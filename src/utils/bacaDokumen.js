@@ -17,17 +17,26 @@ let pdfjsCache = null;
 // pdf.js dimuat saat dibutuhkan saja. Ukurannya cukup besar, dan
 // kebanyakan sesi tidak pernah membuka berkas PDF.
 //
-// Worker-nya diambil dari CDN, bukan lewat import path internal
-// ("pdfjs-dist/build/pdf.worker.min.mjs?url"). Path semacam itu rapuh
-// di build produksi Vite — strukturnya berbeda antar versi pdf.js dan
-// gampang menghasilkan error samar seperti "undefined is not a function"
-// begitu di-bundle, meski di dev server terlihat baik-baik saja.
+// Worker WAJIB versi yang persis sama dengan paket pdfjs-dist yang
+// ter-bundle. CDN eksternal berisiko tidak sinkron dengan versi yang
+// terpasang di package.json, dan hasilnya bisa berupa kegagalan yang
+// tidak jelas — salah satunya "dok.destroy is not a function", karena
+// objek yang kembali bukan PDFDocumentProxy yang semestinya.
+//
+// Worker diimpor lewat `?worker&url`, sintaks bawaan Vite untuk
+// menghasilkan URL ke berkas hasil build worker itu sendiri. Ini
+// menjamin versinya selalu identik dengan pdfjs-dist yang di-bundle,
+// tanpa bergantung struktur path internal paket yang bisa berubah
+// antar rilis, maupun ketersediaan CDN pihak ketiga saat runtime.
 async function muatPdfjs() {
   if (pdfjsCache) return pdfjsCache;
 
-  const pdfjs = await import("pdfjs-dist");
+  const [pdfjs, worker] = await Promise.all([
+    import("pdfjs-dist"),
+    import("pdfjs-dist/build/pdf.worker.mjs?worker&url"),
+  ]);
 
-  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
+  pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
 
   pdfjsCache = pdfjs;
   return pdfjs;
@@ -92,6 +101,13 @@ async function bacaPdf(file, onProgres) {
     );
   }
 
+  if (typeof dok?.getPage !== "function") {
+    throw new Error(
+      "Dokumen PDF gagal terbaca dengan benar. Coba muat ulang halaman, " +
+        "atau tempel teksnya langsung.",
+    );
+  }
+
   const halaman = [];
   for (let i = 1; i <= dok.numPages; i++) {
     onProgres?.(i, dok.numPages);
@@ -100,7 +116,15 @@ async function bacaPdf(file, onProgres) {
     halaman.push(susunBaris(isi.items));
   }
 
-  await dok.destroy();
+  // destroy() dibungkus terpisah: kegagalan di sini hanya berarti
+  // pembersihan memori tidak sempurna, bukan alasan menggagalkan hasil
+  // yang sudah berhasil diekstrak.
+  try {
+    await dok.destroy?.();
+  } catch (e) {
+    console.warn("Gagal membersihkan dokumen PDF setelah dibaca:", e);
+  }
+
   return halaman.join("\n\n").trim();
 }
 
