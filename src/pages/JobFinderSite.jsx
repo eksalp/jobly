@@ -8,6 +8,7 @@ import { UserProfileProvider } from "../context/UserProfileContext";
 import { SavedJobsProvider } from "../context/SavedJobsContext";
 import { LanggananProvider } from "../context/LanggananContext";
 import { GlassBackdrop } from "../components/ui/Glass";
+import { LandingPage } from "./auth/LandingPage";
 import { LoginPage } from "./auth/LoginPage";
 import { RegisterPage } from "./auth/RegisterPage";
 import { ForgotPage } from "./auth/ForgotPage";
@@ -17,6 +18,8 @@ const DASH_IDS = Object.keys(PANEL_META);
 
 function pathFor(page, dashActive) {
   if (page === "dashboard") return `/dashboard/${dashActive}`;
+  // Landing menempati akar, bukan "/landing"
+  if (page === "landing") return "/";
   return `/${page}`;
 }
 
@@ -31,7 +34,9 @@ function parsePath(pathname) {
   if (pathname === "/register")
     return { page: "register", dashActive: "overview" };
   if (pathname === "/forgot") return { page: "forgot", dashActive: "overview" };
-  return { page: "login", dashActive: "overview" };
+  if (pathname === "/login") return { page: "login", dashActive: "overview" };
+  // Selain rute di atas, tampilkan landing
+  return { page: "landing", dashActive: "overview" };
 }
 
 function JobFinderApp() {
@@ -39,7 +44,7 @@ function JobFinderApp() {
   const initial =
     typeof window !== "undefined"
       ? parsePath(window.location.pathname)
-      : { page: "login", dashActive: "overview" };
+      : { page: "landing", dashActive: "overview" };
   const [page, setPageState] = useState(initial.page);
   const [dashActive, setDashActiveState] = useState(initial.dashActive);
 
@@ -74,7 +79,7 @@ function JobFinderApp() {
   React.useEffect(() => {
     if (authLoading || !supabaseConfigured) return;
     if (!session && page === "dashboard") {
-      go("login");
+      go("landing");
     } else if (session && page !== "dashboard") {
       go("dashboard");
     }
@@ -103,6 +108,7 @@ function JobFinderApp() {
   }
 
   const pages = {
+    landing: <LandingPage go={go} />,
     login: <LoginPage go={go} />,
     register: <RegisterPage go={go} />,
     forgot: <ForgotPage go={go} />,

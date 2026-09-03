@@ -3,7 +3,11 @@ import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { T } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/Button";
-import { Field, ErrorNote, GoogleButton } from "../../components/ui/FormControls";
+import {
+  Field,
+  ErrorNote,
+  GoogleButton,
+} from "../../components/ui/FormControls";
 import { AuthWrap } from "./AuthWrap";
 
 export function LoginPage({ go }) {
@@ -116,7 +120,10 @@ export function LoginPage({ go }) {
         <span style={{ fontSize: 12, color: T.inkFaint }}>atau</span>
         <div style={{ flex: 1, height: 1, background: T.border }} />
       </div>
-      <GoogleButton onClick={handleGoogle} disabled={loading || googleLoading} />
+      <GoogleButton
+        onClick={handleGoogle}
+        disabled={loading || googleLoading}
+      />
       <div
         style={{
           textAlign: "center",
@@ -125,6 +132,19 @@ export function LoginPage({ go }) {
           color: T.inkSoft,
         }}
       >
+        <span
+          onClick={() => go("landing")}
+          style={{
+            display: "inline-block",
+            marginBottom: 10,
+            cursor: "pointer",
+            color: T.inkFaint,
+            fontSize: 12.5,
+          }}
+        >
+          ← Kembali ke beranda
+        </span>
+        <br />
         Belum punya akun?{" "}
         <span
           style={{ color: T.accent, fontWeight: 600, cursor: "pointer" }}
@@ -137,4 +157,3 @@ export function LoginPage({ go }) {
     </AuthWrap>
   );
 }
-
