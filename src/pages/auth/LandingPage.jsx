@@ -483,7 +483,7 @@ export function LandingPage({ go }) {
           color: T.inkFaint,
         }}
       >
-        JobFinder AI · Dibuat untuk pencari kerja di Indonesia
+        Jobly · Dibuat untuk pencari kerja di Indonesia
       </div>
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

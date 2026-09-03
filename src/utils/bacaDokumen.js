@@ -17,26 +17,19 @@ let pdfjsCache = null;
 // pdf.js dimuat saat dibutuhkan saja. Ukurannya cukup besar, dan
 // kebanyakan sesi tidak pernah membuka berkas PDF.
 //
-// Worker WAJIB versi yang persis sama dengan paket pdfjs-dist yang
-// ter-bundle. CDN eksternal berisiko tidak sinkron dengan versi yang
-// terpasang di package.json, dan hasilnya bisa berupa kegagalan yang
-// tidak jelas — salah satunya "dok.destroy is not a function", karena
-// objek yang kembali bukan PDFDocumentProxy yang semestinya.
-//
-// Worker diimpor lewat `?worker&url`, sintaks bawaan Vite untuk
-// menghasilkan URL ke berkas hasil build worker itu sendiri. Ini
-// menjamin versinya selalu identik dengan pdfjs-dist yang di-bundle,
-// tanpa bergantung struktur path internal paket yang bisa berubah
-// antar rilis, maupun ketersediaan CDN pihak ketiga saat runtime.
+// `new URL(..., import.meta.url)` adalah cara standar Vite/Rollup untuk
+// mereferensikan aset statis seperti worker: dikenali sebagai aset saat
+// build, ikut ter-copy ke dist/ dengan nama file ber-hash yang benar, dan
+// menghasilkan string URL — cocok untuk GlobalWorkerOptions.workerSrc.
 async function muatPdfjs() {
   if (pdfjsCache) return pdfjsCache;
 
-  const [pdfjs, worker] = await Promise.all([
-    import("pdfjs-dist"),
-    import("pdfjs-dist/build/pdf.worker.mjs?worker&url"),
-  ]);
+  const pdfjs = await import("pdfjs-dist");
 
-  pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/build/pdf.worker.mjs",
+    import.meta.url,
+  ).href;
 
   pdfjsCache = pdfjs;
   return pdfjs;
@@ -79,60 +72,53 @@ function susunBaris(items) {
 }
 
 async function bacaPdf(file, onProgres) {
-  let pdfjs, dok;
+  const pdfjs = await muatPdfjs();
+  const buffer = await file.arrayBuffer();
 
+  // getDocument() mengembalikan PDFDocumentLoadingTask, bukan dokumen
+  // itu sendiri. `.destroy()` ada pada TASK ini — bukan pada objek
+  // PDFDocumentProxy yang didapat dari `.promise`. Di rilis pdf.js
+  // terkini, PDFDocumentProxy sudah tidak punya method `destroy` sama
+  // sekali (diganti `cleanup`), sehingga memanggil `dok.destroy()`
+  // menghasilkan persis "... is not a function" — tidak ada hubungannya
+  // dengan worker atau proses build produksi.
+  const tugas = pdfjs.getDocument({
+    data: buffer,
+    // Menekan permintaan berkas font eksternal yang tidak kita perlukan
+    disableFontFace: true,
+    isEvalSupported: false,
+  });
+
+  let dok;
   try {
-    pdfjs = await muatPdfjs();
-    const buffer = await file.arrayBuffer();
-
-    dok = await pdfjs.getDocument({
-      data: buffer,
-      // Menekan permintaan berkas font eksternal yang tidak kita perlukan
-      disableFontFace: true,
-      isEvalSupported: false,
-    }).promise;
+    dok = await tugas.promise;
   } catch (e) {
-    // Dibedakan dari kegagalan membaca isi PDF di bawah — ini berarti
-    // pdf.js sendiri gagal dimuat atau berkasnya rusak/bukan PDF asli,
-    // bukan soal PDF-nya hasil pindaian.
-    console.error("Gagal memuat pdf.js atau membuka berkas:", e);
+    console.error("Gagal membuka berkas PDF:", e);
     throw new Error(
-      "Gagal membuka berkas PDF. Coba muat ulang halaman, atau tempel teksnya langsung.",
+      "Gagal membuka berkas PDF. Berkasnya mungkin rusak, atau coba tempel teksnya langsung.",
     );
   }
 
-  if (typeof dok?.getPage !== "function") {
-    throw new Error(
-      "Dokumen PDF gagal terbaca dengan benar. Coba muat ulang halaman, " +
-        "atau tempel teksnya langsung.",
-    );
-  }
-
-  const halaman = [];
-  for (let i = 1; i <= dok.numPages; i++) {
-    onProgres?.(i, dok.numPages);
-    const hal = await dok.getPage(i);
-    const isi = await hal.getTextContent();
-    halaman.push(susunBaris(isi.items));
-  }
-
-  // destroy() dibungkus terpisah: kegagalan di sini hanya berarti
-  // pembersihan memori tidak sempurna, bukan alasan menggagalkan hasil
-  // yang sudah berhasil diekstrak.
   try {
-    await dok.destroy?.();
-  } catch (e) {
-    console.warn("Gagal membersihkan dokumen PDF setelah dibaca:", e);
+    const halaman = [];
+    for (let i = 1; i <= dok.numPages; i++) {
+      onProgres?.(i, dok.numPages);
+      const hal = await dok.getPage(i);
+      const isi = await hal.getTextContent();
+      halaman.push(susunBaris(isi.items));
+    }
+    return halaman.join("\n\n").trim();
+  } finally {
+    // Pembersihan lewat TASK, bukan lewat dokumen — dan dibungkus
+    // try/catch sendiri supaya kegagalannya (kalaupun ada) tidak
+    // menutupi hasil ekstraksi yang sudah berhasil didapat.
+    try {
+      await tugas.destroy();
+    } catch (e) {
+      console.warn("Gagal membersihkan dokumen PDF setelah dibaca:", e);
+    }
   }
-
-  return halaman.join("\n\n").trim();
 }
-
-/* ------------------------------------------------------------------ */
-/*  Pintu masuk                                                        */
-/* ------------------------------------------------------------------ */
-
-const MAKS_UKURAN = 10 * 1024 * 1024; // 10 MB
 
 export async function bacaDokumen(file, onProgres) {
   if (!file) throw new Error("Tidak ada berkas yang dipilih.");

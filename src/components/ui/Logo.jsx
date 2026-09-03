@@ -26,9 +26,8 @@ export function Logo({ size = 26 }) {
           color: T.ink,
         }}
       >
-        JobFinder <span style={{ color: T.accent }}>AI</span>
+        Jobly
       </span>
     </div>
   );
 }
-

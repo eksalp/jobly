@@ -76,11 +76,20 @@ export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
       className={`jf-sidebar ${mobileOpen ? "jf-sidebar-open" : ""}`}
       style={{
         width: 248,
-        minHeight: "100vh",
+        // height (bukan minHeight) mengunci sidebar persis setinggi layar.
+        // Dengan minHeight, kontennya boleh melebihi viewport dan bagian
+        // bawah — kartu langganan, nama akun, tombol keluar — terdorong
+        // keluar layar tanpa ada cara menggulirnya, persis yang terjadi
+        // di HP dengan daftar menu panjang.
+        height: "100vh",
         padding: "20px 14px",
         display: "flex",
         flexDirection: "column",
         flexShrink: 0,
+        // Sidebar sendiri yang menggulir, bukan seluruh halaman — dengan
+        // begitu menu tetap menempel di atas sementara isinya bisa digeser.
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
         background: "rgba(255,255,255,0.55)",
         backdropFilter: "blur(22px)",
         WebkitBackdropFilter: "blur(22px)",
@@ -94,6 +103,7 @@ export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
           justifyContent: "space-between",
           padding: "0 6px",
           marginBottom: 24,
+          flexShrink: 0,
         }}
       >
         <Logo size={24} />
