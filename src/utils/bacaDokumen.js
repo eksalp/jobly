@@ -120,6 +120,8 @@ async function bacaPdf(file, onProgres) {
   }
 }
 
+const MAKS_UKURAN = 10 * 1024 * 1024; // 10 MB
+
 export async function bacaDokumen(file, onProgres) {
   if (!file) throw new Error("Tidak ada berkas yang dipilih.");
 
