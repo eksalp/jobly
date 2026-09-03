@@ -16,12 +16,18 @@ let pdfjsCache = null;
 
 // pdf.js dimuat saat dibutuhkan saja. Ukurannya cukup besar, dan
 // kebanyakan sesi tidak pernah membuka berkas PDF.
+//
+// Worker-nya diambil dari CDN, bukan lewat import path internal
+// ("pdfjs-dist/build/pdf.worker.min.mjs?url"). Path semacam itu rapuh
+// di build produksi Vite — strukturnya berbeda antar versi pdf.js dan
+// gampang menghasilkan error samar seperti "undefined is not a function"
+// begitu di-bundle, meski di dev server terlihat baik-baik saja.
 async function muatPdfjs() {
   if (pdfjsCache) return pdfjsCache;
 
   const pdfjs = await import("pdfjs-dist");
-  const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
-  pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+
+  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
   pdfjsCache = pdfjs;
   return pdfjs;
@@ -64,15 +70,27 @@ function susunBaris(items) {
 }
 
 async function bacaPdf(file, onProgres) {
-  const pdfjs = await muatPdfjs();
-  const buffer = await file.arrayBuffer();
+  let pdfjs, dok;
 
-  const dok = await pdfjs.getDocument({
-    data: buffer,
-    // Menekan permintaan berkas font eksternal yang tidak kita perlukan
-    disableFontFace: true,
-    isEvalSupported: false,
-  }).promise;
+  try {
+    pdfjs = await muatPdfjs();
+    const buffer = await file.arrayBuffer();
+
+    dok = await pdfjs.getDocument({
+      data: buffer,
+      // Menekan permintaan berkas font eksternal yang tidak kita perlukan
+      disableFontFace: true,
+      isEvalSupported: false,
+    }).promise;
+  } catch (e) {
+    // Dibedakan dari kegagalan membaca isi PDF di bawah — ini berarti
+    // pdf.js sendiri gagal dimuat atau berkasnya rusak/bukan PDF asli,
+    // bukan soal PDF-nya hasil pindaian.
+    console.error("Gagal memuat pdf.js atau membuka berkas:", e);
+    throw new Error(
+      "Gagal membuka berkas PDF. Coba muat ulang halaman, atau tempel teksnya langsung.",
+    );
+  }
 
   const halaman = [];
   for (let i = 1; i <= dok.numPages; i++) {
