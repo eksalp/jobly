@@ -115,7 +115,15 @@ export function CareerRecommendationsPanel({ setActive }) {
   const [analisis, setAnalisis] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  /* Ambil analisis terbaru — jalur karier dan skill gap datang dari sini */
+  // Deteksi layar kecil secara inline (tidak ada hook useLayarKecil di file ini)
+  const [hp, setHp] = useState(() => window.innerWidth < 600);
+  useEffect(() => {
+    const handler = () => setHp(window.innerWidth < 600);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
+  /* Ambil analisis terbaru */
   useEffect(() => {
     if (!user || !supabaseConfigured) {
       setLoading(false);
@@ -143,7 +151,6 @@ export function CareerRecommendationsPanel({ setActive }) {
     [analisis, cvText],
   );
 
-  /* Skill gap: gabungan kekurangan dan saran perbaikan dari AI */
   const skillGap = useMemo(() => {
     const a = analisis?.kekurangan ?? [];
     const b = analisis?.saran_perbaikan ?? [];
@@ -178,10 +185,15 @@ export function CareerRecommendationsPanel({ setActive }) {
     );
   }
 
-  /* Belum ada analisis — arahkan ke Analyzer dulu */
   if (!analisis) {
     return (
-      <div style={{ padding: 28, maxWidth: 640, margin: "0 auto" }}>
+      <div
+        style={{
+          padding: hp ? "16px 14px" : 28,
+          maxWidth: 640,
+          margin: "0 auto",
+        }}
+      >
         <Glass style={{ padding: 34, textAlign: "center" }}>
           <TrendingUp
             size={22}
@@ -220,19 +232,23 @@ export function CareerRecommendationsPanel({ setActive }) {
   const posisiTarget = analisis.posisi_target ?? [];
   const bidangAlternatif = analisis.bidang_alternatif ?? [];
 
+  // Padding responsif: lebih kecil di HP
+  const pad = hp ? "14px 14px" : "28px";
+
   return (
     <div
       style={{
-        padding: 28,
+        padding: pad,
         maxWidth: 760,
         margin: "0 auto",
         display: "flex",
         flexDirection: "column",
         gap: 14,
+        boxSizing: "border-box",
       }}
     >
-      {/* Arah karier */}
-      <Glass style={{ padding: 22 }}>
+      {/* ── Arah karier ── */}
+      <Glass style={{ padding: hp ? 18 : 24 }}>
         <div
           style={{
             fontSize: 11.5,
@@ -245,23 +261,30 @@ export function CareerRecommendationsPanel({ setActive }) {
         >
           Arah karier kamu
         </div>
+
+        {/* Judul — justify supaya rata kanan-kiri */}
         <div
           style={{
-            fontSize: 16,
-            fontWeight: 600,
+            fontSize: hp ? 15 : 17,
+            fontWeight: 700,
             color: T.ink,
-            lineHeight: 1.4,
+            lineHeight: 1.45,
+            textAlign: "justify",
+            hyphens: "auto",
           }}
         >
           {analisis.arah_karier}
         </div>
+
         {analisis.arah_karier_alasan && (
           <div
             style={{
               fontSize: 12.5,
               color: T.inkSoft,
-              lineHeight: 1.65,
-              marginTop: 8,
+              lineHeight: 1.7,
+              marginTop: 10,
+              textAlign: "justify",
+              hyphens: "auto",
             }}
           >
             {analisis.arah_karier_alasan}
@@ -269,14 +292,15 @@ export function CareerRecommendationsPanel({ setActive }) {
         )}
 
         {posisiTarget.length > 0 && (
-          <div style={{ marginTop: 14 }}>
+          <div style={{ marginTop: 16 }}>
             <div
               style={{
                 fontSize: 11,
                 fontWeight: 700,
                 color: T.inkFaint,
-                marginBottom: 7,
+                marginBottom: 8,
                 letterSpacing: "0.03em",
+                textTransform: "uppercase",
               }}
             >
               Posisi yang realistis dilamar sekarang
@@ -289,9 +313,10 @@ export function CareerRecommendationsPanel({ setActive }) {
                     fontSize: 12,
                     background: "rgba(20,184,166,0.1)",
                     color: T.teal,
-                    padding: "5px 11px",
+                    padding: "5px 12px",
                     borderRadius: 99,
                     fontWeight: 600,
+                    lineHeight: 1.4,
                   }}
                 >
                   {p}
@@ -302,9 +327,9 @@ export function CareerRecommendationsPanel({ setActive }) {
         )}
       </Glass>
 
-      {/* Yang perlu diperkuat + kursus */}
+      {/* ── Yang perlu diperkuat + kursus ── */}
       {skillGap.length > 0 && (
-        <Glass style={{ padding: 22 }}>
+        <Glass style={{ padding: hp ? 18 : 24 }}>
           <div
             style={{
               fontSize: 14.5,
@@ -335,14 +360,25 @@ export function CareerRecommendationsPanel({ setActive }) {
                   gap: 8,
                   fontSize: 12.5,
                   color: T.ink,
-                  lineHeight: 1.6,
-                  marginBottom: 7,
+                  lineHeight: 1.65,
+                  marginBottom: 9,
+                  // Rata kanan-kiri pada teks bullet
+                  textAlign: "justify",
+                  hyphens: "auto",
                 }}
               >
-                <span style={{ color: T.accent, flexShrink: 0, marginTop: 1 }}>
+                <span
+                  style={{
+                    color: T.accent,
+                    flexShrink: 0,
+                    marginTop: 2,
+                    fontSize: 14,
+                    lineHeight: 1,
+                  }}
+                >
                   •
                 </span>
-                <span>{s}</span>
+                <span style={{ flex: 1, minWidth: 0 }}>{s}</span>
               </div>
             ))}
           </div>
@@ -368,10 +404,6 @@ export function CareerRecommendationsPanel({ setActive }) {
                 ))}
               </div>
 
-              {/* Keterbukaan afiliasi.
-                  Wajib ditampilkan: sebagian besar program afiliasi mensyaratkannya
-                  dalam perjanjian, dan tanpa ini kepercayaan user gampang runtuh
-                  begitu mereka menyadarinya sendiri. */}
               <div
                 style={{
                   display: "flex",
@@ -396,9 +428,9 @@ export function CareerRecommendationsPanel({ setActive }) {
         </Glass>
       )}
 
-      {/* Bidang alternatif */}
+      {/* ── Bidang alternatif ── */}
       {bidangAlternatif.length > 0 && (
-        <Glass style={{ padding: 22 }}>
+        <Glass style={{ padding: hp ? 18 : 24 }}>
           <div
             style={{
               fontSize: 14.5,
@@ -420,34 +452,50 @@ export function CareerRecommendationsPanel({ setActive }) {
             Bisa dimasuki dengan bekal yang sudah kamu punya sekarang.
           </div>
 
-          {bidangAlternatif.map((b) => {
+          {bidangAlternatif.map((b, idx) => {
             const kursusBidang = cocokkanKursus(
               [b.bidang, b.alasan],
               b.bidang,
               2,
             );
             return (
-              <div key={b.bidang} style={{ marginBottom: 16 }}>
+              <div
+                key={b.bidang}
+                style={{
+                  marginBottom: idx < bidangAlternatif.length - 1 ? 20 : 0,
+                  paddingBottom: idx < bidangAlternatif.length - 1 ? 20 : 0,
+                  borderBottom:
+                    idx < bidangAlternatif.length - 1
+                      ? `1px solid ${T.border}`
+                      : "none",
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: 6,
-                    marginBottom: 3,
+                    marginBottom: 5,
                   }}
                 >
-                  <BadgeCheck size={13} color={T.teal} />
+                  <BadgeCheck
+                    size={13}
+                    color={T.teal}
+                    style={{ flexShrink: 0 }}
+                  />
                   <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>
                     {b.bidang}
                   </span>
                 </div>
                 <div
                   style={{
-                    fontSize: 12,
+                    fontSize: 12.5,
                     color: T.inkSoft,
-                    lineHeight: 1.6,
-                    marginBottom: 9,
+                    lineHeight: 1.65,
+                    marginBottom: kursusBidang.length ? 10 : 0,
                     paddingLeft: 19,
+                    textAlign: "justify",
+                    hyphens: "auto",
                   }}
                 >
                   {b.alasan}
