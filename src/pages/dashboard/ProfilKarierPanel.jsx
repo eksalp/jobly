@@ -523,6 +523,47 @@ export function ProfilKarierPanel() {
         >
           Keahlian
         </div>
+
+        {/* Daftar chip skill */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            marginBottom: 14,
+          }}
+        >
+          {skills.map((s) => (
+            <span
+              key={s}
+              style={{
+                fontSize: 12.5,
+                background: T.accentSoft,
+                color: T.accent,
+                padding: "6px 8px 6px 12px",
+                borderRadius: 99,
+                fontWeight: 500,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              {s}
+              <X
+                size={12}
+                style={{ cursor: "pointer" }}
+                onClick={() => removeSkill(s)}
+              />
+            </span>
+          ))}
+          {skills.length === 0 && (
+            <span style={{ fontSize: 12.5, color: T.inkFaint }}>
+              Belum ada skill ditambahkan.
+            </span>
+          )}
+        </div>
+
+        {/* Input + tombol tambah */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <input
             value={newSkill}
@@ -550,7 +591,14 @@ export function ProfilKarierPanel() {
           />
           <Button
             variant="outline"
-            style={{ fontSize: 12.5, padding: "8px 14px", flexShrink: 0 }}
+            style={{
+              fontSize: 12.5,
+              padding: "8px 14px",
+              flexShrink: 0,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+            }}
             onClick={() => {
               addSkill(newSkill);
               setNewSkill("");
