@@ -38,6 +38,28 @@ const PRIORITAS = {
   "nilai tambah": { label: "Nilai tambah", warna: "#8891A8" },
 };
 
+// Menjamin field array (skill_transfer, skill_kurang, tahapan,
+// posisi_masuk, risiko) selalu ada, apa pun sumber datanya.
+//
+// Sebelumnya render langsung memanggil `hasil.skill_kurang.length` dkk.
+// tanpa pengaman. Baris riwayat lama — disimpan sebelum field tertentu
+// ditambahkan ke skema, atau hasil AI yang gagal mengisi sebagian field —
+// bisa punya `hasil.skill_kurang === undefined`. Itu membuat React
+// melempar TypeError saat render dan seluruh komponen gagal ter-commit:
+// halaman terlihat diam (kartu yang diklik tidak hilang, tidak ada yang
+// muncul menggantikannya) tanpa pesan error yang jelas di layar.
+function normalisasiHasil(h) {
+  if (!h || typeof h !== "object") return null;
+  return {
+    ...h,
+    skill_transfer: Array.isArray(h.skill_transfer) ? h.skill_transfer : [],
+    skill_kurang: Array.isArray(h.skill_kurang) ? h.skill_kurang : [],
+    tahapan: Array.isArray(h.tahapan) ? h.tahapan : [],
+    posisi_masuk: Array.isArray(h.posisi_masuk) ? h.posisi_masuk : [],
+    risiko: Array.isArray(h.risiko) ? h.risiko : [],
+  };
+}
+
 export function PindahKarierPanel({ setActive }) {
   const { user } = useAuth();
   const {
@@ -137,7 +159,7 @@ export function PindahKarierPanel({ setActive }) {
       }
       if (data?.error) throw new Error(data.error);
 
-      setHasil(data);
+      setHasil(normalisasiHasil(data));
       langganan.refresh();
       setRiwayat((r) => [
         {
@@ -859,7 +881,7 @@ export function PindahKarierPanel({ setActive }) {
                 key={r.id}
                 style={{ padding: 14, cursor: "pointer" }}
                 onClick={() => {
-                  setHasil(r.hasil);
+                  setHasil(normalisasiHasil(r.hasil));
                   setTujuan(r.bidang_tujuan);
                 }}
               >
