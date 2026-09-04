@@ -47,7 +47,7 @@ export const PANEL_COMPONENTS = {
  * menghasilkan error, tapi diarahkan ke halaman "belum tersedia".
  * Kosongkan daftar ini untuk mengaktifkannya kembali.
  */
-const PANEL_DISEMBUNYIKAN = ["recommendations", "pindahkarier"];
+const PANEL_DISEMBUNYIKAN = [];
 
 /* Ditampilkan kalau ada menu yang belum punya komponen.
    Tanpa ini, satu entri yang terlewat membuat seluruh dashboard blank. */

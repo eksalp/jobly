@@ -6,12 +6,14 @@ import {
   Search,
   Bookmark,
   Send,
+  TrendingUp,
   Settings as SettingsIcon,
   X,
   Menu,
   LogOut,
   Linkedin,
   CreditCard,
+  Route,
 } from "lucide-react";
 import { T } from "../../theme";
 import { Logo } from "../../components/ui/Logo";
@@ -41,16 +43,13 @@ export const NAV_GROUPS = [
       { id: "applications", t: "Applications", i: Send },
     ],
   },
-  // Grup "Pengembangan" disembunyikan sementara — daftar kursus afiliasi
-  // belum siap. Kembalikan blok ini untuk mengaktifkannya lagi:
-  //
-  // {
-  //   label: "Pengembangan",
-  //   items: [
-  //     { id: "recommendations", t: "Career Recommendations", i: TrendingUp },
-  //     { id: "pindahkarier", t: "Pindah Karier", i: Route },
-  //   ],
-  // },
+  {
+    label: "Pengembangan",
+    items: [
+      { id: "recommendations", t: "Career Recommendations", i: TrendingUp },
+      { id: "pindahkarier", t: "Pindah Karier", i: Route },
+    ],
+  },
   {
     label: "Lainnya",
     items: [
