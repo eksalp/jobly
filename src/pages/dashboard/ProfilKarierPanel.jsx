@@ -559,40 +559,7 @@ export function ProfilKarierPanel() {
             <Plus size={13} /> Tambah
           </Button>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                addSkill(newSkill);
-                setNewSkill("");
-              }
-            }}
-            placeholder="Tambah skill, lalu Enter..."
-            style={{
-              flex: 1,
-              border: `1px solid ${T.border}`,
-              borderRadius: 12,
-              padding: "9px 12px",
-              fontSize: 13,
-              fontFamily: "'Poppins', sans-serif",
-              background: "rgba(255,255,255,0.6)",
-              outline: "none",
-              color: T.ink,
-            }}
-          />
-          <Button
-            variant="outline"
-            style={{ fontSize: 12.5, padding: "8px 14px" }}
-            onClick={() => {
-              addSkill(newSkill);
-              setNewSkill("");
-            }}
-          >
-            <Plus size={13} /> Tambah
-          </Button>
-        </div>
+
         <div style={{ fontSize: 11.5, color: T.inkFaint, marginTop: 10 }}>
           Skill ini dipakai buat menyaring loker yang cocok di halaman Job
           Finder.
