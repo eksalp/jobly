@@ -38,18 +38,16 @@ const PRIORITAS = {
   "nilai tambah": { label: "Nilai tambah", warna: "#8891A8" },
 };
 
-// Menjamin field array (skill_transfer, skill_kurang, tahapan,
-// posisi_masuk, risiko) selalu ada, apa pun sumber datanya.
-//
-// Sebelumnya render langsung memanggil `hasil.skill_kurang.length` dkk.
-// tanpa pengaman. Baris riwayat lama — disimpan sebelum field tertentu
-// ditambahkan ke skema, atau hasil AI yang gagal mengisi sebagian field —
-// bisa punya `hasil.skill_kurang === undefined`. Itu membuat React
-// melempar TypeError saat render dan seluruh komponen gagal ter-commit:
-// halaman terlihat diam (kartu yang diklik tidak hilang, tidak ada yang
-// muncul menggantikannya) tanpa pesan error yang jelas di layar.
 function normalisasiHasil(h) {
-  if (!h || typeof h !== "object") return null;
+  // Supabase kadang mengembalikan JSON sebagai string — parse dulu
+  if (typeof h === "string") {
+    try {
+      h = JSON.parse(h);
+    } catch {
+      return null;
+    }
+  }
+  if (!h || typeof h !== "object" || Array.isArray(h)) return null;
   return {
     ...h,
     skill_transfer: Array.isArray(h.skill_transfer) ? h.skill_transfer : [],
@@ -106,9 +104,6 @@ export function PindahKarierPanel({ setActive }) {
     setGalat("");
 
     try {
-      // Batas waktu di sisi klien. Kalau function tidak pernah menjawab —
-      // misalnya belum ter-deploy atau menggantung — user tetap mendapat
-      // pesan, bukan loading tanpa akhir.
       const batasWaktu = new Promise((_, tolak) =>
         setTimeout(
           () =>
@@ -125,10 +120,6 @@ export function PindahKarierPanel({ setActive }) {
       ]);
 
       if (error) {
-        // supabase-js mengosongkan `data` untuk status non-2xx dan menaruh
-        // Response aslinya di error.context. Body-nya dibaca sebagai teks
-        // dulu — memanggil .json() langsung akan gagal diam-diam kalau
-        // isinya bukan JSON, dan pesan aslinya jadi hilang.
         let pesan = error.message;
         let mentah = "";
 
@@ -140,8 +131,6 @@ export function PindahKarierPanel({ setActive }) {
           if (mentah) pesan = mentah.slice(0, 300);
         }
 
-        // `detail` memuat pesan asli dari server, termasuk saat pesan yang
-        // ditampilkan ke user sudah diperhalus.
         let detail = "";
         try {
           detail = JSON.parse(mentah)?.detail ?? "";
@@ -149,8 +138,6 @@ export function PindahKarierPanel({ setActive }) {
           /* abaikan */
         }
 
-        // Dicetak sebagai satu baris teks, bukan objek — objek di Console
-        // harus diklik dulu untuk dibuka, dan isinya sering terlewat.
         console.error(
           `[pindah-karier] status=${error.context?.status} | ` +
             `pesan="${pesan}" | detail="${detail || "(kosong)"}"`,
@@ -244,8 +231,6 @@ export function PindahKarierPanel({ setActive }) {
           )}
         </div>
 
-        {/* Asal data disebutkan supaya user tahu penilaian ini
-            berdasarkan versi profil yang mana. */}
         {adaProfil && sumberProfil !== "sesi" && (
           <div
             style={{
@@ -363,6 +348,29 @@ export function PindahKarierPanel({ setActive }) {
       {/* Hasil */}
       {hasil && (
         <>
+          {/* Tombol kembali ke riwayat */}
+          <button
+            onClick={() => {
+              setHasil(null);
+              setGalat("");
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 12,
+              color: T.inkSoft,
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              marginBottom: 12,
+              padding: 0,
+              fontFamily: "'Poppins', sans-serif",
+            }}
+          >
+            ← Kembali ke riwayat
+          </button>
+
           {/* Ringkasan */}
           <Glass style={{ padding: 22, marginBottom: 12 }}>
             <div
@@ -438,6 +446,24 @@ export function PindahKarierPanel({ setActive }) {
             <div style={{ fontSize: 13, color: T.ink, lineHeight: 1.7 }}>
               {hasil.ringkasan}
             </div>
+
+            {/* Fallback kalau semua section kosong */}
+            {hasil.skill_transfer.length === 0 &&
+              hasil.skill_kurang.length === 0 &&
+              hasil.tahapan.length === 0 &&
+              !hasil.ringkasan && (
+                <div
+                  style={{
+                    fontSize: 12.5,
+                    color: T.inkSoft,
+                    marginTop: 8,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Data analisis ini tidak lengkap atau formatnya berbeda. Coba
+                  jalankan analisis ulang untuk mendapatkan hasil terbaru.
+                </div>
+              )}
           </Glass>
 
           {/* Yang sudah kamu punya */}
@@ -796,7 +822,7 @@ export function PindahKarierPanel({ setActive }) {
             </Glass>
           )}
 
-          {/* Risiko — sengaja tidak disembunyikan */}
+          {/* Risiko */}
           {(hasil.risiko.length > 0 || hasil.saran_jujur) && (
             <Glass
               style={{
@@ -859,7 +885,7 @@ export function PindahKarierPanel({ setActive }) {
         </>
       )}
 
-      {/* Riwayat */}
+      {/* Riwayat — hanya tampil kalau belum ada hasil aktif */}
       {!hasil && riwayat.length > 0 && (
         <div style={{ marginTop: 4 }}>
           <div
@@ -881,8 +907,24 @@ export function PindahKarierPanel({ setActive }) {
                 key={r.id}
                 style={{ padding: 14, cursor: "pointer" }}
                 onClick={() => {
-                  setHasil(normalisasiHasil(r.hasil));
+                  console.log(
+                    "[riwayat klik] r.hasil:",
+                    r.hasil,
+                    "| type:",
+                    typeof r.hasil,
+                  );
+                  const h = normalisasiHasil(r.hasil);
+                  console.log("[riwayat klik] normalisasi:", h);
+                  if (!h) {
+                    setGalat(
+                      "Data analisis lama tidak lengkap atau kosong. " +
+                        "Coba jalankan analisis ulang untuk bidang ini.",
+                    );
+                    return;
+                  }
+                  setGalat("");
                   setTujuan(r.bidang_tujuan);
+                  setHasil(h);
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
