@@ -38,8 +38,13 @@ const PRIORITAS = {
   "nilai tambah": { label: "Nilai tambah", warna: "#8891A8" },
 };
 
+// Gaya teks justify yang dipakai berulang
+const justifyText = {
+  textAlign: "justify",
+  hyphens: "auto",
+};
+
 function normalisasiHasil(h) {
-  // Supabase kadang mengembalikan JSON sebagai string — parse dulu
   if (typeof h === "string") {
     try {
       h = JSON.parse(h);
@@ -122,7 +127,6 @@ export function PindahKarierPanel({ setActive }) {
       if (error) {
         let pesan = error.message;
         let mentah = "";
-
         try {
           mentah = (await error.context?.text?.()) ?? "";
           const body = mentah ? JSON.parse(mentah) : null;
@@ -130,14 +134,12 @@ export function PindahKarierPanel({ setActive }) {
         } catch {
           if (mentah) pesan = mentah.slice(0, 300);
         }
-
         let detail = "";
         try {
           detail = JSON.parse(mentah)?.detail ?? "";
         } catch {
           /* abaikan */
         }
-
         console.error(
           `[pindah-karier] status=${error.context?.status} | ` +
             `pesan="${pesan}" | detail="${detail || "(kosong)"}"`,
@@ -187,12 +189,15 @@ export function PindahKarierPanel({ setActive }) {
     );
   }
 
+  const pad = hp ? "14px 14px" : "28px";
+
   return (
     <div
       style={{
-        padding: hp ? "16px 14px" : 28,
+        padding: pad,
         maxWidth: 780,
         margin: "0 auto",
+        boxSizing: "border-box",
       }}
     >
       <BilahLangganan
@@ -200,8 +205,8 @@ export function PindahKarierPanel({ setActive }) {
         onLangganan={() => setActive?.("paket")}
       />
 
-      {/* Form */}
-      <Glass style={{ padding: 22, marginBottom: 16 }}>
+      {/* ── Form ── */}
+      <Glass style={{ padding: hp ? 18 : 22, marginBottom: 16 }}>
         <div
           style={{
             fontSize: 16,
@@ -218,6 +223,7 @@ export function PindahKarierPanel({ setActive }) {
             color: T.inkSoft,
             lineHeight: 1.65,
             marginBottom: 16,
+            ...justifyText,
           }}
         >
           {bidangAsal ? (
@@ -345,10 +351,10 @@ export function PindahKarierPanel({ setActive }) {
         </div>
       </Glass>
 
-      {/* Hasil */}
+      {/* ── Hasil ── */}
       {hasil && (
         <>
-          {/* Tombol kembali ke riwayat */}
+          {/* Tombol kembali */}
           <button
             onClick={() => {
               setHasil(null);
@@ -372,7 +378,7 @@ export function PindahKarierPanel({ setActive }) {
           </button>
 
           {/* Ringkasan */}
-          <Glass style={{ padding: 22, marginBottom: 12 }}>
+          <Glass style={{ padding: hp ? 18 : 22, marginBottom: 12 }}>
             <div
               style={{
                 display: "flex",
@@ -394,7 +400,7 @@ export function PindahKarierPanel({ setActive }) {
             <div
               style={{
                 display: "flex",
-                gap: hp ? 16 : 20,
+                gap: hp ? 16 : 24,
                 marginBottom: 14,
                 flexWrap: "wrap",
               }}
@@ -425,7 +431,7 @@ export function PindahKarierPanel({ setActive }) {
                 <div key={s.label}>
                   <div
                     style={{
-                      fontSize: s.kecil ? 14 : 21,
+                      fontSize: s.kecil ? 14 : 22,
                       fontWeight: 700,
                       color: s.warna,
                       fontFamily: "'Poppins', sans-serif",
@@ -443,11 +449,17 @@ export function PindahKarierPanel({ setActive }) {
               ))}
             </div>
 
-            <div style={{ fontSize: 13, color: T.ink, lineHeight: 1.7 }}>
+            <div
+              style={{
+                fontSize: 13,
+                color: T.ink,
+                lineHeight: 1.7,
+                ...justifyText,
+              }}
+            >
               {hasil.ringkasan}
             </div>
 
-            {/* Fallback kalau semua section kosong */}
             {hasil.skill_transfer.length === 0 &&
               hasil.skill_kurang.length === 0 &&
               hasil.tahapan.length === 0 &&
@@ -466,9 +478,9 @@ export function PindahKarierPanel({ setActive }) {
               )}
           </Glass>
 
-          {/* Yang sudah kamu punya */}
+          {/* Yang sudah kamu bawa */}
           {hasil.skill_transfer.length > 0 && (
-            <Glass style={{ padding: 22, marginBottom: 12 }}>
+            <Glass style={{ padding: hp ? 18 : 22, marginBottom: 12 }}>
               <div
                 style={{
                   display: "flex",
@@ -492,7 +504,7 @@ export function PindahKarierPanel({ setActive }) {
                   key={i}
                   style={{
                     paddingLeft: 12,
-                    borderLeft: `2.5px solid rgba(20,184,166,0.35)`,
+                    borderLeft: "2.5px solid rgba(20,184,166,0.35)",
                     marginBottom: i < hasil.skill_transfer.length - 1 ? 13 : 0,
                   }}
                 >
@@ -503,8 +515,9 @@ export function PindahKarierPanel({ setActive }) {
                     style={{
                       fontSize: 12.5,
                       color: T.inkSoft,
-                      lineHeight: 1.6,
+                      lineHeight: 1.65,
                       marginTop: 4,
+                      ...justifyText,
                     }}
                   >
                     {s.kenapa_berguna}
@@ -514,9 +527,9 @@ export function PindahKarierPanel({ setActive }) {
             </Glass>
           )}
 
-          {/* Yang perlu dikejar + kursus */}
+          {/* Yang perlu dikejar */}
           {hasil.skill_kurang.length > 0 && (
-            <Glass style={{ padding: 22, marginBottom: 12 }}>
+            <Glass style={{ padding: hp ? 18 : 22, marginBottom: 12 }}>
               <div
                 style={{
                   fontSize: 14.5,
@@ -532,13 +545,23 @@ export function PindahKarierPanel({ setActive }) {
                 const p = PRIORITAS[s.prioritas] ?? PRIORITAS.penting;
                 const kursus = kursusUntuk(s.skill);
                 return (
-                  <div key={i} style={{ marginBottom: 16 }}>
+                  <div
+                    key={i}
+                    style={{
+                      marginBottom: i < hasil.skill_kurang.length - 1 ? 18 : 0,
+                      paddingBottom: i < hasil.skill_kurang.length - 1 ? 18 : 0,
+                      borderBottom:
+                        i < hasil.skill_kurang.length - 1
+                          ? `1px solid ${T.border}`
+                          : "none",
+                    }}
+                  >
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 7,
-                        marginBottom: 3,
+                        marginBottom: 5,
                         flexWrap: "wrap",
                       }}
                     >
@@ -564,8 +587,9 @@ export function PindahKarierPanel({ setActive }) {
                       style={{
                         fontSize: 12.5,
                         color: T.inkSoft,
-                        lineHeight: 1.6,
-                        marginBottom: kursus.length ? 9 : 0,
+                        lineHeight: 1.65,
+                        marginBottom: kursus.length ? 10 : 0,
+                        ...justifyText,
                       }}
                     >
                       {s.cara_belajar}
@@ -647,7 +671,7 @@ export function PindahKarierPanel({ setActive }) {
                 style={{
                   display: "flex",
                   gap: 8,
-                  marginTop: 6,
+                  marginTop: 14,
                   padding: "10px 12px",
                   background: "rgba(0,0,0,0.03)",
                   borderRadius: 10,
@@ -668,7 +692,7 @@ export function PindahKarierPanel({ setActive }) {
 
           {/* Tahapan */}
           {hasil.tahapan.length > 0 && (
-            <Glass style={{ padding: 22, marginBottom: 12 }}>
+            <Glass style={{ padding: hp ? 18 : 22, marginBottom: 12 }}>
               <div
                 style={{
                   fontSize: 14.5,
@@ -746,8 +770,9 @@ export function PindahKarierPanel({ setActive }) {
                       style={{
                         fontSize: 12.5,
                         color: T.inkSoft,
-                        lineHeight: 1.6,
+                        lineHeight: 1.65,
                         marginTop: 4,
+                        ...justifyText,
                       }}
                     >
                       {t.fokus}
@@ -760,7 +785,7 @@ export function PindahKarierPanel({ setActive }) {
 
           {/* Posisi masuk */}
           {hasil.posisi_masuk.length > 0 && (
-            <Glass style={{ padding: 22, marginBottom: 12 }}>
+            <Glass style={{ padding: hp ? 18 : 22, marginBottom: 12 }}>
               <div
                 style={{
                   fontSize: 14.5,
@@ -778,7 +803,12 @@ export function PindahKarierPanel({ setActive }) {
                 <div
                   key={i}
                   style={{
-                    marginBottom: i < hasil.posisi_masuk.length - 1 ? 12 : 0,
+                    marginBottom: i < hasil.posisi_masuk.length - 1 ? 14 : 0,
+                    paddingBottom: i < hasil.posisi_masuk.length - 1 ? 14 : 0,
+                    borderBottom:
+                      i < hasil.posisi_masuk.length - 1
+                        ? `1px solid ${T.border}`
+                        : "none",
                   }}
                 >
                   <div
@@ -787,6 +817,7 @@ export function PindahKarierPanel({ setActive }) {
                       alignItems: "center",
                       gap: 7,
                       flexWrap: "wrap",
+                      marginBottom: 3,
                     }}
                   >
                     <span
@@ -811,8 +842,8 @@ export function PindahKarierPanel({ setActive }) {
                     style={{
                       fontSize: 12.5,
                       color: T.inkSoft,
-                      lineHeight: 1.6,
-                      marginTop: 3,
+                      lineHeight: 1.65,
+                      ...justifyText,
                     }}
                   >
                     {p.alasan}
@@ -826,7 +857,7 @@ export function PindahKarierPanel({ setActive }) {
           {(hasil.risiko.length > 0 || hasil.saran_jujur) && (
             <Glass
               style={{
-                padding: 22,
+                padding: hp ? 18 : 22,
                 border: "1px solid rgba(217,119,6,0.35)",
                 background: "rgba(217,119,6,0.04)",
               }}
@@ -854,15 +885,23 @@ export function PindahKarierPanel({ setActive }) {
                     fontSize: 12.5,
                     color: T.ink,
                     lineHeight: 1.65,
-                    marginBottom: 7,
+                    marginBottom: 9,
                   }}
                 >
                   <span
-                    style={{ color: "#B45309", flexShrink: 0, marginTop: 1 }}
+                    style={{
+                      color: "#B45309",
+                      flexShrink: 0,
+                      marginTop: 2,
+                      fontSize: 14,
+                      lineHeight: 1,
+                    }}
                   >
                     •
                   </span>
-                  <span>{r}</span>
+                  <span style={{ flex: 1, minWidth: 0, ...justifyText }}>
+                    {r}
+                  </span>
                 </div>
               ))}
 
@@ -875,6 +914,7 @@ export function PindahKarierPanel({ setActive }) {
                     marginTop: 12,
                     paddingTop: 12,
                     borderTop: "1px solid rgba(217,119,6,0.25)",
+                    ...justifyText,
                   }}
                 >
                   {hasil.saran_jujur}
@@ -885,7 +925,7 @@ export function PindahKarierPanel({ setActive }) {
         </>
       )}
 
-      {/* Riwayat — hanya tampil kalau belum ada hasil aktif */}
+      {/* ── Riwayat ── */}
       {!hasil && riwayat.length > 0 && (
         <div style={{ marginTop: 4 }}>
           <div
@@ -903,18 +943,13 @@ export function PindahKarierPanel({ setActive }) {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {riwayat.map((r) => (
-              <Glass
+              <div
                 key={r.id}
-                style={{ padding: 14, cursor: "pointer" }}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: "pointer" }}
                 onClick={() => {
-                  console.log(
-                    "[riwayat klik] r.hasil:",
-                    r.hasil,
-                    "| type:",
-                    typeof r.hasil,
-                  );
                   const h = normalisasiHasil(r.hasil);
-                  console.log("[riwayat klik] normalisasi:", h);
                   if (!h) {
                     setGalat(
                       "Data analisis lama tidak lengkap atau kosong. " +
@@ -926,38 +961,47 @@ export function PindahKarierPanel({ setActive }) {
                   setTujuan(r.bidang_tujuan);
                   setHasil(h);
                 }}
+                onKeyDown={(e) => e.key === "Enter" && e.currentTarget.click()}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <TrendingUp
-                    size={14}
-                    color={T.accent}
-                    style={{ flexShrink: 0 }}
-                  />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div
-                      style={{ fontSize: 13, fontWeight: 600, color: T.ink }}
-                    >
-                      {r.bidang_tujuan}
+                <Glass style={{ padding: 14 }}>
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    <TrendingUp
+                      size={14}
+                      color={T.accent}
+                      style={{ flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{ fontSize: 13, fontWeight: 600, color: T.ink }}
+                      >
+                        {r.bidang_tujuan}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: T.inkFaint,
+                          marginTop: 2,
+                        }}
+                      >
+                        {new Date(r.created_at).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                        {r.hasil?.peluang_persen != null &&
+                          ` · peluang ${r.hasil.peluang_persen}%`}
+                      </div>
                     </div>
-                    <div
-                      style={{ fontSize: 11, color: T.inkFaint, marginTop: 2 }}
-                    >
-                      {new Date(r.created_at).toLocaleDateString("id-ID", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                      {r.hasil?.peluang_persen != null &&
-                        ` · peluang ${r.hasil.peluang_persen}%`}
-                    </div>
+                    <ArrowRight
+                      size={13}
+                      color={T.inkFaint}
+                      style={{ flexShrink: 0 }}
+                    />
                   </div>
-                  <ArrowRight
-                    size={13}
-                    color={T.inkFaint}
-                    style={{ flexShrink: 0 }}
-                  />
-                </div>
-              </Glass>
+                </Glass>
+              </div>
             ))}
           </div>
         </div>
