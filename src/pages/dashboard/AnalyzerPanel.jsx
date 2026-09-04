@@ -816,8 +816,13 @@ export function AnalyzerPanel({ setActive }) {
             </div>
           )}
 
-          {/* CTA berlangganan */}
-          {!langganan.aktif && (
+          {/* Tombol jalankan analisis lengkap.
+              DULU tombol ini numpang di dalam blok "!langganan.aktif" —
+              akibatnya user yang SUDAH berlangganan justru tidak pernah
+              melihat tombol untuk menjalankan analisisnya sendiri. Sekarang
+              dipisah: blok promosi hanya untuk yang belum berlangganan,
+              tombol aksi selalu tampil kalau belum ada hasil AI. */}
+          {!aiResult && (
             <Glass
               style={{
                 padding: 22,
@@ -825,13 +830,67 @@ export function AnalyzerPanel({ setActive }) {
                 border: `1.5px solid ${T.accent}`,
               }}
             >
-              <div style={{ marginBottom: 14 }}>
+              {!langganan.aktif && (
+                <div style={{ marginBottom: 14 }}>
+                  <div
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: T.ink,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Sparkles
+                      size={14}
+                      style={{ verticalAlign: -2, marginRight: 6 }}
+                      color={T.accent}
+                    />
+                    Perbaiki CV dan LinkedIn kamu
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12.5,
+                      color: T.inkSoft,
+                      lineHeight: 1.7,
+                      textAlign: "left",
+                      maxWidth: 420,
+                      margin: "0 auto",
+                    }}
+                  >
+                    {[
+                      sisaTerkunci > 0
+                        ? `${sisaTerkunci} loker cocok lainnya yang masih terkunci`
+                        : "Semua loker yang cocok dengan profilmu",
+                      "Arah karier lengkap: posisi target dan bidang alternatif",
+                      sourceType === "cv"
+                        ? "Skor ATS dan temuan spesifik per bagian CV"
+                        : "Skor profil LinkedIn dan temuan per bagian",
+                      "CV ditulis ulang agar lolos ATS — versi Indonesia dan Inggris",
+                      "Profil LinkedIn siap pakai dalam dua bahasa",
+                    ].map((t) => (
+                      <div
+                        key={t}
+                        style={{ display: "flex", gap: 8, marginBottom: 5 }}
+                      >
+                        <Check
+                          size={13}
+                          color={T.teal}
+                          style={{ flexShrink: 0, marginTop: 3 }}
+                        />
+                        <span>{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {langganan.aktif && (
                 <div
                   style={{
-                    fontSize: 14,
+                    fontSize: 13.5,
                     fontWeight: 600,
                     color: T.ink,
-                    marginBottom: 8,
+                    marginBottom: 14,
                   }}
                 >
                   <Sparkles
@@ -839,43 +898,10 @@ export function AnalyzerPanel({ setActive }) {
                     style={{ verticalAlign: -2, marginRight: 6 }}
                     color={T.accent}
                   />
-                  Perbaiki CV dan LinkedIn kamu
+                  Siap dianalisis lengkap dengan AI
                 </div>
-                <div
-                  style={{
-                    fontSize: 12.5,
-                    color: T.inkSoft,
-                    lineHeight: 1.7,
-                    textAlign: "left",
-                    maxWidth: 420,
-                    margin: "0 auto",
-                  }}
-                >
-                  {[
-                    sisaTerkunci > 0
-                      ? `${sisaTerkunci} loker cocok lainnya yang masih terkunci`
-                      : "Semua loker yang cocok dengan profilmu",
-                    "Arah karier lengkap: posisi target dan bidang alternatif",
-                    sourceType === "cv"
-                      ? "Skor ATS dan temuan spesifik per bagian CV"
-                      : "Skor profil LinkedIn dan temuan per bagian",
-                    "CV ditulis ulang agar lolos ATS — versi Indonesia dan Inggris",
-                    "Profil LinkedIn siap pakai dalam dua bahasa",
-                  ].map((t) => (
-                    <div
-                      key={t}
-                      style={{ display: "flex", gap: 8, marginBottom: 5 }}
-                    >
-                      <Check
-                        size={13}
-                        color={T.teal}
-                        style={{ flexShrink: 0, marginTop: 3 }}
-                      />
-                      <span>{t}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              )}
+
               {aiError && (
                 <div style={{ marginBottom: 12 }}>
                   <div
