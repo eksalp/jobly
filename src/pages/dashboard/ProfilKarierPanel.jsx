@@ -523,42 +523,41 @@ export function ProfilKarierPanel() {
         >
           Keahlian
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 8,
-            marginBottom: 14,
-          }}
-        >
-          {skills.map((s) => (
-            <span
-              key={s}
-              style={{
-                fontSize: 12.5,
-                background: T.accentSoft,
-                color: T.accent,
-                padding: "6px 8px 6px 12px",
-                borderRadius: 99,
-                fontWeight: 500,
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-              }}
-            >
-              {s}
-              <X
-                size={12}
-                style={{ cursor: "pointer" }}
-                onClick={() => removeSkill(s)}
-              />
-            </span>
-          ))}
-          {skills.length === 0 && (
-            <span style={{ fontSize: 12.5, color: T.inkFaint }}>
-              Belum ada skill ditambahkan.
-            </span>
-          )}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <input
+            value={newSkill}
+            onChange={(e) => setNewSkill(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                addSkill(newSkill);
+                setNewSkill("");
+              }
+            }}
+            placeholder="Tambah skill, lalu Enter..."
+            style={{
+              flex: "1 1 160px",
+              minWidth: 0,
+              border: `1px solid ${T.border}`,
+              borderRadius: 12,
+              padding: "9px 12px",
+              fontSize: 13,
+              fontFamily: "'Poppins', sans-serif",
+              background: "rgba(255,255,255,0.6)",
+              outline: "none",
+              color: T.ink,
+              boxSizing: "border-box",
+            }}
+          />
+          <Button
+            variant="outline"
+            style={{ fontSize: 12.5, padding: "8px 14px", flexShrink: 0 }}
+            onClick={() => {
+              addSkill(newSkill);
+              setNewSkill("");
+            }}
+          >
+            <Plus size={13} /> Tambah
+          </Button>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <input
