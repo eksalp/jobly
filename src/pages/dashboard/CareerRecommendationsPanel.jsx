@@ -387,10 +387,8 @@ export function CareerRecommendationsPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  Sebagian tautan kursus di atas adalah tautan afiliasi. Kalau
-                  kamu mendaftar lewat tautan itu, kami menerima komisi tanpa
-                  biaya tambahan untukmu. Rekomendasinya tetap disusun
-                  berdasarkan kecocokan dengan profilmu, bukan besaran komisi.
+                  Tautan tersebut adalah rekomendasi dari sistem AI Jobly untuk
+                  mencari course yang cocok buat kamu!
                 </span>
               </div>
             </>
