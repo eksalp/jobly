@@ -44,7 +44,7 @@ export function GlassBackdrop() {
   );
 }
 
-export function Glass({ children, style }) {
+export function Glass({ children, style, ...rest }) {
   return (
     <div
       style={{
@@ -56,6 +56,7 @@ export function Glass({ children, style }) {
         borderRadius: 20,
         ...style,
       }}
+      {...rest}
     >
       {children}
     </div>
