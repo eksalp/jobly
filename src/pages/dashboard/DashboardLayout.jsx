@@ -75,20 +75,23 @@ export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
       className={`jf-sidebar ${mobileOpen ? "jf-sidebar-open" : ""}`}
       style={{
         width: 248,
-        // height (bukan minHeight) mengunci sidebar persis setinggi layar.
-        // Dengan minHeight, kontennya boleh melebihi viewport dan bagian
-        // bawah — kartu langganan, nama akun, tombol keluar — terdorong
-        // keluar layar tanpa ada cara menggulirnya, persis yang terjadi
-        // di HP dengan daftar menu panjang.
+        // 100dvh (dynamic viewport height) memperhitungkan bilah alamat
+        // browser HP yang muncul-hilang saat menggulir. Dengan 100vh biasa,
+        // tinggi dihitung seolah bilah itu tidak ada — akibatnya bagian
+        // paling bawah (nama akun & tombol keluar) selalu terdorong ke
+        // area yang tertutup dan tidak pernah bisa dijangkau.
+        // 100vh ditulis lebih dulu sebagai cadangan untuk browser lama.
         height: "100vh",
+        maxHeight: "100dvh",
         padding: "20px 14px",
         display: "flex",
         flexDirection: "column",
         flexShrink: 0,
-        // Sidebar sendiri yang menggulir, bukan seluruh halaman — dengan
-        // begitu menu tetap menempel di atas sementara isinya bisa digeser.
-        overflowY: "auto",
-        WebkitOverflowScrolling: "touch",
+        // Sidebar TIDAK menggulir sendiri. Yang menggulir hanya area menu
+        // di dalamnya, supaya header (logo) dan footer (akun) tetap diam
+        // di tempatnya. Sebelumnya keduanya sama-sama scrollable dan
+        // saling berebut, sehingga footer ikut hanyut keluar layar.
+        overflow: "hidden",
         background: "rgba(255,255,255,0.55)",
         backdropFilter: "blur(22px)",
         WebkitBackdropFilter: "blur(22px)",
@@ -119,7 +122,17 @@ export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
           <X size={18} />
         </button>
       </div>
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      {/* Satu-satunya area yang menggulir. minHeight: 0 wajib ada —
+          tanpa itu, anak flex menolak menyusut di bawah tinggi isinya
+          dan malah mendorong footer keluar layar alih-alih menggulir. */}
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
         {NAV_GROUPS.filter((g) => g.items.length > 0).map((g) => (
           <div key={g.label} style={{ marginBottom: 18 }}>
             <div
@@ -175,11 +188,13 @@ export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
       <div
         style={{
           borderTop: `1px solid ${T.border}`,
-          paddingTop: 14,
           display: "flex",
           alignItems: "center",
           gap: 10,
           padding: "14px 10px 0",
+          // Tanpa ini footer ikut terperas saat menu panjang, sampai nama
+          // akun dan tombol keluar hilang sama sekali dari layar.
+          flexShrink: 0,
         }}
       >
         <div
@@ -250,6 +265,12 @@ export function Topbar({ title, setMobileOpen }) {
         background: "rgba(255,255,255,0.5)",
         backdropFilter: "blur(18px)",
         borderBottom: `1px solid ${T.border}`,
+        // Header tetap menempel di atas saat konten digulir, supaya judul
+        // halaman dan tombol menu selalu terjangkau — terutama di HP di
+        // mana halaman bisa sangat panjang.
+        position: "sticky",
+        top: 0,
+        zIndex: 30,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

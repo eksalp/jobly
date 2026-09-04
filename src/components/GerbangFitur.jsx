@@ -8,7 +8,7 @@ import { Button } from "./ui/Button";
  * Menutup sebuah fitur untuk user yang belum berlangganan.
  *
  * PENTING: ini murni tampilan. Konten di dalamnya tidak dirender sama
- * sekali saat terkunci (bukan disembunyikan lewat CSS), dan server tetap
+ * sekali saat terkunci (bukan disembunyikan lewat ), dan server tetap
  * memeriksa ulang setiap permintaan. Menghapus komponen ini lewat DevTools
  * tidak membuka data apa pun.
  */
