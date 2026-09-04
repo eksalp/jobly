@@ -44,7 +44,15 @@ export function GlassBackdrop() {
   );
 }
 
-export function Glass({ children, style }) {
+// Sebelumnya komponen ini hanya menerima `children` dan `style`, sehingga
+// prop lain seperti onClick, onMouseEnter, atau key tidak pernah diteruskan
+// ke <div> di dalamnya — inilah sebab kartu riwayat di halaman Pindah Karier
+// (dan kemungkinan tempat lain yang memakai Glass dengan onClick) terlihat
+// bisa diklik (cursor: pointer dari style) tapi tidak melakukan apa-apa.
+//
+// Perbaikannya: teruskan semua prop tambahan (...rest) ke <div>, supaya
+// event handler apa pun yang dikirim ke <Glass> otomatis berfungsi.
+export function Glass({ children, style, ...rest }) {
   return (
     <div
       style={{
@@ -56,9 +64,9 @@ export function Glass({ children, style }) {
         borderRadius: 20,
         ...style,
       }}
+      {...rest}
     >
       {children}
     </div>
   );
 }
-
