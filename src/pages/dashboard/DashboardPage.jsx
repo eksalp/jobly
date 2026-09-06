@@ -11,6 +11,7 @@ import { CareerRecommendationsPanel } from "./CareerRecommendationsPanel";
 import { PindahKarierPanel } from "./PindahKarierPanel";
 import { SettingsPanel } from "./SettingsPanel";
 import { Sidebar, Topbar } from "./DashboardLayout";
+import { Footer } from "../../components/ui/Footer";
 
 export const PANEL_META = {
   overview: { title: "Cari Arah Karier" },
@@ -111,9 +112,22 @@ export function DashboardPage({ go, active, setActive }) {
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
       />
-      <div style={{ flex: 1, minWidth: 0 }}>
+      {/* minHeight + flex kolom: mendorong footer ke bawah pada halaman
+          yang isinya pendek, supaya tidak menggantung di tengah layar. */}
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+        }}
+      >
         <Topbar title={meta.title} setMobileOpen={setMobileOpen} />
-        <PanelComponent setActive={setActive} go={go} />
+        <div style={{ flex: 1 }}>
+          <PanelComponent setActive={setActive} go={go} />
+        </div>
+        <Footer />
       </div>
     </div>
   );

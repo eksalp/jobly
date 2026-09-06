@@ -15,6 +15,7 @@ import { T } from "../../theme";
 import { Button } from "../../components/ui/Button";
 import { Glass } from "../../components/ui/Glass";
 import { Logo } from "../../components/ui/Logo";
+import { Footer } from "../../components/ui/Footer";
 import { useStatistikLoker, bulatkan } from "../../hooks/useStatistikLoker";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 
@@ -478,13 +479,14 @@ export function LandingPage({ go }) {
       <div
         style={{
           textAlign: "center",
-          padding: "0 18px 32px",
+          padding: "0 18px 4px",
           fontSize: 11.5,
           color: T.inkFaint,
         }}
       >
-        Jobly · Dibuat untuk pencari kerja di Indonesia
+        Dibuat untuk pencari kerja di Indonesia
       </div>
+      <Footer />
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
