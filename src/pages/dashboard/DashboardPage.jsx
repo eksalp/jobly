@@ -9,6 +9,8 @@ import { SavedJobsPanel } from "./SavedJobsPanel";
 import { ApplicationsPanel } from "./ApplicationsPanel";
 import { CareerRecommendationsPanel } from "./CareerRecommendationsPanel";
 import { PindahKarierPanel } from "./PindahKarierPanel";
+import { LatihanInterviewPanel } from "./LatihanInterviewPanel";
+import { SimulasiInterviewPanel } from "./SimulasiInterviewPanel";
 import { SettingsPanel } from "./SettingsPanel";
 import { Sidebar, Topbar } from "./DashboardLayout";
 import { Footer } from "../../components/ui/Footer";
@@ -23,6 +25,8 @@ export const PANEL_META = {
   applications: { title: "Lamaran" },
   recommendations: { title: "Rekomendasi Karier" },
   pindahkarier: { title: "Pindah Karier" },
+  interview: { title: "Latihan Interview" },
+  simulasi: { title: "Simulasi Interview AI" },
   paket: { title: "Paket & Langganan" },
   settings: { title: "Pengaturan" },
 };
@@ -37,6 +41,8 @@ export const PANEL_COMPONENTS = {
   applications: ApplicationsPanel,
   recommendations: CareerRecommendationsPanel,
   pindahkarier: PindahKarierPanel,
+  interview: LatihanInterviewPanel,
+  simulasi: SimulasiInterviewPanel,
   paket: PaketPanel,
   settings: SettingsPanel,
 };

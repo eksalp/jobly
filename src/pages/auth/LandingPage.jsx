@@ -215,7 +215,7 @@ export function LandingPage({ go }) {
         }}
       >
         <Glass style={{ padding: hp ? 20 : 28 }}>
-          <div style={{ textAlign: "center", marginBottom: 22 }}>
+          <div style={{ textAlign: "center", marginBottom: 5 }}>
             <div
               style={{
                 display: "flex",
@@ -476,16 +476,6 @@ export function LandingPage({ go }) {
         </Glass>
       </div>
 
-      <div
-        style={{
-          textAlign: "center",
-          padding: "0 18px 4px",
-          fontSize: 11.5,
-          color: T.inkFaint,
-        }}
-      >
-        Dibuat untuk pencari kerja di Indonesia
-      </div>
       <Footer />
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

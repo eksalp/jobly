@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Check,
+  X,
   Loader2,
   Sparkles,
   Clock,
@@ -368,6 +369,35 @@ export function PaketPanel() {
                       style={{ flexShrink: 0, marginTop: 3 }}
                     />
                     <span>{f}</span>
+                  </div>
+                ))}
+
+                {/* Fitur yang TIDAK termasuk. Ditampilkan terus terang
+                    supaya user tahu persis apa yang didapat dengan naik
+                    paket — jauh lebih jelas daripada membandingkan dua
+                    daftar panjang sendiri. */}
+                {(p.tanpa || []).map((f) => (
+                  <div
+                    key={f}
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      fontSize: 12,
+                      color: T.inkFaint,
+                      lineHeight: 1.55,
+                      marginBottom: 7,
+                    }}
+                  >
+                    <X
+                      size={12}
+                      color={T.inkFaint}
+                      style={{ flexShrink: 0, marginTop: 3 }}
+                    />
+                    <span
+                      style={{ textDecoration: "line-through", opacity: 0.75 }}
+                    >
+                      {f}
+                    </span>
                   </div>
                 ))}
               </div>

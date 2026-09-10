@@ -14,6 +14,8 @@ import {
   Linkedin,
   CreditCard,
   Route,
+  MessageSquareQuote,
+  Bot,
 } from "lucide-react";
 import { T } from "../../theme";
 import { Logo } from "../../components/ui/Logo";
@@ -48,6 +50,8 @@ export const NAV_GROUPS = [
     items: [
       { id: "recommendations", t: "Career Recommendations", i: TrendingUp },
       { id: "pindahkarier", t: "Pindah Karier", i: Route },
+      { id: "interview", t: "Latihan Interview", i: MessageSquareQuote },
+      { id: "simulasi", t: "Simulasi Interview AI", i: Bot },
     ],
   },
   {

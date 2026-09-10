@@ -26,6 +26,10 @@ const KOSONG = {
   kuotaAnalisis: 0,
   kuotaTerpakai: 0,
   sisaAnalisis: 0,
+  kuotaPindah: 0,
+  sisaPindah: 0,
+  kuotaInterview: 0,
+  sisaInterview: 0,
   jumlahPaket: 0,
 };
 
@@ -58,6 +62,10 @@ export function LanggananProvider({ children }) {
       kuotaAnalisis: b?.kuota_analisis ?? 0,
       kuotaTerpakai: b?.kuota_terpakai ?? 0,
       sisaAnalisis: b?.sisa_analisis ?? 0,
+      kuotaPindah: b?.kuota_pindah ?? 0,
+      sisaPindah: b?.sisa_pindah ?? 0,
+      kuotaInterview: b?.kuota_interview ?? 0,
+      sisaInterview: b?.sisa_interview ?? 0,
       jumlahPaket: b?.jumlah_paket ?? 0,
     });
     setLoading(false);
@@ -74,6 +82,12 @@ export function LanggananProvider({ children }) {
     detailPaket,
     // Peringatan menjelang habis — supaya user memperpanjang sebelum
     // aksesnya terputus, bukan sesudah.
+    // Sebuah fitur dianggap "termasuk paket" kalau kuota totalnya > 0,
+    // terlepas dari apakah sisanya masih ada. Ini membedakan "paketmu
+    // tidak punya fitur ini" dari "kuotamu habis" — dua kondisi yang
+    // butuh pesan berbeda ke user.
+    punyaPindah: status.aktif && status.kuotaPindah > 0,
+    punyaInterview: status.aktif && status.kuotaInterview > 0,
     segeraBerakhir: status.aktif && status.sisaHari <= 3,
     kuotaMenipis: status.aktif && status.sisaAnalisis <= 1,
     loading,
