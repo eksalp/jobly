@@ -184,7 +184,16 @@ export function PindahKarierPanel({ setActive }) {
      yang belum berlangganan perlu diajak berlangganan, sementara yang
      sudah berlangganan paket Mingguan perlu tahu bahwa fitur ini ada di
      paket yang lebih tinggi — bukan sekadar disuruh berlangganan lagi. */
-  if (!langganan.loading && (!langganan.aktif || !langganan.punyaPindah)) {
+  const kuotaHabis =
+    langganan.aktif && langganan.punyaPindah && langganan.sisaPindah <= 0;
+
+  // Hasil yang sedang ditampilkan tidak ikut dikunci — kuota yang habis
+  // tidak boleh menghapus analisis yang sudah dibayar dan dibuka user.
+  if (
+    !langganan.loading &&
+    !hasil &&
+    (!langganan.aktif || !langganan.punyaPindah || kuotaHabis)
+  ) {
     const sudahLangganan = langganan.aktif;
     return (
       <div
@@ -197,11 +206,17 @@ export function PindahKarierPanel({ setActive }) {
         <GerbangFitur
           terbuka={false}
           tinggiMinimal={240}
-          judul="Rencana Pindah Karier"
+          judul={
+            kuotaHabis
+              ? "Kuota Pindah Karier kamu sudah habis"
+              : "Rencana Pindah Karier"
+          }
           keterangan={
-            sudahLangganan
-              ? "Fitur ini tersedia di paket Bulanan dan Tiga Bulan. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya."
-              : "AI menilai keahlian mana dari pengalamanmu sekarang yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya. Termasuk penilaian jujur soal risikonya."
+            kuotaHabis
+              ? `Kamu sudah memakai seluruh ${langganan.kuotaPindah} analisis Pindah Karier di paket ini. Beli paket baru untuk menambah kuota — sisa masa aktif paketmu sekarang tidak hangus, dan kuotanya digabung.`
+              : sudahLangganan
+                ? "Fitur ini tersedia di paket Pro dan Max. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya."
+                : "AI menilai keahlian mana dari pengalamanmu sekarang yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya. Termasuk penilaian jujur soal risikonya."
           }
           onLangganan={() => setActive?.("paket")}
         />

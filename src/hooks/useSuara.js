@@ -15,12 +15,11 @@ import { useState, useRef, useEffect, useCallback } from "react";
  */
 export function usePengenalanSuara({
   bahasa = "id-ID",
-  // Berapa lama diam sebelum jawaban dianggap selesai. 1,8 detik dipilih
-  // dari pengamatan: jeda berpikir di tengah kalimat biasanya di bawah
-  // 1,5 detik, sedangkan jeda setelah selesai menjawab jauh lebih panjang.
-  // Terlalu pendek -> kalimat terpotong di tengah. Terlalu panjang ->
-  // percakapan terasa lambat dan canggung.
-  jedaSelesaiMs = 1800,
+  // Jeda dasar sebelum jawaban dianggap selesai. Dinaikkan ke 3 detik
+  // karena 1,8 detik terbukti terlalu agresif — orang berhenti sejenak
+  // untuk berpikir di tengah jawaban, terutama saat menjawab pertanyaan
+  // wawancara yang menuntut mengingat pengalaman.
+  jedaSelesaiMs = 3000,
   onSelesaiBicara = null,
 } = {}) {
   const [mendengar, setMendengar] = useState(false);
@@ -74,14 +73,66 @@ export function usePengenalanSuara({
       setTeks(gabungan);
 
       // Setiap kali ada suara masuk, hitungan jeda diulang dari nol.
-      // Jawaban dianggap selesai hanya kalau benar-benar diam selama
-      // jedaSelesaiMs penuh.
       clearTimeout(jedaRef.current);
-      if (gabungan && onSelesaiRef.current) {
-        jedaRef.current = setTimeout(() => {
-          onSelesaiRef.current?.(gabungan);
-        }, jedaSelesaiMs);
+      if (!gabungan || !onSelesaiRef.current) return;
+
+      // Jeda disesuaikan dengan bentuk kalimatnya, bukan seragam.
+      //
+      // Kalimat yang menggantung — berakhir dengan kata sambung, atau
+      // masih sangat pendek — hampir pasti belum selesai. Memotongnya di
+      // situ adalah kesalahan paling mengganggu dalam percakapan suara,
+      // jadi kasus-kasus itu diberi waktu tunggu lebih panjang.
+      const kata = gabungan.split(/\s+/);
+      const kataTerakhir = (kata[kata.length - 1] || "").toLowerCase();
+
+      const GANTUNG = [
+        "dan",
+        "atau",
+        "tapi",
+        "tetapi",
+        "karena",
+        "kalau",
+        "jika",
+        "yang",
+        "untuk",
+        "dengan",
+        "di",
+        "ke",
+        "dari",
+        "pada",
+        "adalah",
+        "sebagai",
+        "seperti",
+        "kemudian",
+        "lalu",
+        "terus",
+        "jadi",
+        "sehingga",
+        "supaya",
+        "misalnya",
+        "contohnya",
+        "yaitu",
+        "yakni",
+        "eee",
+        "emm",
+        "anu",
+        "itu",
+        "ini",
+      ];
+
+      let jeda = jedaSelesaiMs;
+
+      if (GANTUNG.includes(kataTerakhir)) {
+        jeda = jedaSelesaiMs + 2500; // jelas belum selesai
+      } else if (kata.length < 8) {
+        jeda = jedaSelesaiMs + 1500; // masih terlalu pendek untuk jawaban wawancara
+      } else if (/[.!?]$/.test(gabungan)) {
+        jeda = Math.max(1800, jedaSelesaiMs - 800); // kalimat sudah utuh
       }
+
+      jedaRef.current = setTimeout(() => {
+        onSelesaiRef.current?.(gabungan);
+      }, jeda);
     };
 
     p.onerror = (e) => {
@@ -133,6 +184,78 @@ export function usePengenalanSuara({
     bersihkan,
     setTeks,
   };
+}
+
+/**
+ * Mengukur kerasnya suara dari mikrofon (0-1).
+ *
+ * Dipakai untuk menggerakkan orb supaya user langsung tahu mikrofonnya
+ * benar-benar menangkap suaranya. Tanpa umpan balik ini, orang cenderung
+ * ragu dan mengulang-ulang kalimat karena mengira tidak terdengar.
+ *
+ * Berjalan terpisah dari SpeechRecognition dengan stream-nya sendiri —
+ * Web Speech API tidak membuka data audio mentahnya ke aplikasi.
+ */
+export function usePengukurSuara(aktif) {
+  const [tingkat, setTingkat] = useState(0);
+  const rujukan = useRef({});
+
+  useEffect(() => {
+    if (!aktif) {
+      setTingkat(0);
+      return;
+    }
+
+    let batal = false;
+
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        if (batal) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const sumber = ctx.createMediaStreamSource(stream);
+        const analis = ctx.createAnalyser();
+        analis.fftSize = 256;
+        analis.smoothingTimeConstant = 0.6;
+        sumber.connect(analis);
+
+        const data = new Uint8Array(analis.frequencyBinCount);
+        rujukan.current = { stream, ctx };
+
+        const ukur = () => {
+          if (batal) return;
+          analis.getByteFrequencyData(data);
+          const rata = data.reduce((a, b) => a + b, 0) / data.length;
+          // Dibagi 90, bukan 255 — suara bicara normal jarang menyentuh
+          // puncak skala, jadi pembagi penuh membuat orb nyaris tak bergerak.
+          setTingkat(Math.min(1, rata / 90));
+          rujukan.current.frame = requestAnimationFrame(ukur);
+        };
+        ukur();
+      } catch {
+        // Izin mikrofon ditolak — orb tetap jalan tanpa denyut suara.
+        setTingkat(0);
+      }
+    })();
+
+    return () => {
+      batal = true;
+      const { stream, ctx, frame } = rujukan.current;
+      if (frame) cancelAnimationFrame(frame);
+      stream?.getTracks().forEach((t) => t.stop());
+      ctx?.close();
+      rujukan.current = {};
+      setTingkat(0);
+    };
+  }, [aktif]);
+
+  return tingkat;
 }
 
 /** Membacakan teks dengan suara bawaan browser. */
