@@ -828,9 +828,8 @@ export function PindahKarierPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  Sebagian tautan kursus adalah tautan afiliasi. Kami menerima
-                  komisi tanpa biaya tambahan untukmu, dan rekomendasinya
-                  disusun berdasarkan kecocokan dengan kebutuhanmu.
+                  Sebagian tautan kursus adalah tautan afiliasi. Rekomendasi
+                  kami disusun berdasarkan kecocokan dengan kebutuhanmu.
                 </span>
               </div>
             </Glass>

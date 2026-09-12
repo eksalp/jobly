@@ -160,7 +160,7 @@ export function KartuPelatihan({ skor }) {
       >
         <Info size={11} style={{ flexShrink: 0, marginTop: 2 }} />
         <span>
-          Layanan ini disediakan mitra kami, dan kami menerima komisi dari
+          Layanan ini disediakan mitra kami, dan kami merekomendasikan dari
           pendaftaran lewat tautan di atas — tanpa biaya tambahan untukmu.
         </span>
       </div>
