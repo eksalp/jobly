@@ -21,7 +21,14 @@ import { useAuth } from "../../context/AuthContext";
 import { useTeksProfil } from "../../hooks/useTeksProfil";
 import { useLangganan } from "../../hooks/useLangganan";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
-import { GerbangFitur, BilahLangganan } from "../../components/GerbangFitur";
+import { useCegahTinggalkan } from "../../hooks/useCegahTinggalkan";
+import {
+  tandaiBerjalan,
+  bacaPenanda,
+  hapusPenanda,
+} from "../../utils/pemulihAnalisis";
+import { GerbangFitur } from "../../components/GerbangFitur";
+import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { detectCategory } from "../../utils/jobMatching";
 import { cocokkanKursus } from "../../data/kursus";
 import { TAXONOMY } from "../../data/taxonomy";
@@ -76,6 +83,16 @@ export function PindahKarierPanel({ setActive }) {
   const [galat, setGalat] = useState("");
   const [hasil, setHasil] = useState(null);
   const [riwayat, setRiwayat] = useState([]);
+  // Analisis yang ditinggal sebelum selesai, sedang dijemput hasilnya
+  const [memulihkan, setMemulihkan] = useState(false);
+
+  // Cegah user pergi saat analisis berjalan — kuotanya sudah terpotong,
+  // dan hasilnya lebih baik ditunggu daripada dijemput belakangan.
+  //
+  // Harus setelah `loading` dideklarasikan: pemanggilan hook di atas
+  // deklarasi state yang dipakainya melanggar temporal dead zone dan
+  // membuat seluruh komponen gagal dirender.
+  useCegahTinggalkan(loading, "Analisis Pindah Karier sedang berjalan.");
 
   const bidangAsal = cvText ? detectCategory(cvText)?.label : null;
 
@@ -88,6 +105,91 @@ export function PindahKarierPanel({ setActive }) {
       .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) => setRiwayat(data || []));
+  }, [user?.id]);
+
+  /* Menjemput hasil analisis yang ditinggal sebelum selesai.
+     
+     Edge function tetap menyimpan hasilnya ke career_switches meski klien
+     sudah pergi, jadi yang perlu dilakukan hanya mencari baris yang dibuat
+     SETELAH analisis dimulai. Kalau belum ada, prosesnya mungkin masih
+     berjalan — jadi dicoba beberapa kali dengan jeda, bukan langsung
+     menyerah. */
+  useEffect(() => {
+    const penanda = bacaPenanda("pindah");
+    if (!penanda || !user || !supabaseConfigured) return;
+
+    let batal = false;
+    let percobaan = 0;
+
+    const jemput = async () => {
+      percobaan += 1;
+
+      const { data } = await supabase
+        .from("career_switches")
+        .select("id, bidang_tujuan, hasil, created_at")
+        .eq("user_id", user.id)
+        .gte("created_at", new Date(penanda.mulai - 5000).toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (batal) return;
+
+      if (data?.hasil) {
+        hapusPenanda("pindah");
+        setHasil(normalisasiHasil(data.hasil));
+        setTujuan(data.bidang_tujuan || penanda.bidang || "");
+        setMemulihkan(false);
+        setRiwayat((r) => (r.some((x) => x.id === data.id) ? r : [data, ...r]));
+        return;
+      }
+
+      // Enam kali dengan jeda 5 detik = 30 detik. Cukup untuk analisis
+      // yang masih berjalan, tapi tidak membuat user menunggu tanpa
+      // kepastian kalau prosesnya memang gagal.
+      if (percobaan < 6) {
+        setTimeout(jemput, 5000);
+      } else {
+        hapusPenanda("pindah");
+
+        /* Hasilnya tidak ketemu. Server diminta memeriksa sendiri apakah
+           ada kuota yang terpotong tanpa hasil tersimpan.
+
+           Klien TIDAK boleh sekadar mengklaim kuota sudah dikembalikan —
+           itu dua hal berbeda, dan menyamakannya berarti memberi tahu
+           user sesuatu yang belum tentu benar. */
+        try {
+          const { data: klaim } = await supabase.functions.invoke(
+            "kembalikan-kuota",
+            { body: { klaimTertinggal: true } },
+          );
+
+          if (klaim?.jumlah > 0) {
+            setGalat(
+              "Analisis sebelumnya tidak selesai, jadi kuotamu sudah dikembalikan. Silakan coba lagi.",
+            );
+            langganan.refresh();
+          } else {
+            setGalat(
+              "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+            );
+          }
+        } catch {
+          setGalat(
+            "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+          );
+        }
+
+        setMemulihkan(false);
+      }
+    };
+
+    setMemulihkan(true);
+    jemput();
+
+    return () => {
+      batal = true;
+    };
   }, [user?.id]);
 
   const analisis = async () => {
@@ -104,6 +206,10 @@ export function PindahKarierPanel({ setActive }) {
     }
     setLoading(true);
     setGalat("");
+
+    // Ditandai SEBELUM permintaan dikirim. Kalau user pindah halaman
+    // sedetik setelah menekan tombol, penandanya sudah tersimpan.
+    tandaiBerjalan("pindah", { bidang: tujuan });
 
     try {
       // Batas waktu di sisi klien. Kalau function tidak pernah menjawab —
@@ -159,6 +265,7 @@ export function PindahKarierPanel({ setActive }) {
       }
       if (data?.error) throw new Error(data.error);
 
+      hapusPenanda("pindah");
       setHasil(normalisasiHasil(data));
       langganan.refresh();
       setRiwayat((r) => [
@@ -232,10 +339,65 @@ export function PindahKarierPanel({ setActive }) {
         margin: "0 auto",
       }}
     >
-      <BilahLangganan
+      <KuotaSaya
         langganan={langganan}
         onLangganan={() => setActive?.("paket")}
       />
+
+      {/* Peringatan selama analisis berjalan. Ditampilkan menonjol
+          karena dialog browser hanya muncul saat menutup tab — pindah
+          menu di dalam aplikasi tidak memicunya. */}
+      {loading && (
+        <Glass
+          style={{
+            padding: "13px 16px",
+            marginBottom: 14,
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 10,
+            background: "rgba(217,119,6,0.07)",
+            border: "1px solid rgba(217,119,6,0.35)",
+          }}
+        >
+          <AlertTriangle
+            size={15}
+            color="#B45309"
+            style={{ flexShrink: 0, marginTop: 1 }}
+          />
+          <div style={{ fontSize: 12.5, color: "#92400E", lineHeight: 1.6 }}>
+            <strong>Jangan tinggalkan halaman ini dulu.</strong> Analisis sedang
+            berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang,
+            hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.
+          </div>
+        </Glass>
+      )}
+
+      {/* Analisis yang ditinggal sebelum selesai. Disebut terus terang
+          bahwa prosesnya tetap berjalan di server — tanpa keterangan ini
+          user mengira kuotanya hangus percuma. */}
+      {memulihkan && (
+        <Glass
+          style={{
+            padding: "13px 16px",
+            marginBottom: 14,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            background: "rgba(76,99,224,0.05)",
+            border: `1px solid ${T.accentSoft}`,
+          }}
+        >
+          <Loader2
+            size={15}
+            color={T.accent}
+            style={{ animation: "spin 1s linear infinite", flexShrink: 0 }}
+          />
+          <span style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.6 }}>
+            Mengambil hasil analisis yang tadi kamu tinggalkan — prosesnya tetap
+            berjalan di server, sebentar lagi muncul.
+          </span>
+        </Glass>
+      )}
 
       {/* Form */}
       <Glass style={{ padding: 22, marginBottom: 16 }}>
@@ -350,13 +512,23 @@ export function PindahKarierPanel({ setActive }) {
           </div>
         )}
 
+        {/* Yang diperiksa sisaPindah, BUKAN sisaAnalisis — keduanya kuota
+            berbeda sejak dipisah per fitur. */}
         <Button
           variant="primary"
           onClick={analisis}
-          disabled={loading || langganan.sisaPindah <= 0}
+          disabled={loading || memulihkan || langganan.sisaPindah <= 0}
           style={{ width: "100%" }}
         >
-          {loading ? (
+          {memulihkan ? (
+            <>
+              <Loader2
+                size={15}
+                style={{ animation: "spin 1s linear infinite" }}
+              />{" "}
+              Mengambil hasil sebelumnya...
+            </>
+          ) : loading ? (
             <>
               <Loader2
                 size={15}
@@ -364,7 +536,7 @@ export function PindahKarierPanel({ setActive }) {
               />{" "}
               Menilai kelayakan, bisa sampai 1 menit...
             </>
-          ) : langganan.sisaAnalisis <= 0 ? (
+          ) : langganan.sisaPindah <= 0 ? (
             <>Kuota Pindah Karier habis</>
           ) : (
             <>

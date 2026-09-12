@@ -21,6 +21,7 @@ import { T } from "../../theme";
 import { Glass } from "../../components/ui/Glass";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { KATEGORI_INTERVIEW, TOTAL_PERTANYAAN } from "../../data/interviewBank";
+import { KartuPelatihan } from "../../components/ui/KartuPelatihan";
 
 // Peta nama ikon (string di file data) ke komponennya. File data sengaja
 // hanya menyimpan nama supaya tetap murni data tanpa impor React.
@@ -391,6 +392,12 @@ export function LatihanInterviewPanel() {
           </div>
         ))
       )}
+
+      {/* Tawaran pelatihan ditaruh di bawah daftar, bukan di atas.
+          Orang datang ke halaman ini untuk membaca pertanyaannya —
+          menaruh tawaran di depan akan menghalangi itu. Yang sudah
+          menggulir sampai bawah justru sedang serius mempersiapkan diri. */}
+      <KartuPelatihan />
     </div>
   );
 }

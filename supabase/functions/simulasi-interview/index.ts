@@ -262,9 +262,60 @@ serve(async (req) => {
 
     /* ---------- NILAI: akhir sesi ---------- */
     if (aksi === "nilai") {
+      /* Aksi ini memanggil AI tanpa memotong kuota, jadi tanpa pengaman
+         siapa pun bisa memakainya berulang dengan transkrip karangan
+         sendiri — biayanya ditanggung pemilik aplikasi.
+
+         Pengamannya: wajib menyertakan token sesi yang memang pernah
+         diterbitkan untuk user ini, dan token itu langsung ditandai
+         terpakai sehingga tidak bisa dipakai menilai berkali-kali. */
+      const tokenId = str(body.tokenId);
+      if (!tokenId) {
+        return json({ error: "tokenId wajib disertakan." }, 400);
+      }
+
+      const { data: tok, error: galatTok } = await supabaseAdmin
+        .from("sesi_token")
+        .select("id, terpakai, created_at")
+        .eq("id", tokenId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (galatTok)
+        throw new Error("Gagal memeriksa sesi: " + galatTok.message);
+      if (!tok) return json({ error: "Sesi tidak dikenali." }, 403);
+      if (tok.terpakai) {
+        return json({ error: "Sesi ini sudah dinilai sebelumnya." }, 409);
+      }
+
+      await supabaseAdmin
+        .from("sesi_token")
+        .update({ terpakai: true })
+        .eq("id", tokenId);
+
+      // Transkrip kosong tidak layak dinilai — hasilnya asal-asalan dan
+      // justru menyesatkan kandidat.
+      const adaJawaban = dialog.some(
+        (d) => d?.dari === "user" && str(d?.teks).trim(),
+      );
+      if (!adaJawaban) {
+        return json({ error: "Belum ada jawaban untuk dinilai." }, 400);
+      }
+
+      // Transkrip panjang dipangkas: percakapan 15 menit bisa sangat
+      // banyak, dan prompt yang membengkak memperlambat penilaian tanpa
+      // menambah kualitasnya.
+      const dialogNilai = dialog
+        .filter((d) => str(d?.teks).trim())
+        .slice(-40)
+        .map((d) => ({
+          dari: d.dari === "ai" ? "ai" : "user",
+          teks: str(d.teks).slice(0, 1200),
+        }));
+
       const menit = Math.max(1, Math.round(num(body.durasiDetik, 0) / 60));
       const h = await panggilGemini(
-        promptPenilaian({ posisi, kategori, dialog, menit }),
+        promptPenilaian({ posisi, kategori, dialog: dialogNilai, menit }),
         1600,
       );
 
@@ -293,10 +344,10 @@ serve(async (req) => {
           user_id: user.id,
           posisi,
           kategori,
-          jumlah_soal: dialog.filter((d) => d.dari === "ai").length,
+          jumlah_soal: dialogNilai.filter((d) => d.dari === "ai").length,
           durasi_detik: num(body.durasiDetik, 0),
           skor: hasil.skor,
-          transkrip: dialog,
+          transkrip: dialogNilai,
           ringkasan: hasil,
         })
         .then(({ error }) => {

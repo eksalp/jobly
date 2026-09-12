@@ -23,6 +23,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { getInitials } from "../../utils/format";
 import { KartuLangganan } from "../../components/KartuLangganan";
+import { useLayarKecil } from "../../hooks/useLayarKecil";
 
 export const NAV_GROUPS = [
   {
@@ -64,6 +65,7 @@ export const NAV_GROUPS = [
 ];
 
 export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
+  const layarKecil = useLayarKecil(900);
   const { user, signOut } = useAuth();
   const { fullName } = useUserProfile();
   const displayName = fullName || user?.email?.split("@")[0] || "User";
@@ -87,6 +89,14 @@ export function Sidebar({ active, setActive, go, mobileOpen, setMobileOpen }) {
         // 100vh ditulis lebih dulu sebagai cadangan untuk browser lama.
         height: "100vh",
         maxHeight: "100dvh",
+
+        // Sticky menahan sidebar di tempatnya saat konten digulir.
+        //
+        // Hanya diterapkan di layar lebar: di HP, CSS `.jf-sidebar`
+        // sudah memakai `position: fixed` untuk laci geser, dan gaya
+        // inline akan menimpanya — lacinya jadi tidak berfungsi.
+        ...(layarKecil ? null : { position: "sticky", top: 0 }),
+
         padding: "20px 14px",
         display: "flex",
         flexDirection: "column",

@@ -174,11 +174,23 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
-    /* Gerbang kuota — kuota dikurangi secara atomik di Postgres,
-       sama seperti get-paid-analysis. */
+    /* Gerbang kuota.
+       Jenisnya WAJIB "pindah" — memakai fungsi lama pakai_kuota_analisis
+       akan memotong jatah analisis CV, bukan jatah Pindah Karier. */
+    // Catat sesi SEBELUM kuota dipotong. Id-nya dipakai mengembalikan
+    // kuota kalau analisisnya gagal — tanpa catatan ini, pengembalian
+    // tidak bisa diverifikasi dan jadi celah yang bisa disalahgunakan.
+    const { data: catatan } = await supabaseAdmin
+      .from("sesi_token")
+      .insert({ user_id: user.id, jenis: "pindah" })
+      .select("id")
+      .single();
+
+    const tokenId = catatan?.id ?? null;
+
     const { data: pakai, error: kuotaErr } = await supabaseAdmin.rpc(
-      "pakai_kuota_analisis",
-      { p_user_id: user.id },
+      "pakai_kuota",
+      { p_user_id: user.id, p_jenis: "pindah" },
     );
 
     if (kuotaErr) throw new Error("Gagal memeriksa kuota: " + kuotaErr.message);
@@ -240,7 +252,31 @@ ATURAN PENTING:
 Semua teks dalam Bahasa Indonesia.`;
 
     const mulai = Date.now();
-    const h = await jalankan(prompt);
+
+    let h;
+    try {
+      h = await jalankan(prompt);
+    } catch (e) {
+      /* Analisis gagal — kuota dikembalikan SEKARANG, di server, tanpa
+         menunggu klien mengklaim. Ini penting: user yang analisisnya
+         gagal lalu menutup tab tidak akan pernah mengirim klaim apa pun,
+         dan kuotanya hangus percuma. */
+      if (tokenId) {
+        const { error: galatKembali } = await supabaseAdmin.rpc(
+          "kembalikan_kuota_token",
+          { p_user_id: user.id, p_token_id: tokenId },
+        );
+        if (galatKembali) {
+          console.error("Gagal mengembalikan kuota:", galatKembali.message);
+        } else {
+          console.log(
+            `Kuota pindah dikembalikan untuk ${user.id} (analisis gagal)`,
+          );
+        }
+      }
+      throw e;
+    }
+
     console.log(
       `Analisis pindah karier selesai dalam ${Date.now() - mulai} ms`,
     );
@@ -294,21 +330,40 @@ Semua teks dalam Bahasa Indonesia.`;
     // Penyimpanan tidak ditunggu. Hasilnya sudah ada di tangan user, dan
     // menunggu tulisan ke database hanya menambah waktu pada permintaan
     // yang sudah mepet batas.
-    supabaseAdmin
+    /* Penyimpanan DITUNGGU, tidak lagi fire-and-forget.
+       Alasannya: pemulihan di klien bergantung pada baris ini benar-benar
+       ada. Kalau penyimpanan gagal diam-diam, user yang pindah halaman
+       tidak akan pernah menemukan hasilnya — dan kuotanya sudah terpotong. */
+    const { error: galatSimpan } = await supabaseAdmin
       .from("career_switches")
       .insert({
         user_id: user.id,
         bidang_tujuan: hasil.bidang_tujuan,
         hasil,
         created_at: new Date().toISOString(),
-      })
-      .then(({ error }) => {
-        if (error)
-          console.error(
-            "Gagal menyimpan riwayat pindah karier:",
-            error.message,
-          );
       });
+
+    if (galatSimpan) {
+      console.error(
+        "Gagal menyimpan riwayat pindah karier:",
+        galatSimpan.message,
+      );
+      // Hasilnya tetap dikirim ke user yang sedang menunggu, tapi kuota
+      // dikembalikan karena hasilnya tidak bisa dipulihkan nanti.
+      if (tokenId) {
+        await supabaseAdmin.rpc("kembalikan_kuota_token", {
+          p_user_id: user.id,
+          p_token_id: tokenId,
+        });
+      }
+    } else if (tokenId) {
+      // Ditandai terpakai: hasilnya tersimpan dan bisa dipulihkan,
+      // jadi kuotanya memang layak terpotong.
+      await supabaseAdmin.rpc("tandai_token_terpakai", {
+        p_user_id: user.id,
+        p_token_id: tokenId,
+      });
+    }
 
     return json({ ...hasil, sisa_analisis: sisaKuota });
   } catch (err) {

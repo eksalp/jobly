@@ -6,22 +6,24 @@ import {
   Sparkles,
   Clock,
   ChevronRight,
+  Mic,
+  Square,
   Bot,
-  User as UserIcon,
   Info,
   AlertCircle,
   Check,
-  PhoneOff,
 } from "lucide-react";
 import { T } from "../../theme";
 import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
 import { OrbSuara } from "../../components/ui/OrbSuara";
+import { KartuPelatihan } from "../../components/ui/KartuPelatihan";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
 import { useLangganan } from "../../hooks/useLangganan";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
-import { GerbangFitur, BilahLangganan } from "../../components/GerbangFitur";
+import { GerbangFitur } from "../../components/GerbangFitur";
+import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
 import { useGeminiLive } from "../../hooks/useGeminiLive";
 
@@ -45,26 +47,39 @@ export function SimulasiInterviewPanel({ setActive }) {
   const [posisi, setPosisi] = useState("");
   const [kategori, setKategori] = useState(KATEGORI_INTERVIEW[0]);
   const [tahap, setTahap] = useState(TAHAP.siap);
-  const [dialog, setDialog] = useState([]);
   const [menyiapkan, setMenyiapkan] = useState(false);
   const [menilai, setMenilai] = useState(false);
   const [galat, setGalat] = useState("");
   const [detik, setDetik] = useState(0);
   const [hasil, setHasil] = useState(null);
+  const [jumlahGiliran, setJumlahGiliran] = useState(0);
+  const [galatPosisi, setGalatPosisi] = useState("");
   const [riwayat, setRiwayat] = useState([]);
 
   const timerRef = useRef(null);
-  const akhirRef = useRef(null);
   const akhiriRef = useRef(null);
   const dialogRef = useRef([]);
+  // Menandai koneksi yang ditolak sebelum sesi benar-benar siap.
+  // Dipakai ref, bukan state: pengembalian kuota berjalan di fungsi
+  // lain setelah ini, dan state belum tentu sudah diperbarui saat itu.
+  const gagalRef = useRef(false);
+  // Id sesi dari server. Wajib disertakan saat menilai maupun
+  // mengembalikan kuota — keduanya menolak permintaan tanpa ini.
+  const tokenIdRef = useRef(null);
 
   /* Transkrip datang sepotong-sepotong. Potongan berturut-turut dari
-     pembicara yang sama digabung jadi satu gelembung, supaya dialognya
-     terbaca seperti percakapan — bukan cacahan kata. */
+     pembicara yang sama digabung, supaya transkrip yang dikirim untuk
+     penilaian terbaca sebagai percakapan utuh — bukan cacahan kata. */
+  /* Transkrip dikumpulkan di ref saja, TIDAK memicu render.
+     Sebelumnya tiap potongan transkrip memanggil setDialog, dan potongan
+     itu datang beberapa kali per detik — setiap kalinya me-render ulang
+     seluruh daftar percakapan. Beban itu bersaing dengan pemrosesan audio
+     di thread yang sama dan membuat suara terasa tersendat.
+
+     Isinya baru dipakai saat sesi berakhir, untuk menyusun penilaian. */
   const tambahTranskrip = useCallback((dari, teks) => {
     if (dari === "giliran-selesai") {
       dialogRef.current = dialogRef.current.map((d) => ({ ...d, tutup: true }));
-      setDialog([...dialogRef.current]);
       return;
     }
     if (!teks) return;
@@ -77,10 +92,7 @@ export function SimulasiInterviewPanel({ setActive }) {
     } else {
       isi.push({ dari, teks: teks.trim(), tutup: false });
     }
-    setDialog([...isi]);
   }, []);
-
-  const gagalRef = useRef(false);
 
   const live = useGeminiLive({
     onTranskrip: tambahTranskrip,
@@ -126,10 +138,6 @@ export function SimulasiInterviewPanel({ setActive }) {
     return () => clearInterval(timerRef.current);
   }, [tahap]);
 
-  useEffect(() => {
-    akhirRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [dialog.length]);
-
   const sisaDetik = Math.max(0, DURASI_DETIK - detik);
   const formatDurasi = (d) =>
     `${String(Math.floor(d / 60)).padStart(2, "0")}:${String(d % 60).padStart(2, "0")}`;
@@ -139,8 +147,9 @@ export function SimulasiInterviewPanel({ setActive }) {
      yang sedang ditampilkan ke user. */
   const kembalikanKuota = useCallback(async () => {
     try {
+      if (!tokenIdRef.current) return;
       await supabase.functions.invoke("kembalikan-kuota", {
-        body: { jenis: "interview" },
+        body: { tokenId: tokenIdRef.current },
       });
       langganan.refresh();
     } catch {
@@ -151,14 +160,15 @@ export function SimulasiInterviewPanel({ setActive }) {
   /* ---------------- Mulai sesi ---------------- */
   const mulai = async () => {
     if (!posisi.trim()) {
-      setGalat("Isi dulu posisi yang ingin kamu latih.");
+      setGalatPosisi(
+        "Posisi wajib diisi supaya pertanyaannya sesuai bidangmu.",
+      );
       return;
     }
 
     setMenyiapkan(true);
     setGalat("");
     dialogRef.current = [];
-    setDialog([]);
 
     try {
       // Token sementara diterbitkan server; kuota dipotong di sana juga.
@@ -176,17 +186,24 @@ export function SimulasiInterviewPanel({ setActive }) {
       }
       if (data?.error) throw new Error(data.error);
 
+      tokenIdRef.current = data.token_id ?? null;
+
       const instruksi = `Kamu pewawancara kerja profesional di Indonesia yang sedang
 mewawancarai kandidat untuk posisi "${posisi}". Fokus wawancara: ${kategori.nama}.
 
 Wawancara ini berlangsung sekitar ${DURASI_MENIT} menit.
+
+PENTING: Kandidat memakai tombol tekan-untuk-bicara. Setiap kali kamu
+menerima suaranya, itu berarti ia SUDAH SELESAI bicara — langsung tanggapi,
+jangan menunggu tambahan.
 
 CARA BICARA:
 - Bahasa Indonesia yang wajar dan hangat, seperti orang sungguhan — bukan
   membacakan naskah.
 - Ringkas. Satu sampai dua kalimat per giliran. Ini percakapan lisan;
   kalimat panjang sulit disimak.
-- Buka dengan sapaan singkat lalu satu pertanyaan pembuka.
+- Kandidat yang menyapa lebih dulu, seperti masuk ruang wawancara.
+  Balas sapaannya dengan hangat dan singkat, lalu ajukan pertanyaan pembuka.
 - GALI dari jawaban kandidat. Kalau jawabannya umum atau menghindar, minta
   contoh konkret. Menelusuri satu topik sampai jelas jauh lebih berguna
   daripada melompat-lompat.
@@ -194,7 +211,14 @@ CARA BICARA:
   tidak terdengar kaku.
 - Ajukan SATU pertanyaan per giliran. Jangan menumpuk beberapa pertanyaan
   sekaligus — kandidat akan bingung menjawab yang mana.
-- Menjelang akhir waktu, arahkan ke pertanyaan penutup lalu tutup dengan sopan.
+- JANGAN menutup atau menyudahi wawancara atas inisiatifmu sendiri. Kamu
+  tidak tahu sisa waktunya, dan menyudahi terlalu cepat membuat kandidat
+  kehilangan sebagian besar sesi yang sudah ia bayar.
+- Teruslah menggali topik baru selama kandidat masih menjawab. Kalau satu
+  topik sudah tuntas, pindah ke aspek lain dari posisi yang dilamar:
+  pengalaman, cara kerja, penanganan masalah, rencana ke depan.
+- Sesi akan dihentikan oleh sistem saat waktunya habis. Sampai itu terjadi,
+  anggap wawancara masih panjang.
 
 Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
 
@@ -208,6 +232,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
       }
 
       setDetik(0);
+      setJumlahGiliran(0);
       gagalRef.current = false;
       setTahap(TAHAP.berlangsung);
       langganan.refresh();
@@ -251,6 +276,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
         {
           body: {
             aksi: "nilai",
+            tokenId: tokenIdRef.current,
             posisi,
             kategori: kategori.nama,
             dialog: transkrip.map(({ dari, teks }) => ({ dari, teks })),
@@ -265,7 +291,17 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
       setTahap(TAHAP.selesai);
       setTimeout(muatRiwayat, 1200);
     } catch (e) {
-      setGalat(e?.message || "Gagal menilai sesi.");
+      let pesan = e?.message || "Gagal menilai sesi.";
+      try {
+        const mentah = (await e?.context?.text?.()) ?? "";
+        const body = mentah ? JSON.parse(mentah) : null;
+        if (body?.error) pesan = body.error;
+      } catch {
+        /* pakai pesan bawaan */
+      }
+
+      console.error("[simulasi] gagal menilai:", pesan);
+      setGalat(pesan);
       setTahap(TAHAP.selesai);
     } finally {
       setMenilai(false);
@@ -278,12 +314,13 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
 
   const ulangi = () => {
     setTahap(TAHAP.siap);
-    setDialog([]);
     dialogRef.current = [];
     setHasil(null);
     setDetik(0);
+    setJumlahGiliran(0);
     setPosisi("");
     setGalat("");
+    setGalatPosisi("");
   };
 
   /* ---------------- Gerbang akses ---------------- */
@@ -350,7 +387,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
       ? "berpikir"
       : live.berbicara
         ? "bicara"
-        : live.mendengar
+        : live.sedangBicara
           ? "mendengar"
           : "diam";
 
@@ -362,7 +399,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
         margin: "0 auto",
       }}
     >
-      <BilahLangganan
+      <KuotaSaya
         langganan={langganan}
         onLangganan={() => setActive?.("paket")}
       />
@@ -412,39 +449,109 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 marginBottom: 16,
               }}
             >
-              Ngobrol langsung dengan AI selama {DURASI_MENIT} menit. Bicara
-              saja seperti wawancara biasa — kamu bahkan bisa memotong saat AI
-              sedang bicara. Penilaian muncul otomatis di akhir.
+              Ngobrol langsung dengan AI selama {DURASI_MENIT} menit, seperti
+              wawancara sungguhan. Penilaian muncul otomatis di akhir sesi.
             </div>
 
+            {/* Panduan singkat sebelum masuk. Ditulis sebagai langkah
+                berurutan, bukan paragraf — user membacanya sambil bersiap,
+                bukan sambil duduk tenang. */}
             <div
               style={{
-                display: "flex",
-                gap: 8,
                 marginBottom: 14,
-                padding: "10px 13px",
+                padding: "13px 15px",
                 borderRadius: 12,
-                background: "rgba(76,99,224,0.06)",
+                background: "rgba(76,99,224,0.05)",
                 border: `1px solid ${T.accentSoft}`,
-                fontSize: 11.5,
-                color: T.inkSoft,
-                lineHeight: 1.6,
               }}
             >
-              <Info size={13} style={{ flexShrink: 0, marginTop: 2 }} />
-              <span>
-                Pakai <strong>headphone</strong> supaya suara AI tidak terekam
-                balik oleh mikrofon. Sesi butuh izin mikrofon.
-              </span>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 7,
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: T.accent,
+                  marginBottom: 9,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                <Info size={13} /> CARA KERJANYA
+              </div>
+
+              {[
+                "Tekan Mulai bicara saat giliranmu, tekan Selesai kalau sudah — pewawancara baru menjawab setelah itu.",
+                "Buka dengan salam dan perkenalan diri, seperti masuk ruang wawancara sungguhan.",
+                "Pakai headphone supaya suara pewawancara tidak terekam balik mikrofonmu.",
+                "Cari tempat yang cukup tenang. Sesi ini butuh izin mikrofon.",
+              ].map((t, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    gap: 9,
+                    marginBottom: 7,
+                    fontSize: 12,
+                    color: T.inkSoft,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: T.accent,
+                      background: T.accentSoft,
+                      borderRadius: 99,
+                      width: 17,
+                      height: 17,
+                      flexShrink: 0,
+                      marginTop: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span>{t}</span>
+                </div>
+              ))}
             </div>
 
+            {/* Posisi wajib diisi: seluruh pertanyaan pewawancara disusun
+                dari sini. Tanpa posisi, AI hanya bisa bertanya umum dan
+                latihannya kehilangan sebagian besar manfaatnya. */}
+            <label
+              style={{
+                display: "block",
+                fontSize: 11,
+                fontWeight: 700,
+                color: T.inkFaint,
+                marginBottom: 6,
+                letterSpacing: "0.03em",
+              }}
+            >
+              POSISI YANG DILAMAR <span style={{ color: "#B23A3A" }}>*</span>
+            </label>
             <input
               value={posisi}
-              onChange={(e) => setPosisi(e.target.value)}
-              placeholder="Posisi yang dilamar, mis. HR Generalist"
+              onChange={(e) => {
+                setPosisi(e.target.value);
+                if (galatPosisi) setGalatPosisi("");
+              }}
+              onBlur={() => {
+                if (!posisi.trim()) {
+                  setGalatPosisi(
+                    "Posisi wajib diisi supaya pertanyaannya sesuai bidangmu.",
+                  );
+                }
+              }}
+              placeholder="mis. HR Generalist, Data Analyst, Barista"
               style={{
                 width: "100%",
-                border: `1px solid ${T.border}`,
+                border: `1px solid ${galatPosisi ? "#B23A3A" : T.border}`,
                 borderRadius: 12,
                 padding: "10px 14px",
                 fontSize: 13.5,
@@ -453,9 +560,24 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 outline: "none",
                 color: T.ink,
                 boxSizing: "border-box",
-                marginBottom: 14,
+                marginBottom: galatPosisi ? 6 : 14,
               }}
             />
+            {galatPosisi && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 11.5,
+                  color: "#B23A3A",
+                  marginBottom: 14,
+                }}
+              >
+                <AlertCircle size={12} style={{ flexShrink: 0 }} />
+                {galatPosisi}
+              </div>
+            )}
 
             <div
               style={{
@@ -503,7 +625,10 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
             <Button
               variant="primary"
               onClick={mulai}
-              disabled={menyiapkan || !posisi.trim()}
+              // Sengaja TIDAK dinonaktifkan saat posisi kosong. Tombol mati
+              // tanpa keterangan membuat orang mengira aplikasinya rusak —
+              // lebih baik dibiarkan diklik lalu menunjukkan apa yang kurang.
+              disabled={menyiapkan}
               style={{ width: "100%" }}
             >
               {menyiapkan ? (
@@ -617,116 +742,117 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
             </div>
           </Glass>
 
-          {/* Orb — pusat perhatian selama percakapan */}
+          {/* Orb + tombol bicara */}
           <Glass style={{ padding: hp ? 18 : 24, marginBottom: 12 }}>
             <OrbSuara
               keadaan={keadaanOrb}
               tingkat={live.tingkat}
-              ukuran={hp ? 140 : 165}
+              ukuran={hp ? 130 : 155}
             />
 
-            {/* Selama kalibrasi, derau latar diukur untuk menentukan
-                ambang gerbang. User perlu tahu harus diam sebentar —
-                kalau ia bicara di detik pertama, ambangnya jadi terlalu
-                tinggi dan suaranya ikut tersaring sepanjang sesi. */}
-            {live.mengkalibrasi && (
-              <div
+            {/* Panduan berubah mengikuti keadaan. Dalam percakapan suara
+                user tidak bisa membaca sambil bicara, jadi kalimatnya
+                dibuat sangat pendek dan hanya menjawab satu pertanyaan:
+                sekarang harus apa. */}
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: 4,
+                marginBottom: 16,
+                fontSize: 12.5,
+                color: T.inkSoft,
+                lineHeight: 1.6,
+                minHeight: 36,
+              }}
+            >
+              {live.berbicara
+                ? "Pewawancara sedang bicara — dengarkan dulu"
+                : live.sedangBicara
+                  ? "Silakan bicara. Tekan Selesai kalau sudah."
+                  : jumlahGiliran === 0
+                    ? "Tekan tombol di bawah, lalu ucapkan salam pembuka dan perkenalkan dirimu."
+                    : "Tekan tombol di bawah saat siap menjawab"}
+            </div>
+
+            <div style={{ textAlign: "center" }}>
+              <button
+                onClick={() => {
+                  if (live.sedangBicara) {
+                    live.selesaiBicara();
+                    setJumlahGiliran((n) => n + 1);
+                  } else {
+                    live.mulaiBicara();
+                  }
+                }}
+                disabled={!live.terhubung || menilai}
                 style={{
-                  textAlign: "center",
-                  marginTop: 10,
-                  fontSize: 12,
-                  color: T.inkSoft,
-                  lineHeight: 1.5,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 9,
+                  padding: hp ? "13px 26px" : "14px 32px",
+                  borderRadius: 99,
+                  border: "none",
+                  cursor:
+                    live.terhubung && !menilai ? "pointer" : "not-allowed",
+                  fontSize: 14.5,
+                  fontWeight: 600,
+                  fontFamily: "'Poppins', sans-serif",
+                  background: live.sedangBicara ? "#B23A3A" : T.accent,
+                  color: "#fff",
+                  opacity: live.terhubung && !menilai ? 1 : 0.5,
+                  boxShadow: live.sedangBicara
+                    ? "0 0 0 7px rgba(178,58,58,0.14)"
+                    : "0 6px 20px rgba(76,99,224,0.3)",
+                  transition: "all .2s",
                 }}
               >
-                Menyesuaikan dengan suara ruanganmu — diam sebentar ya
-              </div>
-            )}
+                {live.sedangBicara ? (
+                  <>
+                    <Square size={16} /> Selesai bicara
+                  </>
+                ) : (
+                  <>
+                    <Mic size={17} /> Mulai bicara
+                  </>
+                )}
+              </button>
+            </div>
 
-            <div style={{ textAlign: "center", marginTop: 6 }}>
+            <div
+              style={{
+                marginTop: 18,
+                paddingTop: 14,
+                borderTop: `1px solid ${T.border}`,
+                textAlign: "center",
+              }}
+            >
+              {/* Disebut terus terang: sesi tidak berhenti sendiri sampai
+                  waktunya habis. Tanpa ini user yang merasa sudah cukup
+                  cenderung menutup tab — sesinya jadi tidak pernah dinilai
+                  dan kuotanya terbuang. */}
+              <div
+                style={{
+                  fontSize: 11.5,
+                  color: T.inkSoft,
+                  lineHeight: 1.6,
+                  marginBottom: 10,
+                }}
+              >
+                Sudah merasa cukup? Tekan tombol di bawah untuk mengakhiri dan
+                melihat penilaianmu — jangan menutup halaman, hasilnya akan
+                hilang.
+              </div>
+
               <Button
                 variant="outline"
                 onClick={() => akhiri()}
                 disabled={menilai}
                 style={{ fontSize: 12.5 }}
               >
-                <PhoneOff size={13} /> Akhiri & lihat penilaian
+                <Check size={13} /> Akhiri & lihat penilaian
               </Button>
             </div>
           </Glass>
-
-          {/* Transkrip berjalan */}
-          {dialog.length > 0 && (
-            <Glass
-              style={{
-                padding: hp ? 14 : 18,
-                maxHeight: 300,
-                overflowY: "auto",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 10.5,
-                  fontWeight: 700,
-                  color: T.inkFaint,
-                  letterSpacing: "0.04em",
-                  marginBottom: 12,
-                }}
-              >
-                TRANSKRIP
-              </div>
-              {dialog.map((d, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    gap: 9,
-                    marginBottom: 10,
-                    flexDirection: d.dari === "user" ? "row-reverse" : "row",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 99,
-                      flexShrink: 0,
-                      background:
-                        d.dari === "ai" ? T.accentSoft : "rgba(0,0,0,0.06)",
-                      color: d.dari === "ai" ? T.accent : T.inkSoft,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {d.dari === "ai" ? (
-                      <Bot size={12} />
-                    ) : (
-                      <UserIcon size={12} />
-                    )}
-                  </div>
-                  <div
-                    style={{
-                      maxWidth: "80%",
-                      background:
-                        d.dari === "ai"
-                          ? "rgba(255,255,255,0.7)"
-                          : T.accentSoft,
-                      border: `1px solid ${d.dari === "ai" ? T.border : "transparent"}`,
-                      borderRadius: 12,
-                      padding: "9px 12px",
-                      fontSize: 12.5,
-                      color: T.ink,
-                      lineHeight: 1.55,
-                    }}
-                  >
-                    {d.teks}
-                  </div>
-                </div>
-              ))}
-              <div ref={akhirRef} />
-            </Glass>
-          )}
         </>
       )}
 
@@ -1007,7 +1133,14 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
         </Glass>
       )}
 
-      <div style={{ textAlign: "center", marginTop: 16 }}>
+      {/* Tawaran pelatihan dengan pewawancara sungguhan. Sengaja
+          diletakkan SETELAH daftar perbaikan — di titik itu user baru
+          saja membaca kekurangannya sendiri dan paling terbuka pada
+          bantuan nyata. Di awal halaman, tawaran yang sama cuma
+          menghalangi hasil yang sedang mereka tunggu. */}
+      <KartuPelatihan skor={hasil.skor} />
+
+      <div style={{ textAlign: "center", marginTop: 18 }}>
         <Button variant="primary" onClick={onUlangi}>
           Kembali
         </Button>

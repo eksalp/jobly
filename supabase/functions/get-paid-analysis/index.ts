@@ -203,9 +203,22 @@ serve(async (req) => {
        Kuota dikurangi lewat fungsi Postgres yang mengunci barisnya,
        sehingga dua permintaan bersamaan tidak bisa sama-sama lolos
        saat kuota tinggal satu. */
+    // Jenis disebut eksplisit, tidak mengandalkan fungsi pembungkus lama.
+    // Sejak kuota dipisah per fitur, menyebutkannya di sini membuat
+    // kekeliruan seperti memotong jatah yang salah langsung kelihatan.
+    // Catat sesi sebelum kuota dipotong. Id-nya dipakai mengembalikan
+    // kuota kalau analisisnya gagal.
+    const { data: catatan } = await supabaseAdmin
+      .from("sesi_token")
+      .insert({ user_id: user.id, jenis: "analisis" })
+      .select("id")
+      .single();
+
+    const tokenId = catatan?.id ?? null;
+
     const { data: pakai, error: kuotaErr } = await supabaseAdmin.rpc(
-      "pakai_kuota_analisis",
-      { p_user_id: user.id },
+      "pakai_kuota",
+      { p_user_id: user.id, p_jenis: "analisis" },
     );
 
     if (kuotaErr) throw new Error("Gagal memeriksa kuota: " + kuotaErr.message);
@@ -343,10 +356,29 @@ RULES:
 - linkedin_draft.experiences[].skills: max 5 per role.
 ${INSTRUKSI_BAHASA.en}`;
 
-    const [utama, versiEn] = await Promise.all([
-      jalankanAnalisis(prompt, 8000, "id", false),
-      jalankanAnalisis(promptEn, 8000, "en", true),
-    ]);
+    let utama, versiEn;
+    try {
+      [utama, versiEn] = await Promise.all([
+        jalankanAnalisis(prompt, 8000, "id", false),
+        jalankanAnalisis(promptEn, 8000, "en", true),
+      ]);
+    } catch (e) {
+      /* Analisis gagal — kuota dikembalikan seketika di server.
+         User yang gagal lalu menutup tab tidak akan pernah mengirim
+         klaim apa pun, jadi menunggu klien bukan pilihan. */
+      if (tokenId) {
+        const { error: galatKembali } = await supabaseAdmin.rpc(
+          "kembalikan_kuota_token",
+          { p_user_id: user.id, p_token_id: tokenId },
+        );
+        if (galatKembali) {
+          console.error("Gagal mengembalikan kuota:", galatKembali.message);
+        } else {
+          console.log(`Kuota analisis dikembalikan untuk ${user.id} (gagal)`);
+        }
+      }
+      throw e;
+    }
 
     const { hasil: hasilAi, penyedia } = utama;
     const hasilEn = versiEn.hasil ?? {};
@@ -467,11 +499,33 @@ ${INSTRUKSI_BAHASA.en}`;
     };
 
     /* ----- Simpan ----- */
-    await supabaseAdmin.from("analysis_results").insert({
-      user_id: user.id,
-      ...hasil,
-      created_at: new Date().toISOString(),
-    });
+    const { error: galatSimpan } = await supabaseAdmin
+      .from("analysis_results")
+      .insert({
+        user_id: user.id,
+        ...hasil,
+        created_at: new Date().toISOString(),
+      });
+
+    if (galatSimpan) {
+      console.error("Gagal menyimpan hasil analisis:", galatSimpan.message);
+      // Hasilnya tetap dikirim ke user yang menunggu, tapi kuota
+      // dikembalikan karena hasilnya tidak bisa dipulihkan nanti kalau
+      // user sempat pindah halaman.
+      if (tokenId) {
+        await supabaseAdmin.rpc("kembalikan_kuota_token", {
+          p_user_id: user.id,
+          p_token_id: tokenId,
+        });
+      }
+    } else if (tokenId) {
+      // Hasil tersimpan dan bisa dipulihkan — kuotanya memang layak
+      // terpotong, jadi tokennya ditandai terpakai.
+      await supabaseAdmin.rpc("tandai_token_terpakai", {
+        p_user_id: user.id,
+        p_token_id: tokenId,
+      });
+    }
 
     await supabaseAdmin
       .from("profiles")

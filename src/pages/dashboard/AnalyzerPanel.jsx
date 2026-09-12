@@ -5,6 +5,7 @@ import {
   Check,
   ChevronRight,
   AlertCircle,
+  AlertTriangle,
   Loader2,
   X,
 } from "lucide-react";
@@ -16,7 +17,13 @@ import { useAuth } from "../../context/AuthContext";
 import { useSavedJobs } from "../../context/SavedJobsContext";
 import { useAnalysisHistory } from "../../hooks/useAnalysisHistory";
 import { useLangganan } from "../../hooks/useLangganan";
-import { BilahLangganan } from "../../components/GerbangFitur";
+import { useCegahTinggalkan } from "../../hooks/useCegahTinggalkan";
+import { KuotaSaya } from "../../components/ui/KuotaSaya";
+import {
+  tandaiBerjalan,
+  bacaPenanda,
+  hapusPenanda,
+} from "../../utils/pemulihAnalisis";
 import {
   rankJobs,
   detectCategory,
@@ -180,6 +187,7 @@ export function AnalyzerPanel({ setActive }) {
   const [fileName, setFileName] = useState("");
   const [bacaProgres, setBacaProgres] = useState("");
   const [bacaGalat, setBacaGalat] = useState("");
+  const [memulihkan, setMemulihkan] = useState(false);
   const [freeResult, setFreeResult] = useState(null);
   const [unlocked, setUnlocked] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -191,6 +199,14 @@ export function AnalyzerPanel({ setActive }) {
 
   const [bolehCobaLagi, setBolehCobaLagi] = useState(false);
   const fileRef = useRef(null);
+
+  // Cegah user pergi saat analisis berjalan — kuotanya sudah terpotong,
+  // dan hasilnya lebih baik ditunggu daripada dijemput belakangan.
+  //
+  // Harus setelah `aiLoading` dideklarasikan: memanggil hook di atas
+  // deklarasi state yang dipakainya melanggar temporal dead zone dan
+  // membuat seluruh komponen gagal dirender.
+  useCegahTinggalkan(aiLoading, "Analisis CV sedang berjalan.");
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
@@ -261,7 +277,87 @@ export function AnalyzerPanel({ setActive }) {
 
   // Langkah 2: setelah bayar sukses, minta hasil analisis dari server
   // Loker TIDAK pernah ada di client — semua diproses di Edge Function
+  /* Menjemput hasil analisis CV yang ditinggal sebelum selesai.
+     Sama seperti Pindah Karier: edge function tetap menyimpan hasilnya
+     meski klien sudah pergi, jadi tinggal mencari baris yang dibuat
+     setelah analisis dimulai. */
+  useEffect(() => {
+    const penanda = bacaPenanda("cv");
+    if (!penanda || !user || !supabaseConfigured) return;
+
+    let batal = false;
+    let percobaan = 0;
+
+    const jemput = async () => {
+      percobaan += 1;
+
+      const { data } = await supabase
+        .from("analysis_results")
+        .select("*")
+        .eq("user_id", user.id)
+        .gte("created_at", new Date(penanda.mulai - 5000).toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (batal) return;
+
+      if (data) {
+        hapusPenanda("cv");
+        setAiResult(data);
+        setUnlocked(true);
+        setMemulihkan(false);
+        langganan.refresh();
+        return;
+      }
+
+      if (percobaan < 6) {
+        setTimeout(jemput, 5000);
+      } else {
+        hapusPenanda("cv");
+
+        /* Hasilnya tidak ketemu. Server diminta memeriksa sendiri apakah
+           ada kuota yang terpotong tanpa hasil tersimpan — klien tidak
+           boleh sekadar mengklaim kuota sudah kembali. */
+        try {
+          const { data: klaim } = await supabase.functions.invoke(
+            "kembalikan-kuota",
+            { body: { klaimTertinggal: true } },
+          );
+
+          if (klaim?.jumlah > 0) {
+            setAiError(
+              "Analisis sebelumnya tidak selesai, jadi kuotamu sudah dikembalikan. Silakan coba lagi.",
+            );
+            langganan.refresh();
+          } else {
+            setAiError(
+              "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+            );
+          }
+        } catch {
+          setAiError(
+            "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+          );
+        }
+
+        setMemulihkan(false);
+        setBolehCobaLagi(true);
+      }
+    };
+
+    setMemulihkan(true);
+    jemput();
+
+    return () => {
+      batal = true;
+    };
+  }, [user?.id]);
+
   const runAiAnalysis = async (orderId) => {
+    // Ditandai sebelum permintaan dikirim, supaya hasilnya tetap bisa
+    // dijemput kalau user pindah halaman di tengah proses.
+    tandaiBerjalan("cv", { sourceType });
     setAiLoading(true);
     setAiError("");
     setBolehCobaLagi(false);
@@ -303,6 +399,7 @@ export function AnalyzerPanel({ setActive }) {
 
       console.log("Analisis selesai lewat:", data._penyedia);
 
+      hapusPenanda("cv");
       setAiResult(data);
       setUnlocked(true);
       langganan.refresh(); // sisa kuota di sidebar ikut turun
@@ -351,9 +448,17 @@ export function AnalyzerPanel({ setActive }) {
     ? Math.max(0, freeResult.matchCount - LOKER_GRATIS)
     : 0;
 
-  const isPaymentBusy = aiLoading;
+  const isPaymentBusy = aiLoading || memulihkan;
 
   const labelTombol = () => {
+    if (memulihkan) {
+      return (
+        <>
+          <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
+          Mengambil hasil sebelumnya...
+        </>
+      );
+    }
     if (aiLoading)
       return (
         <>
@@ -385,10 +490,33 @@ export function AnalyzerPanel({ setActive }) {
       {/* Banner sumber data hanya relevan buat yang belum berlangganan,
           karena cuma mereka yang melihat daftar loker di halaman ini. */}
       {!langganan.aktif && <DataSourceBanner />}
-      <BilahLangganan
-        langganan={langganan}
-        onLangganan={() => pergiKe("paket")}
-      />
+      <KuotaSaya langganan={langganan} onLangganan={() => pergiKe("paket")} />
+
+      {/* Peringatan selama analisis berjalan */}
+      {aiLoading && (
+        <Glass
+          style={{
+            padding: "13px 16px",
+            marginBottom: 14,
+            display: "flex",
+            alignItems: "flex-start",
+            gap: 10,
+            background: "rgba(217,119,6,0.07)",
+            border: "1px solid rgba(217,119,6,0.35)",
+          }}
+        >
+          <AlertTriangle
+            size={15}
+            color="#B45309"
+            style={{ flexShrink: 0, marginTop: 1 }}
+          />
+          <div style={{ fontSize: 12.5, color: "#92400E", lineHeight: 1.6 }}>
+            <strong>Jangan tinggalkan halaman ini dulu.</strong> Analisis sedang
+            berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang,
+            hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.
+          </div>
+        </Glass>
+      )}
 
       {/* Upload / paste CV */}
       <Glass style={{ padding: 24, marginBottom: 20 }}>
@@ -927,8 +1055,7 @@ export function AnalyzerPanel({ setActive }) {
                           marginBottom: 8,
                         }}
                       >
-                        Kuota kamu tidak terpotong untuk analisis yang gagal.
-                        Silakan ulangi.
+                        Kuota kamu sudah dikembalikan otomatis. Silakan ulangi.
                       </div>
                       <Button
                         variant="outline"

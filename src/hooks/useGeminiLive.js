@@ -3,9 +3,8 @@ import { useState, useRef, useCallback, useEffect } from "react";
 /**
  * Koneksi Gemini Live API lewat SDK resmi (@google/genai).
  *
- * FIX: Ephemeral token harus dikirim sebagai token.name ("auth_tokens/xxx"),
- * bukan nilai token mentah. SDK mengecek prefix "auth_tokens/" untuk
- * menentukan metode autentikasi yang benar (BidiGenerateContentConstrained).
+ * Ephemeral token dikirim sebagai token.name ("auth_tokens/xxx"), bukan
+ * nilai mentah — SDK memakai prefix itu untuk memilih metode autentikasi.
  *
  * Pasang dulu: npm install @google/genai
  */
@@ -15,9 +14,21 @@ const MODEL_LIVE = "models/gemini-2.5-flash-native-audio-preview-12-2025";
 const LAJU_MASUK = 16000; // Live API menerima PCM 16 kHz
 const LAJU_KELUAR = 24000; // Live API mengembalikan PCM 24 kHz
 
+/**
+ * Ukuran potongan audio. Pada 16 kHz:
+ *   4096 = 256 ms  (terasa lambat)
+ *   2048 = 128 ms
+ *   1024 =  64 ms  (terasa alami)
+ */
+const UKURAN_POTONGAN = 1024;
+
+/* Catatan: kalibrasi derau dan gerbang otomatis sudah dibuang.
+   Keduanya dibutuhkan saat giliran bicara dideteksi sendiri — begitu
+   user yang menekan tombol, semua itu tidak lagi berguna dan hanya
+   menambah kemungkinan salah. */
+
 /* ---------- Bantuan konversi audio ---------- */
 
-/** Float32 (-1..1) -> PCM 16-bit little endian. */
 function keP16(float32) {
   const buf = new ArrayBuffer(float32.length * 2);
   const view = new DataView(buf);
@@ -64,6 +75,9 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
   const [berbicara, setBerbicara] = useState(false);
   const [tingkat, setTingkat] = useState(0);
   const [galat, setGalat] = useState("");
+  // Apakah user sedang menekan tombol bicara. Ini yang menentukan
+  // audio dikirim atau tidak — bukan lagi deteksi otomatis.
+  const [sedangBicara, setSedangBicara] = useState(false);
 
   const r = useRef({
     sesi: null,
@@ -78,6 +92,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     sumberAktif: [],
     ditutupSengaja: false,
     siap: false,
+    giliranAktif: false, // apakah activityStart sudah dikirim
   });
 
   const cb = useRef({ onTranskrip, onSelesai, onGalat });
@@ -90,8 +105,9 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
   const putarAntrian = useCallback(() => {
     const s = r.current;
     if (!s.ctxKeluar || s.antrian.length === 0) {
-      if (s.antrian.length === 0 && s.sumberAktif.length === 0)
+      if (s.antrian.length === 0 && s.sumberAktif.length === 0) {
         setBerbicara(false);
+      }
       return;
     }
 
@@ -102,7 +118,15 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       sumber.connect(s.ctxKeluar.destination);
 
       const sekarang = s.ctxKeluar.currentTime;
-      const mulai = Math.max(sekarang, s.waktuBerikut);
+
+      // Kalau jadwal tertinggal jauh — biasanya karena tab sempat tidak
+      // aktif — antrian diselaraskan ulang. Tanpa ini AI terdengar
+      // memutar audio basi di belakang percakapan.
+      if (s.waktuBerikut < sekarang - 0.25) s.waktuBerikut = 0;
+
+      // Ancang-ancang 20 ms: potongan yang dijadwalkan tepat di
+      // currentTime kadang terlewat dan terdengar patah.
+      const mulai = Math.max(sekarang + 0.02, s.waktuBerikut);
       sumber.start(mulai);
       s.waktuBerikut = mulai + buffer.duration;
 
@@ -117,7 +141,6 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     setBerbicara(true);
   }, []);
 
-  /** Hentikan audio AI seketika — dipakai saat user memotong. */
   const hentikanSuaraAi = useCallback(() => {
     const s = r.current;
     s.antrian = [];
@@ -141,16 +164,15 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       const s = r.current;
       s.ditutupSengaja = false;
       s.siap = false;
+      s.giliranAktif = false;
 
-      // Validasi format token — harus "auth_tokens/xxx" bukan nilai mentah.
-      // Kalau backend mengembalikan objek, ambil .name-nya di sini.
       const apiKey =
         typeof token === "object" && token !== null ? token.name : token;
 
       if (!apiKey?.startsWith("auth_tokens/")) {
         console.warn(
           "[useGeminiLive] Token tidak dimulai dengan 'auth_tokens/' —",
-          "pastikan backend mengirim token.name, bukan token.token.",
+          "pastikan backend mengirim token.name.",
           "Nilai diterima:",
           String(apiKey).slice(0, 40),
         );
@@ -159,31 +181,28 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       try {
         const { GoogleGenAI, Modality } = await import("@google/genai");
 
-        // 1. Mikrofon — noise suppression agresif untuk lingkungan berisik
+        // 1. Mikrofon
         s.stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             channelCount: 1,
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
-            // Chrome-specific: filter tambahan untuk noise latar & kresek
-            googNoiseSuppression: true,
-            googHighpassFilter: true,
-            googEchoCancellation: true,
-            googAutoGainControl: true,
           },
         });
 
+        // latencyHint "interactive": browser memilih buffer perangkat
+        // keras terkecil yang sanggup ia tangani.
         s.ctxMasuk = new (window.AudioContext || window.webkitAudioContext)({
           sampleRate: LAJU_MASUK,
+          latencyHint: "interactive",
         });
         s.ctxKeluar = new (window.AudioContext || window.webkitAudioContext)({
           sampleRate: LAJU_KELUAR,
+          latencyHint: "interactive",
         });
 
-        // 2. Koneksi lewat SDK.
-        //    apiKey harus berupa token.name ("auth_tokens/xxx").
-        //    apiVersion v1alpha wajib — diset via httpOptions.
+        // 2. Koneksi lewat SDK
         const ai = new GoogleGenAI({
           apiKey,
           httpOptions: { apiVersion: "v1alpha" },
@@ -200,15 +219,21 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
             systemInstruction: instruksi,
             inputAudioTranscription: {},
             outputAudioTranscription: {},
-            // VAD — lebih cepat potong saat diam, tidak terpancing noise latar
+
+            // VAD otomatis Google DIMATIKAN, giliran dikendalikan sendiri.
+            //
+            // Alasannya: gerbang derau di sisi klien berhenti mengirim
+            // audio saat user diam. VAD Google lalu tidak pernah mendengar
+            // keheningan — dari sudut pandangnya, aliran audio cuma
+            // berhenti — sehingga giliran menggantung dan AI menunggu
+            // selamanya.
+            //
+            // Dengan kendali manual, gerbang yang sudah tahu persis kapan
+            // bicara dimulai dan berakhir mengirimkan penanda activityStart
+            // dan activityEnd secara eksplisit. Hasilnya jauh lebih pasti
+            // dan responsnya langsung.
             realtimeInputConfig: {
-              automaticActivityDetection: {
-                disabled: false,
-                startOfSpeechSensitivity: "START_SENSITIVITY_LOW",
-                endOfSpeechSensitivity: "END_SENSITIVITY_HIGH",
-                prefixPaddingMs: 200,
-                silenceDurationMs: 500,
-              },
+              automaticActivityDetection: { disabled: true },
             },
           },
           callbacks: {
@@ -280,12 +305,25 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
         s.analis.smoothingTimeConstant = 0.6;
         sumber.connect(s.analis);
 
-        s.prosesor = s.ctxMasuk.createScriptProcessor(2048, 1, 1);
+        // ScriptProcessor memang usang, tapi AudioWorklet butuh berkas
+        // terpisah yang harus ikut proses build. Peringatan di console
+        // tidak memengaruhi fungsinya.
+        s.prosesor = s.ctxMasuk.createScriptProcessor(UKURAN_POTONGAN, 1, 1);
         sumber.connect(s.prosesor);
         s.prosesor.connect(s.ctxMasuk.destination);
 
         s.prosesor.onaudioprocess = (e) => {
           if (!s.sesi || !s.siap) return;
+
+          // Audio HANYA dikirim saat user menekan tombol bicara.
+          //
+          // Pendekatan ini menggantikan deteksi otomatis yang sebelumnya
+          // sering keliru: derau latar membuat giliran tidak pernah
+          // tertutup, sementara jeda berpikir malah memotong kalimat.
+          // Dengan tombol, user yang memutuskan — dan keputusannya selalu
+          // benar karena hanya dia yang tahu sudah selesai atau belum.
+          if (!s.giliranAktif) return;
+
           const data = e.inputBuffer.getChannelData(0);
           try {
             s.sesi.sendRealtimeInput({
@@ -323,6 +361,39 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     },
     [putarAntrian, hentikanSuaraAi],
   );
+
+  /* ---------- Kendali bicara ---------- */
+
+  const mulaiBicara = useCallback(() => {
+    const s = r.current;
+    if (!s.sesi || !s.siap || s.giliranAktif) return;
+
+    try {
+      // AI dipotong kalau ia masih bicara — user yang menekan tombol
+      // jelas ingin bicara sekarang, bukan menunggu.
+      hentikanSuaraAi();
+      s.sesi.sendRealtimeInput({ activityStart: {} });
+      s.giliranAktif = true;
+      setSedangBicara(true);
+    } catch {
+      /* sesi sudah tertutup */
+    }
+  }, [hentikanSuaraAi]);
+
+  const selesaiBicara = useCallback(() => {
+    const s = r.current;
+    if (!s.sesi || !s.siap || !s.giliranAktif) return;
+
+    try {
+      // Penanda ini yang memicu AI mulai menyusun jawaban.
+      s.sesi.sendRealtimeInput({ activityEnd: {} });
+    } catch {
+      /* sesi sudah tertutup */
+    } finally {
+      s.giliranAktif = false;
+      setSedangBicara(false);
+    }
+  }, []);
 
   /* ---------- Akhiri sesi ---------- */
 
@@ -369,15 +440,28 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       sumberAktif: [],
       waktuBerikut: 0,
       siap: false,
+      giliranAktif: false,
     };
 
     setTerhubung(false);
     setMendengar(false);
     setBerbicara(false);
+    setSedangBicara(false);
     setTingkat(0);
   }, [hentikanSuaraAi]);
 
   useEffect(() => () => akhiri(), [akhiri]);
 
-  return { terhubung, mendengar, berbicara, tingkat, galat, mulai, akhiri };
+  return {
+    terhubung,
+    mendengar,
+    berbicara,
+    tingkat,
+    galat,
+    sedangBicara,
+    mulai,
+    akhiri,
+    mulaiBicara,
+    selesaiBicara,
+  };
 }

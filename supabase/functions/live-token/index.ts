@@ -74,6 +74,20 @@ serve(async (req) => {
     /* Terbitkan token sementara.
        Masa berlaku sengaja pendek: cukup untuk memulai satu sesi, tidak
        cukup untuk dipakai ulang kalau bocor. */
+    // Catat penerbitan token. Id-nya dikirim ke klien dan menjadi
+    // satu-satunya cara mengembalikan kuota — tanpa ini, jalur
+    // pengembalian bisa dipanggil berulang tanpa batas.
+    const { data: catatan, error: galatCatat } = await supabaseAdmin
+      .from("sesi_token")
+      .insert({ user_id: user.id, jenis: "interview" })
+      .select("id")
+      .single();
+
+    if (galatCatat) {
+      console.error("Gagal mencatat token sesi:", galatCatat.message);
+      throw new Error("Gagal menyiapkan sesi.");
+    }
+
     const kedaluwarsa = new Date(Date.now() + 30 * 60 * 1000).toISOString();
     const bolehMulaiSampai = new Date(Date.now() + 2 * 60 * 1000).toISOString();
 
@@ -109,6 +123,34 @@ serve(async (req) => {
     // token yang sebenarnya dikembalikan Google — bukan menebak-nebak.
     console.log("Token Live diterbitkan:", JSON.stringify(data).slice(0, 200));
 
+    /* Daftar model yang benar-benar mendukung percakapan dua arah,
+       ditanyakan langsung ke Google. Nama model Live berganti cukup
+       sering, dan menebaknya dari dokumentasi sering meleset — ini
+       jawaban yang pasti untuk akun ini. Hasilnya dikirim balik ke
+       klien supaya bisa dipakai tanpa perlu membuka log. */
+    let modelLive = [];
+    try {
+      const resModel = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200",
+        { headers: { "x-goog-api-key": apiKey } },
+      );
+      if (resModel.ok) {
+        const dm = await resModel.json();
+        modelLive = (dm.models || [])
+          .filter((m) =>
+            (m.supportedGenerationMethods || []).includes(
+              "bidiGenerateContent",
+            ),
+          )
+          .map((m) => m.name);
+        console.log("Model Live tersedia:", JSON.stringify(modelLive));
+      } else {
+        console.warn("Gagal mengambil daftar model:", resModel.status);
+      }
+    } catch (e) {
+      console.warn("Gagal mengambil daftar model:", e?.message);
+    }
+
     const token = data.name ?? data.token ?? data.tokenString;
     if (!token) {
       console.error(
@@ -120,6 +162,8 @@ serve(async (req) => {
 
     return json({
       token,
+      token_id: catatan.id,
+      model_live: modelLive,
       sisa_interview: hk.sisa,
     });
   } catch (err) {

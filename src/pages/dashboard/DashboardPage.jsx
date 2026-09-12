@@ -1,3 +1,4 @@
+jsx;
 import React, { useState, useEffect } from "react";
 import { AnalyzerPanel } from "./AnalyzerPanel";
 import { ProfilKarierPanel } from "./ProfilKarierPanel";
@@ -14,6 +15,10 @@ import { SimulasiInterviewPanel } from "./SimulasiInterviewPanel";
 import { SettingsPanel } from "./SettingsPanel";
 import { Sidebar, Topbar } from "./DashboardLayout";
 import { Footer } from "../../components/ui/Footer";
+import {
+  adaProsesBerjalan,
+  keteranganProses,
+} from "../../hooks/useCegahTinggalkan";
 
 export const PANEL_META = {
   overview: { title: "Cari Arah Karier" },
@@ -56,8 +61,10 @@ export const PANEL_COMPONENTS = {
  */
 const PANEL_DISEMBUNYIKAN = [];
 
-/* Ditampilkan kalau ada menu yang belum punya komponen.
-   Tanpa ini, satu entri yang terlewat membuat seluruh dashboard blank. */
+/**
+ * Ditampilkan kalau ada menu yang belum punya komponen.
+ * Tanpa ini, satu entri yang terlewat membuat seluruh dashboard blank.
+ */
 function PanelTidakDitemukan() {
   return (
     <div
@@ -84,21 +91,63 @@ export function DashboardPage({ go, active, setActive }) {
   useEffect(() => {
     const pindah = (e) => {
       const tujuan = e.detail;
+
       if (PANEL_COMPONENTS[tujuan] && !PANEL_DISEMBUNYIKAN.includes(tujuan)) {
         setActive(tujuan);
       }
     };
+
     window.addEventListener("jf:navigate", pindah);
-    return () => window.removeEventListener("jf:navigate", pindah);
+
+    return () => {
+      window.removeEventListener("jf:navigate", pindah);
+    };
   }, [setActive]);
 
-  const meta = PANEL_META[active] ?? { title: "Halaman tidak ditemukan" };
+  const meta = PANEL_META[active] ?? {
+    title: "Halaman tidak ditemukan",
+  };
+
+  /*
+   * Pindah menu saat analisis berjalan.
+   *
+   * beforeunload tidak menangkap ini karena halamannya tidak benar-benar
+   * ditinggalkan, hanya panel yang berganti.
+   */
+  const gantiPanel = (tujuan) => {
+    if (tujuan !== active && adaProsesBerjalan()) {
+      const lanjut = window.confirm(
+        `${keteranganProses()}\n\n` +
+          "Kalau pindah sekarang, hasilnya tetap diproses di server dan bisa " +
+          "kamu lihat saat kembali — tapi lebih baik ditunggu.\n\n" +
+          "Tetap pindah halaman?",
+      );
+
+      if (!lanjut) return;
+    }
+
+    setActive(tujuan);
+  };
+
   const PanelComponent = PANEL_DISEMBUNYIKAN.includes(active)
     ? PanelTidakDitemukan
     : (PANEL_COMPONENTS[active] ?? PanelTidakDitemukan);
 
+  /*
+   * alignItems "flex-start" wajib ada untuk sidebar yang sticky.
+   *
+   * Bawaan flex adalah "stretch", yang dapat membuat sidebar meregang
+   * setinggi seluruh konten sehingga sticky tidak bekerja sebagaimana
+   * mestinya.
+   */
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        alignItems: "flex-start",
+      }}
+    >
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
@@ -111,15 +160,19 @@ export function DashboardPage({ go, active, setActive }) {
           className="jf-overlay"
         />
       )}
+
       <Sidebar
         active={active}
-        setActive={setActive}
+        setActive={gantiPanel}
         go={go}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
       />
-      {/* minHeight + flex kolom: mendorong footer ke bawah pada halaman
-          yang isinya pendek, supaya tidak menggantung di tengah layar. */}
+
+      {/*
+        minHeight + flex kolom: mendorong footer ke bawah pada halaman
+        yang isinya pendek, supaya tidak menggantung di tengah layar.
+      */}
       <div
         style={{
           flex: 1,
@@ -130,9 +183,11 @@ export function DashboardPage({ go, active, setActive }) {
         }}
       >
         <Topbar title={meta.title} setMobileOpen={setMobileOpen} />
+
         <div style={{ flex: 1 }}>
-          <PanelComponent setActive={setActive} go={go} />
+          <PanelComponent setActive={gantiPanel} go={go} />
         </div>
+
         <Footer />
       </div>
     </div>
