@@ -83,7 +83,6 @@ export const PAKET: Record<string, any> = {
       "LinkedIn Builder dengan arahan AI",
       "Draft CV & LinkedIn dalam dua bahasa",
       "Riwayat analisis tersimpan, bisa dibandingkan",
-      "Pelacak lamaran tanpa batas",
       "100 pertanyaan interview + strategi menjawab",
     ],
     tanpa: [],
