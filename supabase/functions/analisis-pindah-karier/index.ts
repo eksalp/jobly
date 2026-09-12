@@ -77,7 +77,7 @@ async function panggilGemini(
           // untuk struktur bersarang tertentu. Mode tanpa skema dipakai
           // sebagai cadangan, dengan parsing manual sebagai gantinya.
           ...(pakaiSkema ? { responseSchema: SKEMA_PINDAH } : {}),
-          maxOutputTokens: 3000,
+          maxOutputTokens: 5000,
           temperature: 0.4,
         },
       }),
