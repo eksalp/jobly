@@ -1,4 +1,3 @@
-jsx;
 import React, { useState, useEffect } from "react";
 import { AnalyzerPanel } from "./AnalyzerPanel";
 import { ProfilKarierPanel } from "./ProfilKarierPanel";
