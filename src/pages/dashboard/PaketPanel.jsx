@@ -100,6 +100,18 @@ export function PaketPanel() {
     setGalat("");
 
     try {
+      // Pastikan sesi masih valid sebelum memanggil. 401 di create-payment
+      // hampir selalu berarti token login sudah kedaluwarsa — memeriksanya
+      // di sini memberi pesan yang jelas ketimbang "Unauthorized" mentah.
+      const { data: sesiData } = await supabase.auth.getSession();
+      if (!sesiData?.session) {
+        setGalat(
+          "Sesi kamu sudah berakhir. Muat ulang halaman dan login lagi, lalu coba beli kembali.",
+        );
+        setProses(null);
+        return;
+      }
+
       // Server yang menentukan harga berdasarkan paketId.
       // Nominal TIDAK dikirim dari sini — kalau dikirim, bisa dipalsukan.
       const { data, error } = await supabase.functions.invoke(
@@ -116,6 +128,12 @@ export function PaketPanel() {
           if (body?.error) pesan = body.error;
         } catch {
           /* biarkan pesan bawaan */
+        }
+
+        // 401 spesifik: sesi tidak diterima server meski ada di klien.
+        if (error.context?.status === 401 || /unauthorized/i.test(pesan)) {
+          pesan =
+            "Sesi kamu sudah berakhir. Muat ulang halaman dan login lagi, lalu coba beli kembali.";
         }
         throw new Error(pesan);
       }
