@@ -13,7 +13,7 @@ import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useLangganan } from "../../hooks/useLangganan";
-import { DAFTAR_PAKET, rupiah } from "../../data/paket";
+import { DAFTAR_PAKET, SEMUA_TIER, PAKET, rupiah } from "../../data/paket";
 import { RiwayatPembelian } from "../../components/RiwayatPembelian";
 
 /**
@@ -29,6 +29,7 @@ import { RiwayatPembelian } from "../../components/RiwayatPembelian";
 function useSnapScript() {
   const [siap, setSiap] = useState(() => Boolean(window.snap));
   const [galat, setGalat] = useState("");
+  const [sukses, setSukses] = useState("");
 
   useEffect(() => {
     if (window.snap) {
@@ -74,6 +75,7 @@ export function PaketPanel() {
   const snap = useSnapScript();
   const [proses, setProses] = useState(null); // id paket yang sedang diproses
   const [galat, setGalat] = useState("");
+  const [sukses, setSukses] = useState("");
 
   // Kalau kuota masih banyak, beri tahu sebelum membeli.
   // Membiarkan orang membeli sesuatu yang belum dibutuhkan itu
@@ -126,6 +128,13 @@ export function PaketPanel() {
           await new Promise((r) => setTimeout(r, 2500));
           await langganan.refresh();
           setProses(null);
+          // Kadang webhook baru tiba beberapa detik kemudian, atau
+          // langganan lama masih ter-cache. Menyarankan refresh memastikan
+          // user melihat kuota barunya tanpa mengira pembayarannya gagal.
+          setSukses(
+            "Pembayaran berhasil! Kalau kuota belum bertambah, muat ulang " +
+              "halaman ini sebentar — paketmu sedang diaktifkan.",
+          );
         },
         onPending: () => {
           setGalat(
@@ -247,6 +256,41 @@ export function PaketPanel() {
         </Glass>
       )}
 
+      {sukses && (
+        <Glass
+          style={{
+            padding: "13px 16px",
+            marginBottom: 16,
+            background: "rgba(20,184,166,0.07)",
+            border: "1px solid rgba(20,184,166,0.4)",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+          }}
+        >
+          <Check size={16} color={T.teal} style={{ flexShrink: 0 }} />
+          <span
+            style={{
+              fontSize: 12.5,
+              color: T.ink,
+              lineHeight: 1.6,
+              flex: 1,
+              minWidth: 180,
+            }}
+          >
+            {sukses}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() => window.location.reload()}
+            style={{ fontSize: 12, padding: "7px 14px", flexShrink: 0 }}
+          >
+            Muat ulang sekarang
+          </Button>
+        </Glass>
+      )}
+
       {galat && (
         <Glass
           style={{
@@ -268,14 +312,17 @@ export function PaketPanel() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
           gap: 14,
           alignItems: "start",
         }}
       >
-        {DAFTAR_PAKET.map((p) => {
+        {SEMUA_TIER.map((p) => {
           const sedangProses = proses === p.id;
           const iniPaketAktif = langganan.aktif && langganan.paket === p.id;
+          const gratis = p.harga === 0;
+          // Free dianggap "paket sekarang" kalau user belum punya langganan aktif
+          const iniTierSekarang = gratis && !langganan.aktif;
 
           return (
             <Glass
@@ -347,30 +394,46 @@ export function PaketPanel() {
               <div
                 style={{ fontSize: 11, color: T.inkFaint, marginBottom: 16 }}
               >
-                sekali bayar · {p.durasiHari} hari · {p.kuotaAnalisis} analisis
+                {gratis
+                  ? "Selamanya · tanpa kartu"
+                  : `sekali bayar · ${p.durasiHari} hari · ${p.kuotaAnalisis} analisis AI`}
               </div>
 
               <div style={{ flex: 1, marginBottom: 18 }}>
-                {p.fitur.map((f) => (
-                  <div
-                    key={f}
-                    style={{
-                      display: "flex",
-                      gap: 8,
-                      fontSize: 12,
-                      color: T.inkSoft,
-                      lineHeight: 1.55,
-                      marginBottom: 7,
-                    }}
-                  >
-                    <Check
-                      size={12}
-                      color={T.teal}
-                      style={{ flexShrink: 0, marginTop: 3 }}
-                    />
-                    <span>{f}</span>
-                  </div>
-                ))}
+                {p.fitur.map((f) => {
+                  // Baris "Semua fitur X, plus:" jadi pemisah, bukan item
+                  // bercentang — supaya jelas ini rangkuman tier bawah.
+                  const pemisah = f.endsWith("plus:");
+                  return (
+                    <div
+                      key={f}
+                      style={{
+                        display: "flex",
+                        gap: 8,
+                        fontSize: 12,
+                        color: pemisah ? T.ink : T.inkSoft,
+                        fontWeight: pemisah ? 600 : 400,
+                        lineHeight: 1.55,
+                        marginBottom: 7,
+                      }}
+                    >
+                      {pemisah ? (
+                        <Sparkles
+                          size={12}
+                          color={T.accent}
+                          style={{ flexShrink: 0, marginTop: 3 }}
+                        />
+                      ) : (
+                        <Check
+                          size={12}
+                          color={T.teal}
+                          style={{ flexShrink: 0, marginTop: 3 }}
+                        />
+                      )}
+                      <span>{f}</span>
+                    </div>
+                  );
+                })}
 
                 {/* Fitur yang TIDAK termasuk. Ditampilkan terus terang
                     supaya user tahu persis apa yang didapat dengan naik
@@ -402,28 +465,46 @@ export function PaketPanel() {
                 ))}
               </div>
 
-              <Button
-                variant={p.populer ? "primary" : "outline"}
-                onClick={() => beli(p.id)}
-                disabled={sedangProses || Boolean(proses) || !snap.siap}
-                style={{ width: "100%" }}
-              >
-                {sedangProses ? (
-                  <>
-                    <Loader2
-                      size={14}
-                      style={{ animation: "spin 1s linear infinite" }}
-                    />{" "}
-                    Memproses...
-                  </>
-                ) : iniPaketAktif ? (
-                  <>
-                    Perpanjang <Sparkles size={13} />
-                  </>
-                ) : (
-                  <>Pilih paket ini</>
-                )}
-              </Button>
+              {gratis ? (
+                <div
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    padding: "9px 0",
+                    borderRadius: 12,
+                    border: `1px dashed ${T.border}`,
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    color: iniTierSekarang ? T.teal : T.inkFaint,
+                    fontFamily: "'Poppins', sans-serif",
+                  }}
+                >
+                  {iniTierSekarang ? "Paket kamu sekarang" : "Selalu aktif"}
+                </div>
+              ) : (
+                <Button
+                  variant={p.populer ? "primary" : "outline"}
+                  onClick={() => beli(p.id)}
+                  disabled={sedangProses || Boolean(proses) || !snap.siap}
+                  style={{ width: "100%" }}
+                >
+                  {sedangProses ? (
+                    <>
+                      <Loader2
+                        size={14}
+                        style={{ animation: "spin 1s linear infinite" }}
+                      />{" "}
+                      Memproses...
+                    </>
+                  ) : iniPaketAktif ? (
+                    <>
+                      Perpanjang <Sparkles size={13} />
+                    </>
+                  ) : (
+                    <>Pilih paket ini</>
+                  )}
+                </Button>
+              )}
             </Glass>
           );
         })}

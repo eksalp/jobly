@@ -64,6 +64,9 @@ serve(async (req) => {
     if (bayarErr)
       throw new Error("Gagal mencatat pembayaran: " + bayarErr.message);
 
+    // KETIGA kuota diisi saat insert. Kalau tidak, dan kolom baru
+    // (kuota_pindah/kuota_interview) NOT NULL tanpa default, insert gagal
+    // dan seluruh create-payment ikut gagal — token jadi kosong.
     const { error: langErr } = await supabaseAdmin
       .from("subscriptions")
       .insert({
@@ -72,6 +75,8 @@ serve(async (req) => {
         status: "pending",
         kuota_analisis: paket.kuotaAnalisis,
         kuota_terpakai: 0,
+        kuota_pindah: paket.kuotaPindah ?? 0,
+        kuota_interview: paket.kuotaInterview ?? 0,
         harga: paket.harga,
         order_id: orderId,
       });
@@ -102,14 +107,6 @@ serve(async (req) => {
     //
     // Kalau URL ini tidak di-set, Midtrans jatuh ke setelan dashboard.
     const urlNotifikasi = Deno.env.get("MIDTRANS_NOTIFICATION_URL");
-
-    // DIAGNOSTIK SEMENTARA — hapus setelah webhook terbukti jalan.
-    // Menunjukkan persis URL notifikasi yang dipakai dan apakah header
-    // override benar-benar disertakan ke Midtrans.
-    console.log(
-      "DIAGNOSTIK notif URL:",
-      urlNotifikasi || "(KOSONG - pakai setelan dashboard!)",
-    );
 
     const mtRes = await fetch(snapUrl, {
       method: "POST",
@@ -143,13 +140,6 @@ serve(async (req) => {
     }
 
     const mtData = await mtRes.json();
-    console.log(
-      "DIAGNOSTIK Midtrans merespons, order:",
-      orderId,
-      "token ada:",
-      Boolean(mtData.token),
-    );
-
     await supabaseAdmin
       .from("payments")
       .update({ snap_token: mtData.token })
