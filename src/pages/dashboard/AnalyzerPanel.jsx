@@ -6,6 +6,7 @@ import {
   ChevronRight,
   AlertCircle,
   AlertTriangle,
+  Info,
   Loader2,
   X,
 } from "lucide-react";
@@ -198,6 +199,16 @@ export function AnalyzerPanel({ setActive }) {
   const [orderTerakhir, setOrderTerakhir] = useState(null);
 
   const [bolehCobaLagi, setBolehCobaLagi] = useState(false);
+  const [tampilPanduanLi, setTampilPanduanLi] = useState(false);
+
+  // Mendeteksi kalau user cuma menempel TAUTAN profil, bukan isinya.
+  // AI tidak bisa membuka URL — yang dibutuhkan teks profilnya. Ini
+  // kesalahan paling umum di mode LinkedIn, jadi ditangkap sejak awal.
+  const teksBersih = text.trim();
+  const cumaTautan =
+    teksBersih.length < 120 &&
+    /linkedin\.com\/in\//i.test(teksBersih) &&
+    teksBersih.split(/\s+/).length <= 3;
   const fileRef = useRef(null);
 
   // Cegah user pergi saat analisis berjalan — kuotanya sudah terpotong,
@@ -268,7 +279,10 @@ export function AnalyzerPanel({ setActive }) {
   // Menjalankan analisis. Kuota diperiksa dan dikurangi di SERVER —
   // pemeriksaan di sini hanya menentukan tampilan tombol.
   const mulaiAnalisis = () => {
-    if (!langganan.aktif || langganan.sisaAnalisis <= 0) {
+    // Analisis diizinkan selama masih ada kuota — TIDAK bergantung akses
+    // loker. User yang paketnya lewat tempo tapi kuota analisisnya masih
+    // ada tetap boleh menganalisis. Yang berhenti hanya akses loker.
+    if (langganan.sisaAnalisis <= 0) {
       pergiKe("paket");
       return;
     }
@@ -466,18 +480,18 @@ export function AnalyzerPanel({ setActive }) {
           Menganalisis CV...
         </>
       );
-    if (!langganan.aktif)
-      return (
+    if (langganan.sisaAnalisis <= 0) {
+      // Bedakan "belum pernah punya" dari "kuota habis" — dua pesan berbeda.
+      return langganan.aktif || langganan.punyaKuota ? (
+        <>
+          Kuota habis — tambah paket <ChevronRight size={15} />
+        </>
+      ) : (
         <>
           Lihat paket langganan <ChevronRight size={15} />
         </>
       );
-    if (langganan.sisaAnalisis <= 0)
-      return (
-        <>
-          Kuota habis — tambah paket <ChevronRight size={15} />
-        </>
-      );
+    }
     return (
       <>
         Analisis Lengkap dengan AI <ChevronRight size={15} />
@@ -574,6 +588,120 @@ export function AnalyzerPanel({ setActive }) {
             </button>
           ))}
         </div>
+
+        {/* Panduan LinkedIn — selalu muncul saat mode LinkedIn dipilih,
+            bukan cuma saat user salah menempel tautan. Analisis LinkedIn
+            butuh isi profil (teks atau PDF), dan cara mendapatkannya tidak
+            sejelas CV, jadi panduannya ditaruh di depan. */}
+        {sourceType === "linkedin" && (
+          <div
+            style={{
+              marginBottom: 12,
+              padding: "12px 14px",
+              borderRadius: 12,
+              background: "rgba(76,99,224,0.05)",
+              border: `1px solid ${T.accentSoft}`,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 7,
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: T.accent,
+                marginBottom: 9,
+                letterSpacing: "0.02em",
+              }}
+            >
+              <Info size={13} /> CARA ANALISIS PROFIL LINKEDIN
+            </div>
+            <div
+              style={{
+                fontSize: 12,
+                color: T.inkSoft,
+                lineHeight: 1.65,
+                marginBottom: 10,
+              }}
+            >
+              AI tidak bisa membuka tautan LinkedIn — yang dibutuhkan isi
+              profilnya. Ada dua cara:
+            </div>
+            {[
+              "Cara cepat: buka profilmu, salin bagian Tentang & Pengalaman, tempel ke kotak di bawah.",
+              "Cara lengkap: unduh profil sebagai PDF, lalu unggah di sini.",
+            ].map((t, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 6,
+                  fontSize: 12,
+                  color: T.inkSoft,
+                  lineHeight: 1.55,
+                }}
+              >
+                <span style={{ color: T.accent, flexShrink: 0 }}>•</span>
+                <span>{t}</span>
+              </div>
+            ))}
+            <div
+              style={{
+                marginTop: 8,
+                paddingTop: 8,
+                borderTop: `1px solid ${T.accentSoft}`,
+                fontSize: 11,
+                fontWeight: 700,
+                color: T.inkSoft,
+                marginBottom: 6,
+              }}
+            >
+              Langkah unduh PDF:
+            </div>
+            {[
+              "Buka profil LinkedIn kamu (aplikasi HP atau browser).",
+              'Ketuk "Saya" (Me) lalu buka halaman profilmu.',
+              'Ketuk "Lainnya" (More) di bawah foto profil.',
+              'Pilih "Simpan ke PDF" (Save to PDF).',
+              "Unggah file PDF-nya di kotak unggah di bawah.",
+            ].map((t, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 5,
+                  fontSize: 11.5,
+                  color: T.inkSoft,
+                  lineHeight: 1.5,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 9.5,
+                    fontWeight: 700,
+                    color: "#fff",
+                    background: T.accent,
+                    borderRadius: 99,
+                    width: 15,
+                    height: 15,
+                    flexShrink: 0,
+                    marginTop: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <span>{t}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div
           onClick={() => fileRef.current.click()}
           style={{
@@ -645,6 +773,102 @@ export function AnalyzerPanel({ setActive }) {
             background: "rgba(255,255,255,0.5)",
           }}
         />
+        {/* Peringatan tautan LinkedIn */}
+        {cumaTautan && (
+          <div
+            style={{
+              marginTop: 12,
+              padding: "12px 14px",
+              borderRadius: 12,
+              background: "rgba(217,119,6,0.07)",
+              border: "1px solid rgba(217,119,6,0.35)",
+            }}
+          >
+            <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+              <AlertTriangle
+                size={15}
+                color="#B45309"
+                style={{ flexShrink: 0, marginTop: 1 }}
+              />
+              <div
+                style={{ fontSize: 12.5, color: "#92400E", lineHeight: 1.6 }}
+              >
+                <strong>Itu tautan, bukan isi profil.</strong> AI tidak bisa
+                membuka halaman LinkedIn — yang dibutuhkan teks profilnya. Salin
+                isinya, atau unduh sebagai PDF lalu unggah di sini.
+              </div>
+            </div>
+            <button
+              onClick={() => setTampilPanduanLi((v) => !v)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#B45309",
+                fontSize: 12,
+                fontWeight: 600,
+                fontFamily: "'Poppins', sans-serif",
+                padding: 0,
+                textDecoration: "underline",
+              }}
+            >
+              {tampilPanduanLi
+                ? "Sembunyikan panduan"
+                : "Cara unduh PDF LinkedIn"}
+            </button>
+
+            {tampilPanduanLi && (
+              <div
+                style={{
+                  marginTop: 10,
+                  paddingTop: 10,
+                  borderTop: "1px solid rgba(217,119,6,0.25)",
+                }}
+              >
+                {[
+                  "Buka profil LinkedIn kamu lewat aplikasi HP atau browser.",
+                  'Ketuk tombol "Saya" (Me) lalu buka halaman profilmu.',
+                  'Ketuk tombol "Lainnya" (More) di bawah foto profil.',
+                  'Pilih "Simpan ke PDF" (Save to PDF).',
+                  "Unggah file PDF itu di kotak unggah di atas.",
+                ].map((t, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      gap: 9,
+                      marginBottom: 6,
+                      fontSize: 12,
+                      color: "#92400E",
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        color: "#fff",
+                        background: "#B45309",
+                        borderRadius: 99,
+                        width: 16,
+                        height: 16,
+                        flexShrink: 0,
+                        marginTop: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    <span>{t}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         <div
           style={{
             display: "flex",
@@ -659,7 +883,7 @@ export function AnalyzerPanel({ setActive }) {
           <Button
             variant="primary"
             onClick={runFree}
-            disabled={text.trim().length < 30}
+            disabled={text.trim().length < 30 || cumaTautan}
           >
             Analisis Gratis <Sparkles size={15} />
           </Button>

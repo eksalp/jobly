@@ -103,6 +103,14 @@ serve(async (req) => {
     // Kalau URL ini tidak di-set, Midtrans jatuh ke setelan dashboard.
     const urlNotifikasi = Deno.env.get("MIDTRANS_NOTIFICATION_URL");
 
+    // DIAGNOSTIK SEMENTARA — hapus setelah webhook terbukti jalan.
+    // Menunjukkan persis URL notifikasi yang dipakai dan apakah header
+    // override benar-benar disertakan ke Midtrans.
+    console.log(
+      "DIAGNOSTIK notif URL:",
+      urlNotifikasi || "(KOSONG - pakai setelan dashboard!)",
+    );
+
     const mtRes = await fetch(snapUrl, {
       method: "POST",
       headers: {
@@ -135,6 +143,13 @@ serve(async (req) => {
     }
 
     const mtData = await mtRes.json();
+    console.log(
+      "DIAGNOSTIK Midtrans merespons, order:",
+      orderId,
+      "token ada:",
+      Boolean(mtData.token),
+    );
+
     await supabaseAdmin
       .from("payments")
       .update({ snap_token: mtData.token })

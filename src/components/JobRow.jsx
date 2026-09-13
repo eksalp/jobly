@@ -8,6 +8,7 @@ import {
   Lock,
   Check,
   Send,
+  Plus,
 } from "lucide-react";
 import { T } from "../theme";
 import { useLayarKecil } from "../hooks/useLayarKecil";
@@ -129,8 +130,8 @@ export function JobRow({
           disabled={sudahDilamar}
           title={
             sudahDilamar
-              ? "Sudah ada di daftar lamaran"
-              : "Catat sebagai lamaran"
+              ? "Sudah ada di menu Applications"
+              : "Simpan ke menu Applications untuk dilacak"
           }
           style={{
             flexShrink: 0,
@@ -150,11 +151,11 @@ export function JobRow({
         >
           {sudahDilamar ? (
             <>
-              <Check size={12} /> Dilamar
+              <Check size={12} /> Tersimpan
             </>
           ) : (
             <>
-              <Send size={12} /> Lamar
+              <Plus size={12} /> Lacak lamaran
             </>
           )}
         </button>

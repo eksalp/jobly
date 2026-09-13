@@ -67,6 +67,7 @@ export function LanggananProvider({ children }) {
       kuotaInterview: b?.kuota_interview ?? 0,
       sisaInterview: b?.sisa_interview ?? 0,
       jumlahPaket: b?.jumlah_paket ?? 0,
+      punyaKuota: Boolean(b?.punya_kuota),
     });
     setLoading(false);
   }, [user?.id]);

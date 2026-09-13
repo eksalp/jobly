@@ -18,7 +18,8 @@ const STATUS = {
   aktif: { label: "Aktif", warna: "#0F7B4F", Ikon: Check },
   kedaluwarsa: { label: "Kedaluwarsa", warna: "#8891A8", Ikon: Clock },
   pending: { label: "Menunggu bayar", warna: "#B45309", Ikon: Clock },
-  batal: { label: "Batal", warna: "#B23A3A", Ikon: X },
+  batal: { label: "Dibatalkan", warna: "#8891A8", Ikon: X },
+  expired: { label: "Kedaluwarsa", warna: "#8891A8", Ikon: Clock },
 };
 
 const tglLengkap = (s) =>
@@ -133,7 +134,16 @@ export function RiwayatPembelian() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {daftar.map((d) => {
-          const st = STATUS[d.status] ?? STATUS.batal;
+          // Sesi pembayaran Midtrans kedaluwarsa setelah 15 menit.
+          // Pending yang lebih tua dari itu pasti tidak akan dibayar,
+          // jadi ditampilkan sebagai kedaluwarsa meski notifikasi expire
+          // dari Midtrans belum tentu pernah sampai (user yang cuma
+          // menutup halaman tidak memicu webhook apa pun).
+          const lewatTempo =
+            d.status === "pending" &&
+            Date.now() - new Date(d.created_at).getTime() > 15 * 60 * 1000;
+          const statusTampil = lewatTempo ? "expired" : d.status;
+          const st = STATUS[statusTampil] ?? STATUS.batal;
           const { Ikon } = st;
           const detail = PAKET[d.paket];
           const buka = dibuka === d.id;
@@ -296,7 +306,7 @@ export function RiwayatPembelian() {
                     </div>
                   ))}
 
-                  {d.status === "pending" && (
+                  {statusTampil === "pending" && (
                     <div
                       style={{
                         fontSize: 11.5,

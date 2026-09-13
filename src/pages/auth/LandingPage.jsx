@@ -3,13 +3,16 @@ import {
   ArrowRight,
   Sparkles,
   FileText,
-  Linkedin,
   Search,
   Briefcase,
   Check,
   Loader2,
   Building2,
   Layers,
+  Route,
+  Bot,
+  MessageSquareQuote,
+  Send,
 } from "lucide-react";
 import { T } from "../../theme";
 import { Button } from "../../components/ui/Button";
@@ -23,27 +26,42 @@ const FITUR = [
   {
     Ikon: Layers,
     judul: "Puluhan ribu loker, satu pencarian",
-    isi: "Kami mengumpulkan lowongan dari banyak perusahaan dan sumber sekaligus, lalu memperbaruinya tiap hari. Kamu cukup mencari di satu tempat.",
+    isi: "Lowongan dari banyak perusahaan dan sumber dikumpulkan jadi satu, diperbarui tiap hari. Saring berdasarkan kota, jenis kerja, dan kecocokan dengan profilmu.",
   },
   {
     Ikon: Search,
     judul: "Pencocokan loker dari CV kamu",
-    isi: "Tempel CV, langsung ketahuan lowongan mana yang cocok dan kenapa. Bukan sekadar kata kunci — bidangnya dicocokkan, bukan cuma katanya.",
+    isi: "Tempel CV, langsung ketahuan lowongan mana yang cocok dan kenapa. Bidangnya yang dicocokkan, bukan sekadar kata kunci.",
   },
   {
     Ikon: FileText,
     judul: "Audit CV dengan skor ATS",
-    isi: "Tahu bagian mana yang bikin CV kamu tersaring sistem, lengkap dengan cara memperbaikinya per bagian.",
+    isi: "Tahu bagian mana yang bikin CV kamu tersaring sistem, lengkap dengan cara memperbaikinya per bagian — plus CV Builder siap unduh PDF.",
   },
   {
     Ikon: Sparkles,
-    judul: "CV ditulis ulang oleh AI",
-    isi: "Ringkasan, bullet pengalaman, dan skill disusun ulang agar lolos penyaringan — dalam bahasa Indonesia dan Inggris.",
+    judul: "CV & LinkedIn ditulis ulang AI",
+    isi: "Ringkasan, pengalaman, dan keahlian disusun ulang agar lolos penyaringan dan dilirik recruiter — dalam bahasa Indonesia dan Inggris.",
   },
   {
-    Ikon: Linkedin,
-    judul: "Profil LinkedIn yang dilirik recruiter",
-    isi: "Headline, Tentang, dan keahlian ditulis ulang mengikuti cara kerja pencarian LinkedIn.",
+    Ikon: Route,
+    judul: "Rencana Pindah Karier",
+    isi: "Mau pindah bidang? AI menilai keahlian mana dari pengalamanmu yang masih terpakai, apa yang perlu dikejar, dan seberapa realistis peluangnya.",
+  },
+  {
+    Ikon: Bot,
+    judul: "Simulasi interview dengan AI bersuara",
+    isi: "Latihan wawancara langsung lewat suara, seperti mengobrol dengan pewawancara sungguhan. Dapat penilaian dan masukan spesifik di akhir sesi.",
+  },
+  {
+    Ikon: MessageSquareQuote,
+    judul: "100 pertanyaan interview + strateginya",
+    isi: "Kumpulan pertanyaan yang paling sering menjebak, dalam 10 kategori, lengkap dengan cara menjawab yang disarankan.",
+  },
+  {
+    Ikon: Send,
+    judul: "Pelacak lamaran",
+    isi: "Simpan loker yang kamu incar ke satu papan, lacak statusnya dari dilamar sampai diterima.",
   },
 ];
 
@@ -215,7 +233,7 @@ export function LandingPage({ go }) {
         }}
       >
         <Glass style={{ padding: hp ? 20 : 28 }}>
-          <div style={{ textAlign: "center", marginBottom: 5 }}>
+          <div style={{ textAlign: "center", marginBottom: 22 }}>
             <div
               style={{
                 display: "flex",
@@ -476,6 +494,16 @@ export function LandingPage({ go }) {
         </Glass>
       </div>
 
+      <div
+        style={{
+          textAlign: "center",
+          padding: "0 18px 4px",
+          fontSize: 11.5,
+          color: T.inkFaint,
+        }}
+      >
+        Dibuat untuk pencari kerja di Indonesia
+      </div>
       <Footer />
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

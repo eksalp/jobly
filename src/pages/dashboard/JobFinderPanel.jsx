@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Search, Target } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Search, Target, Check } from "lucide-react";
 import { T } from "../../theme";
 import { useJobs } from "../../context/JobsContext";
 import { useUserProfile } from "../../context/UserProfileContext";
@@ -39,6 +39,52 @@ const TIPE_KERJA_LABELS = {
   freelance: "Freelance",
   magang: "Magang",
 };
+
+// Kota-kota besar Indonesia, diprioritaskan di urutan atas daftar filter.
+// Loker di pasar kerja Indonesia terpusat di kota-kota ini, jadi
+// menaruhnya di depan menghemat gulir untuk mayoritas pengguna.
+const KOTA_PRIORITAS = [
+  "Jakarta",
+  "Bandung",
+  "Surabaya",
+  "Yogyakarta",
+  "Semarang",
+  "Medan",
+  "Makassar",
+  "Denpasar",
+  "Tangerang",
+  "Bekasi",
+  "Depok",
+  "Bogor",
+  "Malang",
+  "Solo",
+  "Palembang",
+];
+
+/**
+ * Menormalkan teks lokasi mentah jadi nama kota yang bisa disaring.
+ * Data lokasi sering berupa "Jakarta Selatan, Indonesia" atau
+ * "Bandung, Jawa Barat" — dipangkas ke nama kota utamanya.
+ */
+function normalkanKota(lokasi) {
+  if (!lokasi) return null;
+  const teks = String(lokasi).trim();
+  if (!teks || /tidak disebutkan|unknown|n\/a|-/i.test(teks.toLowerCase()))
+    return null;
+
+  // Kalau mengandung nama kota prioritas di mana pun, pakai itu — supaya
+  // "Jakarta Selatan", "Kota Jakarta", "DKI Jakarta" semua jadi "Jakarta".
+  const cocok = KOTA_PRIORITAS.find((k) =>
+    teks.toLowerCase().includes(k.toLowerCase()),
+  );
+  if (cocok) return cocok;
+
+  // Selain itu, ambil bagian pertama sebelum koma sebagai nama kota apa
+  // adanya. Batas panjang dilonggarkan supaya nama daerah yang agak
+  // panjang tetap masuk, bukan dibuang jadi null.
+  const bagian = teks.split(/[,\-–|]/)[0].trim();
+  return bagian.length >= 2 && bagian.length <= 40 ? bagian : null;
+}
 
 // Gabungkan array bullet desc (string / array) jadi satu string aman
 function joinDesc(desc) {
@@ -93,6 +139,7 @@ export function JobFinderPanel({ setActive }) {
 
   // Catat loker sebagai lamaran. Data loker disalin, bukan direferensikan,
   // supaya riwayat tetap utuh walau loker aslinya hilang dari scraper.
+  const [toast, setToast] = useState("");
   const handleLamar = async (job) => {
     await tambahLamaran({
       job_id: job.id,
@@ -101,12 +148,41 @@ export function JobFinderPanel({ setActive }) {
       lokasi: job.lokasi,
       link: job.link,
     });
+    // Konfirmasi ke mana loker ini pergi. Tanpa ini user menekan tombol
+    // lalu bingung apa yang terjadi — sumber ambiguitas tombolnya.
+    setToast("Tersimpan ke menu Applications untuk kamu lacak.");
+    setTimeout(() => setToast(""), 3500);
   };
   const [query, setQuery] = useState("");
   const [filterLokasi, setFilterLokasi] = useState("Semua");
+  const [filterKota, setFilterKota] = useState("Semua");
   const [filterTipeKerja, setFilterTipeKerja] = useState("Semua");
   const [page, setPage] = useState(1);
   const lokasiOptions = Object.keys(LOKASI_LABELS);
+
+  // Daftar kota dibangun dari loker yang benar-benar ada. Kota prioritas
+  // yang muncul di data ditaruh di depan, sisanya menyusul urut abjad —
+  // jadi filter tidak pernah menampilkan kota yang tak punya satu loker pun.
+  const kotaOptions = useMemo(() => {
+    const ada = new Set();
+    jobs.forEach((j) => {
+      const kota = normalkanKota(j.lokasi);
+      if (kota) ada.add(kota);
+    });
+    const prioritas = KOTA_PRIORITAS.filter((k) => ada.has(k));
+    const lain = [...ada]
+      .filter((k) => !KOTA_PRIORITAS.includes(k))
+      .sort((a, b) => a.localeCompare(b, "id"));
+    const hasil = ["Semua", ...prioritas, ...lain];
+    // DIAGNOSTIK sementara — hapus setelah filter terbukti muncul.
+    if (jobs.length > 0) {
+      console.log(
+        `[jobfinder] ${jobs.length} loker, ${hasil.length - 1} kota terdeteksi:`,
+        hasil.slice(1, 8),
+      );
+    }
+    return hasil;
+  }, [jobs]);
   const tipeKerjaOptions = Object.keys(TIPE_KERJA_LABELS);
 
   // Referensi tambahan dari CV Builder (cv_json) — pengalaman kerja,
@@ -178,6 +254,7 @@ export function JobFinderPanel({ setActive }) {
       (j) =>
         (filterLokasi === "Semua" || j.lokasiKerja === filterLokasi) &&
         (filterTipeKerja === "Semua" || j.tipeKerja === filterTipeKerja) &&
+        (filterKota === "Semua" || normalkanKota(j.lokasi) === filterKota) &&
         (query.trim() === "" ||
           (j.posisi + j.perusahaan)
             .toLowerCase()
@@ -202,7 +279,14 @@ export function JobFinderPanel({ setActive }) {
   // nyangkut di halaman yang jadi kosong setelah hasilnya berubah.
   useEffect(() => {
     setPage(1);
-  }, [query, filterLokasi, filterTipeKerja, matchOnly, jobs.length]);
+  }, [
+    query,
+    filterLokasi,
+    filterKota,
+    filterTipeKerja,
+    matchOnly,
+    jobs.length,
+  ]);
 
   // Belum langganan: hanya BATAS_GRATIS loker teratas yang boleh dirender.
   const bolehLihat = langganan.aktif
@@ -221,6 +305,33 @@ export function JobFinderPanel({ setActive }) {
     <div style={{ padding: hp ? "16px 14px" : 28 }}>
       <BilahLangganan langganan={langganan} onLangganan={keParket} />
       <DataSourceBanner />
+
+      {/* Konfirmasi melayang setelah menyimpan lamaran */}
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 100,
+            background: T.ink,
+            color: "#fff",
+            fontSize: 12.5,
+            fontWeight: 500,
+            padding: "11px 18px",
+            borderRadius: 12,
+            boxShadow: "0 8px 28px rgba(0,0,0,0.22)",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            maxWidth: "90vw",
+          }}
+        >
+          <Check size={14} color={T.teal} />
+          {toast}
+        </div>
+      )}
       {!hasProfile && (
         <div
           style={{
@@ -278,6 +389,54 @@ export function JobFinderPanel({ setActive }) {
             }}
           />
         </div>
+        {/* Filter kota — dropdown karena jumlah kota bisa puluhan.
+            Muncul begitu ada minimal satu kota di data. Sebelumnya
+            ambangnya > 2 dan bergantung katalog yang sudah dimuat penuh,
+            sehingga saat data belum siap (mis. baru buka halaman) filter
+            tidak pernah tampil. */}
+        {kotaOptions.length > 1 && (
+          <div>
+            <div
+              style={{
+                fontSize: 11,
+                color: T.inkFaint,
+                textTransform: "uppercase",
+                letterSpacing: "0.04em",
+                marginBottom: 6,
+              }}
+            >
+              Kota
+            </div>
+            <select
+              value={filterKota}
+              onChange={(e) => setFilterKota(e.target.value)}
+              style={{
+                width: "100%",
+                maxWidth: 260,
+                padding: "9px 12px",
+                borderRadius: 10,
+                border: `1px solid ${filterKota !== "Semua" ? T.accent : T.border}`,
+                background:
+                  filterKota !== "Semua"
+                    ? T.accentSoft
+                    : "rgba(255,255,255,0.6)",
+                color: filterKota !== "Semua" ? T.accent : T.ink,
+                fontSize: 12.5,
+                fontWeight: 600,
+                fontFamily: "'Poppins', sans-serif",
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {kotaOptions.map((k) => (
+                <option key={k} value={k}>
+                  {k === "Semua" ? "Semua kota" : k}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div>
           <div
             style={{

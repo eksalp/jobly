@@ -37,9 +37,7 @@ serve(async (req) => {
     // Verifikasi tanda tangan Midtrans.
     // Tanpa ini, siapa pun bisa memalsukan notifikasi dan mengaktifkan
     // langganan tanpa membayar.
-    const serverKey = Deno.env.get("MIDTRANS_SERVER_KEY");
-    if (!serverKey)
-      return json({ error: "MIDTRANS_SERVER_KEY belum di-set." }, 500);
+    const serverKey = Deno.env.get("MIDTRANS_SERVER_KEY")!;
     const bahan = order_id + status_code + gross_amount + serverKey;
     const buf = await crypto.subtle.digest(
       "SHA-512",
@@ -127,7 +125,12 @@ serve(async (req) => {
         status: "aktif",
         mulai_at: mulai.toISOString(),
         berakhir_at: berakhir.toISOString(),
+        // KETIGA kuota wajib diisi. Sebelumnya hanya kuota_analisis yang
+        // diset, sehingga pembeli paket Pro/Max membayar penuh tapi kuota
+        // Pindah Karier dan Interview-nya tetap nol.
         kuota_analisis: paket.kuotaAnalisis,
+        kuota_pindah: paket.kuotaPindah ?? 0,
+        kuota_interview: paket.kuotaInterview ?? 0,
       })
       .eq("id", lang.id);
 
