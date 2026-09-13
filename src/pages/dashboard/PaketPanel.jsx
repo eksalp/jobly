@@ -141,17 +141,29 @@ export function PaketPanel() {
 
       window.snap.pay(data.snapToken, {
         onSuccess: async () => {
-          // Webhook Midtrans yang mengaktifkan langganan di server.
-          // Jeda singkat memberi waktu webhook tiba sebelum kita periksa.
-          await new Promise((r) => setTimeout(r, 2500));
-          await langganan.refresh();
           setProses(null);
-          // Kadang webhook baru tiba beberapa detik kemudian, atau
-          // langganan lama masih ter-cache. Menyarankan refresh memastikan
-          // user melihat kuota barunya tanpa mengira pembayarannya gagal.
+          setSukses("Pembayaran berhasil! Mengaktifkan paketmu...");
+
+          // Webhook Midtrans mengaktifkan langganan di server, dan waktu
+          // tibanya tidak pasti — kadang instan, kadang beberapa detik.
+          // Diperiksa berulang sampai kuota bertambah, bukan sekali lalu
+          // menyerah.
+          const kuotaAwal = langganan.sisaAnalisis;
+          let bertambah = false;
+          for (let i = 0; i < 5; i++) {
+            await new Promise((r) => setTimeout(r, 2500));
+            await langganan.refresh();
+            if (langganan.sisaAnalisis > kuotaAwal || langganan.aktif) {
+              bertambah = true;
+              break;
+            }
+          }
+
           setSukses(
-            "Pembayaran berhasil! Kalau kuota belum bertambah, muat ulang " +
-              "halaman ini sebentar — paketmu sedang diaktifkan.",
+            bertambah
+              ? "Pembayaran berhasil dan paketmu sudah aktif! Selamat menggunakan."
+              : "Pembayaran berhasil! Paketmu sedang diaktifkan — muat ulang " +
+                  "halaman ini sebentar kalau kuota belum terlihat bertambah.",
           );
         },
         onPending: () => {
