@@ -177,7 +177,7 @@ export function LandingPage({ go }) {
             letterSpacing: "-0.02em",
           }}
         >
-          Satu tempat untuk mencari di semuanya sekaligus
+          Satu tempat untuk mencari semua loker sekaligus
         </h1>
 
         <p
