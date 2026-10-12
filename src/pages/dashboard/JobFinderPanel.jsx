@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Search, X, Sparkles } from "lucide-react";
 import { useJobs } from "../../context/JobsContext";
 import { useUserProfile } from "../../context/UserProfileContext";
@@ -14,6 +14,8 @@ import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLok
 import { useToast } from "../../components/publik/PublicLayout";
 import { useApplications } from "../../hooks/useApplications";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
+import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
+import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
 
 // Kelipatan 4 supaya baris terakhir grid 4 kolom selalu penuh
 const PER_MUAT = 24;
@@ -106,6 +108,8 @@ export function JobFinderPanel({ setActive }) {
   const { user } = useAuth();
   const { tambah: tambahLamaran, sudahDilamar } = useApplications();
   const hp = useLayarKecil(600);
+  const sentinel = useRef(null);
+  usePintasanCari("cari-cocok");
   const [toast, elemenToast] = useToast();
 
   const [query, setQuery] = useState("");
@@ -189,6 +193,10 @@ export function JobFinderPanel({ setActive }) {
         (!q || `${j.posisi} ${j.perusahaan}`.toLowerCase().includes(q)),
     );
   }, [ranked, jobs, matchOnly, hasProfile, query, filterLokasi, filterTipe, filterKota]);
+
+  useMuatOtomatis(sentinel, !loading && filtered.length > tampil, () =>
+    setTampil((n) => n + PER_MUAT),
+  );
 
   useEffect(() => {
     setTampil(PER_MUAT);
@@ -286,6 +294,7 @@ export function JobFinderPanel({ setActive }) {
         </div>
       </div>
 
+      {!loading && <InfoKuotaLoker />}
       <div className="pb-toolbar">
         <span className="count">
           {loading ? (
@@ -371,15 +380,20 @@ export function JobFinderPanel({ setActive }) {
       </div>
 
       {!loading && filtered.length > tampil && (
-        <div className="pb-more">
+        <div className="pb-more" ref={sentinel}>
           <button type="button" className="pb-btn pb-btn-outline" onClick={() => setTampil((n) => n + PER_MUAT)}>
             Muat lebih banyak
           </button>
           Menampilkan {tampil.toLocaleString("id-ID")} dari {filtered.length.toLocaleString("id-ID")}
         </div>
       )}
+      {!loading && filtered.length <= tampil && (
+        <div className="pb-grid" style={{ marginTop: 18 }}>
+          <KartuKunci />
+        </div>
+      )}
       {!loading && filtered.length > 0 && filtered.length <= tampil && (
-        <div className="pb-more">Semua loker sudah ditampilkan.</div>
+        <div className="pb-more">Semua loker yang terbuka sudah ditampilkan.</div>
       )}
 
       {elemenToast}

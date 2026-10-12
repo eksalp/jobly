@@ -13,7 +13,7 @@ const keHalaman = (path) => (e) => {
  */
 export function AuthWrap({ children }) {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#fff" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--t-surface)" }}>
       <header style={{ borderBottom: `1px solid ${T.border}` }}>
         <div
           style={{
@@ -59,7 +59,7 @@ export function AuthWrap({ children }) {
               border: `1px solid ${T.border}`,
               borderRadius: 18,
               padding: "34px 30px",
-              background: "#fff",
+              background: "var(--t-surface)",
             }}
           >
             {children}

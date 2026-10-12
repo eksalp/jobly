@@ -34,6 +34,7 @@ import { PilihDraftAi } from "../../components/PilihDraftAi";
 import { GerbangFitur } from "../../components/GerbangFitur";
 import { useLangganan } from "../../hooks/useLangganan";
 import { Button } from "../../components/ui/Button";
+import { FONT_CV, TEMA_CV, AKSEN_CV, GAYA_AWAL, bacaGaya, hexKeRgb, pasangFontPdf } from "../../data/cvGaya";
 
 /* ------------------------------------------------------------------ */
 /*  HELPERS                                                             */
@@ -602,7 +603,7 @@ function Field({
     padding: "9px 12px",
     fontSize: 13,
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-    background: "rgba(255,255,255,0.65)",
+    background: "var(--t-field)",
     outline: "none",
     color: T.ink,
     resize: multiline ? "vertical" : "none",
@@ -710,7 +711,7 @@ function BulletListField({ label, items, onChange, placeholder, tipKey }) {
                   padding: "8px 10px",
                   fontSize: 12.5,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: "rgba(255,255,255,0.65)",
+                  background: "var(--t-field)",
                   outline: "none",
                   color: T.ink,
                 }}
@@ -721,7 +722,7 @@ function BulletListField({ label, items, onChange, placeholder, tipKey }) {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  color: "#B23A3A",
+                  color: "var(--t-danger)",
                   padding: "8px 2px",
                   flexShrink: 0,
                 }}
@@ -751,7 +752,7 @@ function BulletListField({ label, items, onChange, placeholder, tipKey }) {
             padding: "9px 12px",
             fontSize: 13,
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-            background: "rgba(255,255,255,0.65)",
+            background: "var(--t-field)",
             outline: "none",
             color: T.ink,
           }}
@@ -803,7 +804,7 @@ function DeleteBtn({ onClick }) {
         alignItems: "center",
         gap: 5,
         fontSize: 11.5,
-        color: "#B23A3A",
+        color: "var(--t-danger)",
         background: "none",
         border: "none",
         cursor: "pointer",
@@ -824,7 +825,7 @@ function ItemWrap({ children }) {
         borderRadius: 12,
         padding: 14,
         marginBottom: 10,
-        background: "rgba(255,255,255,0.45)",
+        background: "var(--t-field)",
       }}
     >
       {children}
@@ -1316,7 +1317,7 @@ function PratinjauBerhalaman({ children }) {
             height: 30,
             borderRadius: 9,
             border: `1px solid ${T.border}`,
-            background: "rgba(255,255,255,0.8)",
+            background: "var(--t-field)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -1349,7 +1350,7 @@ function PratinjauBerhalaman({ children }) {
             height: 30,
             borderRadius: 9,
             border: `1px solid ${T.border}`,
-            background: "rgba(255,255,255,0.8)",
+            background: "var(--t-field)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -1367,35 +1368,51 @@ function PratinjauBerhalaman({ children }) {
 
 function CVPreview({ data, L }) {
   const lang = React.useContext(LangContext);
+  const { font, tema, aksen } = bacaGaya(data.gaya);
+  const k = font.skala || 1; // penyeimbang ukuran antar-font
+  const px = (n) => n * k;
+  const tengah = tema === "eksekutif";
+  const ringkas = tema === "ringkas";
+  const warnaNama = tema === "modern" ? aksen.hex : "#111";
+  const warnaJudul = tema === "modern" || ringkas ? aksen.hex : "#333";
   const s = {
     wrap: {
-      fontFamily: "Arial, Helvetica, sans-serif",
-      fontSize: 10.5,
-      lineHeight: 1.55,
+      fontFamily: font.css,
+      fontSize: px(10.5),
+      lineHeight: ringkas ? 1.45 : 1.55,
       color: "#111",
       width: 680,
-      padding: "36px 48px",
+      padding: ringkas ? "30px 42px" : "36px 48px",
       background: "#fff",
       boxSizing: "border-box",
     },
-    name: { fontSize: 21, fontWeight: 700, color: "#111", marginBottom: 2 },
-    headline: { fontSize: 12, color: "#444", marginBottom: 6 },
+    name: {
+      fontSize: px(tengah ? 22 : tema === "modern" ? 23 : 21),
+      fontWeight: 700,
+      color: warnaNama,
+      marginBottom: 2,
+      textAlign: tengah ? "center" : "left",
+      letterSpacing: tengah ? "0.06em" : tema === "modern" ? "-0.01em" : 0,
+      textTransform: tengah ? "uppercase" : "none",
+    },
+    headline: { fontSize: px(12), color: "#444", marginBottom: 6, textAlign: tengah ? "center" : "left" },
     contact: {
-      fontSize: 10,
+      fontSize: px(10),
       color: "#555",
       display: "flex",
       flexWrap: "wrap",
-      gap: "3px 14px",
-      marginBottom: 14,
+      justifyContent: tengah ? "center" : "flex-start",
+      gap: "3px 0",
+      marginBottom: ringkas ? 8 : 14,
     },
-    divider: { borderTop: "1.5px solid #111", margin: "3px 0 0" },
+    divider: { borderTop: `${tema === "klasik" ? 1.5 : 0.75}px solid ${tema === "klasik" ? aksen.hex : aksen.hex}`, margin: "3px 0 0" },
     thinDivider: { borderTop: "0.5px solid #ccc", margin: "8px 0 6px" },
     sectionTitle: {
-      fontSize: 10,
+      fontSize: px(ringkas || tema === "modern" ? 10.5 : 10),
       fontWeight: 700,
       textTransform: "uppercase",
       letterSpacing: "0.08em",
-      color: "#333",
+      color: warnaJudul,
       marginBottom: 0,
     },
     // Satu entri pengalaman/pendidikan tidak boleh terbelah dua halaman.
@@ -1414,26 +1431,26 @@ function CVPreview({ data, L }) {
     // dan malah menabrak kolom tanggal di sebelah kanan.
     roleText: {
       fontWeight: 700,
-      fontSize: 11,
+      fontSize: px(11),
       color: "#111",
       flex: 1,
       minWidth: 0,
       lineHeight: 1.35,
     },
     metaText: {
-      fontSize: 9.5,
+      fontSize: px(9.5),
       color: "#666",
       textAlign: "right",
       flexShrink: 0,
       whiteSpace: "nowrap",
       paddingTop: 1,
     },
-    subText: { fontSize: 10, color: "#555", marginTop: 1 },
+    subText: { fontSize: px(10), color: "#555", marginTop: 1 },
     descText: {
-      fontSize: 9.5,
+      fontSize: px(9.5),
       color: "#444",
       marginTop: 2,
-      lineHeight: 1.5,
+      lineHeight: ringkas ? 1.42 : 1.5,
       paddingLeft: 4,
       textAlign: "justify",
       // Tanpa hyphens, teks rata kanan-kiri menghasilkan celah antarkata
@@ -1442,24 +1459,39 @@ function CVPreview({ data, L }) {
       WebkitHyphens: "auto",
     },
     skillRow: { display: "flex", flexWrap: "wrap", gap: "3px 10px" },
-    skillTag: { fontSize: 10, color: "#333" },
+    skillTag: { fontSize: px(10), color: "#333" },
   };
 
-  // Garis berada DI BAWAH judul, bukan di atasnya — judul jadi terbaca
-  // menempel pada isinya, bukan mengambang di antara dua bagian.
+  // Judul bagian mengikuti tema. Semua tetap teks biasa — ATS membacanya
+  // sebagai judul standar ("Pengalaman Kerja", "Pendidikan", dst).
   const Section = ({ title }) => (
     <div
       data-blok=""
       data-jaga=""
       style={{
-        marginTop: 12,
-        marginBottom: 6,
+        marginTop: ringkas ? 9 : 12,
+        marginBottom: ringkas ? 4 : 6,
         breakAfter: "avoid",
         pageBreakAfter: "avoid",
       }}
     >
-      <div style={s.sectionTitle}>{title}</div>
-      <div style={s.divider} />
+      {tengah ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ flex: 1, borderTop: `0.75px solid ${aksen.hex}` }} />
+          <div style={s.sectionTitle}>{title}</div>
+          <span style={{ flex: 1, borderTop: `0.75px solid ${aksen.hex}` }} />
+        </div>
+      ) : ringkas ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+          <span style={{ width: 3.5, height: px(11), background: aksen.hex, borderRadius: 1 }} />
+          <div style={s.sectionTitle}>{title}</div>
+        </div>
+      ) : (
+        <>
+          <div style={s.sectionTitle}>{title}</div>
+          <div style={s.divider} />
+        </>
+      )}
     </div>
   );
 
@@ -1522,11 +1554,17 @@ function CVPreview({ data, L }) {
       {/* Header */}
       <div style={s.name}>{data.fullName || "Nama Lengkap"}</div>
       {data.headline && <div style={s.headline}>{data.headline}</div>}
+      {/* Kontak dipisah garis tegak, tanpa ikon — ikon sering terbaca
+          sebagai karakter acak oleh ATS dan tidak ikut di PDF. */}
       <div style={s.contact}>
-        {data.email && <span>✉ {data.email}</span>}
-        {data.phone && <span>☏ {data.phone}</span>}
-        {data.location && <span>⌖ {data.location}</span>}
-        {data.linkedin && <span>in {data.linkedin}</span>}
+        {[data.email, data.phone, data.location, data.linkedin]
+          .filter(Boolean)
+          .map((c, i) => (
+            <span key={i}>
+              {i > 0 && <span style={{ color: "#aaa", margin: "0 8px" }}>|</span>}
+              {c}
+            </span>
+          ))}
       </div>
 
       {/* Ringkasan */}
@@ -1719,6 +1757,119 @@ function CVPreview({ data, L }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Pilihan tampilan: font, tema, warna aksen                           */
+/* ------------------------------------------------------------------ */
+function ThumbTema({ id, warna }) {
+  // Sketsa kecil tiap tema — cukup untuk membedakan, bukan pratinjau penuh
+  const garis = (w, tebal = 2, c = "#c9ced6") => (
+    <i style={{ display: "block", height: tebal, width: w, background: c, borderRadius: 2 }} />
+  );
+  const tengah = id === "eksekutif";
+  return (
+    <div className="cv-thumb" aria-hidden="true">
+      <div style={{ display: "grid", gap: 3, justifyItems: tengah ? "center" : "start" }}>
+        {garis(tengah ? "60%" : "55%", 4, id === "modern" ? warna : "#2b2f36")}
+        {garis(tengah ? "42%" : "38%", 2)}
+      </div>
+      {[0, 1].map((n) => (
+        <div key={n} style={{ display: "grid", gap: 3, marginTop: 7 }}>
+          {id === "eksekutif" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              {garis("100%", 1, warna)}
+              {garis(16, 2, "#2b2f36")}
+              {garis("100%", 1, warna)}
+            </div>
+          ) : id === "ringkas" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+              <i style={{ width: 2, height: 6, background: warna }} />
+              {garis(20, 2, warna)}
+            </div>
+          ) : (
+            <>
+              {garis(22, 2, id === "modern" ? warna : "#2b2f36")}
+              {garis("100%", id === "klasik" ? 1.5 : 1, warna)}
+            </>
+          )}
+          {garis("92%")}
+          {garis("80%")}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PilihGayaCv({ gaya, onUbah, lang }) {
+  const { font, tema, aksen } = bacaGaya(gaya);
+  const id = lang === "ID";
+  return (
+    <SectionCard title={id ? "Tampilan CV" : "CV appearance"} icon={Sparkles}>
+      <div className="cv-gaya">
+        <div className="cv-gaya-h">
+          {id ? "Tema" : "Theme"}
+          <span className="cv-ats">
+            <Check size={12} /> {id ? "Semua tema ramah ATS" : "All themes are ATS-friendly"}
+          </span>
+        </div>
+        <div className="cv-tema">
+          {TEMA_CV.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              className={tema === t.id ? "on" : ""}
+              aria-pressed={tema === t.id}
+              onClick={() => onUbah("tema", t.id)}
+              title={t.ket}
+            >
+              <ThumbTema id={t.id} warna={aksen.hex} />
+              <span>{t.nama}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="cv-gaya-h">{id ? "Font" : "Font"}</div>
+        <div className="cv-font">
+          {FONT_CV.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              className={font.id === f.id ? "on" : ""}
+              aria-pressed={font.id === f.id}
+              onClick={() => onUbah("font", f.id)}
+            >
+              <b style={{ fontFamily: f.css }}>{f.nama}</b>
+              <small>{f.ket}</small>
+            </button>
+          ))}
+        </div>
+
+        <div className="cv-gaya-h">{id ? "Warna aksen" : "Accent colour"}</div>
+        <div className="cv-aksen">
+          {AKSEN_CV.map((a) => (
+            <button
+              key={a.id}
+              type="button"
+              className={aksen.id === a.id ? "on" : ""}
+              aria-pressed={aksen.id === a.id}
+              aria-label={a.nama}
+              title={a.nama}
+              onClick={() => onUbah("aksen", a.id)}
+              style={{ "--w": a.hex }}
+            >
+              {aksen.id === a.id && <Check size={13} />}
+            </button>
+          ))}
+          <small>
+            {id
+              ? "Aksen hanya mewarnai garis & judul. Isi CV tetap hitam agar mudah dibaca dan dicetak."
+              : "Accent only colours rules & headings. Body text stays black for print and ATS."}
+          </small>
+        </div>
+      </div>
+    </SectionCard>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  MAIN PANEL                                                          */
 /* ------------------------------------------------------------------ */
 export function CVBuilderPanel({ setActive }) {
@@ -1760,8 +1911,11 @@ export function CVBuilderPanel({ setActive }) {
       { id: uid(), name: "", issuer: "", year: "", license: "", url: "" },
     ],
     skills: [],
+    gaya: { ...GAYA_AWAL },
   });
   const [newSkill, setNewSkill] = useState("");
+  const setGaya = (kunci, nilai) =>
+    setData((prev) => ({ ...prev, gaya: { ...GAYA_AWAL, ...(prev.gaya || {}), [kunci]: nilai } }));
 
   // Isi awal dari profil user
   useEffect(() => {
@@ -1991,13 +2145,33 @@ export function CVBuilderPanel({ setActive }) {
     try {
       // jsPDF sudah di-import statis di atas (npm install jspdf)
       const doc = new jsPDF({ unit: "mm", format: "a4" });
-      const margin = 20,
+      const { font, tema, aksen } = bacaGaya(data.gaya);
+      // Font pilihan disematkan ke PDF; font bawaan langsung dipakai
+      const F = await pasangFontPdf(doc, font);
+      const k = font.skala || 1;
+      const setUkuran = (n) => doc.setFontSize(n * k);
+      const AKS = hexKeRgb(aksen.hex);
+      const tengah = tema === "eksekutif";
+      const ringkas = tema === "ringkas";
+      doc.setProperties({
+        title: `CV ${data.fullName || ""}`.trim(),
+        subject: "Curriculum Vitae",
+        creator: "Jobly CV Builder",
+      });
+      const margin = ringkas ? 16 : 20,
         pageW = 210,
         contentW = pageW - margin * 2,
         BATAS_BAWAH = 278; // batas bawah area cetak (mm)
       let y = margin;
 
-      const safe = (t) =>
+      // Font yang disematkan memuat seluruh huruf Latin (é, ü, “ ”, –),
+      // jadi cukup buang karakter di luar itu (emoji, aksara lain).
+      const safe = font.file
+        ? (t) =>
+            (t || "")
+              .toString()
+              .replace(/[^\x00-\xFF\u2013\u2014\u2018\u2019\u201C\u201D\u2022\u2026\u20AC]/g, "")
+        : (t) =>
         (t || "")
           .toString()
           // Font bawaan jsPDF memakai WinAnsiEncoding, yang sudah memuat
@@ -2057,10 +2231,11 @@ export function CVBuilderPanel({ setActive }) {
           indent = 0,
           lineH = 5.5,
           justify = false,
+          rataTengah = false,
         } = {},
       ) => {
-        doc.setFontSize(size);
-        doc.setFont("helvetica", bold ? "bold" : "normal");
+        setUkuran(size);
+        doc.setFont(F, bold ? "bold" : "normal");
         doc.setTextColor(...color);
 
         const lebar = contentW - indent;
@@ -2073,7 +2248,9 @@ export function CVBuilderPanel({ setActive }) {
           }
           // Baris terakhir tidak diratakan — kalau dipaksa, celah antarkata
           // jadi menganga karena isinya cuma beberapa kata.
-          if (justify && i < lines.length - 1) {
+          if (rataTengah) {
+            doc.text(line, pageW / 2, y, { align: "center" });
+          } else if (justify && i < lines.length - 1) {
             gambarBarisRata(line, margin + indent, y, lebar);
           } else {
             doc.text(line, margin + indent, y);
@@ -2090,8 +2267,8 @@ export function CVBuilderPanel({ setActive }) {
         const indentTeks = 5;
 
         items.filter(Boolean).forEach((d) => {
-          doc.setFontSize(8.8);
-          doc.setFont("helvetica", "normal");
+          setUkuran(8.8);
+          doc.setFont(F, "normal");
           doc.setTextColor(60, 60, 60);
 
           const lines = doc.splitTextToSize(safe(d), contentW - indentTeks);
@@ -2141,19 +2318,54 @@ export function CVBuilderPanel({ setActive }) {
           doc.addPage();
           y = margin;
         }
-        y += 4;
-        // Jarak antarhuruf meniru letterSpacing 0.08em di pratinjau —
-        // tanpa ini judul section terasa lebih padat daripada versi web.
+        const judul = safe(title.toUpperCase());
+        y += ringkas ? 3 : 4;
+
+        if (tengah) {
+          // Judul di tengah, diapit garis tipis kiri-kanan
+          setUkuran(9);
+          doc.setFont(F, "bold");
+          doc.setCharSpace(0.4);
+          doc.setTextColor(40, 40, 40);
+          const w = doc.getTextWidth(judul) + judul.length * 0.4;
+          doc.text(judul, pageW / 2, y, { align: "center" });
+          doc.setCharSpace(0);
+          doc.setDrawColor(...AKS);
+          doc.setLineWidth(0.25);
+          const ty = y - 1.2;
+          doc.line(margin, ty, pageW / 2 - w / 2 - 3, ty);
+          doc.line(pageW / 2 + w / 2 + 3, ty, pageW - margin, ty);
+          y += 5;
+          return;
+        }
+
+        if (ringkas) {
+          // Penanda kecil berwarna aksen, tanpa garis
+          doc.setFillColor(...AKS);
+          doc.rect(margin, y - 3.1, 1.1, 3.8, "F");
+          setUkuran(9.6);
+          doc.setFont(F, "bold");
+          doc.setCharSpace(0.35);
+          doc.setTextColor(...AKS);
+          doc.text(judul, margin + 3.2, y);
+          doc.setCharSpace(0);
+          y += 4.6;
+          return;
+        }
+
+        // Klasik & modern: judul, lalu garis di bawahnya
         doc.setCharSpace(0.4);
         addText(title.toUpperCase(), {
-          size: 9,
+          size: tema === "modern" ? 9.6 : 9,
           bold: true,
-          lineH: 3.5,
-          color: [60, 60, 60],
+          lineH: 1.8,
+          color: tema === "modern" ? AKS : [60, 60, 60],
         });
         doc.setCharSpace(0);
-        divider(false);
-        y += 1.5;
+        doc.setDrawColor(...AKS);
+        doc.setLineWidth(tema === "klasik" ? 0.45 : 0.25);
+        doc.line(margin, y, pageW - margin, y);
+        y += 5.6;
       };
 
       /**
@@ -2167,11 +2379,11 @@ export function CVBuilderPanel({ setActive }) {
         let t = 0;
 
         // Judul (bisa membungkus kalau panjang)
-        doc.setFontSize(8.5);
-        doc.setFont("helvetica", "normal");
+        setUkuran(8.5);
+        doc.setFont(F, "normal");
         const lebarKanan = tanggal ? doc.getTextWidth(safe(tanggal)) + 4 : 0;
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
+        setUkuran(10);
+        doc.setFont(F, "bold");
         t +=
           doc.splitTextToSize(safe(judulKiri), contentW - lebarKanan).length *
             4.8 +
@@ -2179,15 +2391,15 @@ export function CVBuilderPanel({ setActive }) {
 
         // Sub-teks (nama perusahaan / institusi)
         if (subTeks) {
-          doc.setFontSize(9);
-          doc.setFont("helvetica", "normal");
+          setUkuran(9);
+          doc.setFont(F, "normal");
           t += doc.splitTextToSize(safe(subTeks), contentW).length * 4.4;
         }
 
         // Bullet
         if (Array.isArray(bullets)) {
-          doc.setFontSize(8.8);
-          doc.setFont("helvetica", "normal");
+          setUkuran(8.8);
+          doc.setFont(F, "normal");
           bullets.filter(Boolean).forEach((b) => {
             t += doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
           });
@@ -2215,23 +2427,23 @@ export function CVBuilderPanel({ setActive }) {
           y = margin;
         }
 
-        doc.setFontSize(8.5);
-        doc.setFont("helvetica", "normal");
+        setUkuran(8.5);
+        doc.setFont(F, "normal");
         const lebarKanan = right ? doc.getTextWidth(safe(right)) + 4 : 0;
 
-        doc.setFontSize(10);
-        doc.setFont("helvetica", "bold");
+        setUkuran(10);
+        doc.setFont(F, "bold");
         doc.setTextColor(0, 0, 0);
         const lines = doc.splitTextToSize(safe(left), contentW - lebarKanan);
 
         // Tanggal ditulis sejajar baris pertama judul
         if (right) {
-          doc.setFontSize(8.5);
-          doc.setFont("helvetica", "normal");
+          setUkuran(8.5);
+          doc.setFont(F, "normal");
           doc.setTextColor(110, 110, 110);
           doc.text(safe(right), pageW - margin, y, { align: "right" });
-          doc.setFontSize(10);
-          doc.setFont("helvetica", "bold");
+          setUkuran(10);
+          doc.setFont(F, "bold");
           doc.setTextColor(0, 0, 0);
         }
 
@@ -2247,13 +2459,17 @@ export function CVBuilderPanel({ setActive }) {
       };
 
       // Header
-      addText(data.fullName || "Nama Lengkap", {
-        size: 19,
+      if (tengah) doc.setCharSpace(0.8);
+      addText(tengah ? (data.fullName || "Nama Lengkap").toUpperCase() : data.fullName || "Nama Lengkap", {
+        size: tema === "modern" ? 21 : 19,
         bold: true,
         lineH: 8,
+        color: tema === "modern" ? AKS : [0, 0, 0],
+        rataTengah: tengah,
       });
+      doc.setCharSpace(0);
       if (data.headline)
-        addText(data.headline, { size: 10.5, color: [70, 70, 70], lineH: 5.5 });
+        addText(data.headline, { size: 10.5, color: [70, 70, 70], lineH: 5.5, rataTengah: tengah });
       const contacts = [
         data.email,
         data.phone,
@@ -2266,10 +2482,12 @@ export function CVBuilderPanel({ setActive }) {
           size: 8.8,
           color: [100, 100, 100],
           lineH: 5,
+          rataTengah: tengah,
         });
       }
       y += 2;
 
+      y += ringkas ? -1 : 0;
       if (data.summary) {
         section(L.summary);
         addText(data.summary, {
@@ -2375,8 +2593,8 @@ export function CVBuilderPanel({ setActive }) {
       if (data.skills.length) {
         section(L.skills);
 
-        doc.setFontSize(9.2);
-        doc.setFont("helvetica", "normal");
+        setUkuran(9.2);
+        doc.setFont(F, "normal");
         doc.setTextColor(45, 45, 45);
 
         const lebarTitik = 1.0; // diameter titik
@@ -2470,7 +2688,7 @@ export function CVBuilderPanel({ setActive }) {
               gap: 6,
               padding: 4,
               borderRadius: 12,
-              background: "rgba(0,0,0,0.05)",
+              background: "var(--t-track)",
               position: "sticky",
               top: 0,
               zIndex: 5,
@@ -2492,7 +2710,7 @@ export function CVBuilderPanel({ setActive }) {
                   fontSize: 12.5,
                   fontWeight: 600,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: tabHp === t.key ? "#fff" : "transparent",
+                  background: tabHp === t.key ? "var(--t-surface)" : "transparent",
                   color: tabHp === t.key ? T.accent : T.inkSoft,
                   boxShadow:
                     tabHp === t.key ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
@@ -2551,6 +2769,8 @@ export function CVBuilderPanel({ setActive }) {
               onLangganan={() => setActive?.("paket")}
             />
           )}
+
+          <PilihGayaCv gaya={data.gaya} onUbah={setGaya} lang={lang} />
 
           <SectionCard title={L.personal} icon={User}>
             <Field
@@ -2807,7 +3027,7 @@ export function CVBuilderPanel({ setActive }) {
                   padding: "8px 12px",
                   fontSize: 12.5,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: "rgba(255,255,255,0.6)",
+                  background: "var(--t-field)",
                   outline: "none",
                   color: T.ink,
                 }}
@@ -2842,7 +3062,7 @@ export function CVBuilderPanel({ setActive }) {
               flexWrap: "wrap",
               marginBottom: 12,
               flexShrink: 0,
-              background: "rgba(250,251,253,0.9)",
+              background: "var(--t-surface)",
               backdropFilter: "blur(8px)",
               borderRadius: 14,
               padding: layarKecil ? "10px 12px" : "10px 14px",
@@ -2883,7 +3103,7 @@ export function CVBuilderPanel({ setActive }) {
               <div
                 style={{
                   display: "flex",
-                  background: "rgba(0,0,0,0.05)",
+                  background: "var(--t-track)",
                   borderRadius: 10,
                   padding: 3,
                   gap: 2,
@@ -2901,7 +3121,7 @@ export function CVBuilderPanel({ setActive }) {
                       fontSize: 12,
                       fontWeight: 600,
                       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                      background: lang === l ? "#fff" : "transparent",
+                      background: lang === l ? "var(--t-surface)" : "transparent",
                       color: lang === l ? T.accent : T.inkSoft,
                       boxShadow:
                         lang === l ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
@@ -2967,10 +3187,10 @@ export function CVBuilderPanel({ setActive }) {
             >
               <AlertTriangle
                 size={15}
-                color="#B45309"
+                color="var(--t-warn)"
                 style={{ flexShrink: 0 }}
               />
-              <div style={{ fontSize: 12, color: "#92400E", lineHeight: 1.4 }}>
+              <div style={{ fontSize: 12, color: "var(--t-warn-ink)", lineHeight: 1.4 }}>
                 {lang === "ID"
                   ? "Ada perubahan yang belum disimpan. Klik "
                   : "You have unsaved changes. Click "}
@@ -2990,7 +3210,7 @@ export function CVBuilderPanel({ setActive }) {
               minHeight: 0,
               border: `1px solid ${T.border}`,
               borderRadius: 16,
-              background: "#e8e8e8",
+              background: "var(--t-surface2)",
               boxShadow: "inset 0 2px 8px rgba(0,0,0,0.06)",
             }}
           >

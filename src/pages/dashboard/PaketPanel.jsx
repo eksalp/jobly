@@ -206,7 +206,7 @@ export function PaketPanel() {
             lineHeight: 1.65,
           }}
         >
-          Semua loker, CV Builder, dan LinkedIn Builder gratis selamanya.
+          5.000 loker, CV Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka seluruh loker.
           Paket berbayar menambah kuota analisis AI, Pindah Karier, dan
           simulasi interview.
         </div>
@@ -247,7 +247,7 @@ export function PaketPanel() {
             <span
               style={{
                 fontSize: 11.5,
-                color: "#B45309",
+                color: "var(--t-warn)",
                 display: "flex",
                 alignItems: "center",
                 gap: 5,
@@ -274,10 +274,10 @@ export function PaketPanel() {
         >
           <AlertCircle
             size={15}
-            color="#B45309"
+            color="var(--t-warn)"
             style={{ flexShrink: 0, marginTop: 1 }}
           />
-          <div style={{ fontSize: 12, color: "#92400E", lineHeight: 1.6 }}>
+          <div style={{ fontSize: 12, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
             Kuota kamu masih banyak —{" "}
             <strong>{langganan.sisaAnalisis} analisis tersisa</strong> dan aktif{" "}
             {langganan.sisaHari} hari lagi. Kalau tetap membeli, kuotanya
@@ -334,8 +334,8 @@ export function PaketPanel() {
             gap: 9,
           }}
         >
-          <AlertCircle size={14} color="#B23A3A" style={{ flexShrink: 0 }} />
-          <span style={{ fontSize: 12.5, color: "#B23A3A" }}>{galat}</span>
+          <AlertCircle size={14} color="var(--t-danger)" style={{ flexShrink: 0 }} />
+          <span style={{ fontSize: 12.5, color: "var(--t-danger)" }}>{galat}</span>
         </Glass>
       )}
 

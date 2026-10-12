@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { AnalyzerPanel } from "./AnalyzerPanel";
 import { ProfilKarierPanel } from "./ProfilKarierPanel";
 import { CVBuilderPanel } from "./CVBuilderPanel";
@@ -12,7 +12,8 @@ import { PindahKarierPanel } from "./PindahKarierPanel";
 import { LatihanInterviewPanel } from "./LatihanInterviewPanel";
 import { SimulasiInterviewPanel } from "./SimulasiInterviewPanel";
 import { SettingsPanel } from "./SettingsPanel";
-import { SiteHeader } from "../../components/publik/PublicLayout";
+import { RencanaPanel } from "./RencanaPanel";
+import { SiteHeader, useAnimasiMuncul } from "../../components/publik/PublicLayout";
 import { tautan } from "../../utils/navigasi";
 import { SITUS } from "../../data/situs";
 import {
@@ -26,7 +27,7 @@ import {
  */
 export const PANEL_META = {
   overview: {
-    grup: "Alat AI",
+    grup: "Persiapan",
     title: "Review CV & arah karier",
     desc: "Unggah CV atau profil LinkedIn untuk melihat skor ATS, bidang yang paling cocok, dan loker yang relevan.",
   },
@@ -55,28 +56,33 @@ export const PANEL_META = {
     title: "Loker tersimpan",
     desc: "Lowongan yang kamu tandai untuk dilamar nanti.",
   },
+  rencana: {
+    grup: "Loker",
+    title: "Rencana lamar",
+    desc: "Target mingguan, streak harian, dan misi kecil supaya pencarian kerja tetap jalan.",
+  },
   applications: {
     grup: "Loker",
     title: "Lamaran saya",
     desc: "Catat setiap lamaran dan pantau progresnya sampai tahap akhir.",
   },
   recommendations: {
-    grup: "Alat AI",
+    grup: "Persiapan",
     title: "Rekomendasi karier",
     desc: "Posisi dan bidang yang layak kamu incar berdasarkan profilmu.",
   },
   pindahkarier: {
-    grup: "Alat AI",
+    grup: "Persiapan",
     title: "Pindah karier",
     desc: "Petakan skill yang masih terpakai di bidang baru dan apa saja yang perlu dikejar.",
   },
   interview: {
     grup: "Persiapan",
     title: "Latihan interview",
-    desc: "100+ pertanyaan yang sering menjebak dalam 10 kategori, lengkap dengan strategi menjawabnya.",
+    desc: "140+ pertanyaan dari yang umum sampai level neraka, lengkap dengan strategi, contoh jawaban, dan mode tantangan berwaktu.",
   },
   simulasi: {
-    grup: "Alat AI",
+    grup: "Persiapan",
     title: "Simulasi interview",
     desc: "Wawancara lewat suara dengan pewawancara AI, lalu dapat penilaian dan masukan.",
   },
@@ -106,6 +112,7 @@ export const PANEL_COMPONENTS = {
   simulasi: SimulasiInterviewPanel,
   paket: PaketPanel,
   settings: SettingsPanel,
+  rencana: RencanaPanel,
 };
 
 /** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */
@@ -158,15 +165,17 @@ export function DashboardPage({ go, active, setActive }) {
     setActive(tujuan);
   }
 
+  const akar = useRef(null);
+  useAnimasiMuncul(akar);
   const meta = PANEL_META[active];
   const Panel = PANEL_COMPONENTS[active] ?? PanelTidakDitemukan;
   const tahun = new Date().getFullYear();
 
   return (
-    <div className="pb">
+    <div className="pb" ref={akar}>
       <SiteHeader aktif={`/dashboard/${active}`} />
 
-      <main className="pb-main" style={{ background: "#fff" }}>
+      <main className="pb-main">
         {meta && (
           <div className="pb-app-head">
             <div className="pb-app-wrap">

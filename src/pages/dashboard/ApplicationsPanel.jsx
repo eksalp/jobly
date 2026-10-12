@@ -133,7 +133,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
           <div
             style={{
               fontSize: 10.5,
-              color: "#B45309",
+              color: "var(--t-warn)",
               marginTop: 7,
               lineHeight: 1.4,
             }}
@@ -173,7 +173,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               padding: "7px 10px",
               fontSize: 12,
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              background: "#fff",
+              background: "var(--t-surface)",
               color: T.ink,
               cursor: "pointer",
               marginBottom: 10,
@@ -251,7 +251,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               padding: "7px 10px",
               fontSize: 12,
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              background: "#fff",
+              background: "var(--t-surface)",
               color: T.ink,
               marginBottom: 10,
               boxSizing: "border-box",
@@ -283,7 +283,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               padding: "8px 10px",
               fontSize: 12,
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              background: "#fff",
+              background: "var(--t-surface)",
               color: T.ink,
               resize: "vertical",
               lineHeight: 1.5,
@@ -330,7 +330,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
                 borderRadius: 10,
                 border: `1px solid ${T.border}`,
                 background: "transparent",
-                color: "#B23A3A",
+                color: "var(--t-danger)",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
@@ -381,7 +381,7 @@ function FormTambah({ onTutup, onSimpan }) {
     padding: "9px 12px",
     fontSize: 13,
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-    background: "#fff",
+    background: "var(--t-surface)",
     color: T.ink,
     outline: "none",
     boxSizing: "border-box",
@@ -407,7 +407,7 @@ function FormTambah({ onTutup, onSimpan }) {
           padding: 24,
           width: "100%",
           maxWidth: 440,
-          background: "rgba(255,255,255,0.95)",
+          background: "var(--t-field)",
         }}
       >
         <div
@@ -510,7 +510,7 @@ function FormTambah({ onTutup, onSimpan }) {
         </div>
 
         {galat && (
-          <div style={{ fontSize: 12, color: "#B23A3A", marginTop: 10 }}>
+          <div style={{ fontSize: 12, color: "var(--t-danger)", marginTop: 10 }}>
             {galat}
           </div>
         )}
@@ -572,7 +572,7 @@ export function ApplicationsPanel() {
           alignItems: "center",
           gap: 18,
           marginBottom: 18,
-          background: "rgba(255,255,255,0.7)",
+          background: "var(--t-field)",
           border: `1px solid ${T.border}`,
           borderRadius: 14,
           padding: "14px 18px",

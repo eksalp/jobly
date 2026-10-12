@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import {
   PublicLayout,
@@ -7,6 +7,8 @@ import {
 } from "../../components/publik/PublicLayout";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { useJobs } from "../../context/JobsContext";
+import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
+import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
 import {
   formatGaji,
   infoSumber,
@@ -65,6 +67,8 @@ export function LokerPage() {
   const [toast, elemenToast] = useToast();
 
   const ubah = (sebagian) => setF((lama) => ({ ...lama, ...sebagian }));
+  const sentinel = useRef(null);
+  usePintasanCari("cari-loker");
 
   useEffect(() => {
     tulisUrl(f);
@@ -119,6 +123,11 @@ export function LokerPage() {
     return cocok.sort((a, b) => waktu(b) - waktu(a));
   }, [jobs, f]);
 
+  // Gulir sampai bawah = muat 24 berikutnya, tanpa perlu menekan tombol
+  useMuatOtomatis(sentinel, !loading && hasil.length > tampil, () =>
+    setTampil((n) => n + PER_MUAT),
+  );
+
   const adaFilter = f.q || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
   const reset = () =>
     setF({ q: "", kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
@@ -158,7 +167,7 @@ export function LokerPage() {
                 id="cari-loker"
                 value={f.q}
                 onChange={(e) => ubah({ q: e.target.value })}
-                placeholder="Posisi, perusahaan, atau kata kunci…"
+                placeholder="Posisi, perusahaan, atau kata kunci…  (tekan / )"
                 autoComplete="off"
               />
               {f.q && (
@@ -253,6 +262,7 @@ export function LokerPage() {
       </div>
 
       <div className="pb-wrap">
+        {!loading && <InfoKuotaLoker />}
         <div className="pb-result">
           <span>
             {loading ? (
@@ -303,7 +313,7 @@ export function LokerPage() {
         </div>
 
         {!loading && hasil.length > tampil && (
-          <div className="pb-more">
+          <div className="pb-more" ref={sentinel}>
             <button
               type="button"
               className="pb-btn pb-btn-outline"
@@ -315,8 +325,13 @@ export function LokerPage() {
             {hasil.length.toLocaleString("id-ID")} lowongan
           </div>
         )}
+        {!loading && hasil.length <= tampil && (
+          <div className="pb-grid" style={{ marginTop: 18 }}>
+            <KartuKunci />
+          </div>
+        )}
         {!loading && hasil.length > 0 && hasil.length <= tampil && (
-          <div className="pb-more">Semua lowongan sudah ditampilkan.</div>
+          <div className="pb-more">Semua lowongan yang terbuka sudah ditampilkan.</div>
         )}
       </div>
 

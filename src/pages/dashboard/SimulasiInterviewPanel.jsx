@@ -415,7 +415,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
             background: "rgba(178,58,58,0.06)",
             border: "1px solid rgba(178,58,58,0.3)",
             fontSize: 12.5,
-            color: "#B23A3A",
+            color: "var(--t-danger)",
             lineHeight: 1.6,
           }}
         >
@@ -533,7 +533,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 letterSpacing: "0.03em",
               }}
             >
-              POSISI YANG DILAMAR <span style={{ color: "#B23A3A" }}>*</span>
+              POSISI YANG DILAMAR <span style={{ color: "var(--t-danger)" }}>*</span>
             </label>
             <input
               value={posisi}
@@ -551,12 +551,12 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               placeholder="mis. HR Generalist, Data Analyst, Barista"
               style={{
                 width: "100%",
-                border: `1px solid ${galatPosisi ? "#B23A3A" : T.border}`,
+                border: `1px solid ${galatPosisi ? "var(--t-danger)" : T.border}`,
                 borderRadius: 12,
                 padding: "10px 14px",
                 fontSize: 13.5,
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                background: "rgba(255,255,255,0.6)",
+                background: "var(--t-field)",
                 outline: "none",
                 color: T.ink,
                 boxSizing: "border-box",
@@ -570,7 +570,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                   alignItems: "center",
                   gap: 6,
                   fontSize: 11.5,
-                  color: "#B23A3A",
+                  color: "var(--t-danger)",
                   marginBottom: 14,
                 }}
               >
@@ -613,7 +613,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                     background:
                       kategori.slug === k.slug
                         ? T.accentSoft
-                        : "rgba(255,255,255,0.5)",
+                        : "var(--t-field)",
                     color: kategori.slug === k.slug ? T.accent : T.inkSoft,
                   }}
                 >
@@ -714,7 +714,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                   gap: 5,
                   fontSize: 12.5,
                   fontWeight: 600,
-                  color: sisaDetik <= 120 ? "#B45309" : T.inkSoft,
+                  color: sisaDetik <= 120 ? "var(--t-warn)" : T.inkSoft,
                   fontFamily: "'IBM Plex Mono', monospace",
                 }}
               >
@@ -735,7 +735,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 style={{
                   width: `${(detik / DURASI_DETIK) * 100}%`,
                   height: "100%",
-                  background: sisaDetik <= 120 ? "#B45309" : T.accent,
+                  background: sisaDetik <= 120 ? "var(--t-warn)" : T.accent,
                   transition: "width 1s linear",
                 }}
               />
@@ -797,7 +797,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                   fontSize: 14.5,
                   fontWeight: 600,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: live.sedangBicara ? "#B23A3A" : T.accent,
+                  background: live.sedangBicara ? "var(--t-danger)" : T.accent,
                   color: "#fff",
                   opacity: live.terhubung && !menilai ? 1 : 0.5,
                   boxShadow: live.sedangBicara
@@ -984,10 +984,10 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             color:
               hasil.skor >= 75
-                ? "#0F7B4F"
+                ? "var(--t-ok)"
                 : hasil.skor >= 55
-                  ? "#B45309"
-                  : "#B23A3A",
+                  ? "var(--t-warn)"
+                  : "var(--t-danger)",
           }}
         >
           {hasil.skor}
@@ -1093,7 +1093,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
               marginBottom: 12,
             }}
           >
-            <AlertCircle size={15} color="#B45309" />
+            <AlertCircle size={15} color="var(--t-warn)" />
             <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
               Yang perlu diperbaiki
             </span>
@@ -1110,7 +1110,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
                 marginBottom: 7,
               }}
             >
-              <span style={{ color: "#B45309", flexShrink: 0, marginTop: 1 }}>
+              <span style={{ color: "var(--t-warn)", flexShrink: 0, marginTop: 1 }}>
                 •
               </span>
               <span>{k}</span>

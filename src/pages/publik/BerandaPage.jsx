@@ -1,17 +1,18 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Search,
   MapPin,
   ArrowRight,
   Check,
-  Bookmark,
   FilePlus2,
-  Linkedin,
   MessageSquareQuote,
   FileSearch,
-  Route,
   Mic,
   Globe,
+  ShieldX,
+  BarChart3,
+  Flame,
+  History,
 } from "lucide-react";
 import {
   PublicLayout,
@@ -24,7 +25,12 @@ import { LogoKotak } from "../../components/publik/LogoKotak";
 import { DaftarFaq } from "../../components/publik/DaftarFaq";
 import { useJobs } from "../../context/JobsContext";
 import { useAuth } from "../../context/AuthContext";
+import { useHitungNaik, usePintasanCari, bacaDilihat } from "../../utils/interaksi";
+import { hitungPetaGaji, jt } from "../../utils/petaGaji";
+import { idrPer } from "../../utils/kurs";
+import { infoSumber, urlDetail } from "../../utils/sumberLoker";
 import { SEMUA_TIER, rupiah, labelDurasi } from "../../data/paket";
+import { BATAS_GRATIS } from "../../context/JobsContext";
 import { FAQ_BERANDA } from "../../data/faq";
 import { keHalaman, tautan } from "../../utils/navigasi";
 import { logoPerusahaan, waktuRelatif, kotaDari } from "../../utils/sumberLoker";
@@ -91,44 +97,205 @@ function KalkulatorMini() {
 
 /* ---------------------------------------------------------------- */
 
+function Angka({ nilai, loading }) {
+  const ref = useHitungNaik(loading ? NaN : nilai);
+  return <b ref={ref}>{loading ? "…" : angka(nilai)}</b>;
+}
+
+/* ------------------------------------------------ mini-visual fitur */
+
+function MiniCek() {
+  return (
+    <div className="mv-cek" aria-hidden="true">
+      <div className="bubble">
+        DIBUKA LOWONGAN PT BESAR!!! Lulusan SMA, gaji 9 jt. Wajib{" "}
+        <mark>bayar biaya seragam Rp 350.000</mark>, kirim CV ke{" "}
+        <mark>hrd.ptbesar@gmail.com</mark>. <mark>Kuota terbatas hari ini</mark>!
+      </div>
+      <div className="vonis">
+        <ShieldX size={16} /> Bahaya · 3 tanda penipuan
+      </div>
+    </div>
+  );
+}
+
+function MiniGaji({ data }) {
+  const baris = data.length ? data : [
+    { label: "Teknologi", p25: 9e6, median: 14e6, p75: 22e6 },
+    { label: "Keuangan", p25: 6e6, median: 9e6, p75: 13e6 },
+    { label: "Pemasaran", p25: 5e6, median: 7.5e6, p75: 11e6 },
+    { label: "Administrasi", p25: 4.5e6, median: 5.5e6, p75: 7e6 },
+  ];
+  const maks = Math.max(...baris.map((b) => b.p75)) * 1.1;
+  return (
+    <div className="mv-gaji" aria-hidden="true">
+      {baris.map((b, i) => (
+        <div key={b.label} style={{ "--i": i }}>
+          <span>{b.label}</span>
+          <div className="trek">
+            <i className="pita" style={{ left: `${(b.p25 / maks) * 100}%`, width: `${((b.p75 - b.p25) / maks) * 100}%` }} />
+            <i className="med" style={{ left: `${(b.median / maks) * 100}%` }} />
+          </div>
+          <em>{jt(b.median)}</em>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const FONT_CV = [
+  ["Carlito", "'Carlito', 'Calibri', sans-serif"],
+  ["EB Garamond", "'EB Garamond', Garamond, serif"],
+  ["Lato", "'Lato', sans-serif"],
+  ["Gelasio", "'Gelasio', Georgia, serif"],
+];
+function MiniCv() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setI((x) => (x + 1) % FONT_CV.length), 1800);
+    return () => clearInterval(t);
+  }, []);
+  const [nama, keluarga] = FONT_CV[i];
+  return (
+    <div className="mv-cv" aria-hidden="true">
+      <div className="kertas" style={{ fontFamily: keluarga }} key={nama}>
+        <b>Nadia Putri</b>
+        <small>Finance & Tax Staff · Jakarta</small>
+        <hr />
+        <i style={{ width: "92%" }} />
+        <i style={{ width: "78%" }} />
+        <i style={{ width: "85%" }} />
+      </div>
+      <span className="font">Aa · {nama}</span>
+    </div>
+  );
+}
+
+function MiniLatihan() {
+  return (
+    <div className="mv-latihan" aria-hidden="true">
+      <span className="tag">Level neraka</span>
+      <p>“Kalau kami bisa merekrut kandidat internal dengan gaji lebih rendah, kenapa harus kamu?”</p>
+      <div className="timer">
+        <svg viewBox="0 0 36 36" width="34" height="34">
+          <circle cx="18" cy="18" r="15" fill="none" stroke="var(--bar-bg)" strokeWidth="4" />
+          <circle cx="18" cy="18" r="15" fill="none" stroke="var(--brand)" strokeWidth="4" strokeLinecap="round" strokeDasharray="94" className="putar" transform="rotate(-90 18 18)" />
+        </svg>
+        <span>2:00 untuk menjawab</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniRencana() {
+  const hari = ["S", "S", "R", "K", "J", "S", "M"];
+  const isi = [2, 1, 3, 0, 2, 1, 0];
+  return (
+    <div className="mv-rencana" aria-hidden="true">
+      <div className="api">
+        <Flame size={20} /> <b>5 hari</b> streak
+      </div>
+      <div className="hari">
+        {hari.map((h, i) => (
+          <div key={i} className={isi[i] ? "isi" : ""} style={{ "--i": i }}>
+            <i>{isi[i] || ""}</i>
+            <span>{h}</span>
+          </div>
+        ))}
+      </div>
+      <div className="bar">
+        <i style={{ width: "90%" }} />
+      </div>
+      <small>9 dari 10 lamaran minggu ini</small>
+    </div>
+  );
+}
+
+function MiniSkor() {
+  return (
+    <div className="mv-skor" aria-hidden="true">
+      <svg viewBox="0 0 80 80" width="92" height="92">
+        <circle cx="40" cy="40" r="32" fill="none" stroke="var(--bar-bg)" strokeWidth="8" />
+        <circle cx="40" cy="40" r="32" fill="none" stroke="var(--brand-deep)" strokeWidth="8" strokeLinecap="round" strokeDasharray="201" strokeDashoffset="36" className="isi" transform="rotate(-90 40 40)" />
+        <text x="40" y="46" textAnchor="middle">82</text>
+      </svg>
+      <ul>
+        <li className="ok">Format terbaca ATS</li>
+        <li className="ok">Kata kunci posisi</li>
+        <li className="no">Pencapaian tanpa angka</li>
+      </ul>
+    </div>
+  );
+}
+
+function MiniSuara() {
+  return (
+    <div className="mv-suara" aria-hidden="true">
+      {Array.from({ length: 28 }, (_, i) => (
+        <i key={i} style={{ "--i": i, "--h": `${20 + ((i * 37) % 70)}%` }} />
+      ))}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+
 export function BerandaPage() {
-  const { jobs, loading } = useJobs();
+  const { jobs, loading, total, terkunci } = useJobs();
   const { session } = useAuth();
   const masuk = Boolean(session);
   const [q, setQ] = useState("");
   const [kota, setKota] = useState("");
   const [toast, elemenToast] = useToast();
+  const { rates } = useKurs();
+  const dilihat = useMemo(() => bacaDilihat().slice(0, 4), []);
   useGulirKeHash(!loading);
+  usePintasanCari("cari-beranda");
 
-  const fitur = (panel) => (masuk ? `/dashboard/${panel}` : "/register");
+  const fitur = (panel) => `/dashboard/${panel}`;
 
   const data = useMemo(() => {
     const urut = [...jobs].sort((a, b) => waktuDari(b) - waktuDari(a));
     const seminggu = Date.now() - 7 * 86400000;
     const perusahaan = new Set();
     const perKota = new Map();
+    const sumber = new Map();
     let baru = 0;
-    let remote = 0;
-    for (const j of jobs) {
+    const remote = [];
+    for (const j of urut) {
       perusahaan.add(j.perusahaan);
       if (waktuDari(j) >= seminggu) baru++;
-      if (j.lokasiKerja === "remote") remote++;
+      if (j.lokasiKerja === "remote") remote.push(j);
+      if (j.site) sumber.set(j.site, (sumber.get(j.site) || 0) + 1);
       const lok = (j.lokasi || "").toLowerCase();
       for (const k of KOTA_POPULER) {
         if (lok.includes(k.toLowerCase())) perKota.set(k, (perKota.get(k) || 0) + 1);
       }
     }
     const kotaTeratas = [...perKota.entries()].sort((a, b) => b[1] - a[1]).slice(0, 11);
+    const daftarSumber = [...sumber.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([site]) => {
+        const info = infoSumber({ site });
+        return info.langsung ? site.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : info.nama;
+      });
     return {
       terbaru: urut.slice(0, 8),
       ringkas: urut.slice(0, 5),
-      total: jobs.length,
       baru,
-      remote,
+      remote: remote.slice(0, 4),
+      jumlahRemote: remote.length,
       perusahaan: perusahaan.size,
       kotaTeratas,
+      daftarSumber,
     };
   }, [jobs]);
+
+  const gajiMini = useMemo(() => {
+    const peta = hitungPetaGaji(jobs, { idrPerFn: idrPer, rates, daftarKota: KOTA_POPULER });
+    return peta.perBidang.tampil.slice(0, 4);
+  }, [jobs, rates]);
 
   const cari = (e) => {
     e.preventDefault();
@@ -146,28 +313,30 @@ export function BerandaPage() {
     year: "numeric",
   });
 
-  const ALAT = [
-    { t: "Cari & simpan loker", d: "Saring per kota, remote, dan jenis kerja. Simpan yang menarik dan catat progres lamaranmu.", path: "/loker", Ikon: Bookmark },
-    { t: "CV Builder", d: "Susun CV rapi yang mudah dibaca sistem penyaringan, lalu unduh dalam PDF.", path: fitur("cvbuilder"), Ikon: FilePlus2 },
-    { t: "LinkedIn Builder", d: "Rapikan headline, ringkasan, dan pengalaman agar profilmu mudah ditemukan recruiter.", path: fitur("linkedinbuilder"), Ikon: Linkedin },
-    { t: "Latihan interview", d: "100+ pertanyaan yang sering menjebak dalam 10 kategori, lengkap dengan cara menjawabnya.", path: fitur("interview"), Ikon: MessageSquareQuote },
-    { t: "Review CV dengan AI", d: "Skor kesesuaian ATS, bagian yang melemahkan CV, dan versi perbaikan dalam dua bahasa.", path: fitur("overview"), Ikon: FileSearch, pro: true },
-    { t: "Pindah karier", d: "Lihat skill mana yang masih terpakai di bidang baru, apa yang perlu dikejar, dan seberapa realistis.", path: fitur("pindahkarier"), Ikon: Route, pro: true },
-    { t: "Simulasi interview", d: "Wawancara lewat suara dengan pewawancara AI, lalu dapat penilaian dan masukan di akhir sesi.", path: fitur("simulasi"), Ikon: Mic, pro: true },
-  ];
+  // Daftar sumber untuk pita berjalan. Cadangan dipakai sebelum data siap.
+  const sumberPita = data.daftarSumber.length
+    ? data.daftarSumber
+    : ["LinkedIn", "Indeed", "BCA", "Pertamina", "Shopee", "Astra", "Loker BUMN", "Traveloka", "Unilever", "Danone"];
 
   return (
     <PublicLayout aktif="/">
       {/* ======================================================= hero */}
       <section className="pb-wrap pb-hero">
         <div>
+          <a className="pb-hero-pill" {...tautan("/loker")}>
+            <span className="denyut" />
+            {loading ? "Memuat loker hari ini…" : `${angka(total)} loker aktif · ${angka(data.baru)} baru minggu ini`}
+            <ArrowRight size={14} />
+          </a>
           <h1>
-            Semua lowongan, <span>langsung dari sumbernya.</span>
+            In this economy, cari kerja itu susah.{" "}
+            <span>Biar Jobly yang cariin ribuan loker buat kamu.</span>
           </h1>
           <p className="pb-lede">
-            Jobly mengumpulkan lowongan dari situs karier resmi perusahaan,
-            LinkedIn, dan Indeed setiap hari. Cari tanpa daftar, buka detail
-            lengkapnya, lalu lamar di halaman aslinya.
+            Setiap hari Jobly menyisir situs karier resmi perusahaan, BUMN,
+            LinkedIn, dan Indeed — lalu menyajikannya di satu tempat, lengkap
+            dengan cek loker palsu, peta gaji, dan alat persiapan sampai
+            interview.
           </p>
 
           <form className="pb-searchbar" onSubmit={cari} role="search">
@@ -216,15 +385,15 @@ export function BerandaPage() {
           </div>
           <div className="pb-today-stats">
             <div>
-              <b>{loading ? "…" : angka(data.total)}</b>
+              <Angka nilai={total} loading={loading} />
               <span>lowongan</span>
             </div>
             <div>
-              <b>{loading ? "…" : angka(data.baru)}</b>
+              <Angka nilai={data.baru} loading={loading} />
               <span>baru 7 hari</span>
             </div>
             <div>
-              <b>{loading ? "…" : angka(data.perusahaan)}</b>
+              <Angka nilai={data.perusahaan} loading={loading} />
               <span>perusahaan</span>
             </div>
           </div>
@@ -239,11 +408,11 @@ export function BerandaPage() {
                     </div>
                   </li>
                 ))
-              : data.ringkas.map((j) => {
+              : data.ringkas.map((j, i) => {
                   const logo = logoPerusahaan(j);
                   return (
-                    <li key={j.id}>
-                      <a {...tautan(`/loker/${String(j.id).replace(":", "-")}`)}>
+                    <li key={j.id} className="masuk" style={{ "--i": i }}>
+                      <a {...tautan(urlDetail(j))}>
                         <LogoKotak src={logo} nama={j.perusahaan} ikon={!logo} ukuran={34} />
                         <span style={{ minWidth: 0 }}>
                           <span className="t" style={{ display: "block" }}>
@@ -268,10 +437,41 @@ export function BerandaPage() {
         </aside>
       </section>
 
+      {/* ============================================ pita sumber */}
+      <div className="pb-pita" aria-label="Sumber lowongan">
+        <span className="pb-pita-label">Dikumpulkan dari</span>
+        <div className="pb-pita-trek">
+          <div className="pb-pita-isi">
+            {[...sumberPita, ...sumberPita].map((n, i) => (
+              <span key={i} aria-hidden={i >= sumberPita.length}>
+                {n}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================ terakhir dilihat */}
+      {dilihat.length > 0 && (
+        <section className="pb-wrap pb-dilihat" data-muncul="">
+          <span className="pb-dilihat-h">
+            <History size={15} /> Lanjutkan yang terakhir kamu lihat
+          </span>
+          <div className="pb-dilihat-list">
+            {dilihat.map((d) => (
+              <a key={d.id} {...tautan(urlDetail(d))}>
+                <b>{d.posisi}</b>
+                <span>{d.perusahaan}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ============================================ lowongan terbaru */}
-      <section className="pb-section" style={{ paddingTop: 24 }}>
+      <section className="pb-section" style={{ paddingTop: 40 }}>
         <div className="pb-wrap">
-          <div className="pb-head">
+          <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">Lowongan terbaru</span>
               <h2>Baru masuk dari berbagai sumber</h2>
@@ -280,7 +480,7 @@ export function BerandaPage() {
               Lihat semua <ArrowRight size={15} />
             </a>
           </div>
-          <div className="pb-grid">
+          <div className="pb-grid pb-grid-ringkas">
             {loading
               ? Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)
               : data.terbaru.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
@@ -288,21 +488,146 @@ export function BerandaPage() {
         </div>
       </section>
 
+      {/* ============================================ remote */}
+      <section className="pb-remote-band">
+        <div className="pb-wrap">
+          <div className="pb-remote-band-head" data-muncul="">
+            <div>
+              <span className="pb-label terang">
+                <Globe size={14} /> Khusus remote
+              </span>
+              <h2>Kerja dari rumah, kafe, atau kampung halaman.</h2>
+              <p>
+                {loading ? "Memuat…" : `${angka(data.jumlahRemote)} loker full remote`} dari
+                perusahaan Indonesia dan luar negeri — sebagian bergaji dolar.
+              </p>
+            </div>
+            <a className="pb-btn pb-btn-putih" {...tautan("/remote")}>
+              Jelajahi loker remote <ArrowRight size={16} />
+            </a>
+          </div>
+          <div className="pb-grid pb-grid-ringkas">
+            {loading
+              ? Array.from({ length: 4 }, (_, i) => <KartuLokerSkeleton key={i} />)
+              : data.remote.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================== fitur (bento) */}
+      <section className="pb-section" id="fitur">
+        <div className="pb-wrap">
+          <div className="pb-head" data-muncul="">
+            <div>
+              <span className="pb-label">Kenapa Jobly</span>
+              <h2>Bukan cuma daftar loker.</h2>
+              <p>Alat yang biasanya tersebar di lima situs berbeda — di sini satu tempat, sebagian besar gratis.</p>
+            </div>
+          </div>
+
+          <div className="pb-bento">
+            <a className="pb-bento-item lebar" data-muncul="" {...tautan("/cek-loker")}>
+              <div className="teks">
+                <span className="pb-tag baru">Gratis · tanpa daftar</span>
+                <h3>Cek loker palsu</h3>
+                <p>Tempel teks loker dari WhatsApp atau Instagram. Jobly menandai 16 pola penipuan — minta biaya, travel agent, tugas like berbayar.</p>
+                <span className="go">Coba cek sekarang <ArrowRight size={15} /></span>
+              </div>
+              <MiniCek />
+            </a>
+
+            <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan("/peta-gaji")}>
+              <div className="teks">
+                <span className="pb-tag baru">Gratis</span>
+                <h3>Peta gaji</h3>
+                <p>Kisaran gaji per bidang dan kota, dihitung dari loker sungguhan.</p>
+              </div>
+              <MiniGaji data={gajiMini} />
+            </a>
+
+            <a className="pb-bento-item" data-muncul="" {...tautan(fitur("interview"))}>
+              <div className="teks">
+                <span className="pb-tag">Gratis</span>
+                <h3>Latihan interview level neraka</h3>
+                <p>140+ pertanyaan, contoh jawaban, dan mode tantangan berwaktu.</p>
+              </div>
+              <MiniLatihan />
+            </a>
+
+            <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan(fitur("cvbuilder"))}>
+              <div className="teks">
+                <span className="pb-tag">Gratis</span>
+                <h3>CV Builder ramah ATS</h3>
+                <p>Pilih font dan tema, unduh PDF yang tetap terbaca sistem penyaring.</p>
+              </div>
+              <MiniCv />
+            </a>
+
+            <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "160ms" }} {...tautan(fitur("rencana"))}>
+              <div className="teks">
+                <span className="pb-tag baru">Gratis</span>
+                <h3>Rencana lamar</h3>
+                <p>Target mingguan, streak harian, dan misi kecil biar tetap konsisten.</p>
+              </div>
+              <MiniRencana />
+            </a>
+
+            <a className="pb-bento-item" data-muncul="" {...tautan(fitur("overview"))}>
+              <div className="teks">
+                <span className="pb-tag pro">Pro</span>
+                <h3>
+                  <FileSearch size={17} /> Review CV dengan AI
+                </h3>
+                <p>Skor ATS, bagian yang melemahkan CV, dan versi perbaikan dua bahasa.</p>
+              </div>
+              <MiniSkor />
+            </a>
+
+            <a className="pb-bento-item lebar" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan(fitur("simulasi"))}>
+              <div className="teks">
+                <span className="pb-tag pro">Pro</span>
+                <h3>
+                  <Mic size={17} /> Simulasi interview bersuara
+                </h3>
+                <p>Bicara langsung dengan pewawancara AI, lalu dapat penilaian per jawaban di akhir sesi.</p>
+                <span className="go">Mulai dari {rupiah(SEMUA_TIER[2].harga)} <ArrowRight size={15} /></span>
+              </div>
+              <MiniSuara />
+            </a>
+          </div>
+
+          <div className="pb-bento-kecil" data-muncul="">
+            <a {...tautan(fitur("linkedinbuilder"))}>
+              <FilePlus2 size={16} /> LinkedIn Builder
+            </a>
+            <a {...tautan(fitur("pindahkarier"))}>
+              <BarChart3 size={16} /> Pindah karier <span className="pb-tag pro">Pro</span>
+            </a>
+            <a {...tautan(fitur("applications"))}>
+              <MessageSquareQuote size={16} /> Pelacak lamaran
+            </a>
+            <a {...tautan("/kalkulator-gaji")}>
+              <Globe size={16} /> Kalkulator gaji USD
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ================================================ per kota */}
       <section className="pb-section tint">
         <div className="pb-wrap">
-          <div className="pb-head">
+          <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">Lokasi</span>
               <h2>Cari di kota tujuanmu</h2>
             </div>
           </div>
-          <div className="pb-cities-grid">
-            <a className="pb-city" {...tautan("/loker?lokasi=remote")}>
+          <div className="pb-cities-grid" data-muncul="">
+            <a className="pb-city" {...tautan("/remote")}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "inherit", fontSize: 14.5, fontWeight: 600 }}>
                 <Globe size={16} /> Remote
               </span>
-              {!loading && <span>{angka(data.remote)}</span>}
+              {!loading && <span>{angka(data.jumlahRemote)}</span>}
             </a>
             {(data.kotaTeratas.length ? data.kotaTeratas : KOTA_POPULER.slice(0, 11).map((k) => [k, null])).map(
               ([k, n]) => (
@@ -316,49 +641,10 @@ export function BerandaPage() {
         </div>
       </section>
 
-      {/* ================================================== fitur */}
-      <section className="pb-section" id="fitur">
-        <div className="pb-wrap pb-split">
-          <div className="pb-split-aside">
-            <span className="pb-label">Alat persiapan</span>
-            <h2 className="pb-h2">Lebih siap sebelum menekan tombol lamar.</h2>
-            <p className="pb-sub">
-              Mencari loker hanya separuh pekerjaan. Jobly juga menyediakan alat
-              untuk menyusun CV, merapikan LinkedIn, dan berlatih interview.
-            </p>
-            <div className="pb-note">
-              <b>Gratis selamanya:</b> semua loker, CV Builder, LinkedIn Builder,
-              latihan 100+ pertanyaan, loker tersimpan, dan pelacak lamaran.
-              Fitur bertanda <span className="pb-tag pro">Pro</span> memakai
-              kuota dari paket berbayar, mulai {rupiah(SEMUA_TIER[1].harga)}.
-            </div>
-          </div>
-          <ul className="pb-flist">
-            {ALAT.map(({ t, d, path, Ikon, pro }) => (
-              <li key={t}>
-                <a {...tautan(path)}>
-                  <span className="pb-ficon">
-                    <Ikon size={20} />
-                  </span>
-                  <span style={{ minWidth: 0 }}>
-                    <h3>
-                      {t}
-                      <span className={`pb-tag ${pro ? "pro" : ""}`}>{pro ? "Pro" : "Gratis"}</span>
-                    </h3>
-                    <p>{d}</p>
-                  </span>
-                  <ArrowRight size={18} className="go" />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       {/* ============================================ kalkulator mini */}
-      <section className="pb-section tint">
+      <section className="pb-section">
         <div className="pb-wrap pb-calc-teaser">
-          <div>
+          <div data-muncul="">
             <span className="pb-label">Kalkulator gaji</span>
             <h2 className="pb-h2">Ditawari gaji dalam dolar? Hitung dulu nilainya dalam rupiah.</h2>
             <p className="pb-sub">
@@ -370,49 +656,55 @@ export function BerandaPage() {
               Buka kalkulator lengkap <ArrowRight size={15} />
             </a>
           </div>
-          <KalkulatorMini />
+          <div data-muncul="" style={{ "--tunda": "100ms" }}>
+            <KalkulatorMini />
+          </div>
         </div>
       </section>
 
       {/* =================================================== langkah */}
-      <section className="pb-section">
+      <section className="pb-section tint">
         <div className="pb-wrap">
-          <div className="pb-head">
+          <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">Cara kerja</span>
               <h2>Dari pencarian sampai lamaran terkirim</h2>
             </div>
           </div>
-          <ol className="pb-steps">
+          <ol className="pb-steps" data-muncul="">
             <li>
               <h3>Temukan lowongan</h3>
               <p>Cari berdasarkan posisi, kota, atau jenis kerja. Setiap lowongan menampilkan sumber dan tanggalnya.</p>
             </li>
             <li>
               <h3>Siapkan lamaranmu</h3>
-              <p>Sesuaikan CV, cek kekuatannya, dan latih jawaban untuk pertanyaan yang paling sering muncul.</p>
+              <p>Cek keaslian loker, bandingkan gajinya, rapikan CV, dan latih jawaban untuk pertanyaan tersulit.</p>
             </li>
             <li>
               <h3>Lamar di sumbernya</h3>
-              <p>Tombol Lamar membawamu ke halaman lowongan aslinya. Catat lamaranmu di Jobly untuk memantau progres.</p>
+              <p>Tombol Lamar membawamu ke halaman lowongan aslinya. Catat lamaranmu dan jaga streak-nya.</p>
             </li>
           </ol>
         </div>
       </section>
 
       {/* ===================================================== harga */}
-      <section className="pb-section tint" id="harga">
+      <section className="pb-section" id="harga">
         <div className="pb-wrap">
-          <div className="pb-head">
+          <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">Harga</span>
-              <h2>Gratis untuk mencari. Bayar hanya saat butuh AI.</h2>
-              <p>Sekali bayar, tanpa tagihan berulang. Kuota Review CV tetap bisa dipakai setelah masa berlaku habis.</p>
+              <h2>Mulai gratis. Buka semuanya mulai {rupiah(SEMUA_TIER[1].harga)}.</h2>
+              <p>
+                Akun gratis membuka {angka(BATAS_GRATIS)} loker
+                {terkunci ? ` dari ${angka(total)}` : ""}. Sekali bayar, tanpa tagihan berulang —
+                semua paket membuka seluruh loker.
+              </p>
             </div>
           </div>
           <div className="pb-prices">
-            {SEMUA_TIER.map((p) => (
-              <div key={p.id} className={`pb-price ${p.populer ? "rek" : ""}`}>
+            {SEMUA_TIER.map((p, i) => (
+              <div key={p.id} className={`pb-price ${p.populer ? "rek" : ""}`} data-muncul="" style={{ "--tunda": `${i * 70}ms` }}>
                 <div className="pb-price-top">
                   <h3>{p.nama}</h3>
                   {p.populer && <span className="pb-tag">Paling dipilih</span>}
@@ -446,9 +738,9 @@ export function BerandaPage() {
       </section>
 
       {/* ======================================================= FAQ */}
-      <section className="pb-section">
+      <section className="pb-section tint">
         <div className="pb-wrap pb-split">
-          <div className="pb-split-aside">
+          <div className="pb-split-aside" data-muncul="">
             <span className="pb-label">FAQ</span>
             <h2 className="pb-h2">Pertanyaan yang sering diajukan</h2>
             <p className="pb-sub">Belum menemukan jawabannya? Lihat daftar lengkapnya.</p>

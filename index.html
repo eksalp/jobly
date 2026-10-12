@@ -4,6 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0B3C6E" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Pasang tema sebelum halaman digambar, supaya mode gelap tidak
+      // berkedip putih saat dibuka. Logikanya sama dengan src/utils/tema.js.
+      (function () {
+        try {
+          var p = localStorage.getItem("jobly:tema") || "sistem";
+          var gelap = p === "gelap" || (p === "sistem" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.setAttribute("data-tema", gelap ? "gelap" : "terang");
+        } catch (e) {}
+      })();
+    </script>
     <meta
       name="description"
       content="Jobly mengumpulkan lowongan kerja dari situs karier resmi perusahaan, LinkedIn, dan Indeed setiap hari. Cari gratis, lamar langsung di sumbernya, dan siapkan CV serta interview dengan bantuan AI."

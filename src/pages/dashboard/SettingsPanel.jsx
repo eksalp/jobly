@@ -40,7 +40,7 @@ export function SettingsField({ label, value, onChange, disabled }) {
           padding: "10px 12px",
           fontSize: 13,
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-          background: disabled ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.6)",
+          background: disabled ? "rgba(0,0,0,0.03)" : "var(--t-field)",
           outline: "none",
           color: T.ink,
         }}
@@ -112,7 +112,7 @@ function KartuKataSandi({ user }) {
     padding: "9px 38px 9px 12px",
     fontSize: 13,
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-    background: "rgba(255,255,255,0.6)",
+    background: "var(--t-field)",
     outline: "none",
     color: T.ink,
     boxSizing: "border-box",
@@ -219,7 +219,7 @@ function KartuKataSandi({ user }) {
                 alignItems: "center",
                 gap: 6,
                 fontSize: 12,
-                color: "#B23A3A",
+                color: "var(--t-danger)",
                 marginBottom: 10,
               }}
             >
@@ -354,7 +354,7 @@ export function SettingsPanel({ setActive }) {
             <div style={{ fontSize: 12, color: T.inkSoft, marginTop: 2 }}>
               {langganan.aktif
                 ? `${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`
-                : "Semua loker & alat dasar gratis. Fitur AI mulai Rp 9.000."}
+                : "5.000 loker & alat dasar gratis. Buka semua loker & fitur AI mulai Rp 9.000."}
             </div>
           </div>
           <Button variant="outline" onClick={() => pergiKe("paket")}>
@@ -368,7 +368,7 @@ export function SettingsPanel({ setActive }) {
           style={{
             fontWeight: 600,
             fontSize: 14.5,
-            color: "#C23B3B",
+            color: "var(--t-danger)",
             marginBottom: 8,
           }}
         >
@@ -379,7 +379,7 @@ export function SettingsPanel({ setActive }) {
         </div>
         <Button
           variant="outline"
-          style={{ color: "#C23B3B", borderColor: "rgba(220,60,60,0.3)" }}
+          style={{ color: "var(--t-danger)", borderColor: "rgba(220,60,60,0.3)" }}
         >
           Hapus Akun Saya
         </Button>

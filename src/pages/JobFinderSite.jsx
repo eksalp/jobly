@@ -18,6 +18,9 @@ import { DetailLokerPage } from "./publik/DetailLokerPage";
 import { KalkulatorPage } from "./publik/KalkulatorPage";
 import { FaqPage } from "./publik/FaqPage";
 import { DokumenPage } from "./publik/DokumenPage";
+import { RemotePage } from "./publik/RemotePage";
+import { CekLokerPage } from "./publik/CekLokerPage";
+import { PetaGajiPage } from "./publik/PetaGajiPage";
 import {
   adaProsesBerjalan,
   keteranganProses,
@@ -35,7 +38,7 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "cek", "petagaji"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 
@@ -60,6 +63,9 @@ function parsePath(pathname) {
   }
   if (path === "/loker") return { page: "loker" };
   if (path === "/kalkulator-gaji") return { page: "kalkulator" };
+  if (path === "/remote") return { page: "remote" };
+  if (path === "/cek-loker") return { page: "cek" };
+  if (path === "/peta-gaji") return { page: "petagaji" };
   if (path === "/faq") return { page: "faq" };
   if (DOKUMEN.includes(path.slice(1))) return { page: "dokumen", jenis: path.slice(1) };
   if (path === "/register") return { page: "register" };
@@ -144,9 +150,28 @@ function JobFinderApp() {
   React.useEffect(() => {
     if (authLoading || !supabaseConfigured) return;
     if (!session && page === "dashboard") {
+      // Ingat tujuan, supaya setelah masuk langsung kembali ke sana
+      try {
+        sessionStorage.setItem("jobly:tujuan", window.location.pathname + window.location.search);
+      } catch {
+        /* abaikan */
+      }
       go("login");
     } else if (session && HALAMAN_AUTH.includes(page)) {
-      go("dashboard");
+      let tujuan = null;
+      try {
+        tujuan = sessionStorage.getItem("jobly:tujuan");
+        sessionStorage.removeItem("jobly:tujuan");
+      } catch {
+        /* abaikan */
+      }
+      if (tujuan && tujuan.startsWith("/dashboard/")) {
+        window.history.pushState({}, "", tujuan);
+        terapkan(parsePath(window.location.pathname));
+        window.scrollTo(0, 0);
+      } else {
+        go("dashboard");
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, session, page]);
@@ -200,6 +225,15 @@ function JobFinderApp() {
     case "faq":
       isi = <FaqPage />;
       break;
+    case "remote":
+      isi = <RemotePage />;
+      break;
+    case "cek":
+      isi = <CekLokerPage />;
+      break;
+    case "petagaji":
+      isi = <PetaGajiPage />;
+      break;
     case "dokumen":
       isi = <DokumenPage jenis={rute.jenis} />;
       break;
@@ -222,8 +256,7 @@ function JobFinderApp() {
       <GlassBackdrop />
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #fff; -webkit-font-smoothing: antialiased; }
-        input::placeholder, textarea::placeholder { color: #9AA4B4; }
+        body { -webkit-font-smoothing: antialiased; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
       {isi}
@@ -234,15 +267,15 @@ function JobFinderApp() {
 export default function JobFinderSite() {
   return (
     <AuthProvider>
-      <JobsProvider>
-        <UserProfileProvider>
-          <SavedJobsProvider>
-            <LanggananProvider>
+      <LanggananProvider>
+        <JobsProvider>
+          <UserProfileProvider>
+            <SavedJobsProvider>
               <JobFinderApp />
-            </LanggananProvider>
-          </SavedJobsProvider>
-        </UserProfileProvider>
-      </JobsProvider>
+            </SavedJobsProvider>
+          </UserProfileProvider>
+        </JobsProvider>
+      </LanggananProvider>
     </AuthProvider>
   );
 }

@@ -18,11 +18,17 @@ import {
   Briefcase,
   GraduationCap,
   Wallet,
+  Lock,
 } from "lucide-react";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker } from "../../components/publik/KartuLoker";
 import { LogoKotak, LogoSumber } from "../../components/publik/LogoKotak";
 import { useJobs } from "../../context/JobsContext";
+import { catatDilihat } from "../../utils/interaksi";
+import { cekLoker } from "../../utils/cekLoker";
+import { HasilCek } from "./CekLokerPage";
+import { useTujuanBuka } from "../../components/publik/LokerTerkunci";
+import { DAFTAR_PAKET, rupiah as rupiahPaket } from "../../data/paket";
 import { useAuth } from "../../context/AuthContext";
 import { useSavedJobs } from "../../context/SavedJobsContext";
 import { fetchDetailLoker } from "../../utils/jobMatching";
@@ -99,7 +105,8 @@ function Kerangka() {
 
 export function DetailLokerPage({ slug }) {
   const id = idDariSlug(slug);
-  const { jobs, loading: memuatDaftar } = useJobs();
+  const { jobs, loading: memuatDaftar, terbuka, batasGratis } = useJobs();
+  const tujuanBuka = useTujuanBuka();
   const { session } = useAuth();
   const masuk = Boolean(session);
   const { isSaved, toggleSave } = useSavedJobs();
@@ -135,6 +142,22 @@ export function DetailLokerPage({ slug }) {
   useEffect(() => {
     if (job) document.title = `${job.posisi} — ${job.perusahaan} · Jobly`;
   }, [job]);
+
+  // Terkunci untuk akun gratis kalau loker ini di luar 5.000 yang terbuka.
+  // Ditunggu sampai daftar selesai dimuat supaya tidak salah kunci.
+  const terkunciIni = Boolean(job) && !memuatDaftar && !terbuka(job.id);
+
+  useEffect(() => {
+    if (job && !terkunciIni) catatDilihat(job);
+  }, [job?.id, terkunciIni]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const keamanan = useMemo(
+    () =>
+      detail && detail.deskripsi
+        ? cekLoker({ teks: detail.deskripsi, judul: detail.posisi, perusahaan: detail.perusahaan, link: detail.link })
+        : null,
+    [detail],
+  );
 
   const serupa = useMemo(() => {
     if (!job) return [];
@@ -179,6 +202,50 @@ export function DetailLokerPage({ slug }) {
             <a className="pb-btn pb-btn-primary pb-btn-sm" {...tautan("/loker")}>
               Lihat loker lainnya
             </a>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  if (terkunciIni) {
+    const logoK = logoPerusahaan(job);
+    return (
+      <PublicLayout aktif="/loker">
+        <div className="pb-wrap" style={{ paddingBlock: "48px 90px", maxWidth: 860 }}>
+          <div className="pb-d-head">
+            <LogoKotak src={logoK} nama={job.perusahaan} ikon={!logoK} ukuran={72} radius={18} />
+            <div style={{ minWidth: 0 }}>
+              <h1>{job.posisi}</h1>
+              <div className="pb-d-company">{job.perusahaan}</div>
+            </div>
+          </div>
+          <div className="pb-kunci" style={{ marginTop: 28 }}>
+            <div className="pb-kunci-bayang" aria-hidden="true" style={{ gridTemplateColumns: "1fr" }}>
+              <div style={{ height: 220 }}>
+                {[96, 88, 92, 70, 84, 60].map((w, i) => (
+                  <i key={i} style={{ width: `${w}%` }} />
+                ))}
+              </div>
+            </div>
+            <div className="pb-kunci-isi">
+              <span className="pb-kunci-ic">
+                <Lock size={20} />
+              </span>
+              <h3>Loker ini termasuk di luar {batasGratis.toLocaleString("id-ID")} loker gratis</h3>
+              <p>
+                Buka detail lengkap, tombol lamar, dan seluruh loker lainnya dengan paket
+                apa pun — mulai {rupiahPaket(Math.min(...DAFTAR_PAKET.map((p) => p.harga)))} sekali bayar.
+              </p>
+              <div className="pb-kunci-act">
+                <a className="pb-btn pb-btn-primary" {...tautan(tujuanBuka)}>
+                  Buka semua loker
+                </a>
+                <a className="pb-btn pb-btn-outline" {...tautan("/loker")}>
+                  Kembali ke loker gratis
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </PublicLayout>
@@ -419,6 +486,20 @@ export function DetailLokerPage({ slug }) {
               <div style={{ display: "grid", marginTop: 16 }}>{tombolLamar}</div>
             </div>
 
+            {keamanan && (
+              <div className="pb-box">
+                <h3 style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  Cek keamanan loker
+                  <a className="pb-link" style={{ fontSize: 12.5 }} {...tautan("/cek-loker")}>
+                    Cara kerjanya
+                  </a>
+                </h3>
+                <div style={{ marginTop: 10 }}>
+                  <HasilCek hasil={keamanan} ringkas />
+                </div>
+              </div>
+            )}
+
             <div className="pb-box tint">
               <h3>Siapkan lamaranmu</h3>
               <p style={{ fontSize: 13.5, color: "var(--ink2)", margin: "6px 0 10px", lineHeight: 1.55 }}>
@@ -426,14 +507,15 @@ export function DetailLokerPage({ slug }) {
               </p>
               {[
                 { label: "Review CV dengan AI", pro: true, panel: "overview", Ikon: FileText },
-                { label: "Latihan 100+ pertanyaan", pro: false, panel: "interview", Ikon: MessageSquareQuote },
+                { label: "Latihan 140+ pertanyaan", pro: false, panel: "interview", Ikon: MessageSquareQuote },
+                { label: "Bandingkan di Peta gaji", pro: false, path: `/peta-gaji?posisi=${encodeURIComponent((job.posisi || "").split(/[\s(,/-]+/).slice(0, 2).join(" "))}`, panel: "peta", Ikon: Wallet },
                 { label: "Simulasi interview AI", pro: true, panel: "simulasi", Ikon: Bot },
-              ].map(({ label, pro, panel, Ikon }) => (
+              ].map(({ label, pro, panel, path, Ikon }) => (
                 <a
                   key={panel}
                   className="pb-box-row"
                   style={{ alignItems: "center" }}
-                  {...tautan(pathFitur(panel, masuk))}
+                  {...tautan(path || `/dashboard/${panel}`)}
                 >
                   <span style={{ display: "inline-flex", gap: 9, alignItems: "center", fontWeight: 500 }}>
                     <Ikon size={16} color="var(--brand)" /> {label}

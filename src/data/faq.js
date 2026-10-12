@@ -28,8 +28,8 @@ export const FAQ = [
         q: "Apakah mencari loker di Jobly gratis?",
         beranda: true,
         a: [
-          "Ya. Semua lowongan bisa dicari dan dibuka tanpa biaya dan tanpa perlu mendaftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 100+ pertanyaan interview, loker tersimpan, dan pelacak lamaran.",
-          "Yang berbayar hanya fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
+          "Ya. 5.000 lowongan bisa dicari dan dibuka tanpa biaya dan tanpa perlu mendaftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
+          "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka seluruh loker di atas 5.000 serta fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
         ],
       },
       {
@@ -106,7 +106,7 @@ export const FAQ = [
         q: "Apa yang terjadi saat masa berlaku paket habis?",
         a: [
           "Sisa kuota Review CV tetap bisa kamu pakai. Fitur Pindah Karier dan Simulasi Interview membutuhkan paket yang masih berlaku, jadi sisa kuota keduanya baru bisa dipakai lagi setelah kamu membeli paket baru.",
-          "Semua fitur gratis — termasuk seluruh loker, CV Builder, dan riwayat analisis — tetap bisa diakses.",
+          "Semua fitur gratis — termasuk 5.000 loker, CV Builder, dan riwayat analisis — tetap bisa diakses. Loker di atas 5.000 kembali terkunci sampai kamu membeli paket baru.",
         ],
       },
       {

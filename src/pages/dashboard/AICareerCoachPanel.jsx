@@ -163,7 +163,7 @@ export function AICareerCoachPanel() {
                     ? "16px 16px 4px 16px"
                     : "16px 16px 16px 4px",
                 background:
-                  m.role === "user" ? T.accent : "rgba(255,255,255,0.75)",
+                  m.role === "user" ? T.accent : "var(--t-field)",
                 color: m.role === "user" ? "#fff" : T.ink,
                 fontSize: 13.5,
                 lineHeight: 1.65,
@@ -184,7 +184,7 @@ export function AICareerCoachPanel() {
               style={{
                 padding: "12px 16px",
                 borderRadius: "16px 16px 16px 4px",
-                background: "rgba(255,255,255,0.75)",
+                background: "var(--t-field)",
                 border: `1px solid ${T.border}`,
                 backdropFilter: "blur(14px)",
                 display: "flex",
@@ -208,7 +208,7 @@ export function AICareerCoachPanel() {
           <div
             style={{
               fontSize: 12.5,
-              color: "#B23A3A",
+              color: "var(--t-danger)",
               background: "rgba(178,58,58,0.07)",
               border: "1px solid rgba(178,58,58,0.2)",
               borderRadius: 10,
@@ -242,7 +242,7 @@ export function AICareerCoachPanel() {
                 borderRadius: 99,
                 border: `1px solid ${T.border}`,
                 color: T.inkSoft,
-                background: "rgba(255,255,255,0.5)",
+                background: "var(--t-field)",
                 cursor: "pointer",
                 transition: "all 0.15s",
               }}

@@ -1,0 +1,146 @@
+/*
+ * Tema terang / gelap.
+ *
+ * Semua warna dashboard dibaca dari variabel --t-* (lihat src/theme.js),
+ * dan halaman publik dari variabel di .pb (publik.css). Mode gelap cukup
+ * menimpa variabel-variabel itu — komponen tidak perlu tahu temanya.
+ *
+ * Atribut data-tema dipasang di <html> oleh skrip kecil di index.html
+ * SEBELUM React dimuat, supaya tidak ada kedipan putih saat membuka
+ * halaman dalam mode gelap.
+ */
+
+:root {
+  color-scheme: light;
+  --t-ink: #111b29;
+  --t-ink-soft: #4a5567;
+  --t-ink-faint: #8792a3;
+  --t-accent: #0b3c6e;
+  --t-accent-soft: #eaf1fa;
+  --t-brand: #14549a;
+  --t-teal: #1660b0;
+  --t-bg: #ffffff;
+  --t-surface: #ffffff;
+  --t-surface2: #f3f6fa;
+  --t-border: rgba(17, 27, 41, 0.1);
+  --t-line: rgba(17, 27, 41, 0.06);
+  --t-field: rgba(255, 255, 255, 0.7);
+  --t-track: rgba(17, 27, 41, 0.05);
+  --t-on-accent: #ffffff;
+  --t-danger: #b23a3a;
+  --t-danger-bg: #fdeeee;
+  --t-warn: #b45309;
+  --t-warn-ink: #92400e;
+  --t-warn-bg: #fff8e6;
+  --t-ok: #0f7b4f;
+  --t-ok-bg: #e8f5ee;
+  --t-muted: #8891a8;
+  --t-placeholder: #9aa4b4;
+}
+
+html[data-tema="gelap"] {
+  color-scheme: dark;
+  --t-ink: #e7edf5;
+  --t-ink-soft: #a8b3c3;
+  --t-ink-faint: #7a879b;
+  --t-accent: #3a78c8;
+  --t-accent-soft: rgba(58, 120, 200, 0.18);
+  --t-brand: #7fb2ee;
+  --t-teal: #7db8f5;
+  --t-bg: #0b1220;
+  --t-surface: #111a2a;
+  --t-surface2: #172235;
+  --t-border: rgba(203, 213, 225, 0.13);
+  --t-line: rgba(203, 213, 225, 0.08);
+  --t-field: rgba(255, 255, 255, 0.035);
+  --t-track: rgba(255, 255, 255, 0.06);
+  --t-danger: #f08a8a;
+  --t-danger-bg: rgba(240, 138, 138, 0.12);
+  --t-warn: #f0b25a;
+  --t-warn-ink: #f3c98b;
+  --t-warn-bg: rgba(240, 178, 90, 0.12);
+  --t-ok: #5fd39a;
+  --t-ok-bg: rgba(95, 211, 154, 0.12);
+  --t-muted: #8592a6;
+  --t-placeholder: #66748a;
+}
+
+html[data-tema="gelap"] .pb {
+  --ink: #e7edf5;
+  --ink2: #a8b3c3;
+  --muted: #8592a6;
+  --faint: #66748a;
+  --brand: #7fb2ee;
+  --brand-deep: #3a78c8;
+  --brand-soft: rgba(58, 120, 200, 0.16);
+  --brand-line: rgba(127, 178, 238, 0.28);
+  --salary: #8cc0f7;
+  --tint: #0e1726;
+  --line: rgba(203, 213, 225, 0.12);
+  --line2: rgba(203, 213, 225, 0.07);
+  --surface2: #172235;
+  --amber-bg: rgba(240, 178, 90, 0.12);
+  --amber: #f0b25a;
+  --bg: #0b1220;
+  --card: #111a2a;
+  --head-bg: rgba(11, 18, 32, 0.86);
+  --btn-hover: #4a88d6;
+  --skel-a: #152034;
+  --skel-b: #1c2a42;
+  --bar-bg: #22314b;
+  --danger: #f08a8a;
+  --danger-bg: rgba(240, 138, 138, 0.12);
+  --ok: #5fd39a;
+  --ok-bg: rgba(95, 211, 154, 0.12);
+  --shadow-lg: 0 18px 40px -18px rgba(0, 0, 0, 0.6);
+}
+
+/* Kertas tetap putih di mode gelap: pratinjau CV & LinkedIn harus
+   terlihat seperti hasil akhirnya. Variabel dikembalikan ke nilai terang. */
+html[data-tema="gelap"] .kertas-terang,
+html[data-tema="gelap"] .pb .kertas-terang {
+  color-scheme: light;
+  --t-ink: #111b29;
+  --t-ink-soft: #4a5567;
+  --t-ink-faint: #8792a3;
+  --t-accent: #0b3c6e;
+  --t-accent-soft: #eaf1fa;
+  --t-brand: #14549a;
+  --t-teal: #1660b0;
+  --t-bg: #ffffff;
+  --t-surface: #ffffff;
+  --t-surface2: #f3f6fa;
+  --t-border: rgba(17, 27, 41, 0.1);
+  --t-line: rgba(17, 27, 41, 0.06);
+  --t-field: rgba(255, 255, 255, 0.7);
+  --t-danger: #b23a3a;
+  --t-warn: #b45309;
+  --t-ok: #0f7b4f;
+}
+
+html,
+body {
+  background: var(--t-bg);
+}
+body {
+  transition: background-color 0.2s ease;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--t-placeholder);
+}
+
+/* Pergantian tema terasa halus, bukan berkedip */
+html.ganti-tema *,
+html.ganti-tema *::before,
+html.ganti-tema *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.ganti-tema *,
+  html.ganti-tema *::before,
+  html.ganti-tema *::after {
+    transition: none !important;
+  }
+}

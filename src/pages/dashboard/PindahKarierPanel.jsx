@@ -361,10 +361,10 @@ export function PindahKarierPanel({ setActive }) {
         >
           <AlertTriangle
             size={15}
-            color="#B45309"
+            color="var(--t-warn)"
             style={{ flexShrink: 0, marginTop: 1 }}
           />
-          <div style={{ fontSize: 12.5, color: "#92400E", lineHeight: 1.6 }}>
+          <div style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
             <strong>Jangan tinggalkan halaman ini dulu.</strong> Analisis sedang
             berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang,
             hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.
@@ -471,7 +471,7 @@ export function PindahKarierPanel({ setActive }) {
                 fontWeight: 600,
                 border: `1px solid ${tujuan === c.label ? T.accent : T.border}`,
                 background:
-                  tujuan === c.label ? T.accentSoft : "rgba(255,255,255,0.5)",
+                  tujuan === c.label ? T.accentSoft : "var(--t-field)",
                 color: tujuan === c.label ? T.accent : T.inkSoft,
               }}
             >
@@ -491,7 +491,7 @@ export function PindahKarierPanel({ setActive }) {
             padding: "10px 14px",
             fontSize: 13.5,
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-            background: "rgba(255,255,255,0.6)",
+            background: "var(--t-field)",
             outline: "none",
             color: T.ink,
             boxSizing: "border-box",
@@ -503,7 +503,7 @@ export function PindahKarierPanel({ setActive }) {
           <div
             style={{
               fontSize: 12.5,
-              color: "#B23A3A",
+              color: "var(--t-danger)",
               marginBottom: 12,
               lineHeight: 1.55,
             }}
@@ -593,10 +593,10 @@ export function PindahKarierPanel({ setActive }) {
                   label: "Peluang berhasil",
                   warna:
                     hasil.peluang_persen >= 65
-                      ? "#0F7B4F"
+                      ? "var(--t-ok)"
                       : hasil.peluang_persen >= 40
-                        ? "#B45309"
-                        : "#B23A3A",
+                        ? "var(--t-warn)"
+                        : "var(--t-danger)",
                 },
                 {
                   angka: `${hasil.estimasi_bulan} bln`,
@@ -762,7 +762,7 @@ export function PindahKarierPanel({ setActive }) {
                                 border: `1px solid ${T.border}`,
                                 borderRadius: 10,
                                 padding: "9px 12px",
-                                background: "rgba(255,255,255,0.5)",
+                                background: "var(--t-field)",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 10,
@@ -1008,7 +1008,7 @@ export function PindahKarierPanel({ setActive }) {
                   marginBottom: 12,
                 }}
               >
-                <AlertTriangle size={15} color="#B45309" />
+                <AlertTriangle size={15} color="var(--t-warn)" />
                 <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
                   Yang perlu kamu pertimbangkan
                 </span>
@@ -1027,7 +1027,7 @@ export function PindahKarierPanel({ setActive }) {
                   }}
                 >
                   <span
-                    style={{ color: "#B45309", flexShrink: 0, marginTop: 1 }}
+                    style={{ color: "var(--t-warn)", flexShrink: 0, marginTop: 1 }}
                   >
                     •
                   </span>

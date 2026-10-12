@@ -249,7 +249,7 @@ async function ambilHalaman(client, tabel, halaman, strategi) {
   return q;
 }
 
-async function ambilSemuaBaris(client, tabel, sumber) {
+async function ambilSemuaBaris(client, tabel, sumber, batas = Infinity, info = {}) {
   // Hitung dulu jumlah barisnya, supaya semua halaman bisa diambil
   // BERSAMAAN. Cara berurutan menunggu 10+ perjalanan bolak-balik,
   // dan itu penyebab utama layar "Memuat data loker" terasa lama.
@@ -261,9 +261,10 @@ async function ambilSemuaBaris(client, tabel, sumber) {
     throw new Error(galatHitung.message || "Supabase fetch gagal");
   }
 
+  info.total = count || 0;
   const jumlahHalaman = Math.min(
     MAKS_HALAMAN,
-    Math.max(1, Math.ceil((count || 0) / UKURAN_HALAMAN)),
+    Math.max(1, Math.ceil(Math.min(count || 0, batas) / UKURAN_HALAMAN)),
   );
 
   const strategi = await tentukanStrategi(client, tabel, sumber);
@@ -305,7 +306,7 @@ async function ambilSemuaBaris(client, tabel, sumber) {
   }
 
   console.log(`[loker] ${sumber}: ${semua.length} dari ${count ?? "?"} baris`);
-  return semua.map((row) => mapSupabaseJob(row, sumber));
+  return semua.slice(0, batas).map((row) => mapSupabaseJob(row, sumber));
 }
 
 export async function fetchJobsFromSupabase() {
@@ -360,8 +361,23 @@ export async function fetchDetailLoker(id) {
 // tetap ditampilkan \u2014 jangan sampai satu sumber error bikin semuanya
 // kosong.
 export async function fetchAllJobs() {
-  const tasks = [fetchJobsFromSupabase()];
-  if (supabase2Configured) tasks.push(fetchJobsFromSupabase2());
+  return (await fetchLoker()).jobs;
+}
+
+/**
+ * Ambil loker dengan batas jumlah baris (untuk akun gratis).
+ *
+ * Mengembalikan { jobs, total } — `total` adalah jumlah seluruh baris di
+ * database, dipakai untuk menampilkan "x loker lagi terkunci". Dengan
+ * batas, hanya halaman yang diperlukan yang diunduh, jadi pemuatan untuk
+ * pengunjung justru lebih cepat.
+ */
+export async function fetchLoker({ batas = Infinity } = {}) {
+  const info1 = {};
+  const info2 = {};
+  const tasks = [ambilSemuaBaris(supabase, SUPABASE_TABLE, "db1", batas, info1)];
+  if (supabase2Configured)
+    tasks.push(ambilSemuaBaris(supabase2, SUPABASE_TABLE_2, "db2", batas, info2));
 
   const results = await Promise.allSettled(tasks);
   const jobs = [];
@@ -374,8 +390,11 @@ export async function fetchAllJobs() {
   if (jobs.length === 0 && errors.length > 0) {
     throw new Error(errors.join("; "));
   }
-  // Urutkan gabungan berdasarkan id (paling baru duluan sebisanya)
-  return jobs;
+  const total = (info1.total || 0) + (info2.total || 0);
+  return {
+    jobs: jobs.slice(0, batas),
+    total: Math.max(total, Math.min(jobs.length, batas)),
+  };
 }
 
 // tokenize: pecah teks jadi kata-kata, lalu normalize tiap kata lewat kamus

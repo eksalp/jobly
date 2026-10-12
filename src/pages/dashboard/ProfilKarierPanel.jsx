@@ -57,7 +57,7 @@ function ExpForm({ draft, onChange, onSave, onCancel, saving }) {
     padding: "8px 10px",
     fontSize: 13,
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-    background: "rgba(255,255,255,0.7)",
+    background: "var(--t-field)",
     outline: "none",
     color: T.ink,
   };
@@ -68,7 +68,7 @@ function ExpForm({ draft, onChange, onSave, onCancel, saving }) {
         borderRadius: 12,
         padding: 14,
         marginBottom: 14,
-        background: "rgba(255,255,255,0.45)",
+        background: "var(--t-field)",
       }}
     >
       <div
@@ -395,7 +395,7 @@ export function ProfilKarierPanel() {
                 fontSize: 14,
                 fontWeight: 600,
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                background: "rgba(255,255,255,0.7)",
+                background: "var(--t-field)",
                 outline: "none",
                 color: T.ink,
               }}
@@ -410,7 +410,7 @@ export function ProfilKarierPanel() {
                 padding: "8px 12px",
                 fontSize: 13,
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                background: "rgba(255,255,255,0.7)",
+                background: "var(--t-field)",
                 outline: "none",
                 color: T.ink,
               }}
@@ -425,7 +425,7 @@ export function ProfilKarierPanel() {
                 padding: "8px 12px",
                 fontSize: 13,
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                background: "rgba(255,255,255,0.7)",
+                background: "var(--t-field)",
                 outline: "none",
                 color: T.ink,
               }}
@@ -492,7 +492,7 @@ export function ProfilKarierPanel() {
               resize: "vertical",
               outline: "none",
               color: T.ink,
-              background: "rgba(255,255,255,0.6)",
+              background: "var(--t-field)",
             }}
           />
         ) : (
@@ -583,7 +583,7 @@ export function ProfilKarierPanel() {
               padding: "9px 12px",
               fontSize: 13,
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              background: "rgba(255,255,255,0.6)",
+              background: "var(--t-field)",
               outline: "none",
               color: T.ink,
               boxSizing: "border-box",
@@ -743,7 +743,7 @@ export function ProfilKarierPanel() {
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        color: "#B23A3A",
+                        color: "var(--t-danger)",
                         padding: 4,
                         display: "flex",
                       }}
@@ -857,7 +857,7 @@ export function ProfilKarierPanel() {
                   padding: "8px 12px",
                   fontSize: 13,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: "rgba(255,255,255,0.7)",
+                  background: "var(--t-field)",
                   outline: "none",
                   color: T.ink,
                   boxSizing: "border-box",
@@ -930,7 +930,7 @@ export function ProfilKarierPanel() {
                     padding: "8px 12px",
                     fontSize: 13,
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                    background: "rgba(255,255,255,0.7)",
+                    background: "var(--t-field)",
                     outline: "none",
                     color: T.ink,
                     boxSizing: "border-box",
@@ -951,7 +951,7 @@ export function ProfilKarierPanel() {
                     padding: "8px 12px",
                     fontSize: 13,
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                    background: "rgba(255,255,255,0.7)",
+                    background: "var(--t-field)",
                     outline: "none",
                     color: T.ink,
                     boxSizing: "border-box",

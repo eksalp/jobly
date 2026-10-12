@@ -146,7 +146,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
             alignItems: "center",
             gap: 5,
             fontSize: 11.5,
-            color: langganan.segeraBerakhir ? "#B45309" : T.inkFaint,
+            color: langganan.segeraBerakhir ? "var(--t-warn)" : T.inkFaint,
             fontWeight: langganan.segeraBerakhir ? 600 : 400,
           }}
         >
@@ -170,9 +170,9 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
           const warna = !adaFitur
             ? T.inkFaint
             : habis
-              ? "#B23A3A"
+              ? "var(--t-danger)"
               : persen <= 34
-                ? "#B45309"
+                ? "var(--t-warn)"
                 : T.accent;
 
           return (
@@ -182,7 +182,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
                 padding: "10px 12px",
                 borderRadius: 12,
                 background: adaFitur
-                  ? "rgba(255,255,255,0.55)"
+                  ? "var(--t-field)"
                   : "rgba(0,0,0,0.02)",
                 border: `1px solid ${T.border}`,
                 opacity: adaFitur ? 1 : 0.6,

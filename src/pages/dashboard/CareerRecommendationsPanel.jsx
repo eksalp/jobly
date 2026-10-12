@@ -34,7 +34,7 @@ function KartuKursus({ k }) {
           border: `1px solid ${T.border}`,
           borderRadius: 12,
           padding: "12px 14px",
-          background: "rgba(255,255,255,0.5)",
+          background: "var(--t-field)",
           display: "flex",
           alignItems: "center",
           gap: 12,

@@ -7,15 +7,15 @@
  * Struktur bertingkat: tiap paket berbayar mencakup SEMUA fitur tier di
  * bawahnya, ditambah miliknya sendiri. Fitur dasar (CV Builder, LinkedIn
  * Builder, bank pertanyaan interview, pelacak lamaran) gratis selamanya
- * di tier Free, begitu juga SEMUA LOKER — yang dijual hanya analisis AI dan
- * fitur lanjutan.
+ * di tier Free, begitu juga 5.000 loker pertama. Paket berbayar membuka
+ * SEMUA loker, analisis AI, dan fitur lanjutan.
  */
 
 // Fitur yang sama di semua tier, gratis selamanya. Didefinisikan sekali
 // lalu disebar ke tiap paket, supaya tidak ada yang tertinggal saat
 // daftarnya berubah.
 const FITUR_DASAR = [
-  "Semua loker — cari & saring per kota, tanpa batas",
+  "5.000 loker — cari & saring per kota",
   "CV Builder — bikin & unduh PDF, selamanya",
   "LinkedIn Builder — susun profil, selamanya",
   "100+ pertanyaan interview + strategi menjawab",
@@ -35,6 +35,7 @@ export const PAKET = {
     ringkas: "Mulai tanpa biaya",
     fitur: [...FITUR_DASAR],
     tanpa: [
+      "Loker di atas 5.000",
       "Analisis AI (CV & LinkedIn)",
       "Rencana Pindah Karier",
       "Simulasi interview dengan AI",
@@ -53,6 +54,7 @@ export const PAKET = {
     // Semua yang di Free, PLUS milik Starter
     fitur: [
       "Semua fitur Free, plus:",
+      "Buka SEMUA loker, tanpa batas 5.000",
       "Masa aktif 3 bulan",
       "1x analisis AI (CV atau LinkedIn)",
       "Draft CV & LinkedIn dalam dua bahasa",

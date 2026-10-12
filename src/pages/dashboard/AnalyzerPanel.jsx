@@ -39,7 +39,7 @@ import DataSourceBanner from "../../components/DataSourceBanner";
 
 // Kartu audit — menampilkan skor + daftar masalah & perbaikannya
 function AuditCard({ judul, skor, masalah }) {
-  const warna = skor >= 75 ? T.teal : skor >= 50 ? "#D97706" : "#B23A3A";
+  const warna = skor >= 75 ? T.teal : skor >= 50 ? "var(--t-warn)" : "var(--t-danger)";
   return (
     <Glass style={{ padding: 22, marginTop: 16 }}>
       <div
@@ -100,7 +100,7 @@ function AuditCard({ judul, skor, masalah }) {
             >
               <AlertCircle
                 size={11}
-                style={{ verticalAlign: -1, marginRight: 5, color: "#D97706" }}
+                style={{ verticalAlign: -1, marginRight: 5, color: "var(--t-warn)" }}
               />
               {m.masalah}
             </div>
@@ -521,10 +521,10 @@ export function AnalyzerPanel({ setActive }) {
         >
           <AlertTriangle
             size={15}
-            color="#B45309"
+            color="var(--t-warn)"
             style={{ flexShrink: 0, marginTop: 1 }}
           />
-          <div style={{ fontSize: 12.5, color: "#92400E", lineHeight: 1.6 }}>
+          <div style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
             <strong>Jangan tinggalkan halaman ini dulu.</strong> Analisis sedang
             berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang,
             hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.
@@ -575,7 +575,7 @@ export function AnalyzerPanel({ setActive }) {
                 fontSize: 12.5,
                 fontWeight: 600,
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                background: sourceType === opt.key ? "#fff" : "transparent",
+                background: sourceType === opt.key ? "var(--t-surface)" : "transparent",
                 color: sourceType === opt.key ? T.accent : T.inkSoft,
                 boxShadow:
                   sourceType === opt.key
@@ -713,7 +713,7 @@ export function AnalyzerPanel({ setActive }) {
             gap: 10,
             cursor: "pointer",
             marginBottom: 12,
-            background: "rgba(255,255,255,0.4)",
+            background: "var(--t-field)",
           }}
         >
           {bacaProgres ? (
@@ -742,7 +742,7 @@ export function AnalyzerPanel({ setActive }) {
           <div
             style={{
               fontSize: 12.5,
-              color: "#92400E",
+              color: "var(--t-warn-ink)",
               lineHeight: 1.6,
               background: "rgba(217,119,6,0.07)",
               border: "1px solid rgba(217,119,6,0.3)",
@@ -770,7 +770,7 @@ export function AnalyzerPanel({ setActive }) {
             resize: "vertical",
             outline: "none",
             color: T.ink,
-            background: "rgba(255,255,255,0.5)",
+            background: "var(--t-field)",
           }}
         />
         {/* Peringatan tautan LinkedIn */}
@@ -787,11 +787,11 @@ export function AnalyzerPanel({ setActive }) {
             <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
               <AlertTriangle
                 size={15}
-                color="#B45309"
+                color="var(--t-warn)"
                 style={{ flexShrink: 0, marginTop: 1 }}
               />
               <div
-                style={{ fontSize: 12.5, color: "#92400E", lineHeight: 1.6 }}
+                style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}
               >
                 <strong>Itu tautan, bukan isi profil.</strong> AI tidak bisa
                 membuka halaman LinkedIn — yang dibutuhkan teks profilnya. Salin
@@ -804,7 +804,7 @@ export function AnalyzerPanel({ setActive }) {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                color: "#B45309",
+                color: "var(--t-warn)",
                 fontSize: 12,
                 fontWeight: 600,
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
@@ -839,7 +839,7 @@ export function AnalyzerPanel({ setActive }) {
                       gap: 9,
                       marginBottom: 6,
                       fontSize: 12,
-                      color: "#92400E",
+                      color: "var(--t-warn-ink)",
                       lineHeight: 1.55,
                     }}
                   >
@@ -848,7 +848,7 @@ export function AnalyzerPanel({ setActive }) {
                         fontSize: 10,
                         fontWeight: 700,
                         color: "#fff",
-                        background: "#B45309",
+                        background: "var(--t-warn)",
                         borderRadius: 99,
                         width: 16,
                         height: 16,
@@ -1259,7 +1259,7 @@ export function AnalyzerPanel({ setActive }) {
                   <div
                     style={{
                       fontSize: 12.5,
-                      color: "#B23A3A",
+                      color: "var(--t-danger)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -1459,7 +1459,7 @@ export function AnalyzerPanel({ setActive }) {
             style={{
               fontSize: 12.5,
               color: T.inkFaint,
-              background: "rgba(255,255,255,0.4)",
+              background: "var(--t-field)",
               border: `1px dashed ${T.border}`,
               borderRadius: 14,
               padding: "16px 18px",

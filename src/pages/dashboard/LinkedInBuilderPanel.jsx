@@ -479,7 +479,7 @@ function PanelReview({
               color: T.ink,
               lineHeight: 1.65,
               whiteSpace: "pre-wrap",
-              background: "#fff",
+              background: "var(--t-surface)",
               border: `1px solid ${T.border}`,
               borderRadius: 9,
               padding: "10px 12px",
@@ -595,7 +595,7 @@ export function LinkedInBuilderPanel({ setActive }) {
 
   const review = useMemo(() => auditProfile(p), [p]);
   const skor = useMemo(() => skorProfil(review), [review]);
-  const skorWarna = skor >= 75 ? "#0F7B4F" : skor >= 50 ? "#B45309" : "#B23A3A";
+  const skorWarna = skor >= 75 ? "var(--t-ok)" : skor >= 50 ? "var(--t-warn)" : "var(--t-danger)";
 
   const ubah = (field) => (e) =>
     setP((prev) => ({ ...prev, [field]: e.target.value }));
@@ -805,9 +805,9 @@ export function LinkedInBuilderPanel({ setActive }) {
     padding: "8px 11px",
     fontSize: 13,
     fontFamily: LI.font,
-    background: "#fff",
+    background: "var(--t-surface)",
     outline: "none",
-    color: LI.text,
+    color: T.ink,
     boxSizing: "border-box",
   };
 
@@ -830,7 +830,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           // sampai membungkus satu kata per baris.
           flexWrap: "wrap",
           marginBottom: 18,
-          background: "rgba(255,255,255,0.7)",
+          background: "var(--t-field)",
           border: `1px solid ${T.border}`,
           borderRadius: 14,
           padding: layarKecil ? "12px 14px" : "14px 18px",
@@ -892,7 +892,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           </div>
         </div>
         {dirty && (
-          <span style={{ fontSize: 11, color: "#B45309", flexShrink: 0 }}>
+          <span style={{ fontSize: 11, color: "var(--t-warn)", flexShrink: 0 }}>
             Belum tersimpan
           </span>
         )}
@@ -957,6 +957,7 @@ export function LinkedInBuilderPanel({ setActive }) {
       >
         {/* ============ KIRI: MOCKUP LINKEDIN ============ */}
         <div
+          className="kertas-terang"
           style={{
             background: LI.page,
             borderRadius: 12,
@@ -1106,7 +1107,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                     <span
                       style={{
                         fontSize: 11,
-                        color: p.headline.length > 220 ? "#B23A3A" : T.inkFaint,
+                        color: p.headline.length > 220 ? "var(--t-danger)" : T.inkFaint,
                         fontFamily: "'IBM Plex Mono', monospace",
                       }}
                     >
@@ -1233,7 +1234,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                   <span
                     style={{
                       fontSize: 11,
-                      color: p.about.length > 2600 ? "#B23A3A" : T.inkFaint,
+                      color: p.about.length > 2600 ? "var(--t-danger)" : T.inkFaint,
                       fontFamily: "'IBM Plex Mono', monospace",
                     }}
                   >
@@ -1447,7 +1448,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                           alignItems: "center",
                           gap: 5,
                           fontSize: 11.5,
-                          color: "#B23A3A",
+                          color: "var(--t-danger)",
                           background: "none",
                           border: "none",
                           cursor: "pointer",
@@ -1550,7 +1551,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                       <div
                         style={{
                           fontSize: 11.5,
-                          color: "#B45309",
+                          color: "var(--t-warn)",
                           marginTop: 8,
                         }}
                       >
@@ -1688,7 +1689,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         key={sk}
                         style={{
                           fontSize: 12.5,
-                          background: "rgba(0,0,0,0.05)",
+                          background: "var(--t-track)",
                           color: LI.text,
                           padding: "5px 8px 5px 12px",
                           borderRadius: 99,
@@ -1782,7 +1783,7 @@ export function LinkedInBuilderPanel({ setActive }) {
             style={{
               position: "sticky",
               top: 20,
-              background: "rgba(255,255,255,0.72)",
+              background: "var(--t-field)",
               border: `1px solid ${T.border}`,
               borderRadius: 14,
               backdropFilter: "blur(16px)",
@@ -1829,7 +1830,7 @@ export function LinkedInBuilderPanel({ setActive }) {
               bottom: 0,
               zIndex: 61,
               width: "min(420px, 88vw)",
-              background: "#fff",
+              background: "var(--t-surface)",
               boxShadow: "-8px 0 32px rgba(0,0,0,0.18)",
               // Laci selalu ada di DOM dan hanya digeser, supaya
               // animasinya mulus dan isinya tidak dirender ulang.

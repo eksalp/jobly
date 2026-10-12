@@ -120,7 +120,7 @@ export function BilahLangganan({ langganan, onLangganan }) {
             background: "none",
             border: "none",
             cursor: "pointer",
-            color: "#B45309",
+            color: "var(--t-warn)",
             fontSize: 11.5,
             fontWeight: 600,
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",

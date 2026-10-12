@@ -35,7 +35,7 @@ export function Field({
           border: `1px solid ${T.border}`,
           borderRadius: 14,
           padding: "12px 14px",
-          background: "rgba(255,255,255,0.7)",
+          background: "var(--t-field)",
           gap: 10,
         }}
       >
@@ -79,8 +79,8 @@ export function ErrorNote({ message }) {
         alignItems: "flex-start",
         gap: 7,
         fontSize: 12.5,
-        color: "#B23A3A",
-        background: "#FDEEEE",
+        color: "var(--t-danger)",
+        background: "var(--t-danger-bg)",
         border: "1px solid rgba(178,58,58,0.25)",
         borderRadius: 12,
         padding: "10px 12px",

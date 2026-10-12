@@ -1,32 +1,44 @@
 /**
  * Token desain Jobly.
  *
- * Latar putih, teks biru-hitam, dan satu warna merek: biru navy yang dalam.
- * Warna merek dipakai hemat — tombol utama, tautan, angka penting, dan
- * status aktif. Pemisah antar-bagian berupa garis tipis.
+ * Nilai di sini adalah variabel CSS, bukan warna langsung. Warna
+ * sesungguhnya didefinisikan di src/styles/tema.css — sekali untuk tema
+ * terang, sekali untuk tema gelap. Dengan begitu seluruh panel ikut
+ * berganti tema tanpa diubah satu per satu.
  *
- * Nama kunci lama (ink, inkSoft, accent, dst) dipertahankan agar seluruh
- * panel dashboard ikut berganti tanpa diubah satu per satu.
+ * Nama kunci lama (ink, inkSoft, accent, dst) dipertahankan.
  */
 export const T = {
   // Teks
-  ink: "#111B29", // judul & teks utama
-  inkSoft: "#4A5567", // teks pendukung
-  inkFaint: "#8792A3", // keterangan, placeholder
+  ink: "var(--t-ink)",
+  inkSoft: "var(--t-ink-soft)",
+  inkFaint: "var(--t-ink-faint)",
 
   // Merek
-  accent: "#0B3C6E", // biru navy — tombol utama, logo, item aktif
-  accentSoft: "#EAF1FA", // latar lembut untuk chip & ikon
-  brand: "#14549A", // tautan & teks berwarna merek
-  teal: "#1660B0", // aksen sekunder
-  salary: "#1660B0", // nominal gaji
+  accent: "var(--t-accent)",
+  accentSoft: "var(--t-accent-soft)",
+  brand: "var(--t-brand)",
+  teal: "var(--t-teal)",
+  salary: "var(--t-teal)",
 
   // Permukaan & garis
-  bg: "#FFFFFF",
-  surface: "#FFFFFF",
-  surface2: "#F3F6FA",
-  border: "rgba(17,27,41,0.10)",
-  line: "rgba(17,27,41,0.06)",
+  bg: "var(--t-bg)",
+  surface: "var(--t-surface)",
+  surface2: "var(--t-surface2)",
+  border: "var(--t-border)",
+  line: "var(--t-line)",
+  field: "var(--t-field)",
+  track: "var(--t-track)",
+
+  // Status
+  danger: "var(--t-danger)",
+  dangerBg: "var(--t-danger-bg)",
+  warn: "var(--t-warn)",
+  warnInk: "var(--t-warn-ink)",
+  warnBg: "var(--t-warn-bg)",
+  ok: "var(--t-ok)",
+  okBg: "var(--t-ok-bg)",
+  muted: "var(--t-muted)",
 
   // Huruf
   sans: "'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif",

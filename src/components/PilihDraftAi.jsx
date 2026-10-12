@@ -49,7 +49,7 @@ function Cuplikan({ draft, bahasa, ringkas = false }) {
       style={{
         border: `1px solid ${T.border}`,
         borderRadius: 10,
-        background: "#fff",
+        background: "var(--t-surface)",
         padding: "10px 12px",
       }}
     >
@@ -214,7 +214,7 @@ export function PilihDraftAi({
             style={{
               display: "flex",
               gap: 4,
-              background: "rgba(0,0,0,0.05)",
+              background: "var(--t-track)",
               padding: 3,
               borderRadius: 10,
             }}
@@ -241,7 +241,7 @@ export function PilihDraftAi({
                     fontSize: 11.5,
                     fontWeight: 600,
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                    background: bahasa === opt.key ? "#fff" : "transparent",
+                    background: bahasa === opt.key ? "var(--t-surface)" : "transparent",
                     color: !tersedia
                       ? T.inkFaint
                       : bahasa === opt.key
@@ -358,7 +358,7 @@ export function PilihDraftAi({
               padding: "9px 12px",
               borderRadius: 10,
               border: `1px solid ${T.border}`,
-              background: "#fff",
+              background: "var(--t-surface)",
               cursor: "pointer",
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               textAlign: "left",
@@ -400,7 +400,7 @@ export function PilihDraftAi({
                 marginTop: 6,
                 border: `1px solid ${T.border}`,
                 borderRadius: 10,
-                background: "#fff",
+                background: "var(--t-surface)",
                 overflow: "hidden",
                 maxHeight: 230,
                 overflowY: "auto",
@@ -488,7 +488,7 @@ export function PilihDraftAi({
           style={{
             display: "flex",
             gap: 4,
-            background: "rgba(0,0,0,0.05)",
+            background: "var(--t-track)",
             padding: 3,
             borderRadius: 10,
           }}
@@ -518,7 +518,7 @@ export function PilihDraftAi({
                   fontSize: 11.5,
                   fontWeight: 600,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: bahasa === opt.key ? "#fff" : "transparent",
+                  background: bahasa === opt.key ? "var(--t-surface)" : "transparent",
                   color: !tersedia
                     ? T.inkFaint
                     : bahasa === opt.key

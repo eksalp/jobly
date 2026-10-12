@@ -310,7 +310,7 @@ export function RiwayatPembelian() {
                     <div
                       style={{
                         fontSize: 11.5,
-                        color: "#92400E",
+                        color: "var(--t-warn-ink)",
                         marginTop: 9,
                         lineHeight: 1.55,
                       }}

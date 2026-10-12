@@ -29,7 +29,7 @@ export function JobRow({
   const inner = (
     <div
       style={{
-        background: "rgba(255,255,255,0.5)",
+        background: "var(--t-field)",
         border: `1px solid ${T.border}`,
         borderRadius: 14,
         padding: hp ? 12 : 14,

@@ -52,7 +52,7 @@ const tombolDasar = {
   padding: "0 9px",
   borderRadius: 10,
   border: `1px solid ${T.border}`,
-  background: "rgba(255,255,255,0.6)",
+  background: "var(--t-field)",
   color: T.ink,
   display: "flex",
   alignItems: "center",
@@ -112,7 +112,7 @@ export function Pagination({
             style={{
               ...tombolDasar,
               background:
-                h === currentPage ? T.accent : "rgba(255,255,255,0.6)",
+                h === currentPage ? T.accent : "var(--t-field)",
               borderColor: h === currentPage ? T.accent : T.border,
               color: h === currentPage ? "#fff" : T.ink,
               boxShadow:

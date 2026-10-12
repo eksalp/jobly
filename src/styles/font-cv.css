@@ -1,0 +1,14 @@
+/* Font pilihan CV Builder (SIL Open Font License). Hanya diunduh browser
+   saat benar-benar dipakai di halaman. */
+@font-face { font-family: "Carlito"; src: url("/fonts/cv/carlito-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Carlito"; src: url("/fonts/cv/carlito-700.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Caladea"; src: url("/fonts/cv/caladea-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Caladea"; src: url("/fonts/cv/caladea-700.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Gelasio"; src: url("/fonts/cv/gelasio-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Gelasio"; src: url("/fonts/cv/gelasio-700.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "EB Garamond"; src: url("/fonts/cv/eb-garamond-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "EB Garamond"; src: url("/fonts/cv/eb-garamond-700.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Lato"; src: url("/fonts/cv/lato-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Lato"; src: url("/fonts/cv/lato-700.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Roboto"; src: url("/fonts/cv/roboto-400.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Roboto"; src: url("/fonts/cv/roboto-700.ttf") format("truetype"); font-weight: 700; font-display: swap; }
