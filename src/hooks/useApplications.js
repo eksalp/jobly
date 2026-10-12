@@ -13,7 +13,7 @@ export const TAHAPAN = [
   {
     id: "ditinjau",
     label: "Ditinjau",
-    warna: "#4C63E0",
+    warna: "#0B3C6E",
     deskripsi: "Sedang diproses HR",
   },
   {

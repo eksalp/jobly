@@ -123,7 +123,7 @@ export function BilahLangganan({ langganan, onLangganan }) {
             color: "#B45309",
             fontSize: 11.5,
             fontWeight: 600,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             padding: 0,
           }}
         >

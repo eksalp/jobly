@@ -60,7 +60,7 @@ function AuditCard({ judul, skor, masalah }) {
                 fontSize: 24,
                 fontWeight: 700,
                 color: warna,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               }}
             >
               {skor}
@@ -574,7 +574,7 @@ export function AnalyzerPanel({ setActive }) {
                 cursor: "pointer",
                 fontSize: 12.5,
                 fontWeight: 600,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 background: sourceType === opt.key ? "#fff" : "transparent",
                 color: sourceType === opt.key ? T.accent : T.inkSoft,
                 boxShadow:
@@ -599,7 +599,7 @@ export function AnalyzerPanel({ setActive }) {
               marginBottom: 12,
               padding: "12px 14px",
               borderRadius: 12,
-              background: "rgba(76,99,224,0.05)",
+              background: "rgba(11,60,110,0.05)",
               border: `1px solid ${T.accentSoft}`,
             }}
           >
@@ -766,7 +766,7 @@ export function AnalyzerPanel({ setActive }) {
             borderRadius: 14,
             padding: 14,
             fontSize: 13.5,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             resize: "vertical",
             outline: "none",
             color: T.ink,
@@ -807,7 +807,7 @@ export function AnalyzerPanel({ setActive }) {
                 color: "#B45309",
                 fontSize: 12,
                 fontWeight: 600,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 padding: 0,
                 textDecoration: "underline",
               }}
@@ -921,7 +921,7 @@ export function AnalyzerPanel({ setActive }) {
             </div>
             <div
               style={{
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 fontSize: unlocked ? 17 : 19,
                 color: T.ink,
                 fontWeight: 600,
@@ -1158,7 +1158,7 @@ export function AnalyzerPanel({ setActive }) {
                   color: T.teal,
                   fontSize: 12.5,
                   fontWeight: 600,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   padding: 0,
                   flexShrink: 0,
                 }}

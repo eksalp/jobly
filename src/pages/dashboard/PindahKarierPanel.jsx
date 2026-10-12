@@ -200,7 +200,7 @@ export function PindahKarierPanel({ setActive }) {
     if (!adaProfil) {
       setGalat(
         "Belum ada data profil. Isi CV kamu di CV Builder, atau jalankan " +
-          "analisis di halaman Cari Arah Karier dulu.",
+          "analisis di halaman Review CV dulu.",
       );
       return;
     }
@@ -383,7 +383,7 @@ export function PindahKarierPanel({ setActive }) {
             display: "flex",
             alignItems: "center",
             gap: 10,
-            background: "rgba(76,99,224,0.05)",
+            background: "rgba(11,60,110,0.05)",
             border: `1px solid ${T.accentSoft}`,
           }}
         >
@@ -426,7 +426,7 @@ export function PindahKarierPanel({ setActive }) {
               perlu dikejar.
             </>
           ) : (
-            "Isi dulu CV kamu di CV Builder, atau jalankan analisis di halaman Cari Arah Karier."
+            "Isi dulu CV kamu di CV Builder, atau jalankan analisis di halaman Review CV."
           )}
         </div>
 
@@ -467,7 +467,7 @@ export function PindahKarierPanel({ setActive }) {
                 padding: "6px 12px",
                 borderRadius: 99,
                 cursor: "pointer",
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 fontWeight: 600,
                 border: `1px solid ${tujuan === c.label ? T.accent : T.border}`,
                 background:
@@ -490,7 +490,7 @@ export function PindahKarierPanel({ setActive }) {
             borderRadius: 12,
             padding: "10px 14px",
             fontSize: 13.5,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             background: "rgba(255,255,255,0.6)",
             outline: "none",
             color: T.ink,
@@ -616,7 +616,7 @@ export function PindahKarierPanel({ setActive }) {
                       fontSize: s.kecil ? 14 : 21,
                       fontWeight: 700,
                       color: s.warna,
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                       lineHeight: 1.2,
                     }}
                   >

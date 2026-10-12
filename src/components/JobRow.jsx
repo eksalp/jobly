@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Building2,
   MapPin,
   DollarSign,
   Bookmark,
@@ -13,6 +12,9 @@ import {
 import { T } from "../theme";
 import { useLayarKecil } from "../hooks/useLayarKecil";
 import { Button } from "./ui/Button";
+import { LogoKotak } from "./publik/LogoKotak";
+import { formatGaji, logoPerusahaan, urlDetail } from "../utils/sumberLoker";
+import { tautan } from "../utils/navigasi";
 
 export function JobRow({
   job,
@@ -39,21 +41,13 @@ export function JobRow({
         alignItems: hp ? "flex-start" : "center",
       }}
     >
-      <div
-        style={{
-          width: 38,
-          height: 38,
-          borderRadius: 10,
-          background: T.accent,
-          color: "#fff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-        }}
-      >
-        <Building2 size={16} />
-      </div>
+      <LogoKotak
+        src={logoPerusahaan(job)}
+        nama={job.perusahaan}
+        ikon={!logoPerusahaan(job)}
+        ukuran={40}
+        radius={11}
+      />
       <div style={{ flex: hp ? "1 1 100%" : 1, minWidth: 0 }}>
         <div
           style={{
@@ -69,7 +63,17 @@ export function JobRow({
             overflow: "hidden",
           }}
         >
-          {job.posisi}
+          {job.id ? (
+            <a
+              {...tautan(urlDetail(job))}
+              style={{ color: "inherit", textDecoration: "none" }}
+              title="Lihat detail lowongan"
+            >
+              {job.posisi}
+            </a>
+          ) : (
+            job.posisi
+          )}
         </div>
         <div
           style={{
@@ -89,7 +93,7 @@ export function JobRow({
           </span>
           <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
             <DollarSign size={10} />
-            {job.gaji}
+            {formatGaji(job) || "Gaji tidak disebutkan"}
           </span>
         </div>
         {job.alasan && (
@@ -146,7 +150,7 @@ export function JobRow({
             gap: 5,
             fontSize: 12,
             fontWeight: 600,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           }}
         >
           {sudahDilamar ? (

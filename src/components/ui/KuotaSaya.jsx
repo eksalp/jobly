@@ -70,7 +70,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
             color: T.accent,
             fontSize: 12.5,
             fontWeight: 600,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             padding: 0,
             flexShrink: 0,
           }}
@@ -208,7 +208,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
                     fontSize: 19,
                     fontWeight: 700,
                     color: warna,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                     lineHeight: 1,
                   }}
                 >
@@ -267,7 +267,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
               color: T.accent,
               fontSize: 11.5,
               fontWeight: 600,
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               padding: 0,
             }}
           >

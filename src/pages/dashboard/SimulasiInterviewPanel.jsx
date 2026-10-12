@@ -461,7 +461,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 marginBottom: 14,
                 padding: "13px 15px",
                 borderRadius: 12,
-                background: "rgba(76,99,224,0.05)",
+                background: "rgba(11,60,110,0.05)",
                 border: `1px solid ${T.accentSoft}`,
               }}
             >
@@ -555,7 +555,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 borderRadius: 12,
                 padding: "10px 14px",
                 fontSize: 13.5,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 background: "rgba(255,255,255,0.6)",
                 outline: "none",
                 color: T.ink,
@@ -608,7 +608,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                     borderRadius: 99,
                     cursor: "pointer",
                     fontWeight: 600,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                     border: `1px solid ${kategori.slug === k.slug ? T.accent : T.border}`,
                     background:
                       kategori.slug === k.slug
@@ -796,13 +796,13 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                     live.terhubung && !menilai ? "pointer" : "not-allowed",
                   fontSize: 14.5,
                   fontWeight: 600,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   background: live.sedangBicara ? "#B23A3A" : T.accent,
                   color: "#fff",
                   opacity: live.terhubung && !menilai ? 1 : 0.5,
                   boxShadow: live.sedangBicara
                     ? "0 0 0 7px rgba(178,58,58,0.14)"
-                    : "0 6px 20px rgba(76,99,224,0.3)",
+                    : "0 6px 20px rgba(11,60,110,0.3)",
                   transition: "all .2s",
                 }}
               >
@@ -981,7 +981,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
             fontSize: 44,
             fontWeight: 700,
             lineHeight: 1,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             color:
               hasil.skor >= 75
                 ? "#0F7B4F"
@@ -1024,7 +1024,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
                     fontSize: 14,
                     fontWeight: 700,
                     color: n.warna,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   }}
                 >
                   {n.label}

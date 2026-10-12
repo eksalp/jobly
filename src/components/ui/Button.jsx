@@ -3,27 +3,26 @@ import { T } from "../../theme";
 
 export function Button({ children, variant = "primary", style, ...props }) {
   const base = {
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: T.sans,
     fontWeight: 600,
     fontSize: 14,
-    padding: "12px 22px",
-    borderRadius: 14,
+    padding: "12px 20px",
+    borderRadius: 12,
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    transition: "all .18s",
-    border: "none",
+    transition: "all .16s",
+    border: "1px solid transparent",
   };
   const variants = {
     primary: {
       background: T.accent,
       color: "#fff",
-      boxShadow: "0 6px 18px rgba(76,99,224,0.28)",
     },
     outline: {
-      background: "rgba(255,255,255,0.6)",
+      background: T.surface,
       color: T.ink,
       border: `1px solid ${T.border}`,
     },
@@ -32,7 +31,7 @@ export function Button({ children, variant = "primary", style, ...props }) {
   return (
     <button
       style={{ ...base, ...variants[variant], ...style }}
-      onMouseEnter={(e) => (e.currentTarget.style.filter = "brightness(1.05)")}
+      onMouseEnter={(e) => (e.currentTarget.style.filter = "brightness(1.08)")}
       onMouseLeave={(e) => (e.currentTarget.style.filter = "brightness(1)")}
       {...props}
     >
@@ -40,4 +39,3 @@ export function Button({ children, variant = "primary", style, ...props }) {
     </button>
   );
 }
-

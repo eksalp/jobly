@@ -50,7 +50,7 @@ export function LoginPage({ go }) {
     <AuthWrap>
       <h1
         style={{
-          fontFamily: "'Poppins', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           fontSize: 22,
           fontWeight: 600,
           color: T.ink,

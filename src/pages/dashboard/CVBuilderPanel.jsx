@@ -550,7 +550,7 @@ function Tooltip({ tipKey }) {
                 color: "#fff",
               }}
             >
-              💡 Tips ATS: {tip.title}
+              Tips ATS: {tip.title}
             </div>
             {tip.tips.map((t, i) => (
               <div
@@ -601,7 +601,7 @@ function Field({
     borderRadius: 10,
     padding: "9px 12px",
     fontSize: 13,
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
     background: "rgba(255,255,255,0.65)",
     outline: "none",
     color: T.ink,
@@ -709,7 +709,7 @@ function BulletListField({ label, items, onChange, placeholder, tipKey }) {
                   borderRadius: 10,
                   padding: "8px 10px",
                   fontSize: 12.5,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   background: "rgba(255,255,255,0.65)",
                   outline: "none",
                   color: T.ink,
@@ -750,7 +750,7 @@ function BulletListField({ label, items, onChange, placeholder, tipKey }) {
             borderRadius: 10,
             padding: "9px 12px",
             fontSize: 13,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             background: "rgba(255,255,255,0.65)",
             outline: "none",
             color: T.ink,
@@ -1332,7 +1332,7 @@ function PratinjauBerhalaman({ children }) {
           style={{
             fontSize: 12,
             color: T.inkSoft,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             minWidth: 108,
             textAlign: "center",
           }}
@@ -2491,7 +2491,7 @@ export function CVBuilderPanel({ setActive }) {
                   cursor: "pointer",
                   fontSize: 12.5,
                   fontWeight: 600,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   background: tabHp === t.key ? "#fff" : "transparent",
                   color: tabHp === t.key ? T.accent : T.inkSoft,
                   boxShadow:
@@ -2806,7 +2806,7 @@ export function CVBuilderPanel({ setActive }) {
                   borderRadius: 10,
                   padding: "8px 12px",
                   fontSize: 12.5,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   background: "rgba(255,255,255,0.6)",
                   outline: "none",
                   color: T.ink,
@@ -2900,7 +2900,7 @@ export function CVBuilderPanel({ setActive }) {
                       cursor: "pointer",
                       fontSize: 12,
                       fontWeight: 600,
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                       background: lang === l ? "#fff" : "transparent",
                       color: lang === l ? T.accent : T.inkSoft,
                       boxShadow:

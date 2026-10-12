@@ -280,7 +280,7 @@ export function AICareerCoachPanel() {
             border: "none",
             outline: "none",
             fontSize: 13.5,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             background: "transparent",
             color: T.ink,
             resize: "none",

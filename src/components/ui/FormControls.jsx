@@ -51,7 +51,7 @@ export function Field({
             outline: "none",
             flex: 1,
             fontSize: 14,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             background: "transparent",
             color: T.ink,
             width: "100%",

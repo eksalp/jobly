@@ -23,7 +23,7 @@ export function OrbSuara({ keadaan, tingkat = 0, ukuran = 150 }) {
       Ikon: Mic,
     },
     mendengar: {
-      warna: "#4C63E0",
+      warna: "#0B3C6E",
       warna2: "#818CF8",
       label: "Mendengarkan",
       Ikon: Mic,
@@ -36,7 +36,7 @@ export function OrbSuara({ keadaan, tingkat = 0, ukuran = 150 }) {
     },
     bicara: {
       warna: "#0F7B4F",
-      warna2: "#34D399",
+      warna2: "#5B9BE0",
       label: "AI sedang bicara",
       Ikon: Volume2,
     },

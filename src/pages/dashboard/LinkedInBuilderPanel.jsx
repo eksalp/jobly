@@ -177,7 +177,7 @@ function PenandaReview({ status, aktif, onClick, adaPanah }) {
         border: `1px solid ${aktif ? s.warna : "transparent"}`,
         fontSize: 11,
         fontWeight: 600,
-        fontFamily: "'Poppins', sans-serif",
+        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
         cursor: "pointer",
         whiteSpace: "nowrap",
         transition: "background .12s, color .12s",
@@ -851,7 +851,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                 fontSize: 26,
                 fontWeight: 700,
                 color: skorWarna,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 lineHeight: 1,
               }}
             >

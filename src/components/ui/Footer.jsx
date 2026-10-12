@@ -2,10 +2,10 @@ import React from "react";
 import { T } from "../../theme";
 
 /**
- * Footer hak cipta.
+ * Footer ringkas untuk dashboard. Halaman publik memakai PublicFooter
+ * yang lebih lengkap.
  *
- * Tahunnya dihitung otomatis dari tanggal saat ini, bukan ditulis tetap,
- * supaya tidak perlu diperbarui manual tiap pergantian tahun.
+ * Tahunnya dihitung otomatis supaya tidak perlu diubah tiap tahun.
  */
 export function Footer() {
   const tahun = new Date().getFullYear();
@@ -13,11 +13,13 @@ export function Footer() {
   return (
     <div
       style={{
+        borderTop: `1px solid ${T.line}`,
         textAlign: "center",
-        padding: "24px 18px 28px",
-        fontSize: 11.5,
+        padding: "22px 18px 26px",
+        fontSize: 12,
         color: T.inkFaint,
         lineHeight: 1.6,
+        marginTop: 24,
       }}
     >
       © {tahun} Jobly · Dibuat oleh Eksal Pujianto

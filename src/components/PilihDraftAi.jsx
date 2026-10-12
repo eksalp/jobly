@@ -240,7 +240,7 @@ export function PilihDraftAi({
                     cursor: tersedia ? "pointer" : "not-allowed",
                     fontSize: 11.5,
                     fontWeight: 600,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                     background: bahasa === opt.key ? "#fff" : "transparent",
                     color: !tersedia
                       ? T.inkFaint
@@ -270,7 +270,7 @@ export function PilihDraftAi({
                 color: T.teal,
                 fontSize: 11.5,
                 fontWeight: 600,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 flexShrink: 0,
                 padding: 0,
               }}
@@ -360,7 +360,7 @@ export function PilihDraftAi({
               border: `1px solid ${T.border}`,
               background: "#fff",
               cursor: "pointer",
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               textAlign: "left",
             }}
           >
@@ -425,7 +425,7 @@ export function PilihDraftAi({
                       background: aktif
                         ? "rgba(20,184,166,0.08)"
                         : "transparent",
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                       display: "flex",
                       alignItems: "flex-start",
                       gap: 8,
@@ -517,7 +517,7 @@ export function PilihDraftAi({
                   cursor: tersedia ? "pointer" : "not-allowed",
                   fontSize: 11.5,
                   fontWeight: 600,
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   background: bahasa === opt.key ? "#fff" : "transparent",
                   color: !tersedia
                     ? T.inkFaint

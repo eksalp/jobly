@@ -50,6 +50,25 @@ function formatGaji(row) {
   return row.gaji || "Tidak disebutkan";
 }
 
+// Judul dari sebagian scraper ditulis HURUF BESAR SEMUA. Ubah jadi
+// kapital biasa, singkatan dalam kurung (mis. "(MDP)") tetap utuh.
+function rapikanJudul(judul) {
+  const t = String(judul || "").trim();
+  if (!t || t !== t.toUpperCase() || !/[A-Z]{4,}/.test(t)) return t;
+  return t
+    .toLowerCase()
+    .replace(/(^|[\s\-/(])([a-z])/g, (m, a, b) => a + b.toUpperCase())
+    .replace(/\(([^)]{1,6})\)/g, (m, isi) => `(${isi.toUpperCase()})`)
+    .replace(/\b(Dan|Di|Ke|Dari|Untuk|Atau|Of|And|For|The|In|At|To)\b/g, (m, w, i) =>
+      i === 0 ? w : w.toLowerCase(),
+    )
+    .replace(SINGKATAN, (m) => m.toUpperCase());
+}
+
+// Singkatan yang harus tetap kapital setelah judul dirapikan
+const SINGKATAN =
+  /\b(It|Hr|Hrd|Hrbp|Qa|Qc|Ui|Ux|Ai|Seo|Sem|Cs|Ga|Pr|Ios|Sap|Sql|Pt|Bumn|Mt|Odp|Mdp|Erp|Crm|Kol|Ppic|Hse|K3|Smk|D3|S1|S2|Spg|Spb|Bd|Ceo|Cfo|Cto|Coo|Vp|Api|Mep|Gis)\b/g;
+
 // Ubah baris hasil query Supabase jadi bentuk yang dipakai UI di sini.
 // `source` dipakai buat bikin id gabungan yang aman kalau datanya digabung
 // dari beberapa project Supabase sekaligus (dua tabel beda project bisa
@@ -68,7 +87,7 @@ export function mapSupabaseJob(row, source = "db1") {
     id: `${source}:${row.id}`, // id gabungan, aman dipakai sebagai React key & buat saved_jobs
     rawId: row.id, // id asli dari tabel, kalau-kalau dibutuhkan
     source,
-    posisi: row.title || row.posisi || "Tanpa judul",
+    posisi: rapikanJudul(row.title || row.posisi) || "Tanpa judul",
     perusahaan: row.company || row.perusahaan || "Tidak disebutkan",
     lokasiKerja, // "onsite" | "remote" | "hybrid"
     tipeKerja, // "fulltime" | "contract" | "freelance" | "internship" | "parttime"
@@ -78,6 +97,21 @@ export function mapSupabaseJob(row, source = "db1") {
     gaji: formatGaji(row),
     link: row.job_url || row.job_url_direct || row.link || "#",
     deskripsi: row.description || row.deskripsi || "",
+    // --- Data tambahan untuk kartu & halaman detail ---
+    // `site` = sumber scraping dari bot Telegram (linkedin, indeed, bca,
+    // pertamina_ptc, ...). Dipakai untuk menampilkan logo sumber.
+    site: (row.site || "").toString().toLowerCase().trim() || null,
+    logoPerusahaan: row.company_logo || null,
+    situsPerusahaan: row.company_url_direct || row.company_url || null,
+    industri: row.company_industry || null,
+    jenjang: row.job_level || row.experience_range || null,
+    fungsi: row.job_function || null,
+    tanggal: row.date_posted || row.posted_at || row.created_at || null,
+    gajiMin: row.min_amount ?? row.salary_min ?? null,
+    gajiMax: row.max_amount ?? row.salary_max ?? null,
+    mataUang: row.currency || row.salary_currency || null,
+    intervalGaji: row.interval || null,
+    gajiTeks: row.gaji || row.salary || null,
     // Kolom skill di database (array Postgres atau string dipisah koma).
     // Dipakai buat matching yang lebih presisi daripada cuma judul/deskripsi.
     skills: Array.isArray(row.skills)
@@ -138,6 +172,16 @@ const KOLOM_DIINGINKAN = [
   "created_at",
   "date_posted",
   "posted_at",
+  // Untuk kartu & detail ala remotefreelance/JobStreet. Semuanya kolom
+  // pendek, jadi tidak membebani payload seperti `description`.
+  "site",
+  "company_logo",
+  "company_url",
+  "company_url_direct",
+  "company_industry",
+  "job_level",
+  "job_function",
+  "experience_range",
 ];
 
 // Kolom besar yang sengaja TIDAK diambil meski ada — isinya panjang,
@@ -273,6 +317,42 @@ export async function fetchJobsFromSupabase() {
 // VITE_SUPABASE_URL_2 / VITE_SUPABASE_ANON_KEY_2 udah diisi.
 export async function fetchJobsFromSupabase2() {
   return ambilSemuaBaris(supabase2, SUPABASE_TABLE_2, "db2");
+}
+
+/**
+ * Ambil SATU loker lengkap (termasuk `description` dan info perusahaan)
+ * untuk halaman detail. Daftar loker sengaja tidak memuat kolom besar,
+ * jadi detailnya diambil terpisah saat lowongan dibuka — seperti
+ * JobStreet membuka satu lowongan.
+ *
+ * `id` berbentuk "db1:123" (lihat mapSupabaseJob).
+ */
+export async function fetchDetailLoker(id) {
+  const [sumber, ...sisa] = String(id).split(":");
+  const rawId = sisa.join(":");
+  if (!rawId) throw new Error("ID loker tidak valid.");
+
+  const client = sumber === "db2" ? supabase2 : supabase;
+  const tabel = sumber === "db2" ? SUPABASE_TABLE_2 : SUPABASE_TABLE;
+
+  const { data, error } = await client
+    .from(tabel)
+    .select("*")
+    .eq("id", rawId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message || "Gagal memuat loker.");
+  if (!data) return null;
+
+  return {
+    ...mapSupabaseJob(data, sumber === "db2" ? "db2" : "db1"),
+    deskripsiPerusahaan: data.company_description || null,
+    jumlahKaryawan: data.company_num_employees || null,
+    alamatPerusahaan: data.company_addresses || null,
+    rating: data.company_rating ?? null,
+    jumlahUlasan: data.company_reviews_count ?? null,
+    jumlahLowongan: data.vacancy_count ?? null,
+  };
 }
 
 // fetchAllJobs: gabungin loker dari kedua project Supabase (kalau

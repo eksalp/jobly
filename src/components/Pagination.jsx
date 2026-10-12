@@ -60,7 +60,7 @@ const tombolDasar = {
   cursor: "pointer",
   fontSize: 12.5,
   fontWeight: 600,
-  fontFamily: "'Poppins', sans-serif",
+  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
   transition: "background .12s, border-color .12s",
 };
 
@@ -116,7 +116,7 @@ export function Pagination({
               borderColor: h === currentPage ? T.accent : T.border,
               color: h === currentPage ? "#fff" : T.ink,
               boxShadow:
-                h === currentPage ? "0 4px 12px rgba(76,99,224,0.25)" : "none",
+                h === currentPage ? "0 4px 12px rgba(11,60,110,0.25)" : "none",
             }}
           >
             {h}

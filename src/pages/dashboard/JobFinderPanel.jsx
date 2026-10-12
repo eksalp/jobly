@@ -16,9 +16,7 @@ import { Glass } from "../../components/ui/Glass";
 import { JobRow } from "../../components/JobRow";
 import { Pagination } from "../../components/Pagination";
 import { useApplications } from "../../hooks/useApplications";
-import { useLangganan } from "../../hooks/useLangganan";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
-import { GerbangFitur, BilahLangganan } from "../../components/GerbangFitur";
 import DataSourceBanner from "../../components/DataSourceBanner";
 
 const JOBS_PER_PAGE = 10;
@@ -129,13 +127,9 @@ export function JobFinderPanel({ setActive }) {
   const { user } = useAuth();
   const { isSaved, toggleSave } = useSavedJobs();
   const { tambah: tambahLamaran, sudahDilamar } = useApplications();
-  const langganan = useLangganan();
   const hp = useLayarKecil(600);
-  const keParket = () => setActive?.("paket");
 
-  // Tanpa langganan, hanya sebagian loker yang DIRENDER.
-  // Sisanya tidak masuk DOM sama sekali, bukan sekadar disembunyikan.
-  const BATAS_GRATIS = 5;
+  // Semua loker gratis untuk semua pengguna — tidak ada batas tampil.
 
   // Catat loker sebagai lamaran. Data loker disalin, bukan direferensikan,
   // supaya riwayat tetap utuh walau loker aslinya hilang dari scraper.
@@ -288,11 +282,8 @@ export function JobFinderPanel({ setActive }) {
     jobs.length,
   ]);
 
-  // Belum langganan: hanya BATAS_GRATIS loker teratas yang boleh dirender.
-  const bolehLihat = langganan.aktif
-    ? filtered
-    : filtered.slice(0, BATAS_GRATIS);
-  const sisaTerkunci = Math.max(0, filtered.length - BATAS_GRATIS);
+  // Loker gratis untuk semua: seluruh hasil saringan boleh dilihat.
+  const bolehLihat = filtered;
 
   const totalPages = Math.max(1, Math.ceil(bolehLihat.length / JOBS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -303,7 +294,6 @@ export function JobFinderPanel({ setActive }) {
 
   return (
     <div style={{ padding: hp ? "16px 14px" : 28 }}>
-      <BilahLangganan langganan={langganan} onLangganan={keParket} />
       <DataSourceBanner />
 
       {/* Konfirmasi melayang setelah menyimpan lamaran */}
@@ -349,7 +339,7 @@ export function JobFinderPanel({ setActive }) {
         >
           <Target size={14} color={T.accent} />
           Tambahkan skill di halaman Profil Karier, lengkapi CV di CV Builder,
-          atau paste CV di halaman Cari Arah Karier, biar loker di sini bisa
+          atau paste CV di halaman Review CV, biar loker di sini bisa
           disaring sesuai keahlianmu.
         </div>
       )}
@@ -383,7 +373,7 @@ export function JobFinderPanel({ setActive }) {
               outline: "none",
               flex: 1,
               fontSize: 13,
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               background: "transparent",
               color: T.ink,
             }}
@@ -423,7 +413,7 @@ export function JobFinderPanel({ setActive }) {
                 color: filterKota !== "Semua" ? T.accent : T.ink,
                 fontSize: 12.5,
                 fontWeight: 600,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 cursor: "pointer",
                 outline: "none",
               }}
@@ -464,7 +454,7 @@ export function JobFinderPanel({ setActive }) {
                   fontSize: 12,
                   fontWeight: 600,
                   cursor: "pointer",
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 }}
               >
                 {LOKASI_LABELS[opt]}
@@ -499,7 +489,7 @@ export function JobFinderPanel({ setActive }) {
                   fontSize: 12,
                   fontWeight: 600,
                   cursor: "pointer",
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                 }}
               >
                 {TIPE_KERJA_LABELS[opt]}
@@ -550,7 +540,7 @@ export function JobFinderPanel({ setActive }) {
               fontSize: 12,
               fontWeight: 600,
               cursor: hasProfile ? "pointer" : "not-allowed",
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               opacity: hasProfile ? 1 : 0.5,
             }}
           >
@@ -567,7 +557,7 @@ export function JobFinderPanel({ setActive }) {
               fontSize: 12,
               fontWeight: 600,
               cursor: "pointer",
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             }}
           >
             Semua Loker
@@ -601,21 +591,7 @@ export function JobFinderPanel({ setActive }) {
           </div>
         )}
       </div>
-      {/* Gerbang langganan. Loker yang terkunci tidak dirender sama sekali,
-          jadi tidak ada yang bisa diambil lewat DevTools. */}
-      {!loading && !langganan.aktif && sisaTerkunci > 0 && (
-        <div style={{ marginTop: 14 }}>
-          <GerbangFitur
-            terbuka={false}
-            tinggiMinimal={180}
-            judul={`${sisaTerkunci} loker lainnya masih terkunci`}
-            keterangan="Berlangganan untuk membuka seluruh loker yang cocok dengan profilmu, plus analisis AI, CV Builder, dan LinkedIn Builder."
-            onLangganan={keParket}
-          />
-        </div>
-      )}
-
-      {!loading && langganan.aktif && bolehLihat.length > JOBS_PER_PAGE && (
+      {!loading && bolehLihat.length > JOBS_PER_PAGE && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

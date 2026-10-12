@@ -1,26 +1,34 @@
 // @ts-nocheck
-// Salinan definisi paket untuk sisi server.
-// Harga dan kuota SELALU dibaca dari sini, tidak pernah dari body request.
+// Salinan definisi paket untuk sisi server (webhook pembayaran).
+// Webhook hanya memakai `durasiHari` untuk menghitung tanggal berakhir.
+// Harga & kuota yang dibayar ditentukan oleh create-payment/paket.ts —
+// keduanya WAJIB sama.
 export const PAKET = {
   coba: {
     id: "coba",
-    nama: "Mingguan",
-    harga: 14000,
+    nama: "Starter",
+    harga: 9000,
     kuotaAnalisis: 1,
-    durasiHari: 7,
+    kuotaPindah: 0,
+    kuotaInterview: 0,
+    durasiHari: 90, // 3 bulan
   },
   aktif: {
     id: "aktif",
-    nama: "Bulanan",
-    harga: 39000,
-    kuotaAnalisis: 5,
-    durasiHari: 30,
+    nama: "Pro",
+    harga: 19000,
+    kuotaAnalisis: 3,
+    kuotaPindah: 2,
+    kuotaInterview: 1,
+    durasiHari: 180, // 6 bulan
   },
   serius: {
     id: "serius",
-    nama: "Tiga Bulan",
-    harga: 59000,
-    kuotaAnalisis: 15,
-    durasiHari: 90,
+    nama: "Max",
+    harga: 29000,
+    kuotaAnalisis: 10,
+    kuotaPindah: 5,
+    kuotaInterview: 2,
+    durasiHari: 365, // 1 tahun
   },
 };

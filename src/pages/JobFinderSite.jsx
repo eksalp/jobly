@@ -8,85 +8,161 @@ import { UserProfileProvider } from "../context/UserProfileContext";
 import { SavedJobsProvider } from "../context/SavedJobsContext";
 import { LanggananProvider } from "../context/LanggananContext";
 import { GlassBackdrop } from "../components/ui/Glass";
-import { LandingPage } from "./auth/LandingPage";
 import { LoginPage } from "./auth/LoginPage";
 import { RegisterPage } from "./auth/RegisterPage";
 import { ForgotPage } from "./auth/ForgotPage";
 import { DashboardPage, PANEL_META } from "./dashboard/DashboardPage";
+import { BerandaPage } from "./publik/BerandaPage";
+import { LokerPage } from "./publik/LokerPage";
+import { DetailLokerPage } from "./publik/DetailLokerPage";
+import { KalkulatorPage } from "./publik/KalkulatorPage";
+import { FaqPage } from "./publik/FaqPage";
+import { DokumenPage } from "./publik/DokumenPage";
+import {
+  adaProsesBerjalan,
+  keteranganProses,
+} from "../hooks/useCegahTinggalkan";
 
 const DASH_IDS = Object.keys(PANEL_META);
 
+/*
+ * Peta rute:
+ *   /                 Beranda (publik)
+ *   /loker            Daftar loker (publik, gratis untuk semua)
+ *   /loker/<id>       Detail loker ala JobStreet (publik)
+ *   /kalkulator-gaji  Kalkulator gaji mata uang asing → rupiah
+ *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
+ *   /login /register /forgot
+ *   /dashboard/<menu> Area akun (wajib masuk)
+ */
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen"];
+const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
+const HALAMAN_AUTH = ["login", "register", "forgot"];
+
 function pathFor(page, dashActive) {
   if (page === "dashboard") return `/dashboard/${dashActive}`;
-  // Landing menempati akar, bukan "/landing"
-  if (page === "landing") return "/";
+  if (page === "landing" || page === "beranda") return "/";
   return `/${page}`;
 }
 
 function parsePath(pathname) {
-  if (pathname.startsWith("/dashboard")) {
-    const seg = pathname.split("/dashboard/")[1];
+  const path = pathname.replace(/\/+$/, "") || "/";
+
+  if (path.startsWith("/dashboard")) {
+    const seg = path.split("/dashboard/")[1];
     return {
       page: "dashboard",
       dashActive: DASH_IDS.includes(seg) ? seg : "overview",
     };
   }
-  if (pathname === "/register")
-    return { page: "register", dashActive: "overview" };
-  if (pathname === "/forgot") return { page: "forgot", dashActive: "overview" };
-  if (pathname === "/login") return { page: "login", dashActive: "overview" };
-  // Selain rute di atas, tampilkan landing
-  return { page: "landing", dashActive: "overview" };
+  if (path.startsWith("/loker/")) {
+    return { page: "detail", slug: path.slice("/loker/".length) };
+  }
+  if (path === "/loker") return { page: "loker" };
+  if (path === "/kalkulator-gaji") return { page: "kalkulator" };
+  if (path === "/faq") return { page: "faq" };
+  if (DOKUMEN.includes(path.slice(1))) return { page: "dokumen", jenis: path.slice(1) };
+  if (path === "/register") return { page: "register" };
+  if (path === "/forgot") return { page: "forgot" };
+  if (path === "/login") return { page: "login" };
+  return { page: "beranda" };
 }
 
 function JobFinderApp() {
   const { session, authLoading } = useAuth();
-  const initial =
-    typeof window !== "undefined"
-      ? parsePath(window.location.pathname)
-      : { page: "landing", dashActive: "overview" };
-  const [page, setPageState] = useState(initial.page);
-  const [dashActive, setDashActiveState] = useState(initial.dashActive);
+  const [rute, setRute] = useState(() => ({
+    dashActive: "overview",
+    ...parsePath(window.location.pathname),
+  }));
+  // Kunci render untuk halaman loker: berubah tiap navigasi, sehingga
+  // filter dibaca ulang dari URL (mis. klik nama kota di footer).
+  const [kunci, setKunci] = useState(0);
+  const page = rute.page;
 
-  // Handle browser back/forward buttons
+  const terapkan = (parsed) => {
+    setRute((lama) => ({ dashActive: lama.dashActive, ...parsed }));
+    setKunci((k) => k + 1);
+  };
+
+  // Tombol kembali / maju browser
   React.useEffect(() => {
-    const onPopState = () => {
-      const parsed = parsePath(window.location.pathname);
-      setPageState(parsed.page);
-      setDashActiveState(parsed.dashActive);
-    };
+    const onPopState = () => terapkan(parsePath(window.location.pathname));
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  // go("login" | "register" | "forgot" | "dashboard") — pushes a new URL and updates state
+  // Navigasi dari komponen mana pun: keHalaman("/loker?kota=Bandung")
+  React.useEffect(() => {
+    const onPath = (e) => {
+      const tujuan = String(e.detail || "/");
+      const url = new URL(tujuan, window.location.origin);
+
+      // Analisis AI sedang berjalan: minta konfirmasi sebelum pindah
+      if (url.pathname !== window.location.pathname && adaProsesBerjalan()) {
+        const lanjut = window.confirm(
+          `${keteranganProses()}\n\nKalau pindah sekarang, hasilnya tetap diproses ` +
+            "di server dan bisa kamu lihat saat kembali — tapi lebih baik ditunggu.\n\n" +
+            "Tetap pindah halaman?",
+        );
+        if (!lanjut) return;
+      }
+
+      const sekarang = window.location.pathname + window.location.search + window.location.hash;
+      if (tujuan !== sekarang) window.history.pushState({}, "", tujuan);
+      terapkan(parsePath(url.pathname));
+
+      // "/#harga" → gulir ke bagian itu; selain itu ke atas halaman
+      if (url.hash) {
+        setTimeout(() => {
+          document.getElementById(url.hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 80);
+      } else {
+        window.scrollTo(0, 0);
+      }
+    };
+    window.addEventListener("jf:path", onPath);
+    return () => window.removeEventListener("jf:path", onPath);
+  }, []);
+
+  // go("login" | "register" | "forgot" | "dashboard" | "landing") —
+  // dipakai halaman lama (login, dashboard, dsb.)
   const go = (target) => {
-    const nextDashActive = target === "dashboard" ? "overview" : dashActive;
-    setPageState(target);
-    setDashActiveState(nextDashActive);
-    window.history.pushState({}, "", pathFor(target, nextDashActive));
+    const dash = target === "dashboard" ? "overview" : rute.dashActive;
+    window.history.pushState({}, "", pathFor(target, dash));
+    terapkan(parsePath(window.location.pathname));
+    window.scrollTo(0, 0);
   };
 
-  // switch active dashboard tab — pushes /dashboard/{id}
   const goDash = (id) => {
-    setDashActiveState(id);
+    setRute((lama) => ({ ...lama, page: "dashboard", dashActive: id }));
     window.history.pushState({}, "", pathFor("dashboard", id));
   };
 
-  // Proteksi route: kalau belum login tapi buka /dashboard/*, lempar ke
-  // login. Kalau sudah login tapi masih di halaman login/register/forgot
-  // (mis. setelah redirect OAuth balik ke /login), lempar ke dashboard.
+  // Proteksi rute. Halaman publik (beranda, loker, detail) bebas dibuka
+  // siapa saja. Dashboard wajib masuk; halaman masuk/daftar dilewati
+  // kalau sudah masuk.
   React.useEffect(() => {
     if (authLoading || !supabaseConfigured) return;
     if (!session && page === "dashboard") {
-      go("landing");
-    } else if (session && page !== "dashboard") {
+      go("login");
+    } else if (session && HALAMAN_AUTH.includes(page)) {
       go("dashboard");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, session, page]);
 
-  if (authLoading) {
+  // Judul tab untuk halaman non-publik (halaman publik mengatur sendiri)
+  React.useEffect(() => {
+    if (page === "beranda") document.title = "Jobly — Lowongan kerja dari sumber resmi";
+    else if (page === "dashboard")
+      document.title = `${PANEL_META[rute.dashActive]?.title || "Dashboard"} · Jobly`;
+    else if (HALAMAN_AUTH.includes(page)) document.title = "Masuk · Jobly";
+  }, [page, rute.dashActive]);
+
+  const publik = HALAMAN_PUBLIK.includes(page);
+
+  // Halaman publik tidak menunggu sesi — loker langsung tampil
+  if (authLoading && !publik) {
     return (
       <div
         style={{
@@ -96,7 +172,7 @@ function JobFinderApp() {
           justifyContent: "center",
           gap: 10,
           color: T.inkSoft,
-          fontFamily: "'Poppins', sans-serif",
+          fontFamily: T.sans,
           fontSize: 14,
         }}
       >
@@ -107,29 +183,50 @@ function JobFinderApp() {
     );
   }
 
-  const pages = {
-    landing: <LandingPage go={go} />,
-    login: <LoginPage go={go} />,
-    register: <RegisterPage go={go} />,
-    forgot: <ForgotPage go={go} />,
-    dashboard: <DashboardPage go={go} active={dashActive} setActive={goDash} />,
-  };
+  let isi;
+  switch (page) {
+    case "beranda":
+      isi = <BerandaPage />;
+      break;
+    case "loker":
+      isi = <LokerPage key={kunci} />;
+      break;
+    case "detail":
+      isi = <DetailLokerPage slug={rute.slug} />;
+      break;
+    case "kalkulator":
+      isi = <KalkulatorPage />;
+      break;
+    case "faq":
+      isi = <FaqPage />;
+      break;
+    case "dokumen":
+      isi = <DokumenPage jenis={rute.jenis} />;
+      break;
+    case "login":
+      isi = <LoginPage go={go} />;
+      break;
+    case "register":
+      isi = <RegisterPage go={go} />;
+      break;
+    case "forgot":
+      isi = <ForgotPage go={go} />;
+      break;
+    default:
+      isi = <DashboardPage go={go} active={rute.dashActive} setActive={goDash} />;
+  }
+
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif", position: "relative" }}>
+    <div style={{ fontFamily: T.sans, position: "relative", color: T.ink }}>
       <link rel="stylesheet" href={fontLink} />
       <GlassBackdrop />
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        input::placeholder, textarea::placeholder { color: #9CA3AF; }
-        @media (max-width: 900px) {
-          .jf-sidebar { position: fixed !important; left: -260px; top: 0; z-index: 50; transition: left .25s ease; }
-          .jf-sidebar-open { left: 0 !important; }
-          .jf-sidebar-close { display: block !important; }
-          .jf-sidebar-open-btn { display: block !important; }
-        }
-        @media (min-width: 901px) { .jf-overlay { display: none !important; } }
+        body { background: #fff; -webkit-font-smoothing: antialiased; }
+        input::placeholder, textarea::placeholder { color: #9AA4B4; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
-      {pages[page]}
+      {isi}
     </div>
   );
 }

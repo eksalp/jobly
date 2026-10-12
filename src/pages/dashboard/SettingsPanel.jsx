@@ -39,7 +39,7 @@ export function SettingsField({ label, value, onChange, disabled }) {
           borderRadius: 12,
           padding: "10px 12px",
           fontSize: 13,
-          fontFamily: "'Poppins', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
           background: disabled ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.6)",
           outline: "none",
           color: T.ink,
@@ -111,7 +111,7 @@ function KartuKataSandi({ user }) {
     borderRadius: 10,
     padding: "9px 38px 9px 12px",
     fontSize: 13,
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
     background: "rgba(255,255,255,0.6)",
     outline: "none",
     color: T.ink,
@@ -354,7 +354,7 @@ export function SettingsPanel({ setActive }) {
             <div style={{ fontSize: 12, color: T.inkSoft, marginTop: 2 }}>
               {langganan.aktif
                 ? `${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`
-                : "Analisis AI, CV Builder, dan seluruh loker yang cocok"}
+                : "Semua loker & alat dasar gratis. Fitur AI mulai Rp 9.000."}
             </div>
           </div>
           <Button variant="outline" onClick={() => pergiKe("paket")}>

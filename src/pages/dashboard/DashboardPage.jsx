@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { AnalyzerPanel } from "./AnalyzerPanel";
 import { ProfilKarierPanel } from "./ProfilKarierPanel";
 import { CVBuilderPanel } from "./CVBuilderPanel";
@@ -12,27 +12,84 @@ import { PindahKarierPanel } from "./PindahKarierPanel";
 import { LatihanInterviewPanel } from "./LatihanInterviewPanel";
 import { SimulasiInterviewPanel } from "./SimulasiInterviewPanel";
 import { SettingsPanel } from "./SettingsPanel";
-import { Sidebar, Topbar } from "./DashboardLayout";
-import { Footer } from "../../components/ui/Footer";
+import { SiteHeader } from "../../components/publik/PublicLayout";
+import { tautan } from "../../utils/navigasi";
+import { SITUS } from "../../data/situs";
 import {
   adaProsesBerjalan,
   keteranganProses,
 } from "../../hooks/useCegahTinggalkan";
 
+/**
+ * Judul, kelompok menu, dan keterangan setiap halaman akun.
+ * `grup` sama dengan label menu di header supaya pengguna tahu posisinya.
+ */
 export const PANEL_META = {
-  overview: { title: "Cari Arah Karier" },
-  profile: { title: "Profil Karier" },
-  cvbuilder: { title: "CV Builder" },
-  linkedinbuilder: { title: "LinkedIn Builder" },
-  jobfinder: { title: "Job Finder" },
-  saved: { title: "Loker Disimpan" },
-  applications: { title: "Lamaran" },
-  recommendations: { title: "Rekomendasi Karier" },
-  pindahkarier: { title: "Pindah Karier" },
-  interview: { title: "Latihan Interview" },
-  simulasi: { title: "Simulasi Interview AI" },
-  paket: { title: "Paket & Langganan" },
-  settings: { title: "Pengaturan" },
+  overview: {
+    grup: "Alat AI",
+    title: "Review CV & arah karier",
+    desc: "Unggah CV atau profil LinkedIn untuk melihat skor ATS, bidang yang paling cocok, dan loker yang relevan.",
+  },
+  profile: {
+    grup: "Profil & CV",
+    title: "Profil karier",
+    desc: "Data diri, keahlian, dan preferensi kerja yang dipakai untuk mencocokkan loker denganmu.",
+  },
+  cvbuilder: {
+    grup: "Profil & CV",
+    title: "CV Builder",
+    desc: "Susun CV yang mudah dibaca sistem penyaringan, lalu unduh dalam PDF.",
+  },
+  linkedinbuilder: {
+    grup: "Profil & CV",
+    title: "LinkedIn Builder",
+    desc: "Rapikan headline, ringkasan, dan pengalaman di profil LinkedIn-mu.",
+  },
+  jobfinder: {
+    grup: "Loker",
+    title: "Cocok untukku",
+    desc: "Loker diurutkan berdasarkan kecocokan dengan keahlian, profil, dan CV-mu.",
+  },
+  saved: {
+    grup: "Loker",
+    title: "Loker tersimpan",
+    desc: "Lowongan yang kamu tandai untuk dilamar nanti.",
+  },
+  applications: {
+    grup: "Loker",
+    title: "Lamaran saya",
+    desc: "Catat setiap lamaran dan pantau progresnya sampai tahap akhir.",
+  },
+  recommendations: {
+    grup: "Alat AI",
+    title: "Rekomendasi karier",
+    desc: "Posisi dan bidang yang layak kamu incar berdasarkan profilmu.",
+  },
+  pindahkarier: {
+    grup: "Alat AI",
+    title: "Pindah karier",
+    desc: "Petakan skill yang masih terpakai di bidang baru dan apa saja yang perlu dikejar.",
+  },
+  interview: {
+    grup: "Persiapan",
+    title: "Latihan interview",
+    desc: "100+ pertanyaan yang sering menjebak dalam 10 kategori, lengkap dengan strategi menjawabnya.",
+  },
+  simulasi: {
+    grup: "Alat AI",
+    title: "Simulasi interview",
+    desc: "Wawancara lewat suara dengan pewawancara AI, lalu dapat penilaian dan masukan.",
+  },
+  paket: {
+    grup: "Akun",
+    title: "Paket & langganan",
+    desc: "Kuota fitur AI, masa berlaku paket, dan riwayat pembelian.",
+  },
+  settings: {
+    grup: "Akun",
+    title: "Pengaturan",
+    desc: "Data akun, kata sandi, dan preferensi.",
+  },
 };
 
 export const PANEL_COMPONENTS = {
@@ -51,69 +108,44 @@ export const PANEL_COMPONENTS = {
   settings: SettingsPanel,
 };
 
-/**
- * Menu yang sementara disembunyikan.
- *
- * Panelnya tetap terdaftar di PANEL_COMPONENTS agar URL lama tidak
- * menghasilkan error, tapi diarahkan ke halaman "belum tersedia".
- * Kosongkan daftar ini untuk mengaktifkannya kembali.
- */
-const PANEL_DISEMBUNYIKAN = [];
-
-/**
- * Ditampilkan kalau ada menu yang belum punya komponen.
- * Tanpa ini, satu entri yang terlewat membuat seluruh dashboard blank.
- */
+/** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */
 function PanelTidakDitemukan() {
   return (
-    <div
-      style={{
-        padding: 48,
-        textAlign: "center",
-        color: "#8891A8",
-        fontSize: 13,
-        lineHeight: 1.7,
-      }}
-    >
-      Halaman ini belum tersedia.
-      <br />
-      Fitur ini sedang disiapkan dan akan segera hadir.
+    <div style={{ padding: "48px 28px", color: "var(--muted)", fontSize: 14, lineHeight: 1.7 }}>
+      Halaman ini tidak ditemukan.{" "}
+      <a {...tautan("/dashboard/overview")} style={{ color: "var(--brand)", fontWeight: 600 }}>
+        Kembali ke Review CV
+      </a>
     </div>
   );
 }
 
+/**
+ * Kerangka halaman akun — tanpa sidebar.
+ *
+ * Navigasi sepenuhnya lewat header (menu turun per kelompok + menu akun),
+ * sama dengan halaman publik, sehingga situs terasa satu kesatuan.
+ */
 export function DashboardPage({ go, active, setActive }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Panel mana pun bisa meminta pindah halaman lewat event ini,
-  // tanpa harus menerima prop setActive.
+  // Panel mana pun bisa meminta pindah halaman lewat event ini
   useEffect(() => {
     const pindah = (e) => {
-      const tujuan = e.detail;
-
-      if (PANEL_COMPONENTS[tujuan] && !PANEL_DISEMBUNYIKAN.includes(tujuan)) {
-        setActive(tujuan);
-      }
+      if (PANEL_COMPONENTS[e.detail]) gantiPanel(e.detail);
     };
-
     window.addEventListener("jf:navigate", pindah);
+    return () => window.removeEventListener("jf:navigate", pindah);
+  });
 
-    return () => {
-      window.removeEventListener("jf:navigate", pindah);
-    };
-  }, [setActive]);
-
-  const meta = PANEL_META[active] ?? {
-    title: "Halaman tidak ditemukan",
-  };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [active]);
 
   /*
-   * Pindah menu saat analisis berjalan.
-   *
-   * beforeunload tidak menangkap ini karena halamannya tidak benar-benar
-   * ditinggalkan, hanya panel yang berganti.
+   * Pindah halaman saat analisis berjalan: beforeunload tidak menangkap
+   * ini karena halamannya tidak benar-benar ditinggalkan, jadi minta
+   * konfirmasi di sini. Navigasi lewat header dijaga di JobFinderSite.
    */
-  const gantiPanel = (tujuan) => {
+  function gantiPanel(tujuan) {
     if (tujuan !== active && adaProsesBerjalan()) {
       const lanjut = window.confirm(
         `${keteranganProses()}\n\n` +
@@ -121,74 +153,49 @@ export function DashboardPage({ go, active, setActive }) {
           "kamu lihat saat kembali — tapi lebih baik ditunggu.\n\n" +
           "Tetap pindah halaman?",
       );
-
       if (!lanjut) return;
     }
-
     setActive(tujuan);
-  };
+  }
 
-  const PanelComponent = PANEL_DISEMBUNYIKAN.includes(active)
-    ? PanelTidakDitemukan
-    : (PANEL_COMPONENTS[active] ?? PanelTidakDitemukan);
+  const meta = PANEL_META[active];
+  const Panel = PANEL_COMPONENTS[active] ?? PanelTidakDitemukan;
+  const tahun = new Date().getFullYear();
 
-  /*
-   * alignItems "flex-start" wajib ada untuk sidebar yang sticky.
-   *
-   * Bawaan flex adalah "stretch", yang dapat membuat sidebar meregang
-   * setinggi seluruh konten sehingga sticky tidak bekerja sebagaimana
-   * mestinya.
-   */
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        alignItems: "flex-start",
-      }}
-    >
-      {mobileOpen && (
-        <div
-          onClick={() => setMobileOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.3)",
-            zIndex: 45,
-          }}
-          className="jf-overlay"
-        />
-      )}
+    <div className="pb">
+      <SiteHeader aktif={`/dashboard/${active}`} />
 
-      <Sidebar
-        active={active}
-        setActive={gantiPanel}
-        go={go}
-        mobileOpen={mobileOpen}
-        setMobileOpen={setMobileOpen}
-      />
-
-      {/*
-        minHeight + flex kolom: mendorong footer ke bawah pada halaman
-        yang isinya pendek, supaya tidak menggantung di tengah layar.
-      */}
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-        }}
-      >
-        <Topbar title={meta.title} setMobileOpen={setMobileOpen} />
-
-        <div style={{ flex: 1 }}>
-          <PanelComponent setActive={gantiPanel} go={go} />
+      <main className="pb-main" style={{ background: "#fff" }}>
+        {meta && (
+          <div className="pb-app-head">
+            <div className="pb-app-wrap">
+              <span className="pb-label">{meta.grup}</span>
+              <h1>{meta.title}</h1>
+              <p>{meta.desc}</p>
+            </div>
+          </div>
+        )}
+        <div className="pb-app-wrap pb-app-body">
+          <Panel setActive={gantiPanel} go={go} />
         </div>
+      </main>
 
-        <Footer />
-      </div>
+      <footer className="pb-footer">
+        <div className="pb-wrap">
+          <div className="pb-foot-bottom" style={{ borderTop: 0 }}>
+            <span>
+              © {tahun} {SITUS.nama} · Dibuat oleh {SITUS.pembuat}
+            </span>
+            <span style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
+              <a {...tautan("/faq")}>FAQ</a>
+              <a {...tautan("/syarat-ketentuan")}>Syarat & ketentuan</a>
+              <a {...tautan("/kebijakan-privasi")}>Kebijakan privasi</a>
+              <a {...tautan("/disclaimer")}>Disclaimer</a>
+            </span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

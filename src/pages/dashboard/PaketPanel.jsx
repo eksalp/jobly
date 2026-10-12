@@ -13,7 +13,7 @@ import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useLangganan } from "../../hooks/useLangganan";
-import { DAFTAR_PAKET, SEMUA_TIER, PAKET, rupiah } from "../../data/paket";
+import { DAFTAR_PAKET, SEMUA_TIER, PAKET, rupiah, labelDurasi } from "../../data/paket";
 import { RiwayatPembelian } from "../../components/RiwayatPembelian";
 
 /**
@@ -206,8 +206,9 @@ export function PaketPanel() {
             lineHeight: 1.65,
           }}
         >
-          Analisis AI, CV Builder, LinkedIn Builder, dan akses seluruh loker
-          yang cocok dengan profilmu.
+          Semua loker, CV Builder, dan LinkedIn Builder gratis selamanya.
+          Paket berbayar menambah kuota analisis AI, Pindah Karier, dan
+          simulasi interview.
         </div>
       </div>
 
@@ -415,7 +416,7 @@ export function PaketPanel() {
                     fontSize: 26,
                     fontWeight: 700,
                     color: T.ink,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   }}
                 >
                   {rupiah(p.harga)}
@@ -426,7 +427,7 @@ export function PaketPanel() {
               >
                 {gratis
                   ? "Selamanya · tanpa kartu"
-                  : `sekali bayar · ${p.durasiHari} hari · ${p.kuotaAnalisis} analisis AI`}
+                  : `sekali bayar · berlaku ${labelDurasi(p.durasiHari)} · ${p.kuotaAnalisis} analisis AI`}
               </div>
 
               <div style={{ flex: 1, marginBottom: 18 }}>
@@ -506,7 +507,7 @@ export function PaketPanel() {
                     fontSize: 12.5,
                     fontWeight: 600,
                     color: iniTierSekarang ? T.teal : T.inkFaint,
-                    fontFamily: "'Poppins', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   }}
                 >
                   {iniTierSekarang ? "Paket kamu sekarang" : "Selalu aktif"}

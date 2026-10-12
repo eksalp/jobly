@@ -107,7 +107,7 @@ export function KartuPelatihan({ skor }) {
               fontSize: 19,
               fontWeight: 700,
               color: T.ink,
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
               lineHeight: 1.2,
             }}
           >
@@ -132,7 +132,7 @@ export function KartuPelatihan({ skor }) {
             color: "#fff",
             fontSize: 13,
             fontWeight: 600,
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             textDecoration: "none",
             flexShrink: 0,
             boxShadow: "0 4px 14px rgba(20,184,166,0.3)",
