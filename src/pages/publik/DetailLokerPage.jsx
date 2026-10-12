@@ -150,7 +150,7 @@ export function DetailLokerPage({ slug }) {
       })
       .filter((x) => x.skor > 0)
       .sort((a, b) => b.skor - a.skor)
-      .slice(0, 3)
+      .slice(0, 4)
       .map((x) => x.j);
   }, [jobs, job]);
 

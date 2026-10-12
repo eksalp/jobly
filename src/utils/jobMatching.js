@@ -678,9 +678,13 @@ function scoreJob(
   // Kalau kategorinya berbeda, lowongan ini bukan di bidang user —
   // berapa pun kata yang kebetulan sama, hasilnya tetap tidak relevan.
   const katLoker = klasifikasiLoker(job);
-  const kategoriCocok = labelKategoriUser
-    ? katLoker?.label === labelKategoriUser
-    : true; // tanpa kategori user, gerbang tidak diterapkan
+  // Gerbang hanya menolak loker yang JELAS masuk bidang lain. Loker yang
+  // judulnya tidak cocok dengan frasa taxonomy mana pun (mis. "Frontend
+  // Engineer", "Finance & Tax Staff") tetap dinilai dari kecocokan judul
+  // dan skill — dulu loker seperti ini ikut terbuang, sehingga halaman
+  // "Cocok untukku" sering kosong padahal ada loker yang relevan.
+  const kategoriCocok =
+    labelKategoriUser && katLoker ? katLoker.label === labelKategoriUser : true;
 
   let score = 0;
   const matched = new Set();

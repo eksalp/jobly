@@ -278,7 +278,7 @@ export function LokerPage() {
 
         <div className="pb-grid">
           {loading &&
-            Array.from({ length: 6 }, (_, i) => <KartuLokerSkeleton key={i} />)}
+            Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)}
 
           {!loading &&
             hasil.slice(0, tampil).map((j) => (

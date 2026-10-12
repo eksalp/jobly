@@ -120,7 +120,7 @@ export function BerandaPage() {
     }
     const kotaTeratas = [...perKota.entries()].sort((a, b) => b[1] - a[1]).slice(0, 11);
     return {
-      terbaru: urut.slice(0, 6),
+      terbaru: urut.slice(0, 8),
       ringkas: urut.slice(0, 5),
       total: jobs.length,
       baru,
@@ -282,7 +282,7 @@ export function BerandaPage() {
           </div>
           <div className="pb-grid">
             {loading
-              ? Array.from({ length: 6 }, (_, i) => <KartuLokerSkeleton key={i} />)
+              ? Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)
               : data.terbaru.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
           </div>
         </div>
