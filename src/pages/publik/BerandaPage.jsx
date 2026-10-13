@@ -455,7 +455,7 @@ export function BerandaPage() {
       )}
 
       {/* ============================================ lowongan terbaru */}
-      <section className="pb-section" style={{ paddingTop: 40 }}>
+      <section className="pb-section" style={{ paddingTop: 36 }}>
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
