@@ -4492,10 +4492,18 @@ html[data-tema="gelap"] .pb-gaji-legenda .pita {
   transition: color 0.15s, border-color 0.15s, transform 0.15s;
 }
 .pb-sosial a:hover {
-  color: var(--brand);
   border-color: var(--brand-line);
   transform: translateY(-2px);
 }
+/* Saat disentuh, ikon memakai warna khas platformnya */
+.pb-sosial a.s-instagram:hover { color: #e1306c; }
+.pb-sosial a.s-tiktok:hover,
+.pb-sosial a.s-x:hover,
+.pb-sosial a.s-threads:hover { color: var(--ink); }
+.pb-sosial a.s-youtube:hover { color: #ff0000; }
+.pb-sosial a.s-linkedin:hover { color: #0a66c2; }
+.pb-sosial a.s-telegram:hover { color: #229ed9; }
+.pb-sosial a.s-whatsapp:hover { color: #1fa855; }
 .pb-grup-tautan {
   display: flex;
   gap: 8px;

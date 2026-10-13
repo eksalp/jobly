@@ -1,27 +1,21 @@
 import React from "react";
-import {
-  Instagram,
-  Linkedin,
-  Youtube,
-  Twitter,
-  Music2,
-  AtSign,
-  MessageCircle,
-  Send,
-  ArrowUpRight,
-  Users,
-} from "lucide-react";
+import { AtSign, ArrowUpRight, Users } from "lucide-react";
 import { sosialAktif, grupAktif } from "../../data/situs";
+import { JALUR_MEREK, VIEWBOX_MEREK } from "../../data/ikonMerek";
 
-const IKON_SOSIAL = {
-  instagram: Instagram,
-  tiktok: Music2,
-  linkedin: Linkedin,
-  x: Twitter,
-  youtube: Youtube,
-  threads: AtSign,
-};
-const IKON_GRUP = { whatsapp: MessageCircle, telegram: Send };
+/** Ikon merek satu warna (mengikuti currentColor). */
+function IkonMerek({ jenis, size = 18 }) {
+  const d = JALUR_MEREK[jenis];
+  if (!d) return <AtSign size={size} />;
+  return (
+    <svg width={size} height={size} viewBox={VIEWBOX_MEREK[jenis] || "0 0 24 24"} fill="currentColor" aria-hidden="true">
+      <path d={d} />
+    </svg>
+  );
+}
+
+const IKON_SOSIAL = new Proxy({}, { get: (_, jenis) => (p) => <IkonMerek jenis={jenis} {...p} /> });
+const IKON_GRUP = IKON_SOSIAL;
 
 const luar = { target: "_blank", rel: "noopener noreferrer" };
 
@@ -34,7 +28,7 @@ export function IkonSosial() {
       {daftar.map(({ jenis, label, url, handle }) => {
         const Ikon = IKON_SOSIAL[jenis] || AtSign;
         return (
-          <a key={jenis} href={url} {...luar} aria-label={`${label}${handle ? ` ${handle}` : ""}`} title={handle || label}>
+          <a key={jenis} href={url} {...luar} className={`s-${jenis}`} aria-label={`${label}${handle ? ` ${handle}` : ""}`} title={handle || label}>
             <Ikon size={17} />
           </a>
         );
