@@ -121,9 +121,9 @@ export function LokerPage() {
         <span className="pb-label">Lowongan kerja</span>
         <h1>{judul}</h1>
         <p>
-          Lowongan dari situs karier resmi perusahaan dan platform kerja,
-          dikumpulkan setiap hari. Buka detailnya, lalu lamar langsung di
-          sumber aslinya — tanpa biaya dari Jobly.
+          Loker dari situs karier resmi perusahaan dan platform kerja,
+          diperbarui setiap hari. Buka detailnya, lalu lamar langsung di
+          situs aslinya. Gratis, tanpa biaya dari Jobly.
         </p>
       </div>
 
@@ -180,7 +180,7 @@ export function LokerPage() {
               )}
               {daftarSumber.map((s) => (
                 <option key={s.site} value={s.site}>
-                  {s.langsung ? `— ${s.label}` : s.label} ({s.n.toLocaleString("id-ID")})
+                  {s.langsung ? `· ${s.label}` : s.label} ({s.n.toLocaleString("id-ID")})
                 </option>
               ))}
             </select>
@@ -270,7 +270,7 @@ export function LokerPage() {
               <p style={{ margin: "0 0 18px" }}>
                 {error
                   ? "Data loker sedang tidak bisa dimuat. Coba muat ulang halaman sebentar lagi."
-                  : "Coba kata kunci yang lebih umum, atau longgarkan filternya."}
+                  : "Coba kata kunci yang lebih umum, atau kurangi filternya."}
               </p>
               {adaFilter && (
                 <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={reset}>
@@ -300,7 +300,7 @@ export function LokerPage() {
         {!loading && grupAktif().length > 0 && (
           <div className="pb-grup-strip">
             <span>
-              <b>Mau loker pilihan dikirim tiap hari?</b> Gabung grup Jobly, gratis.
+              <b>Mau dapat info loker tiap hari?</b> Gabung grup Jobly, gratis.
             </span>
             <TautanGrup ringkas />
           </div>

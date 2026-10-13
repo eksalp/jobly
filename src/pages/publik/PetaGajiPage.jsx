@@ -106,9 +106,9 @@ export function PetaGajiPage() {
         <span className="pb-label">Peta gaji</span>
         <h1>Berapa gaji yang wajar untuk posisimu?</h1>
         <p>
-          Kisaran gaji dihitung langsung dari loker di Jobly yang mencantumkan
-          angka gaji — bukan survei, bukan tebakan. Mata uang asing disetarakan
-          ke rupiah dengan kurs hari ini.
+          Angkanya diambil langsung dari loker di Jobly yang mencantumkan gaji,
+          bukan dari survei atau perkiraan. Gaji dalam mata uang asing sudah
+          diubah ke rupiah dengan kurs hari ini.
         </p>
       </div>
 
@@ -158,7 +158,7 @@ export function PetaGajiPage() {
                   <div>
                     <span>Data</span>
                     <b className="kecil">{posisi.n} loker</b>
-                    <small>{posisi.n < MIN_DATA ? "masih sedikit — anggap gambaran kasar" : "dengan gaji tercantum"}</small>
+                    <small>{posisi.n < MIN_DATA ? "datanya masih sedikit, jadikan gambaran kasar saja" : "dengan gaji tercantum"}</small>
                   </div>
                 </div>
                 <div className="pb-gaji-contoh">
@@ -238,7 +238,7 @@ export function PetaGajiPage() {
         <div className="pb-wrap pb-cek-cta" data-muncul="">
           <div>
             <h2 className="pb-h2">Ditawari gaji dalam dolar?</h2>
-            <p className="pb-sub">Hitung nilai bersihnya dalam rupiah — per jam sampai per tahun, setelah potongan platform dan biaya transfer.</p>
+            <p className="pb-sub">Hitung berapa yang benar-benar kamu terima dalam rupiah, per jam sampai per tahun, setelah dipotong biaya platform dan transfer.</p>
           </div>
           <a className="pb-btn pb-btn-primary" {...tautan("/kalkulator-gaji")}>
             Buka kalkulator <ArrowRight size={16} />

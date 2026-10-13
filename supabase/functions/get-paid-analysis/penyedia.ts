@@ -255,7 +255,7 @@ export async function jalankanAnalisis(
     /503|429|UNAVAILABLE|high demand|overload/i.test(g),
   );
   const pesan = semuaSibuk
-    ? "Server AI sedang penuh. Tunggu sebentar lalu ulangi — pembayaranmu tetap tersimpan."
+    ? "Server AI sedang penuh. Tunggu sebentar lalu coba lagi. Pembayaranmu tetap tersimpan."
     : `Analisis gagal diproses. ${galat.join(" | ")}`;
 
   const err = new Error(pesan);

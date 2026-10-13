@@ -1,7 +1,7 @@
 /**
  * Informasi situs yang dipakai di footer dan dokumen hukum.
  *
- * EMAIL_KONTAK WAJIB diisi sebelum situs dipublikasikan — alamat ini
+ * EMAIL_KONTAK WAJIB diisi sebelum situs dipublikasikan. Alamat ini
  * dicantumkan di Kebijakan Privasi dan Syarat & Ketentuan sebagai jalur
  * resmi permintaan data, keluhan, dan pengembalian dana. Selama masih
  * kosong, halaman dokumen menampilkan tautan ke halaman FAQ sebagai gantinya.
@@ -31,7 +31,7 @@ export const GRUP = [
   {
     jenis: "telegram",
     label: "Gabung Telegram",
-    ket: "Productive by Eksal — info loker & tips karier",
+    ket: "Productive by Eksal: info loker dan tips karier",
     anggota: "",
     url: "https://t.me/productivebyeksal",
   },

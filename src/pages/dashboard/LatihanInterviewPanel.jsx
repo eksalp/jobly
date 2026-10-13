@@ -176,7 +176,7 @@ function IsiJawaban({ item }) {
             <MessageSquareQuote size={12} /> Contoh jawaban
           </span>
           <p>{item.contoh}</p>
-          <small>Kerangka, bukan hafalan — ganti dengan pengalamanmu sendiri.</small>
+          <small>Ini kerangka, bukan hafalan. Ganti dengan pengalamanmu sendiri.</small>
         </div>
       )}
     </div>
@@ -316,7 +316,7 @@ function ModeTantangan({ onTutup }) {
             </svg>
             <div>
               <b>{mm}</b>
-              <span>{fase === "pikir" ? "Waktu berpikir — susun poinmu" : "Jawab dengan suara keras, seperti di ruang interview"}</span>
+              <span>{fase === "pikir" ? "Waktu berpikir, susun poin jawabanmu" : "Jawab dengan suara keras, seperti di ruang interview"}</span>
             </div>
           </div>
         )}
@@ -341,7 +341,7 @@ function ModeTantangan({ onTutup }) {
           )}
           {fase === "jawab" && (
             <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => setFase("ulas")}>
-              <Eye size={15} /> Selesai — lihat pembahasan
+              <Eye size={15} /> Selesai, lihat pembahasan
             </button>
           )}
           {fase === "ulas" && (
@@ -449,8 +449,8 @@ export function LatihanInterviewPanel() {
             marginBottom: 14,
           }}
         >
-          {TOTAL_PERTANYAAN} pertanyaan — dari yang sering menjebak sampai level
-          neraka, kasus hitung cepat, dan interview bahasa Inggris. Klik
+          {TOTAL_PERTANYAAN} pertanyaan, mulai dari yang sering menjebak sampai
+          level neraka, ditambah kasus hitung cepat dan interview bahasa Inggris. Klik
           pertanyaan untuk melihat apa yang sebenarnya diuji, strategi, dan
           contoh jawabannya.
         </div>

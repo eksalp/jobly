@@ -107,7 +107,7 @@ function JobFinderApp() {
       if (url.pathname !== window.location.pathname && adaProsesBerjalan()) {
         const lanjut = window.confirm(
           `${keteranganProses()}\n\nKalau pindah sekarang, hasilnya tetap diproses ` +
-            "di server dan bisa kamu lihat saat kembali — tapi lebih baik ditunggu.\n\n" +
+            "di server dan bisa kamu lihat saat kembali, tapi sebaiknya ditunggu.\n\n" +
             "Tetap pindah halaman?",
         );
         if (!lanjut) return;
@@ -178,7 +178,7 @@ function JobFinderApp() {
 
   // Judul tab untuk halaman non-publik (halaman publik mengatur sendiri)
   React.useEffect(() => {
-    if (page === "beranda") document.title = "Jobly — Lowongan kerja dari sumber resmi";
+    if (page === "beranda") document.title = "Jobly · Lowongan kerja dari sumber resmi";
     else if (page === "dashboard")
       document.title = `${PANEL_META[rute.dashActive]?.title || "Dashboard"} · Jobly`;
     else if (HALAMAN_AUTH.includes(page)) document.title = "Masuk · Jobly";

@@ -239,7 +239,7 @@ penjelasan dan tanpa markdown fence, dengan struktur PERSIS ini:
 
 ATURAN PENTING:
 - JUJUR. Kalau perpindahannya sulit atau tidak realistis, katakan apa adanya di
-  "saran_jujur" dan "risiko". Jangan memberi harapan palsu — user mengambil
+  "saran_jujur" dan "risiko". Jangan memberi harapan palsu, karena user mengambil
   keputusan hidup berdasarkan ini.
 - "skill_transfer": MAKSIMAL 4 item. Keahlian yang SUDAH dimiliki dan tetap
   terpakai di bidang tujuan. Di "kenapa_berguna", sebutkan dari pengalaman mana
@@ -248,15 +248,17 @@ ATURAN PENTING:
 - "skill_kurang": MAKSIMAL 5 item. Tandai "wajib" hanya untuk yang benar-benar
   jadi syarat masuk, bukan sekadar bagus dimiliki.
 - "posisi_masuk": MAKSIMAL 3 item. Jabatan yang realistis dilamar SETELAH
-  mengisi kekurangan wajib. Sebut levelnya jujur — pindah bidang sering berarti
+  mengisi kekurangan wajib. Sebut levelnya dengan jujur. Pindah bidang sering berarti
   turun level, katakan itu.
 - "tahapan": TEPAT 3 fase berurutan dengan durasi masuk akal.
 - "estimasi_bulan": total waktu realistis sampai siap melamar.
 - "peluang_persen": 0-100, seberapa besar peluang berhasil pindah.
-- "risiko": MAKSIMAL 3 poin — penurunan gaji, usia, persaingan, atau kebutuhan
+- "risiko": MAKSIMAL 3 poin, misalnya penurunan gaji, usia, persaingan, atau kebutuhan
   pengalaman yang tidak bisa dikejar kursus.
 - "ringkasan" dan "saran_jujur": masing-masing maksimal 3 kalimat.
-Semua teks dalam Bahasa Indonesia.`;
+Semua teks dalam Bahasa Indonesia yang lazim dan lugas, seperti orang yang
+sedang memberi saran ke teman. JANGAN memakai tanda pisah panjang (—); pakai
+koma, titik, atau titik dua. Hindari kata klise seperti "dinamis" atau "inovatif".`;
 
     const mulai = Date.now();
 
@@ -388,7 +390,7 @@ Semua teks dalam Bahasa Indonesia.`;
     return json(
       {
         error: sibuk
-          ? "Server AI sedang penuh. Tunggu sebentar lalu coba lagi — kuotamu tidak terpotong."
+          ? "Server AI sedang penuh. Tunggu sebentar lalu coba lagi. Kuotamu tidak terpotong."
           : pesan,
         detail: pesan,
         bolehCobaLagi: true,

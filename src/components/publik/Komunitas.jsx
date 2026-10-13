@@ -68,8 +68,8 @@ export function BagianKomunitas() {
             <span className="pb-label">Komunitas</span>
             <h2 className="pb-h2">Cari kerja nggak harus sendirian.</h2>
             <p className="pb-sub">
-              Gabung grup Jobly untuk dapat loker pilihan, info rekrutmen yang
-              sedang buka, dan tips melamar — langsung di HP-mu.
+              Gabung grup Jobly. Dapat info loker pilihan, rekrutmen yang lagi
+              buka, dan tips melamar, langsung di HP-mu.
             </p>
             {sosial.length > 0 && (
               <div className="pb-komunitas-sosial">

@@ -72,7 +72,7 @@ const KATEGORI_DASAR = [
         nomor: 9,
         pertanyaan: "Kenapa Anda sering pindah kerja (job hopping)?",
         strategi:
-          "Jangan defensif. Kelompokkan pola perpindahan menjadi narasi pertumbuhan yang logis—setiap pindah membawa peningkatan tanggung jawab atau skill baru—dan tegaskan bahwa Anda mencari kestabilan jangka panjang di posisi ini.",
+          "Jangan defensif. Kelompokkan pola perpindahan menjadi narasi pertumbuhan yang logis (setiap pindah membawa tanggung jawab atau skill baru), lalu tegaskan bahwa Anda mencari kestabilan jangka panjang di posisi ini.",
       },
       {
         nomor: 10,
@@ -255,7 +255,7 @@ const KATEGORI_DASAR = [
         nomor: 33,
         pertanyaan: "Jual pulpen ini kepada saya.",
         strategi:
-          "Jangan langsung menjelaskan fitur pulpen. Gali dulu kebutuhan 'pembeli' dengan bertanya, lalu hubungkan fitur pulpen dengan kebutuhan spesifik tersebut—ini menguji kemampuan menjual berbasis kebutuhan, bukan hafalan skrip.",
+          "Jangan langsung menjelaskan fitur pulpen. Gali dulu kebutuhan 'pembeli' dengan bertanya, lalu hubungkan fitur pulpen dengan kebutuhan spesifik tersebut. Pertanyaan ini menguji kemampuan menjual berbasis kebutuhan, bukan hafalan skrip.",
       },
       {
         nomor: 34,
@@ -289,7 +289,7 @@ const KATEGORI_DASAR = [
         nomor: 38,
         pertanyaan: "Apakah Anda pernah berbohong di tempat kerja? Ceritakan.",
         strategi:
-          "Jujur namun bijak—jika pernah, pilih contoh ringan (misalnya menahan opini demi menjaga hubungan kerja) dan tekankan komitmen Anda pada integritas dalam hal-hal penting seperti data dan hasil kerja.",
+          "Jujur, tapi bijak. Jika pernah, pilih contoh ringan (misalnya menahan opini demi menjaga hubungan kerja) dan tekankan komitmen Anda pada integritas dalam hal-hal penting seperti data dan hasil kerja.",
       },
       {
         nomor: 39,
@@ -331,7 +331,7 @@ const KATEGORI_DASAR = [
         nomor: 43,
         pertanyaan: "Apa tipe atasan yang paling sulit Anda hadapi?",
         strategi:
-          "Jawab spesifik namun tetap netral—jelaskan gaya kerja yang menantang bagi Anda (misalnya komunikasi minim) dan bagaimana Anda beradaptasi untuk tetap produktif bekerja dengan gaya tersebut.",
+          "Jawab spesifik tapi tetap netral. Jelaskan gaya kerja yang menantang bagi Anda (misalnya komunikasi minim) dan bagaimana Anda beradaptasi untuk tetap produktif bekerja dengan gaya tersebut.",
       },
       {
         nomor: 44,
@@ -415,7 +415,7 @@ const KATEGORI_DASAR = [
         nomor: 54,
         pertanyaan: "Ada berapa cara menyusun 5 orang dalam antrean?",
         strategi:
-          "Ini soal permutasi: 5! = 120 cara. Jelaskan langkah berpikirnya—pilihan orang pertama 5 opsi, kedua 4 opsi, dan seterusnya, lalu kalikan semua opsi tersebut.",
+          "Ini soal permutasi: 5! = 120 cara. Jelaskan langkah berpikirnya: pilihan orang pertama 5 opsi, kedua 4 opsi, dan seterusnya, lalu kalikan semua opsi tersebut.",
       },
       {
         nomor: 55,
@@ -626,7 +626,7 @@ const KATEGORI_DASAR = [
         nomor: 81,
         pertanyaan: "Apakah Anda punya pertanyaan untuk kami?",
         strategi:
-          "Jangan menjawab 'tidak ada'—ini dianggap kurang minat. Siapkan 2-3 pertanyaan cerdas tentang ekspektasi peran, tim, atau tantangan terbesar posisi ini, yang menunjukkan Anda serius mempertimbangkan kecocokan dua arah.",
+          "Jangan menjawab 'tidak ada', karena itu terkesan kurang berminat. Siapkan 2-3 pertanyaan cerdas tentang ekspektasi peran, tim, atau tantangan terbesar posisi ini, yang menunjukkan Anda serius mempertimbangkan kecocokan dua arah.",
       },
       {
         nomor: 82,
@@ -688,7 +688,7 @@ const KATEGORI_DASAR = [
         pertanyaan:
           "Apa satu hal yang bisa membuat Anda menolak tawaran kerja meski gajinya menarik?",
         strategi:
-          "Jawaban ini menunjukkan nilai inti Anda—sebutkan faktor seperti budaya kerja tidak sehat, ketidaksesuaian etika, atau kurangnya peluang berkembang, yang menunjukkan Anda mempertimbangkan lebih dari sekadar kompensasi.",
+          "Jawaban ini menunjukkan nilai inti Anda. Sebutkan faktor seperti budaya kerja tidak sehat, ketidaksesuaian etika, atau kurangnya peluang berkembang, yang menunjukkan Anda mempertimbangkan lebih dari sekadar kompensasi.",
       },
     ],
   },
@@ -789,7 +789,7 @@ const KATEGORI_DASAR = [
         pertanyaan:
           "Apakah atasan Anda saat ini tahu Anda sedang melamar kerja?",
         strategi:
-          "Menjawab 'tidak tahu' wajar namun jangan terdengar sembunyi-sembunyi. Katakan ini masih proses awal dan Anda akan menginformasikan secara profesional begitu ada keputusan konkret—ini hal normal dan tidak perlu diumumkan sebelum waktunya.",
+          "Menjawab 'tidak tahu' wajar namun jangan terdengar sembunyi-sembunyi. Katakan ini masih proses awal dan Anda akan menginformasikan secara profesional begitu ada keputusan konkret. Ini hal normal dan tidak perlu diumumkan sebelum waktunya.",
       },
       {
         nomor: 103,
@@ -810,21 +810,21 @@ const KATEGORI_DASAR = [
         pertanyaan:
           "Apa yang membuat Anda mencari peluang lain padahal masih bekerja?",
         strategi:
-          "Berbeda dari 'kenapa keluar dari kerja sebelumnya'—di sini pewawancara menguji apakah Anda kabur dari masalah atau mengejar pertumbuhan. Fokus pada hal yang Anda cari ke depan (tantangan, skala, jenjang karier), bukan keluhan tentang tempat kerja sekarang.",
+          "Berbeda dari 'kenapa keluar dari kerja sebelumnya', di sini pewawancara menguji apakah Anda kabur dari masalah atau mengejar pertumbuhan. Fokus pada hal yang Anda cari ke depan (tantangan, skala, jenjang karier), bukan keluhan tentang tempat kerja sekarang.",
       },
       {
         nomor: 106,
         pertanyaan:
           "Berapa lama masa pemberitahuan (notice period) Anda, dan apakah bisa dipercepat?",
         strategi:
-          "Sebutkan kewajiban kontrak Anda secara jujur, tegaskan Anda ingin resign secara profesional agar tidak meninggalkan tim lama dalam kondisi buruk—ini justru sinyal positif soal integritas Anda.",
+          "Sebutkan kewajiban kontrak Anda secara jujur, tegaskan Anda ingin resign secara profesional agar tidak meninggalkan tim lama dalam kondisi buruk. Ini justru sinyal positif soal integritas Anda.",
       },
       {
         nomor: 107,
         pertanyaan:
           "Bagaimana Anda menjaga kerahasiaan info perusahaan lama saat bekerja di sini nanti?",
         strategi:
-          "Tegaskan komitmen pada etika profesional dan kontrak kerahasiaan (NDA)—Anda tidak akan membawa data/strategi rahasia, hanya keahlian dan pengalaman umum.",
+          "Tegaskan komitmen pada etika profesional dan kontrak kerahasiaan (NDA). Anda tidak akan membawa data/strategi rahasia, hanya keahlian dan pengalaman umum.",
       },
       {
         nomor: 108,
@@ -835,7 +835,7 @@ const KATEGORI_DASAR = [
       {
         nomor: 109,
         pertanyaan:
-          "Bagaimana jika proses rekrutmen ini memakan waktu lama—apakah Anda akan tetap menunggu atau mengambil tawaran lain?",
+          "Bagaimana jika proses rekrutmen ini memakan waktu lama, apakah Anda akan tetap menunggu atau mengambil tawaran lain?",
         strategi:
           "Jawab jujur dan profesional: sampaikan bahwa Anda menghargai proses namun juga punya tanggung jawab mempertimbangkan opsi lain jika ada tenggat waktu, sambil tetap terbuka berkomunikasi mengenai linimasa dengan perusahaan ini.",
       },

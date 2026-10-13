@@ -15,9 +15,9 @@
 // lalu disebar ke tiap paket, supaya tidak ada yang tertinggal saat
 // daftarnya berubah.
 const FITUR_DASAR = [
-  "5.000 loker — cari & saring per kota",
-  "CV Builder — bikin & unduh PDF, selamanya",
-  "LinkedIn Builder — susun profil, selamanya",
+  "5.000 loker, bisa dicari dan disaring per kota",
+  "CV Builder: bikin dan unduh PDF, gratis selamanya",
+  "LinkedIn Builder: susun profil, gratis selamanya",
   "140+ pertanyaan interview, termasuk level neraka",
   "Pelacak lamaran untuk memantau progres",
 ];
@@ -76,7 +76,7 @@ export const PAKET = {
     fitur: [
       "Semua fitur Starter, plus:",
       "Masa aktif 6 bulan",
-      "3x analisis AI — cek ulang tiap revisi CV",
+      "3x analisis AI, cukup untuk cek ulang setelah revisi CV",
       "2x Rencana Pindah Karier",
       "1x simulasi interview AI bersuara (10 menit)",
       "Riwayat analisis tersimpan, bisa dibandingkan",

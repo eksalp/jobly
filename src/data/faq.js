@@ -20,15 +20,15 @@ export const FAQ = [
         q: "Apa itu Jobly?",
         beranda: true,
         a: [
-          "Jobly mengumpulkan lowongan kerja dari situs karier resmi perusahaan dan platform kerja seperti LinkedIn dan Indeed ke dalam satu pencarian. Lowongan diperbarui otomatis setiap hari.",
-          "Selain mencari loker, kamu bisa menyusun CV, merapikan profil LinkedIn, berlatih pertanyaan interview, dan memakai alat AI untuk meninjau CV serta simulasi interview.",
+          "Jobly mengumpulkan lowongan dari situs karier resmi perusahaan dan platform kerja seperti LinkedIn dan Indeed, jadi kamu cukup cari di satu tempat. Lowongannya diperbarui otomatis setiap hari.",
+          "Selain cari loker, kamu juga bisa bikin CV, merapikan profil LinkedIn, latihan pertanyaan interview, sampai simulasi interview dengan AI.",
         ],
       },
       {
         q: "Apakah mencari loker di Jobly gratis?",
         beranda: true,
         a: [
-          "Ya. 5.000 lowongan — yang terbaru dari setiap sumber, dibagi rata — bisa dicari dan dibuka tanpa biaya dan tanpa perlu mendaftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
+          "Ya. 5.000 lowongan terbaru, diambil merata dari setiap sumber, bisa dicari dan dibuka gratis tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
           "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka seluruh loker di atas 5.000 serta fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
         ],
       },
@@ -43,13 +43,13 @@ export const FAQ = [
         q: "Bagaimana cara melamar?",
         beranda: true,
         a: [
-          "Buka detail lowongan, lalu klik tombol Lamar. Kamu akan diarahkan ke halaman lowongan di sumber aslinya, dan proses lamaran sepenuhnya dilakukan di sana. Jobly tidak menerima, meneruskan, atau menyeleksi lamaran.",
+          "Buka detail lowongan, lalu klik tombol Lamar. Kamu akan dibawa ke halaman loker di situs aslinya, dan semua proses lamaran dilakukan di sana. Jobly tidak menerima, meneruskan, atau menyeleksi lamaran.",
         ],
       },
       {
         q: "Kenapa ada lowongan yang ternyata sudah ditutup?",
         a: [
-          "Lowongan dikumpulkan secara otomatis, sehingga ada jeda antara saat perusahaan menutup lowongan dan saat lowongan itu hilang dari Jobly. Selalu periksa status dan tenggat di halaman sumbernya sebelum melamar.",
+          "Lowongan dikumpulkan otomatis, jadi kadang ada jeda antara saat perusahaan menutup lowongan dan saat lowongan itu hilang dari Jobly. Sebelum melamar, cek dulu status dan batas waktunya di situs aslinya.",
         ],
       },
       {
@@ -99,26 +99,26 @@ export const FAQ = [
       {
         q: "Metode pembayaran apa saja yang bisa dipakai?",
         a: [
-          "Pembayaran diproses oleh Midtrans. Metode yang tersedia ditampilkan di halaman pembayaran, umumnya meliputi QRIS, dompet digital, transfer virtual account, dan kartu. Jobly tidak menyimpan data kartu atau rekeningmu.",
+          "Pembayaran lewat QRIS, yang diproses oleh Midtrans. Kamu bisa scan pakai aplikasi bank atau dompet digital apa saja, seperti GoPay, OVO, DANA, atau ShopeePay. Jobly tidak menyimpan data rekeningmu.",
         ],
       },
       {
         q: "Apa yang terjadi saat masa berlaku paket habis?",
         a: [
           "Sisa kuota Review CV tetap bisa kamu pakai. Fitur Pindah Karier dan Simulasi Interview membutuhkan paket yang masih berlaku, jadi sisa kuota keduanya baru bisa dipakai lagi setelah kamu membeli paket baru.",
-          "Semua fitur gratis — termasuk 5.000 loker, CV Builder, dan riwayat analisis — tetap bisa diakses. Loker di atas 5.000 kembali terkunci sampai kamu membeli paket baru.",
+          "Semua fitur gratis tetap bisa kamu pakai, termasuk 5.000 loker, CV Builder, dan riwayat analisis. Loker di atas 5.000 kembali terkunci sampai kamu membeli paket baru.",
         ],
       },
       {
         q: "Pembayaran sudah berhasil, tapi kuota belum bertambah.",
         a: [
-          "Konfirmasi dari Midtrans biasanya masuk dalam beberapa detik sampai beberapa menit. Muat ulang halaman setelah pembayaran selesai. Kalau dalam 1×24 jam kuota belum bertambah, hubungi kami dengan menyertakan email akun dan nomor pesanan dari Midtrans.",
+          "Konfirmasi pembayaran biasanya masuk dalam hitungan detik sampai beberapa menit. Setelah bayar, coba muat ulang halaman. Kalau dalam 1×24 jam kuota belum bertambah, hubungi kami dengan menyertakan email akun dan nomor pesanan dari Midtrans.",
         ],
       },
       {
         q: "Apakah pembayaran bisa dikembalikan?",
         a: [
-          "Karena berupa layanan digital yang langsung aktif, pembelian paket pada umumnya tidak dapat dibatalkan. Pengecualiannya adalah tagihan ganda untuk satu pesanan dan kuota yang tidak bertambah meski pembayaran berhasil. Rinciannya ada di Syarat & Ketentuan.",
+          "Karena paket langsung aktif setelah dibayar, pembelian umumnya tidak bisa dibatalkan. Pengecualiannya adalah tagihan ganda untuk satu pesanan dan kuota yang tidak bertambah meski pembayaran berhasil. Rinciannya ada di Syarat & Ketentuan.",
         ],
       },
     ],

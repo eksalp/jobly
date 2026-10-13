@@ -121,7 +121,7 @@ const LABELS = {
     phCertYear: "2022",
     phCertLicense: "UC-XXXXXXXXXX",
     phSummary:
-      "Deskripsikan dirimu secara singkat — pengalaman, keahlian utama, dan tujuan karier...",
+      "Ceritakan dirimu secara singkat: pengalaman, keahlian utama, dan tujuan karier...",
     skillPlaceholder: "Tambah skill, lalu Enter...",
     previewLabel: "Preview CV",
     pdfSubtitle: "Hasil PDF ukuran A4 penuh",
@@ -195,7 +195,7 @@ const LABELS = {
     phCertYear: "2022",
     phCertLicense: "UC-XXXXXXXXXX",
     phSummary:
-      "Briefly describe yourself — your experience, key skills, and career goals...",
+      "Briefly describe yourself: your experience, key skills, and career goals...",
     skillPlaceholder: "Add a skill, then press Enter...",
     previewLabel: "CV Preview",
     pdfSubtitle: "PDF output is full A4 size",
@@ -224,7 +224,7 @@ const ATS_TIPS = {
         "Tulis jabatan yang spesifik dan relevan dengan posisi yang dilamar.",
         "Contoh bagus: 'Tax & Treasury Staff | ICOFR | BUMN'.",
         "Hindari kata generik seperti 'Fresh Graduate' atau 'Jobseeker'.",
-        "Masukkan kata kunci industri — ATS sering mencocokkan headline dengan deskripsi job.",
+        "Masukkan kata kunci industri, karena ATS sering mencocokkan headline dengan deskripsi lowongan.",
       ],
     },
     email: {
@@ -247,7 +247,7 @@ const ATS_TIPS = {
       tips: [
         "Tulis kota dan negara: 'Jakarta, Indonesia'.",
         "Untuk posisi remote, tambahkan '(Open to Remote)'.",
-        "ATS kadang memfilter kandidat berdasarkan lokasi — sesuaikan dengan kota job listing.",
+        "ATS kadang menyaring kandidat berdasarkan lokasi. Sesuaikan dengan kota di lowongan.",
       ],
     },
     linkedin: {
@@ -279,7 +279,7 @@ const ATS_TIPS = {
     company: {
       title: "Perusahaan",
       tips: [
-        "Tulis nama resmi perusahaan (PT/CV/Tbk) — ATS bisa mengenali perusahaan ternama.",
+        "Tulis nama resmi perusahaan (PT/CV/Tbk) supaya ATS bisa mengenali perusahaan ternama.",
         "Tambahkan industri jika perusahaan kurang dikenal: 'Startup Fintech' atau 'BUMN Logistik'.",
       ],
     },
@@ -290,13 +290,13 @@ const ATS_TIPS = {
         "Mulai setiap poin dengan kata kerja aktif: Mengelola, Menganalisis, Menyusun, Memimpin.",
         "Sertakan angka/persentase jika ada: 'Menyusun laporan pajak untuk 12 entitas anak perusahaan'.",
         "Hindari kalimat pasif: 'Bertanggung jawab atas...' → ganti dengan 'Mengelola...'.",
-        "ATS mencari kata kunci teknis di bagian ini — masukkan tools/software yang dipakai.",
+        "ATS mencari kata kunci teknis di bagian ini, jadi sebutkan tools atau software yang kamu pakai.",
       ],
     },
     school: {
       title: "Institusi Pendidikan",
       tips: [
-        "Tulis nama lengkap universitas/sekolah — ATS mengenali nama resmi.",
+        "Tulis nama lengkap universitas atau sekolah, karena ATS mengenali nama resmi.",
         "Contoh: 'Universitas Airlangga' bukan 'UNAIR'.",
       ],
     },
@@ -304,7 +304,7 @@ const ATS_TIPS = {
       title: "Jurusan / Gelar",
       tips: [
         "Format standar: 'S1 Akuntansi' atau 'Bachelor of Economics, Accounting'.",
-        "Sebutkan gelar akademis: S.E., S.Ak., S.T. — berguna untuk filter ATS yang mensyaratkan S1.",
+        "Sebutkan gelar akademis seperti S.E., S.Ak., atau S.T. Ini berguna untuk filter ATS yang mensyaratkan S1.",
       ],
     },
     certName: {
@@ -318,10 +318,10 @@ const ATS_TIPS = {
     skills: {
       title: "Keahlian",
       tips: [
-        "Pisahkan hard skill dan soft skill — ATS lebih mengenali hard skill teknis.",
+        "Pisahkan hard skill dan soft skill, karena ATS lebih mengenali hard skill teknis.",
         "Gunakan nama tools/software yang spesifik: 'Microsoft Excel (Advanced)', 'SAP FI', 'MYOB'.",
         "Cocokkan skill dengan kata kunci di job description yang kamu lamar.",
-        "Hindari skill terlalu generik: 'Komunikasi', 'Kerja Tim' — tambahkan konteks.",
+        "Hindari skill yang terlalu umum seperti 'Komunikasi' atau 'Kerja Tim'. Tambahkan konteksnya.",
         "Urutan penting: letakkan skill yang paling relevan dengan posisi di depan.",
       ],
     },
@@ -341,7 +341,7 @@ const ATS_TIPS = {
         "Write a specific title relevant to the position you're applying for.",
         "Good example: 'Tax & Treasury Staff | ICOFR | State-Owned Enterprise'.",
         "Avoid generic terms like 'Fresh Graduate' or 'Jobseeker'.",
-        "Include industry keywords — ATS often matches the headline against the job description.",
+        "Include industry keywords, since ATS often matches the headline against the job description.",
       ],
     },
     email: {
@@ -364,7 +364,7 @@ const ATS_TIPS = {
       tips: [
         "Write your city and country: 'Jakarta, Indonesia'.",
         "For remote roles, add '(Open to Remote)'.",
-        "ATS sometimes filters candidates by location — match it to the job listing's city.",
+        "ATS sometimes filters candidates by location, so match it to the job listing's city.",
       ],
     },
     linkedin: {
@@ -396,7 +396,7 @@ const ATS_TIPS = {
     company: {
       title: "Company",
       tips: [
-        "Write the company's official name (Inc./Ltd./Corp.) — ATS can recognize well-known companies.",
+        "Write the company's official name (Inc./Ltd./Corp.) so ATS can recognize well-known companies.",
         "Add the industry if the company isn't well known: 'Fintech Startup' or 'State Logistics Company'.",
       ],
     },
@@ -407,13 +407,13 @@ const ATS_TIPS = {
         "Start each point with an active verb: Managed, Analyzed, Prepared, Led.",
         "Include numbers/percentages where possible: 'Prepared tax reports for 12 subsidiary entities'.",
         "Avoid passive phrasing: 'Responsible for...' → use 'Managed...' instead.",
-        "ATS searches for technical keywords here — mention the tools/software you used.",
+        "ATS looks for technical keywords here, so mention the tools or software you used.",
       ],
     },
     school: {
       title: "Educational Institution",
       tips: [
-        "Write the full university/school name — ATS recognizes official names.",
+        "Write the full university or school name, since ATS recognizes official names.",
         "Example: 'Universitas Airlangga' instead of 'UNAIR'.",
       ],
     },
@@ -421,7 +421,7 @@ const ATS_TIPS = {
       title: "Degree / Major",
       tips: [
         "Standard format: 'B.Sc. Accounting' or 'Bachelor of Economics, Accounting'.",
-        "Include your academic title if relevant — useful for ATS filters requiring a bachelor's degree.",
+        "Include your academic title if relevant. It helps with ATS filters that require a bachelor's degree.",
       ],
     },
     certName: {
@@ -435,10 +435,10 @@ const ATS_TIPS = {
     skills: {
       title: "Skills",
       tips: [
-        "Separate hard skills and soft skills — ATS recognizes technical hard skills better.",
+        "Separate hard skills and soft skills, since ATS recognizes technical hard skills better.",
         "Use specific tool/software names: 'Microsoft Excel (Advanced)', 'SAP FI', 'MYOB'.",
         "Match your skills to keywords in the job description you're applying for.",
-        "Avoid overly generic skills like 'Communication' or 'Teamwork' — add context.",
+        "Avoid overly generic skills like 'Communication' or 'Teamwork'. Add context.",
         "Order matters: put the most relevant skills for the position first.",
       ],
     },
@@ -2763,8 +2763,8 @@ export function CVBuilderPanel({ setActive }) {
               }
               keterangan={
                 lang === "ID"
-                  ? "AI menulis ulang ringkasan, bullet pengalaman, dan skill kamu agar lolos penyaringan ATS — tersedia dalam bahasa Indonesia dan Inggris."
-                  : "AI rewrites your summary, experience bullets, and skills to pass ATS screening — available in both Indonesian and English."
+                  ? "AI menulis ulang ringkasan, poin pengalaman, dan skill kamu supaya lolos penyaringan ATS. Tersedia dalam bahasa Indonesia dan Inggris."
+                  : "AI rewrites your summary, experience bullets, and skills to pass ATS screening. Available in Indonesian and English."
               }
               onLangganan={() => setActive?.("paket")}
             />
@@ -2831,7 +2831,7 @@ export function CVBuilderPanel({ setActive }) {
               tipKey="summary"
               value={data.summary}
               onChange={set("summary")}
-              placeholder="Deskripsikan dirimu secara singkat — pengalaman, keahlian utama, dan tujuan karier..."
+              placeholder="Ceritakan dirimu secara singkat: pengalaman, keahlian utama, dan tujuan karier..."
               multiline
               rows={4}
             />

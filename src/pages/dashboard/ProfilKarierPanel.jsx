@@ -325,7 +325,7 @@ export function ProfilKarierPanel() {
     jobPref.tipeKerja.length > 0 ? jobPref.tipeKerja.join(", ") : "Belum diisi";
   const gajiDisplay =
     jobPref.gajiMin || jobPref.gajiMax
-      ? `Rp ${jobPref.gajiMin || "?"}—${jobPref.gajiMax || "?"}jt`
+      ? `Rp ${jobPref.gajiMin || "?"}–${jobPref.gajiMax || "?"} jt`
       : "Belum diisi";
   const lokasiPrefDisplay = jobPref.location || location || "Belum diisi";
 
@@ -644,8 +644,8 @@ export function ProfilKarierPanel() {
           )}
         </div>
         <div style={{ fontSize: 11.5, color: T.inkFaint, marginBottom: 14 }}>
-          Data ini otomatis sinkron dengan Pengalaman Kerja di CV Builder — isi
-          atau ubah di sini, atau di CV Builder, keduanya tetap sama.
+          Data ini otomatis tersambung dengan Pengalaman Kerja di CV Builder. Kamu
+          bisa isi atau ubah di sini maupun di CV Builder, hasilnya tetap sama.
         </div>
 
         {expLoading ? (
@@ -717,7 +717,7 @@ export function ProfilKarierPanel() {
                       {e.role || "Posisi belum diisi"}
                     </div>
                     <div style={{ fontSize: 12.5, color: T.inkSoft }}>
-                      {[e.company, [e.start, e.end].filter(Boolean).join(" — ")]
+                      {[e.company, [e.start, e.end].filter(Boolean).join(" – ")]
                         .filter(Boolean)
                         .join(" · ")}
                     </div>
@@ -936,7 +936,7 @@ export function ProfilKarierPanel() {
                     boxSizing: "border-box",
                   }}
                 />
-                <span style={{ color: T.inkFaint, fontSize: 12 }}>—</span>
+                <span style={{ color: T.inkFaint, fontSize: 12 }}>-</span>
                 <input
                   value={prefDraft.gajiMax}
                   onChange={(e) =>

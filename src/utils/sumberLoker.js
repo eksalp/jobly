@@ -145,7 +145,7 @@ export function formatGaji(job) {
   const ekor = per ? ` per ${per}` : "";
 
   if (min && max && Number(min) !== Number(max)) {
-    return `${angka(min, job.mataUang)} — ${angka(max, job.mataUang)}${ekor}`;
+    return `${angka(min, job.mataUang)} – ${angka(max, job.mataUang)}${ekor}`;
   }
   if (min || max) return `${angka(min || max, job.mataUang)}${ekor}`;
 

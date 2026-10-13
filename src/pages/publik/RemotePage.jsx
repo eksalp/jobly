@@ -73,9 +73,9 @@ export function RemotePage() {
                 Kerja dari mana saja. <span>Gaji tetap jalan.</span>
               </h1>
               <p>
-                Lowongan remote dan hybrid dari perusahaan Indonesia maupun luar
-                negeri, dikumpulkan setiap hari. Sebagian menggaji dalam dolar —
-                cek nilainya dalam rupiah sebelum melamar.
+                Loker remote dan hybrid dari perusahaan Indonesia dan luar negeri,
+                diperbarui setiap hari. Sebagian dibayar dalam dolar, jadi cek
+                dulu nilainya dalam rupiah sebelum melamar.
               </p>
               <label className="pb-input" style={{ maxWidth: 520, marginTop: 22 }}>
                 <Search size={17} color="var(--muted)" aria-hidden="true" />
@@ -165,7 +165,7 @@ export function RemotePage() {
           <div className="pb-head">
             <div>
               <span className="pb-label">Sebelum melamar remote</span>
-              <h2>Tiga hal yang sering terlupa</h2>
+              <h2>Tiga hal yang sering dilupakan</h2>
             </div>
           </div>
           <div className="pb-tips">

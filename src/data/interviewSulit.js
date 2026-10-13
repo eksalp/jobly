@@ -20,11 +20,11 @@ export const KATEGORI_SULIT = [
         nomor: 111,
         pertanyaan: "Kalau kami bisa merekrut kandidat internal dengan gaji lebih rendah, kenapa harus Anda?",
         jebakan:
-          "Menguji apakah Anda bisa menyebut nilai yang tidak dimiliki orang dalam — tanpa merendahkan karyawan mereka.",
+          "Menguji apakah Anda bisa menyebut nilai yang tidak dimiliki orang dalam, tanpa merendahkan karyawan mereka.",
         strategi:
           "Jangan bersaing di harga. Tunjukkan satu-dua hal yang hanya bisa dibawa orang luar: pengalaman dari industri atau perusahaan lain, cara kerja yang sudah terbukti, atau jaringan. Hubungkan dengan masalah konkret yang sedang mereka hadapi, lalu tegaskan Anda ingin memperkuat tim internal, bukan menggantikannya.",
         contoh:
-          "Kandidat internal pasti lebih paham budaya di sini, dan itu nilai yang besar. Yang saya bawa adalah tiga tahun menangani migrasi sistem ERP di dua perusahaan — persis proyek yang Bapak sebut akan dimulai kuartal depan. Saya sudah tahu jebakannya, jadi tim tidak perlu belajar dari kesalahan yang sama.",
+          "Kandidat internal pasti lebih paham budaya di sini, dan itu nilai yang besar. Yang saya bawa adalah tiga tahun menangani migrasi sistem ERP di dua perusahaan. Persis proyek yang Bapak sebut akan dimulai kuartal depan. Saya sudah tahu jebakannya, jadi tim tidak perlu belajar dari kesalahan yang sama.",
       },
       {
         nomor: 112,
@@ -32,7 +32,7 @@ export const KATEGORI_SULIT = [
         jebakan:
           "Ada dua lubang: menjelekkan atasan, atau mengaku selalu setuju (tidak punya pendirian). Yang dinilai adalah cara Anda tidak setuju.",
         strategi:
-          "Pilih keputusan bisnis, bukan soal kepribadian. Ceritakan bagaimana Anda menyampaikan keberatan secara pribadi dengan data, lalu tetap menjalankan keputusan final dengan sungguh-sungguh. Tutup dengan hasilnya dan apa yang Anda pelajari — termasuk kalau ternyata atasan yang benar.",
+          "Pilih keputusan bisnis, bukan soal kepribadian. Ceritakan bagaimana Anda menyampaikan keberatan secara pribadi dengan data, lalu tetap menjalankan keputusan final dengan sungguh-sungguh. Tutup dengan hasilnya dan apa yang Anda pelajari, termasuk kalau ternyata atasan yang benar.",
         contoh:
           "Atasan saya memutuskan memangkas anggaran iklan digital untuk pameran. Saya kirim data konversi tiga bulan terakhir dan minta waktu 15 menit untuk membahasnya. Keputusan tetap jalan, jadi saya bantu siapkan pameran sebaik mungkin sambil mengukur hasilnya. Hasilnya di bawah target, dan kuartal berikutnya data itu dipakai untuk membagi anggaran 60–40.",
       },
@@ -44,13 +44,13 @@ export const KATEGORI_SULIT = [
         strategi:
           "Jangan langsung berpidato. Tanyakan dulu apa yang membuatnya ragu, lalu jawab keraguan itu dengan satu bukti konkret. Kalau ia menolak menjelaskan, sampaikan tiga poin: hasil terbesar Anda, kecocokannya dengan kebutuhan posisi, dan alasan Anda ingin bekerja di sini.",
         contoh:
-          "Boleh saya tahu keraguannya di bagian mana — pengalaman, atau kecocokan dengan tim? … Kalau soal pengalaman memimpin yang baru dua tahun: dalam dua tahun itu tim saya tumbuh dari 3 ke 8 orang dan tidak ada yang keluar. Saya bisa ceritakan caranya.",
+          "Boleh saya tahu keraguannya di bagian mana, pengalaman atau kecocokan dengan tim? … Kalau soal pengalaman memimpin yang baru dua tahun: dalam dua tahun itu tim saya tumbuh dari 3 ke 8 orang dan tidak ada yang keluar. Saya bisa ceritakan caranya.",
       },
       {
         nomor: 114,
         pertanyaan: "Kalau saya telepon atasan terakhir Anda sekarang, apa yang akan ia sebut sebagai kelemahan terbesar Anda?",
         jebakan:
-          "Pertanyaan kelemahan versi 'tidak bisa bohong' — jawaban klise seperti 'perfeksionis' langsung kehilangan nilai karena bisa dicek.",
+          "Pertanyaan kelemahan versi 'tidak bisa bohong'. Jawaban klise seperti 'perfeksionis' langsung kehilangan nilai karena bisa dicek.",
         strategi:
           "Sebut kelemahan nyata yang pernah benar-benar disampaikan atasan Anda, yang tidak fatal untuk posisi ini. Lanjutkan dengan langkah spesifik yang sudah Anda lakukan dan bukti perbaikannya.",
         contoh:
@@ -73,7 +73,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Akui kekhawatirannya, lalu beri alasan yang tulus kenapa posisi ini tepat sekarang (ganti industri, keseimbangan hidup, ingin kembali ke pekerjaan teknis). Tunjukkan bahwa pengalaman lebih justru mempercepat hasil.",
         contoh:
-          "Wajar kalau itu jadi pertanyaan. Saya sengaja mencari peran yang lebih fokus ke pekerjaan teknis setelah lima tahun mengurus administrasi tim. Artinya saya bisa produktif di bulan pertama, dan saya ingin menetap di peran yang saya nikmati — bukan sekadar batu loncatan.",
+          "Wajar kalau itu jadi pertanyaan. Saya sengaja mencari peran yang lebih fokus ke pekerjaan teknis setelah lima tahun mengurus administrasi tim. Artinya saya bisa produktif di bulan pertama, dan saya ingin menetap di peran yang saya nikmati, bukan sekadar batu loncatan.",
       },
       {
         nomor: 117,
@@ -83,17 +83,17 @@ export const KATEGORI_SULIT = [
         strategi:
           "Sebut satu celah yang memang terlihat dari CV Anda dibanding kebutuhan posisi, lalu jelaskan bagaimana Anda menutupnya. Ini kesempatan menjawab keraguan sebelum mereka membahasnya di rapat penilaian.",
         contoh:
-          "Mungkin karena pengalaman saya di B2C, sedangkan klien di sini mayoritas B2B. Karena itu dua bulan terakhir saya ikut kursus account management B2B dan berbincang dengan tiga teman yang bekerja di bidang ini — saya bisa ceritakan yang saya pelajari.",
+          "Mungkin karena pengalaman saya di B2C, sedangkan klien di sini mayoritas B2B. Karena itu dua bulan terakhir saya ikut kursus account management B2B dan berbincang dengan tiga teman yang bekerja di bidang ini. Saya bisa ceritakan apa yang saya pelajari.",
       },
       {
         nomor: 118,
         pertanyaan: "Apa satu hal tentang perusahaan kami yang menurut Anda kurang baik?",
         jebakan:
-          "Menguji riset dan keberanian memberi masukan — tanpa terdengar menghina calon tempat kerja sendiri.",
+          "Menguji riset dan keberanian memberi masukan, tanpa terdengar menghina calon tempat kerja sendiri.",
         strategi:
           "Pilih hal yang bisa diperbaiki dan relevan dengan peran Anda (pengalaman aplikasi, waktu respons layanan, konten media sosial). Sampaikan sebagai pengamatan pengguna, bukan kritik, lalu tawarkan ide perbaikan yang bisa Anda kerjakan.",
         contoh:
-          "Sebagai pengguna, proses pengembalian dana di aplikasi butuh lima langkah dan saya sempat bingung di langkah ketiga. Kalau saya di tim produk, itu salah satu hal pertama yang ingin saya uji — mungkin bisa dipangkas jadi dua langkah.",
+          "Sebagai pengguna, proses pengembalian dana di aplikasi butuh lima langkah dan saya sempat bingung di langkah ketiga. Kalau saya di tim produk, itu salah satu hal pertama yang ingin saya uji. Mungkin bisa dipangkas jadi dua langkah.",
       },
       {
         nomor: 119,
@@ -101,7 +101,7 @@ export const KATEGORI_SULIT = [
         jebakan:
           "Pertanyaan integritas. 'Tidak pernah' terdengar kaku atau tidak jujur; cerita yang melanggar etika langsung mengakhiri peluang Anda.",
         strategi:
-          "Pilih contoh prosedur internal yang kaku, bukan hukum atau etika — dan Anda tetap meminta izin atau melapor. Tunjukkan Anda menimbang risiko, mengambil tanggung jawab, lalu mengusulkan perbaikan prosedurnya.",
+          "Pilih contoh prosedur internal yang kaku, bukan hukum atau etika, dan pastikan Anda tetap meminta izin atau melapor. Tunjukkan Anda menimbang risiko, mengambil tanggung jawab, lalu mengusulkan perbaikan prosedurnya.",
         contoh:
           "Pengiriman ke klien terancam terlambat karena persetujuan manajer harus bertanda tangan basah, sementara beliau di luar kota. Saya minta persetujuan lewat email, mendokumentasikannya, lalu mengirim barang tepat waktu. Setelahnya saya usulkan persetujuan digital, dan sekarang itu jadi prosedur resmi.",
       },
@@ -112,11 +112,11 @@ export const KATEGORI_SULIT = [
         strategi:
           "Jangan menyebut batas bawah. Kembalikan ke kisaran wajar berdasarkan riset (misalnya dari Peta Gaji), tekankan bahwa Anda melihat keseluruhan paket, lalu tanyakan anggaran mereka.",
         contoh:
-          "Dari riset saya, posisi serupa di Jakarta berada di kisaran 9 sampai 12 juta. Saya terbuka mendiskusikan angka di kisaran itu dengan melihat paket keseluruhan — boleh saya tahu anggaran untuk posisi ini?",
+          "Dari riset saya, posisi serupa di Jakarta berada di kisaran 9 sampai 12 juta. Saya terbuka mendiskusikan angka di kisaran itu dengan melihat paket keseluruhan. Boleh saya tahu anggaran untuk posisi ini?",
       },
       {
         nomor: 121,
-        pertanyaan: "Ceritakan kegagalan yang murni kesalahan Anda — bukan tim, bukan keadaan.",
+        pertanyaan: "Ceritakan kegagalan yang murni kesalahan Anda, bukan karena tim atau keadaan.",
         jebakan:
           "Kebanyakan kandidat menyelipkan 'tapi sebenarnya karena…'. Yang dinilai adalah kemampuan mengambil tanggung jawab penuh.",
         strategi:
@@ -140,7 +140,7 @@ export const KATEGORI_SULIT = [
         jebakan:
           "Tidak ada jawaban benar soal siapa yang dipilih. Yang dinilai adalah cara Anda memprioritaskan dan berkomunikasi.",
         strategi:
-          "Pahami tenggat dan dampak masing-masing tugas, kerjakan bagian yang bisa diselesaikan cepat, lalu libatkan atasan langsung untuk menentukan prioritas — jangan memutuskan diam-diam dan membuat satu pihak kecewa.",
+          "Pahami tenggat dan dampak masing-masing tugas, kerjakan bagian yang bisa diselesaikan cepat, lalu libatkan atasan langsung untuk menentukan prioritas. Jangan memutuskan diam-diam dan membuat satu pihak kecewa.",
         contoh:
           "Saya tanyakan tenggat pasti dan apa akibatnya kalau terlambat. Kalau tetap bertabrakan, saya bawa ke atasan langsung dengan dua opsi jadwal, supaya prioritas diputuskan orang yang berwenang dan kedua direktur tahu kapan tugasnya selesai.",
       },
@@ -150,9 +150,9 @@ export const KATEGORI_SULIT = [
         jebakan:
           "Tekanan sengaja (stress interview) untuk melihat apakah Anda goyah, defensif, atau mengubah jawaban hanya karena ditekan.",
         strategi:
-          "Tetap tenang dan jangan langsung mencabut jawaban. Tanyakan bagian mana yang kurang meyakinkan, lalu perjelas dengan contoh atau angka. Kalau jawaban Anda memang keliru, akui dengan elegan dan perbaiki — itu justru nilai plus.",
+          "Tetap tenang dan jangan langsung mencabut jawaban. Tanyakan bagian mana yang kurang meyakinkan, lalu perjelas dengan contoh atau angka. Kalau jawaban Anda memang keliru, akui dengan elegan dan perbaiki. Itu justru nilai plus.",
         contoh:
-          "Baik, boleh saya tahu bagian mana yang kurang meyakinkan? Mungkin saya kurang konkret. Contohnya begini: di proyek tadi, waktu proses turun dari lima hari ke dua hari — itu yang saya maksud dengan efisiensi.",
+          "Baik, boleh saya tahu bagian mana yang kurang meyakinkan? Mungkin saya kurang konkret. Contohnya begini: di proyek tadi, waktu proses turun dari lima hari ke dua hari. Itu yang saya maksud dengan efisiensi.",
       },
       {
         nomor: 125,
@@ -160,7 +160,7 @@ export const KATEGORI_SULIT = [
         jebakan:
           "Versi ekstrem pertanyaan kelemahan. Menolak menjawab terlihat mengelak; menjawab terlalu jujur bisa merugikan.",
         strategi:
-          "Sebut satu hal yang mungkin tidak cocok bagi mereka tetapi bukan kekurangan kemampuan — misalnya Anda butuh tantangan, atau Anda lugas dalam memberi masukan. Lalu jelaskan kenapa hal itu justru bermanfaat di posisi ini.",
+          "Sebut satu hal yang mungkin tidak cocok bagi mereka tetapi bukan kekurangan kemampuan, misalnya Anda butuh tantangan atau Anda lugas dalam memberi masukan. Lalu jelaskan kenapa hal itu justru bermanfaat di posisi ini.",
         contoh:
           "Kalau Bapak mencari orang yang menjalankan proses persis seperti yang sudah ada tanpa bertanya, mungkin saya bukan orangnya. Saya cenderung bertanya 'kenapa' dan mengusulkan perbaikan. Dari cerita tadi, tim ini justru sedang butuh orang yang mau membenahi proses.",
       },
@@ -201,7 +201,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Tanyakan dulu siapa sasarannya dan berapa nilai satu pelanggan. Usulkan pembagian: sebagian kecil untuk menguji beberapa kanal, ukur biaya per pelanggan, lalu alihkan sisa anggaran ke kanal yang terbukti.",
         contoh:
-          "Saya pakai 30 juta untuk menguji tiga kanal selama dua minggu — iklan media sosial, kerja sama komunitas, dan program referral. Kanal dengan biaya per pelanggan terendah mendapat 70 juta sisanya, dengan evaluasi mingguan.",
+          "Saya pakai 30 juta untuk menguji tiga kanal selama dua minggu: iklan media sosial, kerja sama komunitas, dan program referral. Kanal dengan biaya per pelanggan terendah mendapat 70 juta sisanya, dengan evaluasi mingguan.",
       },
       {
         nomor: 129,
@@ -210,7 +210,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Segera laporkan ke pemangku kepentingan dengan angka yang jelas. Analisis penyebab pembengkakan, susun opsi (kurangi ruang lingkup, tambah anggaran, ubah jadwal) beserta konsekuensinya, lalu minta keputusan.",
         contoh:
-          "Saya laporkan hari itu juga dengan rincian biaya, lalu siapkan tiga opsi: tunda dua fitur ke fase berikutnya, tambah anggaran 40%, atau perpanjang waktu dengan tim lebih kecil — masing-masing dengan risikonya.",
+          "Saya laporkan hari itu juga dengan rincian biaya, lalu siapkan tiga opsi: tunda dua fitur ke fase berikutnya, tambah anggaran 40%, atau perpanjang waktu dengan tim lebih kecil, masing-masing lengkap dengan risikonya.",
       },
       {
         nomor: 130,
@@ -219,21 +219,21 @@ export const KATEGORI_SULIT = [
         strategi:
           "Pecah menjadi bagian yang mudah: 10% ditambah 5%. Ucapkan langkahnya, lalu cek ulang dengan cara lain. Berpikir dengan suara keras justru dinilai positif.",
         contoh:
-          "10% dari 2,4 miliar adalah 240 juta, 5% setengahnya yaitu 120 juta, jadi totalnya 360 juta. Cek: 15% sedikit di bawah seperenam, dan 2,4 miliar dibagi 6 adalah 400 juta — jadi 360 juta masuk akal.",
+          "10% dari 2,4 miliar adalah 240 juta, 5% setengahnya yaitu 120 juta, jadi totalnya 360 juta. Cek: 15% sedikit di bawah seperenam, dan 2,4 miliar dibagi 6 adalah 400 juta. Jadi 360 juta masuk akal.",
       },
       {
         nomor: 131,
         pertanyaan: "Bagaimana Anda tahu sebuah fitur baru di aplikasi berhasil atau tidak?",
         jebakan: "Jawaban 'kalau banyak yang pakai' terlalu dangkal. Yang dicari adalah metrik yang terhubung dengan tujuan bisnis.",
         strategi:
-          "Mulai dari tujuan fiturnya, lalu tentukan satu metrik utama dan beberapa metrik pengaman (yang tidak boleh memburuk). Sebut cara mengukurnya — misalnya uji A/B dengan kelompok pembanding — dan lama evaluasinya.",
+          "Mulai dari tujuan fiturnya, lalu tentukan satu metrik utama dan beberapa metrik pengaman (yang tidak boleh memburuk). Sebut cara mengukurnya (misalnya uji A/B dengan kelompok pembanding) dan berapa lama evaluasinya.",
         contoh:
           "Kalau tujuan fitur 'simpan keranjang' adalah menaikkan penjualan, metrik utamanya tingkat checkout dari keranjang tersimpan, dengan pengaman waktu muat aplikasi dan jumlah keluhan. Saya bandingkan dengan kelompok yang belum mendapat fitur selama dua minggu.",
       },
       {
         nomor: 132,
         pertanyaan: "Kami ingin membuka cabang di kota baru. Data apa yang Anda butuhkan sebelum memutuskan?",
-        jebakan: "Menguji apakah Anda berpikir menyeluruh: pasar, biaya, operasional, dan risiko — bukan hanya jumlah penduduk.",
+        jebakan: "Menguji apakah Anda berpikir menyeluruh: pasar, biaya, operasional, dan risiko, bukan hanya jumlah penduduk.",
         strategi:
           "Kelompokkan: permintaan (calon pelanggan, daya beli, tren), persaingan (siapa saja, harga mereka), biaya (sewa, tenaga kerja, logistik), dan risiko (regulasi, musim). Tutup dengan kriteria keputusan, misalnya target balik modal.",
         contoh:
@@ -246,7 +246,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Hitung dampaknya dalam setahun: dengan 5% per bulan, sekitar 46% pelanggan hilang, dibanding sekitar 31% di angka 3%. Jelaskan bahwa itu kenaikan lebih dari 60% secara relatif, lalu usulkan cara mencari penyebabnya per segmen.",
         contoh:
-          "Serius. Dalam setahun kita kehilangan hampir separuh pelanggan, bukan sepertiga. Saya akan lihat segmen mana yang paling banyak berhenti dan kapan — misalnya setelah kenaikan harga atau gangguan layanan.",
+          "Serius. Dalam setahun kita kehilangan hampir separuh pelanggan, bukan sepertiga. Saya akan lihat segmen mana yang paling banyak berhenti dan kapan, misalnya setelah kenaikan harga atau gangguan layanan.",
       },
       {
         nomor: 134,
@@ -284,7 +284,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Jangan membandingkan dengan orang lain. Fokus pada kecepatan belajar yang terbukti, kecocokan dengan kebutuhan spesifik mereka, dan hasil konkret yang sudah Anda capai dalam waktu singkat.",
         contoh:
-          "I can't compete on years, but I can show how fast I deliver. In my first six months I automated a weekly report that used to take two days. You mentioned the team needs dashboards built quickly — that's what I've been doing every week.",
+          "I can't compete on years, but I can show how fast I deliver. In my first six months I automated a weekly report that used to take two days. You mentioned the team needs dashboards built quickly, and that's what I've been doing every week.",
       },
       {
         nomor: 137,
@@ -313,7 +313,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Sebut arah keahlian dan tanggung jawab, bukan jabatan spesifik, lalu kaitkan dengan jalur yang realistis di perusahaan ini.",
         contoh:
-          "I'd like to be the person the team relies on for pricing decisions — deeper in analytics and probably leading a small team. From what you've shared, that path exists here, which is a big reason I applied.",
+          "I'd like to be the person the team relies on for pricing decisions, deeper in analytics and probably leading a small team. From what you've shared, that path exists here, which is a big reason I applied.",
       },
       {
         nomor: 140,
@@ -322,7 +322,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Ceritakan masukan yang awalnya Anda tidak setujui, bagaimana Anda mencari tahu maksudnya, lalu bagian mana yang akhirnya Anda terima dan terapkan.",
         contoh:
-          "I was told my presentations were too detailed. At first I disagreed — the details mattered. But after asking two colleagues, I realised the main message got lost. Now I put the key number on slide one and move the details to the appendix.",
+          "I was told my presentations were too detailed. At first I disagreed, because I thought the details mattered. But after asking two colleagues, I realised the main message got lost. Now I put the key number on slide one and move the details to the appendix.",
       },
       {
         nomor: 141,
@@ -339,7 +339,7 @@ export const KATEGORI_SULIT = [
         pertanyaan: "What are your salary expectations in US dollars?",
         jebakan: "Banyak kandidat Indonesia menyebut angka terlalu rendah karena mengonversi dari gaji lokal.",
         strategi:
-          "Riset kisaran untuk peran yang sama di pasar remote, hitung nilai bersih setelah biaya platform dan transfer (pakai Kalkulator Gaji), lalu sebut kisaran — bukan satu angka — dan tanyakan anggaran mereka.",
+          "Riset kisaran untuk peran yang sama di pasar remote, hitung nilai bersih setelah biaya platform dan transfer (pakai Kalkulator Gaji), lalu sebut kisaran (bukan satu angka) dan tanyakan anggaran mereka.",
         contoh:
           "Based on similar remote roles, I'm looking at 2,500 to 3,200 dollars a month, depending on the overall package. Could you share the budget for this position?",
       },
@@ -350,7 +350,7 @@ export const KATEGORI_SULIT = [
         strategi:
           "Akui bagian Anda dengan jelas dalam satu kalimat, jelaskan apa yang Anda lakukan untuk memperbaikinya, dan sebut kebiasaan yang berubah sesudahnya.",
         contoh:
-          "We launched a feature that users barely used. My part: I skipped user interviews to save time. Since then I run at least five short interviews before writing any spec — our next feature reached 40% adoption in a month.",
+          "We launched a feature that users barely used. My part: I skipped user interviews to save time. Since then I run at least five short interviews before writing any spec. Our next feature reached 40% adoption in a month.",
       },
       {
         nomor: 144,

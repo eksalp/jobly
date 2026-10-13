@@ -59,7 +59,7 @@ export function KalkulatorPage() {
     ? "kurs yang kamu masukkan"
     : kurs.live
       ? `kurs referensi ${formatWaktuKurs(kurs.waktu) || "hari ini"}`
-      : "kurs cadangan — kurs live gagal dimuat";
+      : "kurs cadangan, karena kurs hari ini gagal dimuat";
 
   return (
     <PublicLayout aktif="/kalkulator-gaji">
@@ -68,9 +68,9 @@ export function KalkulatorPage() {
         <h1>Berapa gaji dolarmu dalam rupiah?</h1>
         <p>
           Masukkan tawaran gaji atau tarif freelance dalam mata uang asing. Kalkulator
-          menghitung nilainya per jam sampai per tahun, lalu menguranginya dengan
-          potongan platform dan biaya transfer — supaya kamu tahu angka yang
-          benar-benar diterima.
+          ini menghitung nilainya per jam sampai per tahun, lalu memotong biaya
+          platform dan transfer. Jadi kamu tahu berapa yang benar-benar masuk ke
+          rekening.
         </p>
       </div>
 
@@ -84,7 +84,7 @@ export function KalkulatorPage() {
                 <select id="kalk-mata-uang" value={kode} onChange={(e) => { setKode(e.target.value); setKursManual(""); }}>
                   {MATA_UANG.map((m) => (
                     <option key={m.kode} value={m.kode}>
-                      {m.kode} — {m.nama}
+                      {m.kode} ({m.nama})
                     </option>
                   ))}
                 </select>
@@ -180,7 +180,7 @@ export function KalkulatorPage() {
                 <input
                   id="kalk-kurs"
                   inputMode="decimal"
-                  placeholder={kursLive ? Math.round(kursLive).toLocaleString("id-ID") : "—"}
+                  placeholder={kursLive ? Math.round(kursLive).toLocaleString("id-ID") : ""}
                   value={kursManual}
                   onChange={(e) => setKursManual(e.target.value)}
                 />
@@ -203,7 +203,7 @@ export function KalkulatorPage() {
               {rupiahPenuh(h.rincianBulan.bersih)}
             </div>
             <div className="pb-kurs" style={{ marginTop: 8 }}>
-              1 {kode} = {kursPakai ? rupiahPenuh(kursPakai) : "—"} · {sumberKurs}
+              1 {kode} = {kursPakai ? rupiahPenuh(kursPakai) : "-"} · {sumberKurs}
             </div>
 
             <ul className="pb-break" style={{ marginTop: 20 }}>

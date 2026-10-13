@@ -49,24 +49,24 @@ import { TandaJobly } from "../ui/TandaJobly";
 const ke = (panel) => `/dashboard/${panel}`;
 
 const I = {
-  semua: { t: "Semua loker", d: "Cari dari semua sumber resmi", path: "/loker", Ikon: Search },
-  remote: { t: "Loker remote", d: "Kerja dari mana saja, gaji rupiah atau dolar", path: "/remote", Ikon: Globe },
-  magang: { t: "Magang & fresh graduate", d: "Untuk langkah pertamamu", path: "/loker?tipe=magang", Ikon: GraduationCap },
-  cocok: { t: "Cocok untukku", d: "Diurutkan sesuai profil & CV-mu", path: ke("jobfinder"), Ikon: Sparkles },
-  simpan: { t: "Tersimpan", d: "Loker yang kamu tandai", path: ke("saved"), Ikon: Bookmark },
-  lamaran: { t: "Lamaran saya", d: "Pantau progres tiap lamaran", path: ke("applications"), Ikon: Send },
-  rencana: { t: "Rencana lamar", d: "Target mingguan & streak harian", path: ke("rencana"), Ikon: CalendarCheck, baru: true },
-  peta: { t: "Peta gaji", d: "Kisaran gaji per bidang & kota", path: "/peta-gaji", Ikon: BarChart3, baru: true },
-  cek: { t: "Cek loker palsu", d: "Tempel teks loker, kenali tanda penipuan", path: "/cek-loker", Ikon: ShieldCheck, baru: true },
-  kalkulator: { t: "Kalkulator gaji", d: "Dolar ke rupiah, per jam s.d. per tahun", path: "/kalkulator-gaji", Ikon: Calculator },
-  profil: { t: "Profil karier", d: "Data diri, skill, pengalaman", path: ke("profile"), Ikon: User },
-  cv: { t: "CV Builder", d: "Pilih font & tema, unduh PDF rapi", path: ke("cvbuilder"), Ikon: FilePlus2 },
-  linkedin: { t: "LinkedIn Builder", d: "Rapikan profil LinkedIn", path: ke("linkedinbuilder"), Ikon: Linkedin },
-  latihan: { t: "Latihan interview", d: "140+ pertanyaan, termasuk level neraka", path: ke("interview"), Ikon: MessageSquareQuote },
-  review: { t: "Review CV", d: "Skor ATS & arah karier dari CV-mu", path: ke("overview"), Ikon: FileSearch, pro: true },
-  pindah: { t: "Pindah karier", d: "Peta skill ke bidang baru", path: ke("pindahkarier"), Ikon: Route, pro: true },
-  rekomendasi: { t: "Rekomendasi karier", d: "Posisi yang layak kamu incar", path: ke("recommendations"), Ikon: TrendingUp },
-  simulasi: { t: "Simulasi interview", d: "Wawancara suara dengan AI", path: ke("simulasi"), Ikon: Mic, pro: true },
+  semua: { t: "Semua loker", d: "Dari situs karier, LinkedIn, Indeed, dan lainnya", path: "/loker", Ikon: Search },
+  remote: { t: "Loker remote", d: "Kerja dari mana saja, digaji rupiah atau dolar", path: "/remote", Ikon: Globe },
+  magang: { t: "Magang & fresh graduate", d: "Cocok buat yang baru mulai kerja", path: "/loker?tipe=magang", Ikon: GraduationCap },
+  cocok: { t: "Cocok untukku", d: "Loker yang paling sesuai dengan CV-mu", path: ke("jobfinder"), Ikon: Sparkles },
+  simpan: { t: "Tersimpan", d: "Loker yang sudah kamu simpan", path: ke("saved"), Ikon: Bookmark },
+  lamaran: { t: "Lamaran saya", d: "Pantau status setiap lamaran", path: ke("applications"), Ikon: Send },
+  rencana: { t: "Rencana lamar", d: "Target mingguan dan streak harian", path: ke("rencana"), Ikon: CalendarCheck, baru: true },
+  peta: { t: "Peta gaji", d: "Kisaran gaji per bidang dan kota", path: "/peta-gaji", Ikon: BarChart3, baru: true },
+  cek: { t: "Cek loker palsu", d: "Cek dulu sebelum kamu kirim data diri", path: "/cek-loker", Ikon: ShieldCheck, baru: true },
+  kalkulator: { t: "Kalkulator gaji", d: "Ubah gaji dolar ke rupiah", path: "/kalkulator-gaji", Ikon: Calculator },
+  profil: { t: "Profil karier", d: "Data diri, skill, dan pengalaman", path: ke("profile"), Ikon: User },
+  cv: { t: "CV Builder", d: "Bikin CV rapi, unduh dalam PDF", path: ke("cvbuilder"), Ikon: FilePlus2 },
+  linkedin: { t: "LinkedIn Builder", d: "Bikin profil LinkedIn lebih menarik", path: ke("linkedinbuilder"), Ikon: Linkedin },
+  latihan: { t: "Latihan interview", d: "140+ pertanyaan, dari yang mudah sampai yang paling sulit", path: ke("interview"), Ikon: MessageSquareQuote },
+  review: { t: "Review CV", d: "Skor ATS dan saran perbaikan CV", path: ke("overview"), Ikon: FileSearch, pro: true },
+  pindah: { t: "Pindah karier", d: "Skill apa yang perlu ditambah untuk bidang baru", path: ke("pindahkarier"), Ikon: Route, pro: true },
+  rekomendasi: { t: "Rekomendasi karier", d: "Posisi yang cocok untuk kamu incar", path: ke("recommendations"), Ikon: TrendingUp },
+  simulasi: { t: "Simulasi interview", d: "Latihan interview pakai suara", path: ke("simulasi"), Ikon: Mic, pro: true },
 };
 
 // Menu untuk pengguna yang sudah masuk — dikelompokkan per tujuan.
@@ -385,7 +385,7 @@ function MenuAkun({ aktif }) {
               <>
                 <div style={{ fontWeight: 600, color: "var(--ink)" }}>Paket Free</div>
                 <div className="exp" style={{ marginTop: 2 }}>
-                  5.000 loker & alat dasar gratis. Buka semua loker & fitur AI mulai Rp 9.000.
+                  5.000 loker dan alat dasar sudah gratis. Mau buka semua loker dan fitur AI? Mulai Rp 9.000.
                 </div>
               </>
             )}
@@ -435,7 +435,7 @@ export function SiteHeader({ aktif }) {
     <header className={`pb-header ${gulir ? "bergulir" : ""}`}>
       <div className="pb-wrap">
         <div className="pb-header-in">
-          <a className="pb-brand" {...tautan("/")} aria-label="Jobly — beranda">
+          <a className="pb-brand" {...tautan("/")} aria-label="Jobly, ke beranda">
             <TandaMerek />
             Jobly
           </a>
@@ -595,9 +595,9 @@ export function SiteFooter() {
               Jobly
             </a>
             <p>
-              In this economy cari kerja itu susah. Jobly mengumpulkan lowongan
-              dari situs karier resmi dan platform tepercaya setiap hari, lalu
-              membantumu menyiapkan lamaran sampai interview.
+              In this economy, cari kerja itu susah. Jobly mengumpulkan lowongan
+              dari situs karier resmi dan platform terpercaya setiap hari, lalu
+              membantumu bersiap dari CV sampai interview.
             </p>
             <IkonSosialFooter />
             <TautanGrup />
@@ -621,9 +621,9 @@ export function SiteFooter() {
             © {tahun} {SITUS.nama} · Dibuat oleh {SITUS.pembuat}
           </span>
           <p>
-            Jobly bukan agen penyalur kerja dan tidak berafiliasi dengan
-            perusahaan yang lowongannya ditampilkan. Melamar selalu di sumber
-            aslinya, tanpa biaya dari Jobly.
+            Jobly bukan agen penyalur kerja dan tidak terhubung dengan perusahaan
+            yang lowongannya ditampilkan. Kamu selalu melamar langsung di situs
+            aslinya, dan Jobly tidak memungut biaya apa pun.
           </p>
         </div>
       </div>

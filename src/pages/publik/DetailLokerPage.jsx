@@ -156,7 +156,7 @@ export function DetailLokerPage({ slug }) {
   const memuatDaftar = !siap;
 
   useEffect(() => {
-    if (job) document.title = `${job.posisi} — ${job.perusahaan} · Jobly`;
+    if (job) document.title = `${job.posisi} di ${job.perusahaan} · Jobly`;
   }, [job]);
 
   useEffect(() => {
@@ -235,10 +235,10 @@ export function DetailLokerPage({ slug }) {
               <span className="pb-kunci-ic">
                 <Lock size={20} />
               </span>
-              <h3>Loker ini termasuk di luar {batasGratis.toLocaleString("id-ID")} loker gratis</h3>
+              <h3>Loker ini di luar {batasGratis.toLocaleString("id-ID")} loker gratis</h3>
               <p>
-                Buka detail lengkap, tombol lamar, dan seluruh loker lainnya dengan paket
-                apa pun — mulai {rupiahPaket(Math.min(...DAFTAR_PAKET.map((p) => p.harga)))} sekali bayar.
+                Detail lengkap dan tombol lamarnya bisa kamu buka dengan paket apa saja,
+                mulai {rupiahPaket(Math.min(...DAFTAR_PAKET.map((p) => p.harga)))} sekali bayar. Semua loker lain ikut terbuka.
               </p>
               <div className="pb-kunci-act">
                 <a className="pb-btn pb-btn-primary" {...tautan(tujuanBuka)}>
@@ -278,7 +278,7 @@ export function DetailLokerPage({ slug }) {
   const klikBagikan = async () => {
     const hasil = await bagikan({
       judul: job.posisi,
-      teks: `${job.posisi} — ${job.perusahaan}`,
+      teks: `${job.posisi} di ${job.perusahaan}`,
       url: window.location.pathname,
     });
     if (hasil === "disalin") toast("Tautan lowongan disalin");
@@ -367,7 +367,7 @@ export function DetailLokerPage({ slug }) {
             </div>
             <div className="pb-d-note">
               {job.tanggal ? `Diposting ${waktuRelatif(job.tanggal).toLowerCase()} · ` : ""}
-              Kamu akan diarahkan ke {sumber.langsung ? "situs karier resmi perusahaan" : sumber.nama}.
+              Tombol lamar akan membuka {sumber.langsung ? "situs karier resmi perusahaan" : sumber.nama}.
               Jobly tidak memungut biaya apa pun.
             </div>
 
@@ -506,7 +506,7 @@ export function DetailLokerPage({ slug }) {
             <div className="pb-box tint">
               <h3>Siapkan lamaranmu</h3>
               <p style={{ fontSize: 13.5, color: "var(--ink2)", margin: "6px 0 10px", lineHeight: 1.55 }}>
-                Tingkatkan peluang dipanggil interview untuk posisi ini.
+                Biar peluang dipanggil interview makin besar.
               </p>
               {[
                 { label: "Review CV dengan AI", pro: true, panel: "overview", Ikon: FileText },

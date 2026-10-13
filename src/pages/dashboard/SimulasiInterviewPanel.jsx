@@ -196,12 +196,12 @@ mewawancarai kandidat untuk posisi "${posisi}". Fokus wawancara: ${kategori.nama
 Wawancara ini berlangsung sekitar ${DURASI_MENIT} menit.
 
 PENTING: Kandidat memakai tombol tekan-untuk-bicara. Setiap kali kamu
-menerima suaranya, itu berarti ia SUDAH SELESAI bicara — langsung tanggapi,
+menerima suaranya, itu berarti ia SUDAH SELESAI bicara. Langsung tanggapi,
 jangan menunggu tambahan.
 
 CARA BICARA:
-- Bahasa Indonesia yang wajar dan hangat, seperti orang sungguhan — bukan
-  membacakan naskah.
+- Bahasa Indonesia yang wajar dan hangat, seperti orang sungguhan, bukan
+  seperti membacakan naskah.
 - Ringkas. Satu sampai dua kalimat per giliran. Ini percakapan lisan;
   kalimat panjang sulit disimak.
 - Kandidat yang menyapa lebih dulu, seperti masuk ruang wawancara.
@@ -212,7 +212,7 @@ CARA BICARA:
 - Boleh menanggapi singkat sebelum bertanya ("Oke, saya paham.") supaya
   tidak terdengar kaku.
 - Ajukan SATU pertanyaan per giliran. Jangan menumpuk beberapa pertanyaan
-  sekaligus — kandidat akan bingung menjawab yang mana.
+  sekaligus, karena kandidat akan bingung menjawab yang mana.
 - JANGAN menutup atau menyudahi wawancara atas inisiatifmu sendiri. Kamu
   tidak tahu sisa waktunya, dan menyudahi terlalu cepat membuat kandidat
   kehilangan sebagian besar sesi yang sudah ia bayar.
@@ -342,7 +342,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
       judul = "Kuota simulasi kamu sudah habis";
       keterangan =
         `Kamu sudah memakai seluruh ${langganan.kuotaInterview} sesi di paket ini. ` +
-        "Beli paket baru untuk menambah kuota — sisa masa aktif paketmu tidak hangus, " +
+        "Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, " +
         "dan kuotanya digabung.";
     } else if (langganan.aktif) {
       keterangan =
@@ -484,7 +484,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               </div>
 
               {[
-                "Tekan Mulai bicara saat giliranmu, tekan Selesai kalau sudah — pewawancara baru menjawab setelah itu.",
+                "Tekan Mulai bicara saat giliranmu, lalu tekan Selesai kalau sudah. Pewawancara baru menjawab setelah itu.",
                 "Buka dengan salam dan perkenalan diri, seperti masuk ruang wawancara sungguhan.",
                 "Pakai headphone supaya suara pewawancara tidak terekam balik mikrofonmu.",
                 "Cari tempat yang cukup tenang. Sesi ini butuh izin mikrofon.",
@@ -769,7 +769,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               }}
             >
               {live.berbicara
-                ? "Pewawancara sedang bicara — dengarkan dulu"
+                ? "Pewawancara sedang bicara, dengarkan dulu"
                 : live.sedangBicara
                   ? "Silakan bicara. Tekan Selesai kalau sudah."
                   : jumlahGiliran === 0
@@ -842,7 +842,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 }}
               >
                 Sudah merasa cukup? Tekan tombol di bawah untuk mengakhiri dan
-                melihat penilaianmu — jangan menutup halaman, hasilnya akan
+                melihat penilaianmu. Jangan tutup halaman ini, nanti hasilnya
                 hilang.
               </div>
 

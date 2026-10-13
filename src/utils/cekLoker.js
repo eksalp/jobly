@@ -62,7 +62,7 @@ const ATURAN = [
     berat: 25,
     judul: "Berbau MLM atau ajakan investasi",
     detail:
-      "Kata seperti member, downline, modal awal, atau passive income menandakan skema keanggotaan — bukan hubungan kerja yang menggaji karyawan.",
+      "Kata seperti member, downline, modal awal, atau passive income menandakan skema keanggotaan, bukan pekerjaan yang menggaji karyawan.",
     pola: [
       /\b(downline|upline|join member|jadi member|keanggotaan)\b/i,
       /\b(modal awal|paket usaha|paket member|passive income|penghasilan pasif|reseller tanpa modal|investasi (awal|minimal) rp)\b/i,
@@ -295,7 +295,7 @@ export const LABEL_LEVEL = {
 export const LANGKAH_VERIFIKASI = [
   "Cari nama perusahaan + 'penipuan' atau 'scam' di Google dan media sosial.",
   "Cocokkan lowongan dengan halaman karier atau akun LinkedIn resmi perusahaan.",
-  "Periksa domain email pengirim — harus sama dengan situs resmi perusahaan.",
+  "Periksa alamat email pengirim. Domainnya harus sama dengan situs resmi perusahaan.",
   "Jangan transfer uang dan jangan bagikan OTP, PIN, atau foto kartu ATM.",
   "Laporkan nomor penipu ke cekrekening.id dan aduannomor.id (Kominfo).",
 ];

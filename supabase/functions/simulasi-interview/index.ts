@@ -165,15 +165,17 @@ Nilai penampilan kandidat. Balas HANYA objek JSON:
 }
 
 ATURAN:
-- "skor": 0-100, jujur. Jangan menggembungkan nilai — kandidat memakai ini
+- "skor": 0-100, jujur. Jangan menggembungkan nilai, karena kandidat memakai ini
   untuk memperbaiki diri sebelum wawancara sungguhan.
 - "kejelasan": seberapa mudah jawabannya dipahami.
 - "struktur": apakah jawaban tersusun (misalnya memakai pola STAR) atau melompat.
 - "relevansi": apakah jawabannya menjawab yang ditanya.
 - "kekuatan" dan "perbaikan": MAKSIMAL 3 poin masing-masing, spesifik dan
-  merujuk pada apa yang benar-benar kandidat katakan — bukan nasihat umum.
+  merujuk pada apa yang benar-benar kandidat katakan, bukan nasihat umum.
 - "catatan": 2-3 kalimat penutup yang membangun.
-Semua dalam Bahasa Indonesia.`;
+Semua dalam Bahasa Indonesia yang lazim dan lugas, seperti pewawancara yang
+memberi masukan langsung. JANGAN memakai tanda pisah panjang (—); pakai koma,
+titik, atau titik dua.`;
 }
 
 /* ------------------------------------------------------------------ */

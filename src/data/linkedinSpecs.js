@@ -10,7 +10,7 @@ export const LI_SPECS = {
     ],
     panduan: [
       "Pakai gambar yang menjelaskan bidang kerjamu, bukan pemandangan generik.",
-      "Teks di sampul sering terpotong di HP — taruh elemen penting di tengah atas.",
+      "Teks di sampul sering terpotong di HP. Taruh bagian penting di tengah atas.",
       "Foto tempat kerja atau industrimu lebih kuat daripada stok gambar.",
     ],
   },
@@ -25,7 +25,7 @@ export const LI_SPECS = {
     panduan: [
       "Latar polos, pencahayaan merata, pakaian sesuai standar industrimu.",
       "Profil dengan foto jauh lebih sering dikunjungi daripada yang tanpa foto.",
-      "Bingkai #OPENTOWORK menandakan sedang mencari kerja — lepas setelah diterima.",
+      "Bingkai #OPENTOWORK menandakan kamu sedang cari kerja. Lepas setelah diterima.",
     ],
   },
   headline: {
@@ -38,7 +38,7 @@ export const LI_SPECS = {
     ],
     panduan: [
       "Pola yang bekerja: Jabatan | Keahlian inti | Industri | Nilai yang kamu bawa.",
-      "Recruiter mencari lewat kata kunci jabatan — pastikan jabatan target ada di sini.",
+      "Recruiter mencari lewat kata kunci jabatan, jadi pastikan jabatan incaranmu ada di sini.",
       "Hindari 'Fresh Graduate' atau 'Open to Work' sebagai isi utama.",
     ],
   },
@@ -65,7 +65,7 @@ export const LI_SPECS = {
       ["Skill per posisi", "Maksimal 5"],
     ],
     panduan: [
-      "Isi kolom Skill di tiap posisi — dipakai LinkedIn untuk mencocokkan lowongan.",
+      "Isi kolom Skill di tiap posisi. LinkedIn memakainya untuk mencocokkan lowongan.",
       "Mulai tiap poin dengan kata kerja aktif dan sertakan angka bila ada.",
       "Lampirkan media di posisi terpenting supaya profil terlihat kredibel.",
     ],
@@ -78,7 +78,7 @@ export const LI_SPECS = {
       ["Bidang studi", "Terpisah dari gelar"],
     ],
     panduan: [
-      "Tulis nama resmi institusi — LinkedIn mencocokkannya dengan halaman kampus.",
+      "Tulis nama resmi kampus atau sekolah supaya LinkedIn bisa mencocokkannya dengan halaman institusinya.",
       "Terhubung ke halaman kampus membuka jaringan alumni untuk referral.",
       "Isi kegiatan dan organisasi kalau pengalaman kerjamu masih sedikit.",
       "Cantumkan IPK hanya kalau di atas 3,5.",
@@ -92,7 +92,7 @@ export const LI_SPECS = {
       ["Masa berlaku", "Bisa dikosongkan"],
     ],
     panduan: [
-      "Selalu isi URL kredensial — sertifikasi yang bisa diklik jauh lebih dipercaya.",
+      "Selalu isi URL kredensial. Sertifikat yang bisa diklik jauh lebih dipercaya.",
       "Tulis nama lengkap sertifikasi, bukan singkatan saja.",
       "Sertifikasi terkait posisi target sebaiknya diletakkan paling atas.",
       "Sertifikasi kedaluwarsa sebaiknya diperbarui atau dihapus.",
@@ -120,7 +120,7 @@ export const LI_SPECS = {
     ],
     panduan: [
       "Isi minimal 15 keahlian, LinkedIn memakainya untuk pencocokan lowongan.",
-      "Tiga teratas paling terlihat — letakkan yang paling relevan dengan posisi target.",
+      "Tiga skill teratas paling sering dilihat, jadi taruh yang paling sesuai dengan posisi incaranmu.",
       "Gunakan nama keahlian yang disarankan LinkedIn, bukan istilah karangan sendiri.",
     ],
   },
@@ -159,7 +159,7 @@ export const LI_SPECS = {
     panduan: [
       "Gunakan istilah resmi LinkedIn: Dasar, Terbatas, Profesional, Mahir, Penutur asli.",
       "Perusahaan multinasional menyaring kandidat lewat kolom ini.",
-      "Jangan melebih-lebihkan — sering diuji saat wawancara.",
+      "Jangan dilebih-lebihkan, karena sering diuji saat wawancara.",
     ],
   },
   organizations: {

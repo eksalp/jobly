@@ -59,7 +59,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
         <span
           style={{ fontSize: 12.5, color: T.inkSoft, flex: 1, minWidth: 180 }}
         >
-          Belum berlangganan — fitur AI masih terkunci.
+          Belum berlangganan, jadi fitur AI masih terkunci.
         </span>
         <button
           onClick={onLangganan}
@@ -212,7 +212,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
                     lineHeight: 1,
                   }}
                 >
-                  {adaFitur ? sisa : "—"}
+                  {adaFitur ? sisa : "-"}
                 </span>
                 {adaFitur && (
                   <span style={{ fontSize: 11, color: T.inkFaint }}>

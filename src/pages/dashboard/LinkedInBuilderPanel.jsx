@@ -774,7 +774,7 @@ export function LinkedInBuilderPanel({ setActive }) {
             .filter(Boolean)
             .map((d) => `• ${d}`)
             .join("\n");
-          return `${e.role || "Posisi"} — ${e.company || ""}\n${isi}`;
+          return `${e.role || "Posisi"}, ${e.company || ""}\n${isi}`;
         })
         .join("\n\n");
     }
@@ -785,7 +785,7 @@ export function LinkedInBuilderPanel({ setActive }) {
         .map((i) => {
           const baris = [def.judul?.(i), def.sub?.(i), def.meta?.(i)]
             .filter(Boolean)
-            .join(" — ");
+            .join(" – ");
           const poin = Array.isArray(i.desc) ? i.desc : i.desc ? [i.desc] : [];
           const isi = poin
             .filter(Boolean)
@@ -939,7 +939,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           terbuka={false}
           tinggiMinimal={160}
           judul="LinkedIn Builder dengan arahan AI"
-          keterangan="AI menulis ulang headline, Tentang, dan keahlian kamu agar lebih mudah ditemukan recruiter — dalam bahasa Indonesia dan Inggris."
+          keterangan="AI menulis ulang headline, bagian Tentang, dan keahlianmu supaya lebih mudah ditemukan recruiter. Tersedia dalam bahasa Indonesia dan Inggris."
           onLangganan={() => setActive?.("paket")}
         />
       )}
@@ -1161,7 +1161,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                   >
                     {p.headline || (
                       <span style={{ color: "rgba(0,0,0,0.3)" }}>
-                        Headline kamu muncul di sini — 220 karakter
+                        Headline kamu muncul di sini (maks. 220 karakter)
                       </span>
                     )}
                   </div>
@@ -1301,7 +1301,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                       lineHeight: 1.65,
                     }}
                   >
-                    Belum ada tulisan. Klik untuk mulai menulis — tersedia 2.600
+                    Belum ada tulisan. Klik untuk mulai menulis, maksimal 2.600
                     karakter.
                   </div>
                 )}

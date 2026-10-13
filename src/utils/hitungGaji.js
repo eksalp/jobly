@@ -102,6 +102,6 @@ export function hitungGaji({ jumlah, periode, jamPerMinggu, kurs, potonganPlatfo
 
 export function formatAsing(n, kode) {
   const v = Number(n);
-  if (!Number.isFinite(v)) return "—";
+  if (!Number.isFinite(v)) return "-";
   return `${kode} ${v.toLocaleString("en-US", { maximumFractionDigits: v < 100 ? 2 : 0 })}`;
 }

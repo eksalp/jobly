@@ -24,7 +24,7 @@ export function KartuPelatihan({ skor }) {
       ? "Latihan dengan AI bagus untuk membiasakan diri, tapi untuk memperbaiki hal-hal di atas, masukan dari pewawancara sungguhan jauh lebih tajam."
       : skor != null && skor >= 80
         ? "Penampilanmu sudah kuat. Untuk mengasahnya sampai siap menghadapi wawancara sungguhan, latihan dengan pewawancara berpengalaman bisa menemukan hal yang tidak tertangkap AI."
-        : "AI bisa melatih kebiasaanmu, tapi pewawancara sungguhan bisa membaca hal yang tidak terekam transkrip — cara membawa diri, jeda, dan keyakinan saat menjawab.";
+        : "AI bisa melatih kebiasaanmu, tapi pewawancara sungguhan bisa membaca hal yang tidak terekam di transkrip, seperti cara membawa diri, jeda bicara, dan rasa percaya diri saat menjawab.";
 
   const isi = [
     "Sesi 1-on-1 lewat Zoom bersama profesional berpengalaman di BUMN dan startup",
@@ -160,8 +160,8 @@ export function KartuPelatihan({ skor }) {
       >
         <Info size={11} style={{ flexShrink: 0, marginTop: 2 }} />
         <span>
-          Layanan ini disediakan mitra kami, dan kami merekomendasikan dari
-          pendaftaran lewat tautan di atas — tanpa biaya tambahan untukmu.
+          Layanan ini disediakan oleh mitra Jobly. Jobly bisa mendapat komisi
+          kalau kamu mendaftar lewat tautan di atas, tanpa biaya tambahan untukmu.
         </span>
       </div>
     </Glass>

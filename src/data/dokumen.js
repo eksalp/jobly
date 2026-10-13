@@ -62,7 +62,7 @@ export const DOKUMEN = {
         judul: "Pemrosesan oleh AI",
         isi: [
           "Saat kamu memakai Review CV, Pindah Karier, atau Simulasi Interview, teks yang diperlukan (misalnya isi CV, posisi yang kamu incar, atau jawabanmu) dikirim ke Google melalui Gemini API untuk diproses. Pada simulasi interview, suaramu dialirkan langsung ke layanan suara Google selama sesi berlangsung. Jobly tidak menyimpan rekaman suara; yang kami simpan hanya transkrip teks dan penilaiannya.",
-          "Pemrosesan oleh Google tunduk pada ketentuan layanan Google. Tergantung jenis layanan yang digunakan, Google dapat menyimpan sementara atau memakai data tersebut sesuai ketentuannya. Karena itu, jangan mencantumkan data yang tidak dibutuhkan untuk melamar — misalnya NIK, nomor rekening, atau foto KTP — di CV yang kamu analisis.",
+          "Pemrosesan oleh Google tunduk pada ketentuan layanan Google. Tergantung jenis layanan yang digunakan, Google dapat menyimpan sementara atau memakai data tersebut sesuai ketentuannya. Karena itu, jangan mencantumkan data yang tidak dibutuhkan untuk melamar (misalnya NIK, nomor rekening, atau foto KTP) di CV yang kamu analisis.",
         ],
       },
       {
@@ -72,10 +72,10 @@ export const DOKUMEN = {
           "Kami memakai penyedia berikut untuk menjalankan layanan. Mereka hanya menerima data yang dibutuhkan untuk tugasnya:",
           {
             daftar: [
-              "Supabase — basis data, autentikasi, dan fungsi server.",
-              "Google — Gemini API untuk fitur AI dan login dengan Google.",
-              "Midtrans — pemrosesan pembayaran.",
-              "Vercel — hosting situs.",
+              "Supabase: basis data, autentikasi, dan fungsi server.",
+              "Google: Gemini API untuk fitur AI dan login dengan Google.",
+              "Midtrans: pemrosesan pembayaran.",
+              "Vercel: hosting situs.",
             ],
           },
           "Logo perusahaan pada daftar loker dimuat dari layanan ikon situs Google, dan kurs mata uang diambil dari layanan kurs publik (open.er-api.com). Saat memuatnya, browser-mu terhubung langsung ke layanan tersebut.",
@@ -97,7 +97,7 @@ export const DOKUMEN = {
           {
             daftar: [
               "Mengakses dan mendapatkan salinan data pribadimu.",
-              "Memperbaiki data yang keliru — sebagian besar bisa langsung kamu ubah di Profil Karier dan CV Builder.",
+              "Memperbaiki data yang keliru. Sebagian besar bisa langsung kamu ubah sendiri di Profil Karier dan CV Builder.",
               "Meminta penghapusan akun beserta datanya.",
               "Menarik persetujuan pemrosesan, dengan konsekuensi fitur terkait tidak lagi bisa dipakai.",
             ],
@@ -216,7 +216,7 @@ export const DOKUMEN = {
         id: "konten",
         judul: "Konten milikmu",
         isi: [
-          "CV dan data yang kamu unggah tetap milikmu. Kamu memberi kami izin terbatas untuk menyimpan dan memprosesnya — termasuk melalui penyedia AI — semata-mata untuk menjalankan fitur yang kamu pakai.",
+          "CV dan data yang kamu unggah tetap milikmu. Kamu memberi kami izin terbatas untuk menyimpan dan memprosesnya, termasuk lewat penyedia AI, hanya untuk menjalankan fitur yang kamu pakai.",
         ],
       },
       {

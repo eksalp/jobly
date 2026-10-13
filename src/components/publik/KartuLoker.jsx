@@ -72,7 +72,7 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
     henti(e);
     const hasil = await bagikan({
       judul: job.posisi,
-      teks: `${job.posisi} — ${job.perusahaan}`,
+      teks: `${job.posisi} di ${job.perusahaan}`,
       url,
     });
     if (hasil === "disalin") onToast?.("Tautan lowongan disalin");

@@ -488,7 +488,7 @@ export function AnalyzerPanel({ setActive }) {
       // Bedakan "belum pernah punya" dari "kuota habis" — dua pesan berbeda.
       return langganan.aktif || langganan.punyaKuota ? (
         <>
-          Kuota habis — tambah paket <ChevronRight size={15} />
+          Kuota habis, tambah paket <ChevronRight size={15} />
         </>
       ) : (
         <>
@@ -629,7 +629,7 @@ export function AnalyzerPanel({ setActive }) {
                 marginBottom: 10,
               }}
             >
-              AI tidak bisa membuka tautan LinkedIn — yang dibutuhkan isi
+              AI tidak bisa membuka tautan LinkedIn. Yang dibutuhkan adalah isi
               profilnya. Ada dua cara:
             </div>
             {[
@@ -798,7 +798,7 @@ export function AnalyzerPanel({ setActive }) {
                 style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}
               >
                 <strong>Itu tautan, bukan isi profil.</strong> AI tidak bisa
-                membuka halaman LinkedIn — yang dibutuhkan teks profilnya. Salin
+                membuka halaman LinkedIn, jadi yang dibutuhkan teks profilnya. Salin
                 isinya, atau unduh sebagai PDF lalu unggah di sini.
               </div>
             </div>
@@ -1011,7 +1011,7 @@ export function AnalyzerPanel({ setActive }) {
                     </span>
                     <span style={{ fontSize: 12, color: T.inkSoft }}>
                       {" "}
-                      — {b.alasan}
+                      ({b.alasan})
                     </span>
                   </div>
                 ))}
@@ -1101,7 +1101,7 @@ export function AnalyzerPanel({ setActive }) {
                       size={14}
                       style={{ animation: "spin 1s linear infinite" }}
                     />
-                    Memuat daftar loker — kamu tetap bisa lanjut ke analisis
+                    Memuat daftar loker. Kamu tetap bisa lanjut ke analisis
                     lengkap.
                   </div>
                 )}
@@ -1111,7 +1111,7 @@ export function AnalyzerPanel({ setActive }) {
                     key={j.id}
                     job={{
                       ...j,
-                      alasan: `${j.persen}% cocok — bidang ${j.kategoriLoker || "serupa"}${j.alasanTerms.length ? ` · ${j.alasanTerms.join(", ")}` : ""}`,
+                      alasan: `${j.persen}% cocok, bidang ${j.kategoriLoker || "serupa"}${j.alasanTerms.length ? ` · ${j.alasanTerms.join(", ")}` : ""}`,
                     }}
                     locked={false}
                     saved={isSaved(j.id)}
@@ -1221,7 +1221,7 @@ export function AnalyzerPanel({ setActive }) {
                       sourceType === "cv"
                         ? "Skor ATS dan temuan spesifik per bagian CV"
                         : "Skor profil LinkedIn dan temuan per bagian",
-                      "CV ditulis ulang agar lolos ATS — versi Indonesia dan Inggris",
+                      "CV ditulis ulang supaya lolos ATS, dalam versi Indonesia dan Inggris",
                       "Profil LinkedIn siap pakai dalam dua bahasa",
                     ].map((t) => (
                       <div

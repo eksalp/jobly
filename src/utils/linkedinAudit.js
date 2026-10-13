@@ -106,7 +106,7 @@ function auditAbout(a) {
       status: BAD,
       ringkas: "Bagian Tentang kosong",
       temuan: [
-        "Tersedia 2.600 karakter dan diindeks pencarian LinkedIn — sayang kalau dilewat.",
+        "Ada 2.600 karakter dan ikut terbaca oleh pencarian LinkedIn. Sayang kalau dilewatkan.",
       ],
     };
   const temuan = [];

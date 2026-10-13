@@ -99,7 +99,7 @@ export function idrPer(kode, rates) {
 /** Rupiah ringkas: 71.640.000 → "Rp 71,6 jt"; 1.200.000.000 → "Rp 1,2 M". */
 export function rupiahRingkas(n) {
   const v = Number(n);
-  if (!Number.isFinite(v)) return "—";
+  if (!Number.isFinite(v)) return "-";
   const f = (x) => x.toLocaleString("id-ID", { maximumFractionDigits: 1 });
   if (Math.abs(v) >= 1e9) return `Rp ${f(v / 1e9)} M`;
   if (Math.abs(v) >= 1e6) return `Rp ${f(v / 1e6)} jt`;
@@ -108,7 +108,7 @@ export function rupiahRingkas(n) {
 
 export function rupiahPenuh(n) {
   const v = Number(n);
-  if (!Number.isFinite(v)) return "—";
+  if (!Number.isFinite(v)) return "-";
   return `Rp ${Math.round(v).toLocaleString("id-ID")}`;
 }
 

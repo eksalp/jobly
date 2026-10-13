@@ -29,7 +29,7 @@ const tglLengkap = (s) =>
         month: "long",
         year: "numeric",
       })
-    : "—";
+    : "-";
 
 const tglSingkat = (s) =>
   s
@@ -38,7 +38,7 @@ const tglSingkat = (s) =>
         month: "short",
         year: "numeric",
       })
-    : "—";
+    : "-";
 
 export function RiwayatPembelian() {
   const { user } = useAuth();
@@ -274,7 +274,7 @@ export function RiwayatPembelian() {
                   {[
                     ["Mulai berlaku", tglLengkap(d.mulai_at)],
                     ["Berakhir", tglLengkap(d.berakhir_at)],
-                    ["Nomor pesanan", d.order_id ?? "—"],
+                    ["Nomor pesanan", d.order_id ?? "-"],
                   ].map(([k, v]) => (
                     <div
                       key={k}

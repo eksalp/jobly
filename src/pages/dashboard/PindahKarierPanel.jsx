@@ -320,7 +320,7 @@ export function PindahKarierPanel({ setActive }) {
           }
           keterangan={
             kuotaHabis
-              ? `Kamu sudah memakai seluruh ${langganan.kuotaPindah} analisis Pindah Karier di paket ini. Beli paket baru untuk menambah kuota — sisa masa aktif paketmu sekarang tidak hangus, dan kuotanya digabung.`
+              ? `Kamu sudah memakai seluruh ${langganan.kuotaPindah} analisis Pindah Karier di paket ini. Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, dan kuotanya digabung.`
               : sudahLangganan
                 ? "Fitur ini tersedia di paket Pro dan Max. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya."
                 : "AI menilai keahlian mana dari pengalamanmu sekarang yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya. Termasuk penilaian jujur soal risikonya."
@@ -393,8 +393,8 @@ export function PindahKarierPanel({ setActive }) {
             style={{ animation: "spin 1s linear infinite", flexShrink: 0 }}
           />
           <span style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.6 }}>
-            Mengambil hasil analisis yang tadi kamu tinggalkan — prosesnya tetap
-            berjalan di server, sebentar lagi muncul.
+            Mengambil hasil analisis yang tadi kamu tinggalkan. Prosesnya tetap
+            berjalan di server, sebentar lagi hasilnya muncul.
           </span>
         </Glass>
       )}

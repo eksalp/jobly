@@ -21,7 +21,7 @@ const CONTOH = [
 
 const IKON_LEVEL = { aman: ShieldCheck, waspada: ShieldAlert, bahaya: ShieldX };
 
-/** Kartu hasil — dipakai di halaman ini dan (versi ringkas) di detail loker. */
+/** Kartu hasil: dipakai di halaman ini dan (versi ringkas) di detail loker. */
 export function HasilCek({ hasil, ringkas = false }) {
   const Ikon = IKON_LEVEL[hasil.level];
   const tampil = ringkas ? hasil.temuan.slice(0, 3) : hasil.temuan;
@@ -106,11 +106,11 @@ export function CekLokerPage() {
         <span className="pb-label">Gratis · tanpa daftar</span>
         <h1>Cek loker palsu sebelum kamu melamar</h1>
         <p>
-          Tempel teks lowongan dari WhatsApp, Instagram, Telegram, atau email.
-          Jobly memeriksa 16 pola penipuan loker yang paling sering beredar di
-          Indonesia — minta biaya, travel agent interview, tugas like berbayar,
-          sampai “jalur orang dalam”. Teksnya diperiksa di perangkatmu dan tidak
-          dikirim ke mana pun.
+          Dapat info loker dari WhatsApp, Instagram, Telegram, atau email? Tempel
+          teksnya di sini. Jobly akan mencocokkannya dengan 16 modus penipuan loker
+          yang paling sering beredar, mulai dari minta biaya, travel agent untuk
+          interview, tugas like berbayar, sampai “jalur orang dalam”. Teksnya
+          diperiksa di HP atau laptopmu sendiri dan tidak dikirim ke mana pun.
         </p>
       </div>
 

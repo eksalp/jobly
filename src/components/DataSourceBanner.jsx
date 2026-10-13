@@ -79,7 +79,7 @@ export default function DataSourceBanner() {
             size={13}
             style={{ verticalAlign: -2, marginRight: 6 }}
           />
-          Gagal memuat loker terbaru — sementara menampilkan data contoh.
+          Loker terbaru gagal dimuat, jadi untuk sementara yang tampil data contoh.
         </span>
         <button
           onClick={refresh}

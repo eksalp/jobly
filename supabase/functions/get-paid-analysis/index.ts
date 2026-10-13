@@ -27,18 +27,26 @@ const INSTRUKSI_BAHASA = {
   id: `Tulis SEMUA teks dalam Bahasa Indonesia yang baik dan profesional.
 Kecualikan nama tools, sertifikasi, dan jabatan yang memang lazim dipakai dalam
 bahasa Inggris di dunia kerja Indonesia (misalnya "Microsoft Excel", "Business
-Analyst", "Robotic Process Automation") — jangan diterjemahkan.
-Data faktual seperti nama perusahaan dan institusi ditulis apa adanya.`,
+Analyst", "Robotic Process Automation"), jangan diterjemahkan.
+Data faktual seperti nama perusahaan dan institusi ditulis apa adanya.
+Gaya tulisan: kalimat yang lazim dipakai orang Indonesia, lugas, tidak
+berlebihan. JANGAN memakai tanda pisah panjang (—) sama sekali; pakai koma,
+titik, titik dua, atau tanda kurung. Hindari kata klise seperti "dinamis",
+"inovatif", "berdedikasi tinggi", "passionate", atau "hasil yang luar biasa".`,
 
   en: `Write ALL text in professional English suitable for international job
-applications. This is not a word-for-word translation job — apply English CV
+applications. This is not a word-for-word translation job. Apply English CV
 conventions: strong action verbs in past tense for previous roles and present
 tense for the current role, quantified achievements, and concise phrasing.
 Keep proper nouns exactly as given: company names, institution names, and
 certification names stay in their original form (e.g. "PT Integrasi Logistik
 Cipta Solusi", "Universitas Sebelas Maret", "Brevet Pajak AB"). Do not
 translate them. Dates may be written in English format (e.g. "Oct 2024").
-For the LinkedIn About section, use first person ("I have...").`,
+For the LinkedIn About section, use first person ("I have...").
+Style: plain, natural wording a real person would write. NEVER use the em dash
+character (—); use commas, periods, colons, or parentheses instead. Avoid
+buzzwords such as "dynamic", "passionate", "results-driven", "synergy",
+"leverage", or "spearheaded" unless the candidate's own CV uses them.`,
 };
 
 const TINGKAT_BAHASA = {

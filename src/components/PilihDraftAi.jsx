@@ -508,7 +508,7 @@ export function PilihDraftAi({
                 title={
                   tersedia
                     ? ""
-                    : "Analisis ini dibuat sebelum fitur dua bahasa — pilih analisis yang lebih baru"
+                    : "Analisis ini dibuat sebelum ada fitur dua bahasa. Pilih analisis yang lebih baru."
                 }
                 style={{
                   padding: "4px 11px",

@@ -157,7 +157,7 @@ export function DashboardPage({ go, active, setActive }) {
       const lanjut = window.confirm(
         `${keteranganProses()}\n\n` +
           "Kalau pindah sekarang, hasilnya tetap diproses di server dan bisa " +
-          "kamu lihat saat kembali — tapi lebih baik ditunggu.\n\n" +
+          "kamu lihat saat kembali, tapi sebaiknya ditunggu.\n\n" +
           "Tetap pindah halaman?",
       );
       if (!lanjut) return;

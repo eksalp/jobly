@@ -309,20 +309,14 @@ export function BerandaPage() {
       {/* ======================================================= hero */}
       <section className="pb-wrap pb-hero">
         <div>
-          <a className="pb-hero-pill" {...tautan("/loker")}>
-            <span className="denyut" />
-            {loading ? "Memuat loker hari ini…" : `${angka(total)} loker aktif · ${angka(data.baru)} baru minggu ini`}
-            <ArrowRight size={14} />
-          </a>
           <h1>
             In this economy, cari kerja itu susah.{" "}
             <span>Biar Jobly yang cariin ribuan loker buat kamu.</span>
           </h1>
           <p className="pb-lede">
-            Setiap hari Jobly menyisir situs karier resmi perusahaan, BUMN,
-            LinkedIn, dan Indeed — lalu menyajikannya di satu tempat, lengkap
-            dengan cek loker palsu, peta gaji, dan alat persiapan sampai
-            interview.
+            Setiap hari Jobly mengumpulkan lowongan dari situs karier perusahaan,
+            BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek
+            gajinya, lalu lamar langsung ke sumbernya. Gratis.
           </p>
 
           <form className="pb-searchbar" onSubmit={cari} role="search">
@@ -441,7 +435,7 @@ export function BerandaPage() {
       {dilihat.length > 0 && (
         <section className="pb-wrap pb-dilihat" data-muncul="">
           <span className="pb-dilihat-h">
-            <History size={15} /> Lanjutkan yang terakhir kamu lihat
+            <History size={15} /> Terakhir kamu lihat
           </span>
           <div className="pb-dilihat-list">
             {dilihat.map((d) => (
@@ -460,7 +454,7 @@ export function BerandaPage() {
           <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">Lowongan terbaru</span>
-              <h2>Baru masuk dari berbagai sumber</h2>
+              <h2>Loker yang baru masuk</h2>
             </div>
             <a className="pb-link" {...tautan("/loker")}>
               Lihat semua <ArrowRight size={15} />
@@ -485,11 +479,11 @@ export function BerandaPage() {
               <h2>Kerja dari rumah, kafe, atau kampung halaman.</h2>
               <p>
                 {loading ? "Memuat…" : `${angka(data.jumlahRemote)} loker full remote`} dari
-                perusahaan Indonesia dan luar negeri — sebagian bergaji dolar.
+                perusahaan Indonesia dan luar negeri. Sebagian dibayar dalam dolar.
               </p>
             </div>
             <a className="pb-btn pb-btn-putih" {...tautan("/remote")}>
-              Jelajahi loker remote <ArrowRight size={16} />
+              Lihat loker remote <ArrowRight size={16} />
             </a>
           </div>
           <div className="pb-grid pb-grid-ringkas">
@@ -507,7 +501,7 @@ export function BerandaPage() {
             <div>
               <span className="pb-label">Kenapa Jobly</span>
               <h2>Bukan cuma daftar loker.</h2>
-              <p>Alat yang biasanya tersebar di lima situs berbeda — di sini satu tempat, sebagian besar gratis.</p>
+              <p>Semua yang kamu butuhkan buat melamar ada di sini, dan sebagian besar gratis.</p>
             </div>
           </div>
 
@@ -516,7 +510,7 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag baru">Gratis · tanpa daftar</span>
                 <h3>Cek loker palsu</h3>
-                <p>Tempel teks loker dari WhatsApp atau Instagram. Jobly menandai 16 pola penipuan — minta biaya, travel agent, tugas like berbayar.</p>
+                <p>Ragu sama loker dari WhatsApp atau Instagram? Tempel teksnya di sini. Jobly akan menandai ciri-ciri penipuan, misalnya minta biaya, pakai travel agent, atau tugas like berbayar.</p>
                 <span className="go">Coba cek sekarang <ArrowRight size={15} /></span>
               </div>
               <MiniCek />
@@ -526,7 +520,7 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag baru">Gratis</span>
                 <h3>Peta gaji</h3>
-                <p>Kisaran gaji per bidang dan kota, dihitung dari loker sungguhan.</p>
+                <p>Lihat kisaran gaji per bidang dan kota, dihitung dari loker yang benar-benar ada.</p>
               </div>
               <MiniGaji data={gajiMini} />
             </a>
@@ -535,7 +529,7 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag">Gratis</span>
                 <h3>Latihan interview level neraka</h3>
-                <p>140+ pertanyaan, contoh jawaban, dan mode tantangan berwaktu.</p>
+                <p>140+ pertanyaan lengkap dengan contoh jawaban, plus mode tantangan dengan batas waktu.</p>
               </div>
               <MiniLatihan />
             </a>
@@ -543,8 +537,8 @@ export function BerandaPage() {
             <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan(fitur("cvbuilder"))}>
               <div className="teks">
                 <span className="pb-tag">Gratis</span>
-                <h3>CV Builder ramah ATS</h3>
-                <p>Pilih font dan tema, unduh PDF yang tetap terbaca sistem penyaring.</p>
+                <h3>Bikin CV yang lolos ATS</h3>
+                <p>Pilih font dan tema sesukamu. PDF-nya tetap rapi dan terbaca oleh sistem penyaring HRD.</p>
               </div>
               <MiniCv />
             </a>
@@ -553,7 +547,7 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag baru">Gratis</span>
                 <h3>Rencana lamar</h3>
-                <p>Target mingguan, streak harian, dan misi kecil biar tetap konsisten.</p>
+                <p>Pasang target mingguan dan jaga streak harian, supaya kamu tetap rajin melamar.</p>
               </div>
               <MiniRencana />
             </a>
@@ -564,7 +558,7 @@ export function BerandaPage() {
                 <h3>
                   <FileSearch size={17} /> Review CV dengan AI
                 </h3>
-                <p>Skor ATS, bagian yang melemahkan CV, dan versi perbaikan dua bahasa.</p>
+                <p>Dapat skor ATS, tahu bagian CV yang masih lemah, plus versi perbaikannya dalam bahasa Indonesia dan Inggris.</p>
               </div>
               <MiniSkor />
             </a>
@@ -575,7 +569,7 @@ export function BerandaPage() {
                 <h3>
                   <Mic size={17} /> Simulasi interview bersuara
                 </h3>
-                <p>Bicara langsung dengan pewawancara AI, lalu dapat penilaian per jawaban di akhir sesi.</p>
+                <p>Latihan ngobrol langsung dengan pewawancara AI. Di akhir sesi, kamu dapat nilai dan masukan untuk tiap jawaban.</p>
                 <span className="go">Mulai dari {rupiah(SEMUA_TIER[2].harga)} <ArrowRight size={15} /></span>
               </div>
               <MiniSuara />
@@ -632,11 +626,11 @@ export function BerandaPage() {
         <div className="pb-wrap pb-calc-teaser">
           <div data-muncul="">
             <span className="pb-label">Kalkulator gaji</span>
-            <h2 className="pb-h2">Ditawari gaji dalam dolar? Hitung dulu nilainya dalam rupiah.</h2>
+            <h2 className="pb-h2">Ditawari gaji dalam dolar? Cek dulu berapa rupiahnya.</h2>
             <p className="pb-sub">
-              Kalkulator lengkap menghitung tarif per jam sampai per tahun,
-              memotong biaya platform dan transfer, dan memakai kurs referensi
-              harian — atau kurs bankmu sendiri.
+              Hitung gaji per jam sampai per tahun, sudah dipotong biaya platform
+              dan transfer. Kursnya ikut kurs hari ini, atau bisa kamu ganti
+              dengan kurs bankmu sendiri.
             </p>
             <a className="pb-link" style={{ marginTop: 20 }} {...tautan("/kalkulator-gaji")}>
               Buka kalkulator lengkap <ArrowRight size={15} />
@@ -654,21 +648,21 @@ export function BerandaPage() {
           <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">Cara kerja</span>
-              <h2>Dari pencarian sampai lamaran terkirim</h2>
+              <h2>Dari cari loker sampai lamaran terkirim</h2>
             </div>
           </div>
           <ol className="pb-steps" data-muncul="">
             <li>
-              <h3>Temukan lowongan</h3>
-              <p>Cari berdasarkan posisi, kota, atau jenis kerja. Setiap lowongan menampilkan sumber dan tanggalnya.</p>
+              <h3>Cari lowongan</h3>
+              <p>Cari berdasarkan posisi, kota, atau jenis kerja. Setiap loker mencantumkan sumber dan tanggal tayangnya.</p>
             </li>
             <li>
               <h3>Siapkan lamaranmu</h3>
-              <p>Cek keaslian loker, bandingkan gajinya, rapikan CV, dan latih jawaban untuk pertanyaan tersulit.</p>
+              <p>Pastikan lokernya asli, bandingkan gajinya, rapikan CV, lalu latihan menjawab pertanyaan yang paling sulit.</p>
             </li>
             <li>
               <h3>Lamar di sumbernya</h3>
-              <p>Tombol Lamar membawamu ke halaman lowongan aslinya. Catat lamaranmu dan jaga streak-nya.</p>
+              <p>Tombol Lamar langsung membuka halaman loker aslinya. Jangan lupa catat lamaranmu supaya mudah dipantau.</p>
             </li>
           </ol>
         </div>
@@ -683,8 +677,8 @@ export function BerandaPage() {
               <h2>Mulai gratis. Buka semuanya mulai {rupiah(SEMUA_TIER[1].harga)}.</h2>
               <p>
                 Akun gratis membuka {angka(BATAS_GRATIS)} loker
-                {terkunci ? ` dari ${angka(total)}` : ""}. Sekali bayar, tanpa tagihan berulang —
-                semua paket membuka seluruh loker.
+                {terkunci ? ` dari ${angka(total)}` : ""}. Paket berbayar cukup sekali bayar, tanpa
+                langganan otomatis, dan membuka semua loker.
               </p>
             </div>
           </div>
@@ -693,7 +687,7 @@ export function BerandaPage() {
               <div key={p.id} className={`pb-price ${p.populer ? "rek" : ""}`} data-muncul="" style={{ "--tunda": `${i * 70}ms` }}>
                 <div className="pb-price-top">
                   <h3>{p.nama}</h3>
-                  {p.populer && <span className="pb-tag">Paling dipilih</span>}
+                  {p.populer && <span className="pb-tag">Rekomendasi</span>}
                 </div>
                 <div className="amt">{rupiah(p.harga)}</div>
                 <div className="per">{p.selamanya ? "selamanya" : `sekali bayar · berlaku ${labelDurasi(p.durasiHari)}`}</div>

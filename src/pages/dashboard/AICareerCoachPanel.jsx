@@ -122,8 +122,8 @@ export function AICareerCoachPanel() {
           AI Career Coach
         </div>
         <div style={{ fontSize: 13, color: T.inkSoft }}>
-          Tanya apapun soal karier kamu — interview, gaji, CV, atau transisi
-          karier.
+          Tanya apa saja soal kariermu, mulai dari interview, gaji, CV, sampai
+          pindah bidang.
           {cvText?.trim() && (
             <span style={{ color: T.accent, marginLeft: 6 }}>
               <Sparkles

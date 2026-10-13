@@ -175,7 +175,7 @@ export function RencanaPanel() {
             </h2>
             <p>
               {tercapai
-                ? "Pertahankan ritmenya — yang dipanggil interview biasanya yang paling konsisten melamar."
+                ? "Pertahankan ritmenya. Biasanya yang paling rajin melamar yang paling sering dipanggil interview."
                 : `Sekitar ${perHariPerlu} lamaran per hari selama ${sisaHari} hari tersisa.`}
             </p>
             <div className="pb-rencana-target" role="radiogroup" aria-label="Target lamaran per minggu">

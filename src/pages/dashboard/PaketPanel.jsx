@@ -162,7 +162,7 @@ export function PaketPanel() {
           setSukses(
             bertambah
               ? "Pembayaran berhasil dan paketmu sudah aktif! Selamat menggunakan."
-              : "Pembayaran berhasil! Paketmu sedang diaktifkan — muat ulang " +
+              : "Pembayaran berhasil! Paketmu sedang diaktifkan. Muat ulang " +
                   "halaman ini sebentar kalau kuota belum terlihat bertambah.",
           );
         },
@@ -278,7 +278,7 @@ export function PaketPanel() {
             style={{ flexShrink: 0, marginTop: 1 }}
           />
           <div style={{ fontSize: 12, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
-            Kuota kamu masih banyak —{" "}
+            Kuota kamu masih banyak:{" "}
             <strong>{langganan.sisaAnalisis} analisis tersisa</strong> dan aktif{" "}
             {langganan.sisaHari} hari lagi. Kalau tetap membeli, kuotanya
             ditambahkan dan masa berlakunya disambung dari tanggal berakhir
@@ -568,14 +568,13 @@ export function PaketPanel() {
           lineHeight: 1.7,
         }}
       >
-        Pembayaran aman lewat Midtrans · QRIS, e-wallet, transfer bank, kartu
-        kredit
+        Pembayaran lewat QRIS, diproses dengan aman oleh Midtrans
         <br />
         Paket berlaku sejak pembayaran terkonfirmasi dan tidak diperpanjang
         otomatis.
         <br />
         Membeli saat paket masih aktif akan menambah kuota dan menyambung masa
-        berlakunya — sisa yang belum terpakai tidak hangus.
+        berlakunya. Sisa yang belum terpakai tidak hangus.
       </div>
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
