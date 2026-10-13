@@ -86,7 +86,7 @@ export function BagianKomunitas() {
           </div>
           {grup.length > 0 && (
             <div className="pb-komunitas-grup">
-              {grup.map(({ jenis, label, ket, anggota, url }) => {
+              {grup.map(({ jenis, label, ket, anggota, url, aksi }) => {
                 const Ikon = IKON_GRUP[jenis] || Users;
                 return (
                   <a key={jenis} href={url} {...luar} className={`pb-grup-kartu ${jenis}`}>
@@ -99,7 +99,7 @@ export function BagianKomunitas() {
                       {anggota && <small>{anggota}</small>}
                     </span>
                     <span className="go">
-                      Gabung <ArrowUpRight size={15} />
+                      {aksi || "Gabung"} <ArrowUpRight size={15} />
                     </span>
                   </a>
                 );

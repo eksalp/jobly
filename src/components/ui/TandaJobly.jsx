@@ -1,34 +1,30 @@
 import React from "react";
 
 /**
- * Tanda Jobly: tas kerja dengan petir di tengahnya — "cari kerja, lebih cepat".
+ * Tanda Jobly: tas kerja putih dengan petir sebagai ruang kosong di
+ * tengahnya — loker, dan cara menemukannya lebih cepat. Satu warna,
+ * satu bentuk, tetap terbaca di ukuran favicon.
  *
- * Animasi (lihat src/styles/merek.css), sengaja hemat:
- *  - saat halaman dibuka, petir "menyambar" sekali;
- *  - kilau tipis melintas pelan setiap beberapa detik;
- *  - saat kursor di atas logo, petir berkedip sekali.
- * Semua dimatikan untuk pengguna yang memilih mengurangi gerakan.
+ * Animasi (src/styles/merek.css): petir muncul sekali saat halaman dibuka.
  */
 export function TandaJobly({ ukuran = 32, diam = false }) {
   return (
     <span
       className={`tj ${diam ? "tj-diam" : ""}`}
-      style={{ width: ukuran, height: ukuran, borderRadius: Math.round(ukuran * 0.28) }}
+      style={{ width: ukuran, height: ukuran, borderRadius: Math.round(ukuran * 0.27) }}
       aria-hidden="true"
     >
-      <svg width={Math.round(ukuran * 0.72)} height={Math.round(ukuran * 0.72)} viewBox="0 0 24 24" fill="none">
-        {/* Gagang & badan tas */}
+      <svg width={Math.round(ukuran * 0.68)} height={Math.round(ukuran * 0.68)} viewBox="0 0 24 24">
         <path
-          d="M8.5 7V5.6A2 2 0 0 1 10.5 3.6h3A2 2 0 0 1 15.5 5.6V7"
+          d="M8.6 7.6V5.9a2 2 0 0 1 2-2h2.8a2 2 0 0 1 2 2v1.7"
+          fill="none"
           stroke="#fff"
-          strokeWidth="1.8"
+          strokeWidth="2"
           strokeLinecap="round"
         />
-        <rect x="2.5" y="7" width="19" height="13.6" rx="2.6" stroke="#fff" strokeWidth="1.8" />
-        {/* Petir */}
-        <path className="tj-petir" d="M14.1 8.7 7.7 15.1h4.2l-1.4 4.6 6.1-6.7h-4.2l1.7-4.3Z" />
+        <rect x="2.6" y="7.6" width="18.8" height="13" rx="2.8" fill="#fff" />
+        <path className="tj-petir" d="M13.9 9.1 8.3 15h3.5l-1.1 4.3 5.4-6.2h-3.5l1.3-4Z" />
       </svg>
-      <span className="tj-kilau" />
     </span>
   );
 }

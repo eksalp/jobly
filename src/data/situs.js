@@ -19,28 +19,31 @@ export const SITUS = {
  * Tampil di footer, beranda (bagian "Gabung komunitas"), dan halaman loker.
  */
 export const SOSIAL = [
-  { jenis: "instagram", label: "Instagram", handle: "", url: "" }, // "https://instagram.com/nama"
-  { jenis: "tiktok", label: "TikTok", handle: "", url: "" }, // "https://tiktok.com/@nama"
-  { jenis: "linkedin", label: "LinkedIn", handle: "", url: "" },
+  { jenis: "instagram", label: "Instagram", handle: "@by.eksal", url: "https://instagram.com/by.eksal/" }, // "https://instagram.com/nama"
+  { jenis: "tiktok", label: "TikTok", handle: "@eksalp", url: "https://tiktok.com/@eksalp" }, // "https://tiktok.com/@nama"
+  { jenis: "linkedin", label: "LinkedIn", handle: "Eksal Pujianto", url: "https://linkedin.com/in/eksalpujianto/" },
   { jenis: "x", label: "X", handle: "", url: "" },
-  { jenis: "youtube", label: "YouTube", handle: "", url: "" },
+  { jenis: "youtube", label: "YouTube", handle: "@eksalp", url: "https://youtube.com/@eksalp" },
   { jenis: "threads", label: "Threads", handle: "", url: "" },
 ];
 
 export const GRUP = [
   {
-    jenis: "whatsapp",
-    label: "Grup WhatsApp",
-    ket: "Info loker pilihan & tips melamar setiap hari",
-    anggota: "", // opsional, mis. "2.300+ anggota"
-    url: "", // "https://chat.whatsapp.com/…" atau "https://whatsapp.com/channel/…"
+    jenis: "telegram",
+    label: "Gabung Telegram",
+    ket: "Productive by Eksal — info loker & tips karier",
+    anggota: "",
+    url: "https://t.me/productivebyeksal",
   },
   {
-    jenis: "telegram",
-    label: "Grup Telegram",
-    ket: "Loker baru langsung dari bot Jobly",
+    // wa.me = chat pribadi. Kalau nanti punya grup/saluran WhatsApp,
+    // ganti url ke tautan chat.whatsapp.com/… atau whatsapp.com/channel/…
+    jenis: "whatsapp",
+    label: "Chat WhatsApp",
+    ket: "Tanya seputar Jobly atau minta info grup",
+    aksi: "Chat",
     anggota: "",
-    url: "", // "https://t.me/nama"
+    url: "https://wa.me/6285811858064",
   },
 ];
 
