@@ -130,7 +130,7 @@ export function kataDari(q) {
 
 /**
  * Susun parameter filter PostgREST dari permintaan.
- * f: { q, kota, lokasi, tipe, sumber, gaji, asing, kata, ids, sejak }
+ * f: { q, kota, lokasi, tipe, sumber, gaji, asing, kata, ids, gratisFilter }
  */
 export function susunFilter(sk, f, agregator) {
   const p = [];
@@ -179,8 +179,11 @@ export function susunFilter(sk, f, agregator) {
 
   if (f.ids?.length) p.push(["id", `in.(${f.ids.map((x) => String(x).replace(/[^\w-]/g, "")).join(",")})`]);
 
-  // Batas loker gratis: hanya yang lebih baru dari titik potong
-  if (f.sejak && sk.tgl) p.push([sk.tgl, `gte.${f.sejak}`]);
+  // Batas loker gratis: hanya loker yang masuk jatah per sumber
+  if (f.gratisFilter) {
+    if (f.gratisFilter.startsWith("or(")) dan.push(f.gratisFilter);
+    else p.push(["id", "eq.-1"]);
+  }
   if (f.sebelum && sk.tgl) p.push([sk.tgl, `lt.${f.sebelum}`]);
   if (f.mulai && sk.tgl) p.push([sk.tgl, `gte.${f.mulai}`]);
 
@@ -196,48 +199,138 @@ export function urutan(sk, urut) {
 /* ---------------------------------------------- batas 5.000 gratis */
 
 export const BATAS_GRATIS = 5000;
-let potongCache = null; // { nilai, totalSemua, waktu }
+let potongCache = null;
 
 /**
- * Titik potong waktu: loker ke-5.000 paling baru dari gabungan semua
- * project. Loker yang lebih baru atau sama dengan titik ini = gratis.
- * Hanya kolom tanggal yang diambil (±35 byte per baris), dan hasilnya
- * disimpan di memori fungsi selama 10 menit.
+ * Jatah 5.000 loker gratis dibagi rata ke SETIAP SUMBER (LinkedIn, Indeed,
+ * BCA, Pertamina, …), supaya pengguna gratis tetap melihat perwakilan dari
+ * semua situs — bukan hanya sumber yang paling banyak lokernya.
+ *
+ * Cara membagi ("isi air"): tiap sumber mendapat bagian yang sama. Sumber
+ * yang lokernya lebih sedikit dari bagiannya diambil semua, dan sisanya
+ * dibagikan lagi ke sumber lain. Dari tiap sumber yang diambil adalah
+ * loker TERBARU-nya.
+ *
+ * Hasilnya per project & per sumber berupa titik potong waktu:
+ *   { db1: { linkedin: "2026-10-01T…", bca: null, … } }
+ * null = seluruh loker sumber itu gratis.
+ *
+ * Biayanya kecil: hitungan per sumber (HEAD, tanpa isi) dan satu baris
+ * tanggal per sumber, disimpan di memori fungsi selama 10 menit.
  */
 export async function titikPotong() {
   if (potongCache && Date.now() - potongCache.waktu < 10 * 60 * 1000) return potongCache;
-  const semua = [];
+  const { SUMBER_DIKENAL } = await import("../../src/data/kota.js");
+
+  // 1. Hitung jumlah loker per (project, sumber)
+  const grup = []; // { db, sk, site, n }
   let totalSemua = 0;
   for (const db of daftarDb()) {
-   try {
-    const sk = await skema(db);
-    if (!sk.tgl) continue;
-    const { total } = await rest(db, `${db.tabel}?${qs([["select", "id"]])}`, { hanyaHitung: true });
-    totalSemua += total || 0;
-    const halaman = Math.ceil(Math.min(total || 0, BATAS_GRATIS) / 1000);
-    const hasil = await Promise.all(
-      Array.from({ length: halaman }, (_, i) =>
-        rest(
+    try {
+      const sk = await skema(db);
+      if (!sk.tgl) continue;
+      const hitung = async (filter) =>
+        (await rest(db, `${db.tabel}?${qs([["select", "id"], ...filter])}`, { hanyaHitung: true })).total || 0;
+
+      if (!sk.ada.has("site")) {
+        const n = await hitung([]);
+        totalSemua += n;
+        grup.push({ db, sk, site: "_semua", n });
+        continue;
+      }
+
+      // Sumber yang dikenal + sumber baru yang belum ada di daftar
+      const dikenal = new Set(SUMBER_DIKENAL);
+      const sisaLain = await hitung([["site", `not.in.(${[...dikenal].join(",")})`]]);
+      if (sisaLain > 0) {
+        const { data } = await rest(
           db,
-          `${db.tabel}?${qs([
-            ["select", sk.tgl],
-            [sk.tgl, "not.is.null"],
-            ["order", `${sk.tgl}.desc`],
-            ["limit", "1000"],
-            ["offset", String(i * 1000)],
-          ])}`,
-        ),
-      ),
-    );
-    hasil.forEach(({ data }) => data.forEach((r) => semua.push(String(r[sk.tgl]))));
-   } catch (e) {
-    console.warn("[api/loker] titik potong", db.id, e.message);
-   }
+          `${db.tabel}?${qs([["select", "site"], ["site", `not.in.(${[...dikenal].join(",")})`], ["limit", "1000"]])}`,
+        );
+        (data || []).forEach((r) => r.site && dikenal.add(String(r.site)));
+      }
+      const situs = [...dikenal];
+      const jumlah = await paralel(situs.map((x) => () => hitung([["site", `eq.${x}`]])), 6);
+      situs.forEach((x, i) => {
+        const n = typeof jumlah[i] === "number" ? jumlah[i] : 0;
+        if (n > 0) grup.push({ db, sk, site: x, n });
+      });
+      const tanpaSitus = await hitung([["site", "is.null"]]);
+      if (tanpaSitus > 0) grup.push({ db, sk, site: "_null", n: tanpaSitus });
+      totalSemua += grup.filter((g) => g.db === db).reduce((t, g) => t + g.n, 0);
+    } catch (e) {
+      console.warn("[api/loker] titik potong", db.id, e.message);
+    }
   }
-  semua.sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
-  const nilai = totalSemua > BATAS_GRATIS && semua.length >= BATAS_GRATIS ? semua[BATAS_GRATIS - 1] : null;
-  potongCache = { nilai, totalSemua, waktu: Date.now() };
+
+  if (totalSemua <= BATAS_GRATIS) {
+    potongCache = { aktif: false, totalSemua, gratis: totalSemua, perDb: {}, waktu: Date.now() };
+    return potongCache;
+  }
+
+  // 2. Bagi jatah: mulai dari sumber terkecil
+  const urut = [...grup].sort((a, b) => a.n - b.n);
+  let sisa = BATAS_GRATIS;
+  urut.forEach((g, i) => {
+    const bagian = Math.floor(sisa / (urut.length - i));
+    g.jatah = Math.min(g.n, bagian);
+    sisa -= g.jatah;
+  });
+
+  // 3. Titik potong untuk sumber yang tidak diambil semuanya
+  const perDb = {};
+  await paralel(
+    grup.map((g) => async () => {
+      perDb[g.db.id] = perDb[g.db.id] || {};
+      if (g.jatah >= g.n) {
+        perDb[g.db.id][g.site] = null;
+        return;
+      }
+      if (g.jatah <= 0) return; // sumber ini tidak mendapat jatah
+      const filterSitus = g.site === "_semua" ? [] : g.site === "_null" ? [["site", "is.null"]] : [["site", `eq.${g.site}`]];
+      const { data } = await rest(
+        g.db,
+        `${g.db.tabel}?${qs([
+          ["select", g.sk.tgl],
+          ...filterSitus,
+          [g.sk.tgl, "not.is.null"],
+          ["order", `${g.sk.tgl}.desc`],
+          ["offset", String(g.jatah - 1)],
+          ["limit", "1"],
+        ])}`,
+      );
+      const t = data?.[0]?.[g.sk.tgl];
+      if (t) perDb[g.db.id][g.site] = String(t);
+    }),
+    6,
+  );
+
+  const gratis = grup.reduce((t, g) => t + (g.jatah || 0), 0);
+  potongCache = { aktif: true, totalSemua, gratis, perDb, waktu: Date.now() };
   return potongCache;
+}
+
+/** Filter PostgREST: hanya loker yang masuk jatah gratis di project ini. */
+export function filterGratis(potong, db, sk) {
+  if (!potong?.aktif) return null;
+  const peta = potong.perDb[db.id] || {};
+  const q = (v) => `"${v}"`; // nilai tanggal mengandung ":" → wajib dikutip
+  const syarat = Object.entries(peta).map(([site, t]) => {
+    if (site === "_semua") return t ? `${sk.tgl}.gte.${q(t)}` : `id.gte.0`;
+    const s = site === "_null" ? "site.is.null" : `site.eq.${site}`;
+    return t ? `and(${s},${sk.tgl}.gte.${q(t)})` : s;
+  });
+  return syarat.length ? `or(${syarat.join(",")})` : "id.eq.-1";
+}
+
+/** Apakah satu baris termasuk jatah gratis. */
+export function barisGratis(potong, db, sk, row) {
+  if (!potong?.aktif) return true;
+  const peta = potong.perDb[db.id] || {};
+  const kunci = sk.ada.has("site") ? (row.site == null ? "_null" : String(row.site)) : "_semua";
+  if (!(kunci in peta)) return false;
+  const t = peta[kunci];
+  return t === null || String(row[sk.tgl] ?? "") >= t;
 }
 
 /* -------------------------------------------------- cek langganan */

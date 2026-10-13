@@ -43,7 +43,7 @@ export function KartuKunci({ jumlah }) {
         </span>
         <h3>{angka(terkunci)} loker lagi {jumlah != null ? "cocok dengan pencarianmu" : "menunggumu"}</h3>
         <p>
-          Akun gratis membuka {angka(batasGratis)} loker. Semua paket berbayar
+          Akun gratis membuka {angka(batasGratis)} loker terbaru, dibagi rata dari setiap sumber. Semua paket berbayar
           membuka seluruh loker — termasuk yang baru masuk setiap hari — mulai{" "}
           {rupiah(termurah)} sekali bayar.
         </p>
@@ -69,8 +69,8 @@ export function InfoKuotaLoker() {
     <div className="pb-kuota-loker">
       <Lock size={15} />
       <span>
-        Kamu melihat <b>{angka(batasGratis)}</b> dari <b>{angka(total)}</b> loker.
-        Pencarian dan filter berlaku untuk loker yang terbuka.
+        Kamu melihat <b>{angka(batasGratis)}</b> dari <b>{angka(total)}</b> loker — yang terbaru
+        dari setiap sumber, dibagi rata. Pencarian dan filter berlaku untuk loker yang terbuka.
       </span>
       <a {...tautan(tujuan)}>Buka semua →</a>
     </div>

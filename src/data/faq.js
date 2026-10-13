@@ -28,7 +28,7 @@ export const FAQ = [
         q: "Apakah mencari loker di Jobly gratis?",
         beranda: true,
         a: [
-          "Ya. 5.000 lowongan bisa dicari dan dibuka tanpa biaya dan tanpa perlu mendaftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
+          "Ya. 5.000 lowongan — yang terbaru dari setiap sumber, dibagi rata — bisa dicari dan dibuka tanpa biaya dan tanpa perlu mendaftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
           "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka seluruh loker di atas 5.000 serta fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
         ],
       },

@@ -21,6 +21,8 @@ import {
   susunFilter,
   urutan,
   titikPotong,
+  filterGratis,
+  barisGratis,
   punyaAksesPenuh,
   kurs,
   idrPer,
@@ -60,7 +62,7 @@ async function aksiDaftar(p, penuh) {
   const urut = p.get("urut") === "gaji" ? "gaji" : "terbaru";
   const kursor = (p.get("c") || "").split(",").map((x) => Math.max(0, Number(x) || 0));
   const halamanPertama = kursor.every((x) => !x);
-  const potong = penuh ? { nilai: null, totalSemua: 0 } : await titikPotong();
+  const potong = penuh ? { aktif: false } : await titikPotong();
 
   const f = {
     q: p.get("q"),
@@ -71,14 +73,14 @@ async function aksiDaftar(p, penuh) {
     gaji: bool(p.get("gaji")),
     asing: bool(p.get("asing")),
     remoteHybrid: bool(p.get("rh")),
-    sejak: potong.nilai,
   };
+  const terbatas = Boolean(potong.aktif);
 
   const perDb = await Promise.all(
     dbs.map(async (db, i) => {
      try {
       const sk = await skema(db);
-      const filter = susunFilter(sk, f, SUMBER_AGREGATOR);
+      const filter = susunFilter(sk, { ...f, gratisFilter: filterGratis(potong, db, sk) }, SUMBER_AGREGATOR);
       const { data, total } = await rest(
         db,
         `${db.tabel}?${qs([
@@ -92,10 +94,10 @@ async function aksiDaftar(p, penuh) {
       );
       // Berapa yang tersembunyi karena batas gratis (hanya di halaman pertama)
       let tanpaBatas = null;
-      if (halamanPertama && f.sejak) {
+      if (halamanPertama && terbatas) {
         const r = await rest(
           db,
-          `${db.tabel}?${qs([["select", "id"], ...susunFilter(sk, { ...f, sejak: null }, SUMBER_AGREGATOR)])}`,
+          `${db.tabel}?${qs([["select", "id"], ...susunFilter(sk, f, SUMBER_AGREGATOR)])}`,
           { hanyaHitung: true },
         );
         tanpaBatas = r.total;
@@ -128,7 +130,7 @@ async function aksiDaftar(p, penuh) {
   };
   if (halamanPertama) {
     hasil.total = perDb.reduce((t, x) => t + (x.total || 0), 0);
-    hasil.terkunci = f.sejak
+    hasil.terkunci = terbatas
       ? Math.max(0, perDb.reduce((t, x) => t + (x.tanpaBatas || 0), 0) - hasil.total)
       : 0;
   }
@@ -197,7 +199,7 @@ async function aksiStatistik() {
 
   return {
     total,
-    gratis: potong.nilai ? Math.min(total, BATAS_GRATIS) : total,
+    gratis: potong.aktif ? potong.gratis : total,
     batasGratis: BATAS_GRATIS,
     baru7,
     baru2,
@@ -228,7 +230,7 @@ async function aksiDetail(p, penuh) {
   if (!row) return { row: null };
   if (!penuh) {
     const potong = await titikPotong();
-    if (potong.nilai && sk.tgl && !(String(row[sk.tgl] ?? "") >= potong.nilai)) {
+    if (!barisGratis(potong, db, sk, row)) {
       // Terkunci: kirim ringkasan saja, tanpa deskripsi & tautan lamar
       return {
         terkunci: true,
@@ -313,7 +315,7 @@ async function aksiKandidat(p, penuh) {
   const kata = (p.get("kata") || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 24);
   if (!kata.length) return { rows: [] };
   const n = Math.min(300, Math.max(20, Number(p.get("n")) || 200));
-  const potong = penuh ? { nilai: null } : await titikPotong();
+  const potong = penuh ? { aktif: false } : await titikPotong();
   const per = await Promise.all(
     daftarDb().map(async (db) => {
       const sk = await skema(db);
@@ -321,7 +323,7 @@ async function aksiKandidat(p, penuh) {
         db,
         `${db.tabel}?${qs([
           ["select", sk.kolom],
-          ...susunFilter(sk, { kata, sejak: potong.nilai }, SUMBER_AGREGATOR),
+          ...susunFilter(sk, { kata, gratisFilter: filterGratis(potong, db, sk) }, SUMBER_AGREGATOR),
           ["order", urutan(sk)],
           ["limit", String(n)],
         ])}`,
@@ -336,7 +338,7 @@ async function aksiKandidat(p, penuh) {
 
 async function aksiId(p, penuh) {
   const daftar = (p.get("ids") || "").split(",").slice(0, 100).map(pecahId).filter((x) => x.rawId);
-  const potong = penuh ? { nilai: null } : await titikPotong();
+  const potong = penuh ? { aktif: false } : await titikPotong();
   const per = await Promise.all(
     daftarDb().map(async (db) => {
       const ids = daftar.filter((x) => x.sumber === db.id).map((x) => x.rawId);
@@ -349,7 +351,7 @@ async function aksiId(p, penuh) {
       return (data || []).map((r) => ({
         ...r,
         _s: db.id,
-        _kunci: Boolean(potong.nilai && sk.tgl && !(String(r[sk.tgl] ?? "") >= potong.nilai)),
+        _kunci: !barisGratis(potong, db, sk, r),
       }));
     }).map((x) => x.catch(() => [])),
   );

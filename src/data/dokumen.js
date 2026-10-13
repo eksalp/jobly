@@ -181,7 +181,7 @@ export const DOKUMEN = {
             daftar: [
               "Harga dalam Rupiah dan dibayar sekali untuk setiap pembelian. Tidak ada tagihan berulang dan tidak ada perpanjangan otomatis.",
               "Masa berlaku dihitung sejak pembayaran dikonfirmasi.",
-              "Akun gratis dapat membuka 5.000 lowongan. Selama paket berbayar masih berlaku, seluruh lowongan terbuka; setelah masa berlaku habis, akses kembali ke 5.000 lowongan.",
+              "Akun gratis dapat membuka 5.000 lowongan terbaru yang dibagi rata dari setiap sumber. Selama paket berbayar masih berlaku, seluruh lowongan terbuka; setelah masa berlaku habis, akses kembali ke 5.000 lowongan.",
               "Sisa kuota Review CV tetap bisa dipakai setelah masa berlaku habis. Pindah Karier dan Simulasi Interview hanya bisa dipakai selama paket masih berlaku.",
               "Jika membeli lebih dari satu paket, kuotanya dijumlahkan dan setiap paket memiliki masa berlakunya sendiri.",
               "Perubahan harga tidak berlaku untuk paket yang sudah dibayar.",
