@@ -20,6 +20,7 @@ import {
   adaProsesBerjalan,
   keteranganProses,
 } from "../../hooks/useCegahTinggalkan";
+import { t } from "../../i18n.js";
 
 /**
  * Judul, kelompok menu, dan keterangan setiap halaman akun.
@@ -27,74 +28,74 @@ import {
  */
 export const PANEL_META = {
   overview: {
-    grup: "Persiapan",
-    title: "Review CV & arah karier",
-    desc: "Unggah CV atau profil LinkedIn untuk melihat skor ATS, bidang yang paling cocok, dan loker yang relevan.",
+    grup: t("Persiapan", "Prepare"),
+    title: t("Review CV & arah karier", "CV review & career direction"),
+    desc: t("Unggah CV atau profil LinkedIn untuk melihat skor ATS, bidang yang paling cocok, dan loker yang relevan.", "Upload your CV or LinkedIn profile to see your ATS score, best-fit fields, and relevant jobs."),
   },
   profile: {
-    grup: "Profil & CV",
-    title: "Profil karier",
-    desc: "Data diri, keahlian, dan preferensi kerja yang dipakai untuk mencocokkan loker denganmu.",
+    grup: t("Profil & CV", "Profile & CV"),
+    title: t("Profil karier", "Career profile"),
+    desc: t("Data diri, keahlian, dan preferensi kerja yang dipakai untuk mencocokkan loker denganmu.", "Your details, skills, and work preferences, used to match jobs to you."),
   },
   cvbuilder: {
-    grup: "Profil & CV",
+    grup: t("Profil & CV", "Profile & CV"),
     title: "CV Builder",
-    desc: "Susun CV yang mudah dibaca sistem penyaringan, lalu unduh dalam PDF.",
+    desc: t("Susun CV yang mudah dibaca sistem penyaringan, lalu unduh dalam PDF.", "Build a CV that screening systems can read, then download it as a PDF."),
   },
   linkedinbuilder: {
-    grup: "Profil & CV",
+    grup: t("Profil & CV", "Profile & CV"),
     title: "LinkedIn Builder",
-    desc: "Rapikan headline, ringkasan, dan pengalaman di profil LinkedIn-mu.",
+    desc: t("Rapikan headline, ringkasan, dan pengalaman di profil LinkedIn-mu.", "Polish the headline, summary, and experience on your LinkedIn profile."),
   },
   jobfinder: {
-    grup: "Loker",
-    title: "Cocok untukku",
-    desc: "Loker diurutkan berdasarkan kecocokan dengan keahlian, profil, dan CV-mu.",
+    grup: t("Loker", "Jobs"),
+    title: t("Cocok untukku", "Matched for me"),
+    desc: t("Loker diurutkan berdasarkan kecocokan dengan keahlian, profil, dan CV-mu.", "Jobs ranked by how well they match your skills, profile, and CV."),
   },
   saved: {
-    grup: "Loker",
-    title: "Loker tersimpan",
-    desc: "Lowongan yang kamu tandai untuk dilamar nanti.",
+    grup: t("Loker", "Jobs"),
+    title: t("Loker tersimpan", "Saved jobs"),
+    desc: t("Lowongan yang kamu tandai untuk dilamar nanti.", "Jobs you've marked to apply to later."),
   },
   rencana: {
-    grup: "Loker",
-    title: "Rencana lamar",
-    desc: "Target mingguan, streak harian, dan misi kecil supaya pencarian kerja tetap jalan.",
+    grup: t("Loker", "Jobs"),
+    title: t("Rencana lamar", "Application plan"),
+    desc: t("Target mingguan, streak harian, dan misi kecil supaya pencarian kerja tetap jalan.", "Weekly targets, daily streaks, and small missions to keep your job search moving."),
   },
   applications: {
-    grup: "Loker",
-    title: "Lamaran saya",
-    desc: "Catat setiap lamaran dan pantau progresnya sampai tahap akhir.",
+    grup: t("Loker", "Jobs"),
+    title: t("Lamaran saya", "My applications"),
+    desc: t("Catat setiap lamaran dan pantau progresnya sampai tahap akhir.", "Log every application and track it through to the final stage."),
   },
   recommendations: {
-    grup: "Persiapan",
-    title: "Rekomendasi karier",
-    desc: "Posisi dan bidang yang layak kamu incar berdasarkan profilmu.",
+    grup: t("Persiapan", "Prepare"),
+    title: t("Rekomendasi karier", "Career suggestions"),
+    desc: t("Posisi dan bidang yang layak kamu incar berdasarkan profilmu.", "Roles and fields worth aiming for, based on your profile."),
   },
   pindahkarier: {
-    grup: "Persiapan",
-    title: "Pindah karier",
-    desc: "Petakan skill yang masih terpakai di bidang baru dan apa saja yang perlu dikejar.",
+    grup: t("Persiapan", "Prepare"),
+    title: t("Pindah karier", "Career switch"),
+    desc: t("Petakan skill yang masih terpakai di bidang baru dan apa saja yang perlu dikejar.", "Map which skills carry over to a new field and what you still need to learn."),
   },
   interview: {
-    grup: "Persiapan",
-    title: "Latihan interview",
-    desc: "140+ pertanyaan dari yang umum sampai level neraka, lengkap dengan strategi, contoh jawaban, dan mode tantangan berwaktu.",
+    grup: t("Persiapan", "Prepare"),
+    title: t("Latihan interview", "Interview practice"),
+    desc: t("140+ pertanyaan dari yang umum sampai level neraka, lengkap dengan strategi, contoh jawaban, dan mode tantangan berwaktu.", "140+ questions from the common to the brutal, with strategies, sample answers, and a timed challenge mode."),
   },
   simulasi: {
-    grup: "Persiapan",
-    title: "Simulasi interview",
-    desc: "Wawancara lewat suara dengan pewawancara AI, lalu dapat penilaian dan masukan.",
+    grup: t("Persiapan", "Prepare"),
+    title: t("Simulasi interview", "Mock interview"),
+    desc: t("Wawancara lewat suara dengan pewawancara AI, lalu dapat penilaian dan masukan.", "A voice interview with an AI interviewer, followed by a score and feedback."),
   },
   paket: {
-    grup: "Akun",
-    title: "Paket & langganan",
-    desc: "Kuota fitur AI, masa berlaku paket, dan riwayat pembelian.",
+    grup: t("Akun", "Account"),
+    title: t("Paket & langganan", "Plans & billing"),
+    desc: t("Kuota fitur AI, masa berlaku paket, dan riwayat pembelian.", "AI credits, plan validity, and purchase history."),
   },
   settings: {
-    grup: "Akun",
-    title: "Pengaturan",
-    desc: "Data akun, kata sandi, dan preferensi.",
+    grup: t("Akun", "Account"),
+    title: t("Pengaturan", "Settings"),
+    desc: t("Data akun, kata sandi, dan preferensi.", "Account details, password, and preferences."),
   },
 };
 
@@ -119,9 +120,9 @@ export const PANEL_COMPONENTS = {
 function PanelTidakDitemukan() {
   return (
     <div style={{ padding: "48px 28px", color: "var(--muted)", fontSize: 14, lineHeight: 1.7 }}>
-      Halaman ini tidak ditemukan.{" "}
+      {t("Halaman ini tidak ditemukan.", "This page wasn't found.")}{" "}
       <a {...tautan("/dashboard/overview")} style={{ color: "var(--brand)", fontWeight: 600 }}>
-        Kembali ke Review CV
+        {t("Kembali ke Review CV", "Back to CV review")}
       </a>
     </div>
   );
@@ -155,10 +156,10 @@ export function DashboardPage({ go, active, setActive }) {
   function gantiPanel(tujuan) {
     if (tujuan !== active && adaProsesBerjalan()) {
       const lanjut = window.confirm(
-        `${keteranganProses()}\n\n` +
-          "Kalau pindah sekarang, hasilnya tetap diproses di server dan bisa " +
-          "kamu lihat saat kembali, tapi sebaiknya ditunggu.\n\n" +
-          "Tetap pindah halaman?",
+        t(
+          `${keteranganProses()}\n\nKalau pindah sekarang, hasilnya tetap diproses di server dan bisa kamu lihat saat kembali, tapi sebaiknya ditunggu.\n\nTetap pindah halaman?`,
+          `${keteranganProses()}\n\nIf you leave now, it keeps processing on the server and you can see the result when you come back, but it's better to wait.\n\nLeave this page anyway?`,
+        ),
       );
       if (!lanjut) return;
     }
@@ -194,12 +195,12 @@ export function DashboardPage({ go, active, setActive }) {
         <div className="pb-wrap">
           <div className="pb-foot-bottom" style={{ borderTop: 0 }}>
             <span>
-              © {tahun} {SITUS.nama} · Dibuat oleh {SITUS.pembuat}
+              © {tahun} {SITUS.nama}{" "}{t("· Dibuat oleh", "· Made by")}{" "}{SITUS.pembuat}
             </span>
             <span style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
               <a {...tautan("/faq")}>FAQ</a>
-              <a {...tautan("/syarat-ketentuan")}>Syarat & ketentuan</a>
-              <a {...tautan("/kebijakan-privasi")}>Kebijakan privasi</a>
+              <a {...tautan("/syarat-ketentuan")}>{t("Syarat & ketentuan", "Terms of service")}</a>
+              <a {...tautan("/kebijakan-privasi")}>{t("Kebijakan privasi", "Privacy policy")}</a>
               <a {...tautan("/disclaimer")}>Disclaimer</a>
             </span>
           </div>

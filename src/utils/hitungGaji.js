@@ -1,3 +1,4 @@
+import { t } from "../i18n.js";
 /**
  * Perhitungan Kalkulator Gaji: gaji mata uang asing → rupiah per periode,
  * dikurangi potongan platform dan biaya transfer.
@@ -10,19 +11,19 @@
  */
 
 export const PERIODE = [
-  { id: "jam", label: "Per jam" },
-  { id: "hari", label: "Per hari" },
-  { id: "minggu", label: "Per minggu" },
-  { id: "bulan", label: "Per bulan" },
-  { id: "tahun", label: "Per tahun" },
+  { id: "jam", label: t("Per jam", "Hourly") },
+  { id: "hari", label: t("Per hari", "Daily") },
+  { id: "minggu", label: t("Per minggu", "Weekly") },
+  { id: "bulan", label: t("Per bulan", "Monthly") },
+  { id: "tahun", label: t("Per tahun", "Yearly") },
 ];
 
 export const MATA_UANG = [
-  { kode: "USD", nama: "Dolar AS" },
-  { kode: "SGD", nama: "Dolar Singapura" },
-  { kode: "AUD", nama: "Dolar Australia" },
+  { kode: "USD", nama: t("Dolar AS", "US dollar") },
+  { kode: "SGD", nama: t("Dolar Singapura", "Singapore dollar") },
+  { kode: "AUD", nama: t("Dolar Australia", "Australian dollar") },
   { kode: "EUR", nama: "Euro" },
-  { kode: "GBP", nama: "Pound Inggris" },
+  { kode: "GBP", nama: t("Pound Inggris", "British pound") },
   { kode: "MYR", nama: "Ringgit Malaysia" },
 ];
 

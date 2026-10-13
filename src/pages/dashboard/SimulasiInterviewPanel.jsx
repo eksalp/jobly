@@ -26,6 +26,7 @@ import { GerbangFitur } from "../../components/GerbangFitur";
 import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
 import { useGeminiLive, pilihModelLive } from "../../hooks/useGeminiLive";
+import { lokal, t } from "../../i18n.js";
 
 const TAHAP = { siap: "siap", berlangsung: "berlangsung", selesai: "selesai" };
 
@@ -35,10 +36,10 @@ const DURASI_MENIT = 10;
 const DURASI_DETIK = DURASI_MENIT * 60;
 
 const NILAI = {
-  kurang: { label: "Kurang", warna: "#B23A3A" },
-  cukup: { label: "Cukup", warna: "#B45309" },
-  baik: { label: "Baik", warna: "#0F7B4F" },
-  "sangat baik": { label: "Sangat baik", warna: "#0F7B4F" },
+  kurang: { label: t("Kurang", "Weak"), warna: "#B23A3A" },
+  cukup: { label: t("Cukup", "Fair"), warna: "#B45309" },
+  baik: { label: t("Baik", "Good"), warna: "#0F7B4F" },
+  "sangat baik": { label: t("Sangat baik", "Excellent"), warna: "#0F7B4F" },
 };
 
 export function SimulasiInterviewPanel({ setActive }) {
@@ -163,7 +164,7 @@ export function SimulasiInterviewPanel({ setActive }) {
   const mulai = async () => {
     if (!posisi.trim()) {
       setGalatPosisi(
-        "Posisi wajib diisi supaya pertanyaannya sesuai bidangmu.",
+        t("Posisi wajib diisi supaya pertanyaannya sesuai bidangmu.", "Enter a role so the questions fit your field."),
       );
       return;
     }
@@ -222,7 +223,10 @@ CARA BICARA:
 - Sesi akan dihentikan oleh sistem saat waktunya habis. Sampai itu terjadi,
   anggap wawancara masih panjang.
 
-Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
+Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
+        "",
+        "\n\nBAHASA: Kandidat memilih tampilan bahasa Inggris. Lakukan SELURUH wawancara dalam bahasa Inggris yang natural, termasuk sapaan pembuka.",
+      )}`;
 
       try {
         await live.mulai({ token: data.token, instruksi, model: pilihModelLive(data.model_live) });
@@ -249,7 +253,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
         }
       }, 4000);
     } catch (e) {
-      setGalat(e?.message || "Gagal memulai sesi.");
+      setGalat(e?.message || t("Gagal memulai sesi.", "Couldn't start the session."));
     } finally {
       setMenyiapkan(false);
     }
@@ -267,7 +271,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
     if (transkrip.filter((d) => d.dari === "user").length === 0) {
       await kembalikanKuota();
       setTahap(TAHAP.siap);
-      setGalat("Sesi berakhir sebelum ada jawaban, jadi kuotamu dikembalikan.");
+      setGalat(t("Sesi berakhir sebelum ada jawaban, jadi kuotamu dikembalikan.", "The session ended before any answer, so your quota was refunded."));
       return;
     }
 
@@ -294,7 +298,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
       setTahap(TAHAP.selesai);
       setTimeout(muatRiwayat, 1200);
     } catch (e) {
-      let pesan = e?.message || "Gagal menilai sesi.";
+      let pesan = e?.message || t("Gagal menilai sesi.", "Couldn't score the session.");
       try {
         const mentah = (await e?.context?.text?.()) ?? "";
         const body = mentah ? JSON.parse(mentah) : null;
@@ -335,23 +339,28 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
     tahap === TAHAP.siap &&
     (!langganan.aktif || !langganan.punyaInterview || kuotaHabis)
   ) {
-    let judul = "Simulasi Interview dengan AI";
+    let judul = t("Simulasi Interview dengan AI", "AI Interview Simulation");
     let keterangan;
 
     if (kuotaHabis) {
-      judul = "Kuota simulasi kamu sudah habis";
+      judul = t("Kuota simulasi kamu sudah habis", "Your simulation quota is used up");
       keterangan =
-        `Kamu sudah memakai seluruh ${langganan.kuotaInterview} sesi di paket ini. ` +
-        "Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, " +
-        "dan kuotanya digabung.";
+        t(
+          `Kamu sudah memakai seluruh ${langganan.kuotaInterview} sesi di paket ini. Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, dan kuotanya digabung.`,
+          `You've used all ${langganan.kuotaInterview} sessions in this plan. Buy a new plan to add quota. Your remaining active days carry over and the quotas are combined.`,
+        );
     } else if (langganan.aktif) {
       keterangan =
-        "Fitur ini tersedia di paket Pro dan Max. Ngobrol langsung dengan AI lewat " +
-        "suara, lalu terima penilaian di akhir sesi.";
+        t(
+          "Fitur ini tersedia di paket Pro dan Max. Ngobrol langsung dengan AI lewat suara, lalu terima penilaian di akhir sesi.",
+          "Available on Pro and Max. Talk with AI by voice, then get a score at the end of the session.",
+        );
     } else {
       keterangan =
-        "Ngobrol langsung dengan AI lewat suara seperti wawancara sungguhan, lalu " +
-        "terima penilaian dan masukan spesifik di akhir sesi.";
+        t(
+          "Ngobrol langsung dengan AI lewat suara seperti wawancara sungguhan, lalu terima penilaian dan masukan spesifik di akhir sesi.",
+          "Talk with AI by voice like a real interview, then get a score and specific feedback at the end.",
+        );
     }
 
     return (
@@ -441,7 +450,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
             >
               <Bot size={17} color={T.accent} />
               <span style={{ fontSize: 16, fontWeight: 600, color: T.ink }}>
-                Mulai simulasi interview
+                {t("Mulai simulasi interview", "Start an interview simulation")}
               </span>
             </div>
             <div
@@ -452,8 +461,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 marginBottom: 16,
               }}
             >
-              Ngobrol langsung dengan AI selama {DURASI_MENIT} menit, seperti
-              wawancara sungguhan. Penilaian muncul otomatis di akhir sesi.
+              {t("Ngobrol langsung dengan AI selama", "Talk live with AI for")}{" "}{DURASI_MENIT}{" "}{t("menit, seperti wawancara sungguhan. Penilaian muncul otomatis di akhir sesi.", "minutes, like a real interview. Your score appears automatically at the end.")}
             </div>
 
             {/* Panduan singkat sebelum masuk. Ditulis sebagai langkah
@@ -480,15 +488,15 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                   letterSpacing: "0.02em",
                 }}
               >
-                <Info size={13} /> CARA KERJANYA
+                <Info size={13} />{" "}{t("CARA KERJANYA", "HOW IT WORKS")}
               </div>
 
               {[
-                "Tekan Mulai bicara saat giliranmu, lalu tekan Selesai kalau sudah. Pewawancara baru menjawab setelah itu.",
-                "Buka dengan salam dan perkenalan diri, seperti masuk ruang wawancara sungguhan.",
-                "Pakai headphone supaya suara pewawancara tidak terekam balik mikrofonmu.",
-                "Cari tempat yang cukup tenang. Sesi ini butuh izin mikrofon.",
-              ].map((t, i) => (
+                t("Tekan Mulai bicara saat giliranmu, lalu tekan Selesai kalau sudah. Pewawancara baru menjawab setelah itu.", "Press Start talking on your turn, then press Done when finished. The interviewer only replies after that."),
+                t("Buka dengan salam dan perkenalan diri, seperti masuk ruang wawancara sungguhan.", "Open with a greeting and introduce yourself, like walking into a real interview."),
+                t("Pakai headphone supaya suara pewawancara tidak terekam balik mikrofonmu.", "Use headphones so the interviewer's voice doesn't feed back into your mic."),
+                t("Cari tempat yang cukup tenang. Sesi ini butuh izin mikrofon.", "Find a quiet spot. This session needs microphone access."),
+              ].map((tt, i) => (
                 <div
                   key={i}
                   style={{
@@ -518,7 +526,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                   >
                     {i + 1}
                   </span>
-                  <span>{t}</span>
+                  <span>{tt}</span>
                 </div>
               ))}
             </div>
@@ -536,7 +544,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 letterSpacing: "0.03em",
               }}
             >
-              POSISI YANG DILAMAR <span style={{ color: "var(--t-danger)" }}>*</span>
+              {t("POSISI YANG DILAMAR", "ROLE YOU'RE APPLYING FOR")}{" "}<span style={{ color: "var(--t-danger)" }}>*</span>
             </label>
             <input
               value={posisi}
@@ -547,11 +555,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               onBlur={() => {
                 if (!posisi.trim()) {
                   setGalatPosisi(
-                    "Posisi wajib diisi supaya pertanyaannya sesuai bidangmu.",
+                    t("Posisi wajib diisi supaya pertanyaannya sesuai bidangmu.", "Enter a role so the questions fit your field."),
                   );
                 }
               }}
-              placeholder="mis. HR Generalist, Data Analyst, Barista"
+              placeholder={t("mis. HR Generalist, Data Analyst, Barista", "e.g. HR Generalist, Data Analyst, Barista")}
               style={{
                 width: "100%",
                 border: `1px solid ${galatPosisi ? "var(--t-danger)" : T.border}`,
@@ -591,7 +599,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 letterSpacing: "0.03em",
               }}
             >
-              FOKUS PERTANYAAN
+              {t("FOKUS PERTANYAAN", "QUESTION FOCUS")}
             </div>
             <div
               style={{
@@ -640,11 +648,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                     size={15}
                     style={{ animation: "spin 1s linear infinite" }}
                   />{" "}
-                  Menyambungkan...
+                  {t("Menyambungkan...", "Connecting...")}
                 </>
               ) : (
                 <>
-                  <Play size={15} /> Mulai ngobrol
+                  <Play size={15} />{" "}{t("Mulai ngobrol", "Start talking")}
                 </>
               )}
             </Button>
@@ -656,7 +664,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 textAlign: "center",
               }}
             >
-              Memakai 1 kuota simulasi · {langganan.sisaInterview} tersisa
+              {t("Memakai 1 kuota simulasi ·", "Uses 1 simulation credit ·")}{" "}{langganan.sisaInterview} tersisa
             </div>
           </Glass>
 
@@ -682,7 +690,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 lineHeight: 1.6,
               }}
             >
-              Belum ada sesi. Riwayat simulasi kamu akan muncul di sini.
+              {t("Belum ada sesi. Riwayat simulasi kamu akan muncul di sini.", "No sessions yet. Your simulation history will appear here.")}
             </div>
           )}
         </>
@@ -707,7 +715,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 </div>
                 <div style={{ fontSize: 11, color: T.inkFaint, marginTop: 2 }}>
                   {kategori.namaPendek}
-                  {live.terhubung ? " · tersambung" : " · menyambungkan..."}
+                  {live.terhubung ? t(" · tersambung", "· connected") : t(" · menyambungkan...", "· connecting...")}
                 </div>
               </div>
               <span
@@ -769,12 +777,12 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               }}
             >
               {live.berbicara
-                ? "Pewawancara sedang bicara, dengarkan dulu"
+                ? t("Pewawancara sedang bicara, dengarkan dulu", "The interviewer is speaking, listen first")
                 : live.sedangBicara
-                  ? "Silakan bicara. Tekan Selesai kalau sudah."
+                  ? t("Silakan bicara. Tekan Selesai kalau sudah.", "Go ahead. Press Done when finished.")
                   : jumlahGiliran === 0
-                    ? "Tekan tombol di bawah, lalu ucapkan salam pembuka dan perkenalkan dirimu."
-                    : "Tekan tombol di bawah saat siap menjawab"}
+                    ? t("Tekan tombol di bawah, lalu ucapkan salam pembuka dan perkenalkan dirimu.", "Press the button below, then greet the interviewer and introduce yourself.")
+                    : t("Tekan tombol di bawah saat siap menjawab", "Press the button below when you're ready to answer")}
             </div>
 
             <div style={{ textAlign: "center" }}>
@@ -811,11 +819,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               >
                 {live.sedangBicara ? (
                   <>
-                    <Square size={16} /> Selesai bicara
+                    <Square size={16} />{" "}{t("Selesai bicara", "Done talking")}
                   </>
                 ) : (
                   <>
-                    <Mic size={17} /> Mulai bicara
+                    <Mic size={17} />{" "}{t("Mulai bicara", "Start talking")}
                   </>
                 )}
               </button>
@@ -841,9 +849,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                   marginBottom: 10,
                 }}
               >
-                Sudah merasa cukup? Tekan tombol di bawah untuk mengakhiri dan
-                melihat penilaianmu. Jangan tutup halaman ini, nanti hasilnya
-                hilang.
+                {t("Sudah merasa cukup? Tekan tombol di bawah untuk mengakhiri dan melihat penilaianmu. Jangan tutup halaman ini, nanti hasilnya hilang.", "Feel ready to wrap up? Press the button below to end and see your score. Don't close this page or the result will be lost.")}
               </div>
 
               <Button
@@ -852,7 +858,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 disabled={menilai}
                 style={{ fontSize: 12.5 }}
               >
-                <Check size={13} /> Akhiri & lihat penilaian
+                <Check size={13} />{" "}{t("Akhiri & lihat penilaian", "End & see score")}
               </Button>
             </div>
           </Glass>
@@ -869,7 +875,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
               style={{ animation: "spin 1s linear infinite", marginBottom: 12 }}
             />
             <div style={{ fontSize: 13.5, color: T.inkSoft }}>
-              Menilai wawancaramu...
+              {t("Menilai wawancaramu...", "Scoring your interview...")}
             </div>
           </Glass>
         ) : hasil ? (
@@ -891,10 +897,10 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
                 marginBottom: 16,
               }}
             >
-              Sesi selesai, tapi penilaiannya gagal dibuat.
+              {t("Sesi selesai, tapi penilaiannya gagal dibuat.", "The session ended, but the score couldn't be generated.")}
             </div>
             <Button variant="primary" onClick={ulangi}>
-              Kembali
+              {t("Kembali", "Back")}
             </Button>
           </Glass>
         ))}
@@ -919,7 +925,7 @@ function DaftarRiwayat({ riwayat, onPilih }) {
       >
         <History size={14} color={T.inkSoft} />
         <span style={{ fontSize: 13.5, fontWeight: 600, color: T.ink }}>
-          Sesi sebelumnya
+          {t("Sesi sebelumnya", "Previous sessions")}
         </span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -936,7 +942,7 @@ function DaftarRiwayat({ riwayat, onPilih }) {
                   {r.posisi}
                 </div>
                 <div style={{ fontSize: 11, color: T.inkFaint, marginTop: 2 }}>
-                  {new Date(r.created_at).toLocaleDateString("id-ID", {
+                  {new Date(r.created_at).toLocaleDateString(lokal(), {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -972,7 +978,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
             marginBottom: 5,
           }}
         >
-          Hasil simulasi
+          {t("Hasil simulasi", "Simulation result")}
         </div>
         <div style={{ fontSize: 12.5, color: T.inkSoft, marginBottom: 20 }}>
           {posisi}
@@ -1003,7 +1009,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
             marginBottom: 20,
           }}
         >
-          dari 100
+          {t("dari 100", "out of 100")}
         </div>
 
         <div
@@ -1015,9 +1021,9 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
           }}
         >
           {[
-            ["Kejelasan", hasil.kejelasan],
-            ["Struktur", hasil.struktur],
-            ["Relevansi", hasil.relevansi],
+            [t("Kejelasan", "Clarity"), hasil.kejelasan],
+            [t("Struktur", "Structure"), hasil.struktur],
+            [t("Relevansi", "Relevance"), hasil.relevansi],
           ].map(([label, nilai]) => {
             const n = NILAI[nilai] ?? NILAI.cukup;
             return (
@@ -1055,7 +1061,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
           >
             <Check size={15} color={T.teal} />
             <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
-              Yang sudah baik
+              {t("Yang sudah baik", "What went well")}
             </span>
           </div>
           {hasil.kekuatan.map((k, i) => (
@@ -1098,7 +1104,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
           >
             <AlertCircle size={15} color="var(--t-warn)" />
             <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
-              Yang perlu diperbaiki
+              {t("Yang perlu diperbaiki", "What to improve")}
             </span>
           </div>
           {hasil.perbaikan.map((k, i) => (
@@ -1145,7 +1151,7 @@ function HasilPenilaian({ hasil, posisi, detik, hp, formatDurasi, onUlangi }) {
 
       <div style={{ textAlign: "center", marginTop: 18 }}>
         <Button variant="primary" onClick={onUlangi}>
-          Kembali
+          {t("Kembali", "Back")}
         </Button>
       </div>
     </>

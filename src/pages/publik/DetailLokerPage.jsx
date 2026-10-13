@@ -48,6 +48,7 @@ import {
 } from "../../utils/sumberLoker";
 import { useKurs, idrPer, rupiahRingkas } from "../../utils/kurs";
 import { tautan, keHalaman, bagikan, pathFitur } from "../../utils/navigasi";
+import { lokal, t } from "../../i18n.js";
 
 function TeksTebal({ teks }) {
   return potongTebal(teks).map((p, i) =>
@@ -60,7 +61,7 @@ function Deskripsi({ teks, judul }) {
   if (!blok.length) {
     return (
       <p className="pb-desc" style={{ color: "#7A8597" }}>
-        Deskripsi lengkap tersedia di halaman sumber lowongan ini.
+        {t("Deskripsi lengkap tersedia di halaman sumber lowongan ini.", "The full description is on the original job page.")}
       </p>
     );
   }
@@ -156,7 +157,7 @@ export function DetailLokerPage({ slug }) {
   const memuatDaftar = !siap;
 
   useEffect(() => {
-    if (job) document.title = `${job.posisi} di ${job.perusahaan} · Jobly`;
+    if (job) document.title = `${t(`${job.posisi} di ${job.perusahaan}`, `${job.posisi} at ${job.perusahaan}`)} · Jobly`;
   }, [job]);
 
   useEffect(() => {
@@ -196,14 +197,14 @@ export function DetailLokerPage({ slug }) {
       <PublicLayout aktif="/loker">
         <div className="pb-wrap" style={{ paddingBlock: 90 }}>
           <div className="pb-empty">
-            <h3>Lowongan ini sudah tidak tersedia</h3>
+            <h3>{t("Lowongan ini sudah tidak tersedia", "This job is no longer available")}</h3>
             <p style={{ margin: "0 0 18px" }}>
               {status === "galat"
-                ? "Lowongan tidak bisa dimuat. Periksa koneksimu lalu coba lagi."
-                : "Mungkin sudah ditutup atau dihapus dari sumbernya."}
+                ? t("Lowongan tidak bisa dimuat. Periksa koneksimu lalu coba lagi.", "The job couldn't be loaded. Check your connection and try again.")
+                : t("Mungkin sudah ditutup atau dihapus dari sumbernya.", "It may have closed or been removed at the source.")}
             </p>
             <a className="pb-btn pb-btn-primary pb-btn-sm" {...tautan("/loker")}>
-              Lihat loker lainnya
+              {t("Lihat loker lainnya", "See other jobs")}
             </a>
           </div>
         </div>
@@ -235,17 +236,24 @@ export function DetailLokerPage({ slug }) {
               <span className="pb-kunci-ic">
                 <Lock size={20} />
               </span>
-              <h3>Loker ini di luar {batasGratis.toLocaleString("id-ID")} loker gratis</h3>
+              <h3>
+                {t(
+                  `Loker ini di luar ${batasGratis.toLocaleString(lokal())} loker gratis`,
+                  `This job is outside the ${batasGratis.toLocaleString(lokal())} free jobs`,
+                )}
+              </h3>
               <p>
-                Detail lengkap dan tombol lamarnya bisa kamu buka dengan paket apa saja,
-                mulai {rupiahPaket(Math.min(...DAFTAR_PAKET.map((p) => p.harga)))} sekali bayar. Semua loker lain ikut terbuka.
+                {t(
+                  `Detail lengkap dan tombol lamarnya bisa kamu buka dengan paket apa saja, mulai ${rupiahPaket(Math.min(...DAFTAR_PAKET.map((p) => p.harga)))} sekali bayar. Semua loker lain ikut terbuka.`,
+                  `Unlock the full details and the apply button with any plan, from ${rupiahPaket(Math.min(...DAFTAR_PAKET.map((p) => p.harga)))} one-time. Every other job unlocks too.`,
+                )}
               </p>
               <div className="pb-kunci-act">
                 <a className="pb-btn pb-btn-primary" {...tautan(tujuanBuka)}>
-                  Buka semua loker
+                  {t("Buka semua loker", "Unlock all jobs")}
                 </a>
                 <a className="pb-btn pb-btn-outline" {...tautan("/loker")}>
-                  Kembali ke loker gratis
+                  {t("Kembali ke loker gratis", "Back to free jobs")}
                 </a>
               </div>
             </div>
@@ -264,7 +272,7 @@ export function DetailLokerPage({ slug }) {
   const situs = situsResmi(job);
   const logo = logoPerusahaan(job);
   const tersimpan = isSaved(job.id);
-  const namaSumber = sumber.langsung ? "situs resmi" : sumber.nama;
+  const namaSumber = sumber.langsung ? t("situs resmi", "the official site") : sumber.nama;
 
   const simpan = () => {
     if (!masuk) {
@@ -272,42 +280,42 @@ export function DetailLokerPage({ slug }) {
       return;
     }
     toggleSave(job.id);
-    toast(tersimpan ? "Dihapus dari loker tersimpan" : "Tersimpan di Loker Disimpan");
+    toast(tersimpan ? t("Dihapus dari loker tersimpan", "Removed from saved jobs") : t("Tersimpan di Loker Disimpan", "Added to saved jobs"));
   };
 
   const klikBagikan = async () => {
     const hasil = await bagikan({
       judul: job.posisi,
-      teks: `${job.posisi} di ${job.perusahaan}`,
+      teks: t(`${job.posisi} di ${job.perusahaan}`, `${job.posisi} at ${job.perusahaan}`),
       url: window.location.pathname,
     });
-    if (hasil === "disalin") toast("Tautan lowongan disalin");
+    if (hasil === "disalin") toast(t("Tautan lowongan disalin", "Job link copied"));
   };
 
   const info = [
-    ["Lokasi kerja", lokasiKerja],
-    ["Tipe pekerjaan", tipe],
-    ["Jenjang", job.jenjang],
-    ["Fungsi", job.fungsi],
-    ["Lokasi", job.lokasi],
-    ["Industri", job.industri],
-    ["Jumlah lowongan", job.jumlahLowongan ? `${job.jumlahLowongan} posisi` : null],
-    ["Diposting", formatTanggal(job.tanggal)],
+    [t("Lokasi kerja", "Work setting"), lokasiKerja],
+    [t("Tipe pekerjaan", "Job type"), tipe],
+    [t("Jenjang", "Level"), job.jenjang],
+    [t("Fungsi", "Function"), job.fungsi],
+    [t("Lokasi", "Location"), job.lokasi],
+    [t("Industri", "Industry"), job.industri],
+    [t("Jumlah lowongan", "Openings"), job.jumlahLowongan ? t(`${job.jumlahLowongan} posisi`, `${job.jumlahLowongan} positions`) : null],
+    [t("Diposting", "Posted"), formatTanggal(job.tanggal)],
   ].filter(([, v]) => v);
 
   const tombolLamar = (
     <a className="pb-btn pb-btn-primary" href={job.link} target="_blank" rel="noreferrer">
-      Lamar di {namaSumber} <ArrowUpRight size={16} />
+      {t(`Lamar di ${namaSumber}`, `Apply on ${namaSumber}`)} <ArrowUpRight size={16} />
     </a>
   );
 
   return (
     <PublicLayout aktif="/loker">
       <div className="pb-wrap">
-        <nav className="pb-crumb" aria-label="Lokasi halaman">
-          <a {...tautan("/")}>Beranda</a>
+        <nav className="pb-crumb" aria-label={t("Lokasi halaman", "Breadcrumb")}>
+          <a {...tautan("/")}>{t("Beranda", "Home")}</a>
           <ChevronRight size={14} />
-          <a {...tautan("/loker")}>Loker</a>
+          <a {...tautan("/loker")}>{t("Loker", "Jobs")}</a>
           {job.lokasi && job.lokasi !== "Tidak disebutkan" && (
             <>
               <ChevronRight size={14} />
@@ -359,20 +367,22 @@ export function DetailLokerPage({ slug }) {
               {tombolLamar}
               <button type="button" className="pb-btn pb-btn-outline" onClick={simpan}>
                 {tersimpan ? <BookmarkCheck size={16} color="var(--brand)" /> : <Bookmark size={16} />}
-                {tersimpan ? "Tersimpan" : "Simpan"}
+                {tersimpan ? t("Tersimpan", "Saved") : t("Simpan", "Save")}
               </button>
               <button type="button" className="pb-btn pb-btn-outline" onClick={klikBagikan}>
-                <Share2 size={16} /> Bagikan
+                <Share2 size={16} /> {t("Bagikan", "Share")}
               </button>
             </div>
             <div className="pb-d-note">
-              {job.tanggal ? `Diposting ${waktuRelatif(job.tanggal).toLowerCase()} · ` : ""}
-              Tombol lamar akan membuka {sumber.langsung ? "situs karier resmi perusahaan" : sumber.nama}.
-              Jobly tidak memungut biaya apa pun.
+              {job.tanggal ? t(`Diposting ${waktuRelatif(job.tanggal).toLowerCase()} · `, `Posted ${waktuRelatif(job.tanggal).toLowerCase()} · `) : ""}
+              {t(
+                `Tombol lamar akan membuka ${sumber.langsung ? "situs karier resmi perusahaan" : sumber.nama}. Jobly tidak memungut biaya apa pun.`,
+                `The apply button opens ${sumber.langsung ? "the company's official career site" : sumber.nama}. Jobly never charges you anything.`,
+              )}
             </div>
 
             <section className="pb-d-sec">
-              <h2>Tentang pekerjaan</h2>
+              <h2>{t("Tentang pekerjaan", "About the job")}</h2>
               {status === "memuat" ? (
                 [96, 100, 90, 74, 98, 62].map((w, i) => (
                   <div key={i} className="pb-skel" style={{ width: `${w}%`, height: 13, marginTop: i ? 14 : 0 }} />
@@ -384,7 +394,7 @@ export function DetailLokerPage({ slug }) {
 
             {info.length > 0 && (
               <section className="pb-d-sec">
-                <h2>Informasi posisi</h2>
+                <h2>{t("Informasi posisi", "Position details")}</h2>
                 <dl className="pb-kv">
                   {info.map(([k, v]) => (
                     <div key={k}>
@@ -397,7 +407,7 @@ export function DetailLokerPage({ slug }) {
             )}
 
             <section className="pb-d-sec">
-              <h2>Tentang perusahaan</h2>
+              <h2>{t("Tentang perusahaan", "About the company")}</h2>
               <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                 <LogoKotak src={logo} nama={job.perusahaan} ikon={!logo} ukuran={56} />
                 <div style={{ minWidth: 0 }}>
@@ -410,13 +420,13 @@ export function DetailLokerPage({ slug }) {
                     )}
                     {job.jumlahKaryawan && (
                       <span style={{ display: "inline-flex", gap: 5, alignItems: "center" }}>
-                        <Users size={14} /> {job.jumlahKaryawan} karyawan
+                        <Users size={14} /> {job.jumlahKaryawan} {t("karyawan", "employees")}
                       </span>
                     )}
                     {job.rating ? (
                       <span style={{ display: "inline-flex", gap: 5, alignItems: "center" }}>
                         <Star size={14} /> {Number(job.rating).toFixed(1)}
-                        {job.jumlahUlasan ? ` (${job.jumlahUlasan} ulasan)` : ""}
+                        {job.jumlahUlasan ? t(` (${job.jumlahUlasan} ulasan)`, ` (${job.jumlahUlasan} reviews)`) : ""}
                       </span>
                     ) : null}
                   </div>
@@ -445,7 +455,7 @@ export function DetailLokerPage({ slug }) {
                 style={{ marginTop: 18, fontSize: 13.5 }}
                 {...tautan(`/loker?q=${encodeURIComponent(job.perusahaan)}`)}
               >
-                Loker lain dari {job.perusahaan} <ArrowRight size={14} />
+                {t(`Loker lain dari ${job.perusahaan}`, `More jobs at ${job.perusahaan}`)} <ArrowRight size={14} />
               </a>
             </section>
           </article>
@@ -453,12 +463,12 @@ export function DetailLokerPage({ slug }) {
           {/* =================================================== samping */}
           <aside className="pb-aside">
             <div className="pb-box">
-              <h3>Ringkasan</h3>
+              <h3>{t("Ringkasan", "Summary")}</h3>
               <div style={{ marginTop: 8 }}>
                 <div className="pb-box-row" style={{ alignItems: "flex-start" }}>
-                  <span className="k">Gaji</span>
+                  <span className="k">{t("Gaji", "Salary")}</span>
                   <span className="v" style={gaji ? { color: "var(--salary)" } : { color: "var(--muted)", fontWeight: 500 }}>
-                    {gaji || "Tidak dicantumkan"}
+                    {gaji || t("Tidak dicantumkan", "Not listed")}
                     {rupiah && (
                       <span style={{ display: "block", fontFamily: "var(--mono)", fontSize: 12, fontWeight: 500, color: "var(--muted)", marginTop: 3 }}>
                         {rupiah}
@@ -468,18 +478,18 @@ export function DetailLokerPage({ slug }) {
                 </div>
                 {tipe && (
                   <div className="pb-box-row">
-                    <span className="k">Tipe</span>
+                    <span className="k">{t("Tipe", "Type")}</span>
                     <span className="v">{tipe}</span>
                   </div>
                 )}
                 {lokasiKerja && (
                   <div className="pb-box-row">
-                    <span className="k">Lokasi kerja</span>
+                    <span className="k">{t("Lokasi kerja", "Work setting")}</span>
                     <span className="v">{lokasiKerja}</span>
                   </div>
                 )}
                 <div className="pb-box-row">
-                  <span className="k">Sumber</span>
+                  <span className="k">{t("Sumber", "Source")}</span>
                   <span className="v" style={{ display: "inline-flex", gap: 7, alignItems: "center" }}>
                     <LogoSumber sumber={sumber} ukuran={20} />
                     {sumber.nama}
@@ -492,9 +502,9 @@ export function DetailLokerPage({ slug }) {
             {keamanan && (
               <div className="pb-box">
                 <h3 style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  Cek keamanan loker
+                  {t("Cek keamanan loker", "Job safety check")}
                   <a className="pb-link" style={{ fontSize: 12.5 }} {...tautan("/cek-loker")}>
-                    Cara kerjanya
+                    {t("Cara kerjanya", "How it works")}
                   </a>
                 </h3>
                 <div style={{ marginTop: 10 }}>
@@ -504,15 +514,15 @@ export function DetailLokerPage({ slug }) {
             )}
 
             <div className="pb-box tint">
-              <h3>Siapkan lamaranmu</h3>
+              <h3>{t("Siapkan lamaranmu", "Prepare your application")}</h3>
               <p style={{ fontSize: 13.5, color: "var(--ink2)", margin: "6px 0 10px", lineHeight: 1.55 }}>
-                Biar peluang dipanggil interview makin besar.
+                {t("Biar peluang dipanggil interview makin besar.", "Improve your chances of getting an interview.")}
               </p>
               {[
-                { label: "Review CV dengan AI", pro: true, panel: "overview", Ikon: FileText },
-                { label: "Latihan 140+ pertanyaan", pro: false, panel: "interview", Ikon: MessageSquareQuote },
-                { label: "Bandingkan di Peta gaji", pro: false, path: `/peta-gaji?posisi=${encodeURIComponent((job.posisi || "").split(/[\s(,/-]+/).slice(0, 2).join(" "))}`, panel: "peta", Ikon: Wallet },
-                { label: "Simulasi interview AI", pro: true, panel: "simulasi", Ikon: Bot },
+                { label: t("Review CV dengan AI", "AI CV review"), pro: true, panel: "overview", Ikon: FileText },
+                { label: t("Latihan 140+ pertanyaan", "Practise 140+ questions"), pro: false, panel: "interview", Ikon: MessageSquareQuote },
+                { label: t("Bandingkan di Peta gaji", "Compare on the salary map"), pro: false, path: `/peta-gaji?posisi=${encodeURIComponent((job.posisi || "").split(/[\s(,/-]+/).slice(0, 2).join(" "))}`, panel: "peta", Ikon: Wallet },
+                { label: t("Simulasi interview AI", "AI mock interview"), pro: true, panel: "simulasi", Ikon: Bot },
               ].map(({ label, pro, panel, path, Ikon }) => (
                 <a
                   key={panel}
@@ -523,7 +533,7 @@ export function DetailLokerPage({ slug }) {
                   <span style={{ display: "inline-flex", gap: 9, alignItems: "center", fontWeight: 500 }}>
                     <Ikon size={16} color="var(--brand)" /> {label}
                   </span>
-                  <span className={`pb-tag ${pro ? "pro" : ""}`}>{pro ? "Pro" : "Gratis"}</span>
+                  <span className={`pb-tag ${pro ? "pro" : ""}`}>{pro ? "Pro" : t("Gratis", "Free")}</span>
                 </a>
               ))}
             </div>
@@ -536,11 +546,11 @@ export function DetailLokerPage({ slug }) {
           <div className="pb-wrap">
             <div className="pb-head">
               <div>
-                <span className="pb-label">Loker serupa</span>
-                <h2>Lowongan lain yang mirip</h2>
+                <span className="pb-label">{t("Loker serupa", "Similar jobs")}</span>
+                <h2>{t("Lowongan lain yang mirip", "Other jobs like this")}</h2>
               </div>
               <a className="pb-link" {...tautan("/loker")}>
-                Semua lowongan <ArrowRight size={15} />
+                {t("Semua lowongan", "All jobs")} <ArrowRight size={15} />
               </a>
             </div>
             <div className="pb-grid">

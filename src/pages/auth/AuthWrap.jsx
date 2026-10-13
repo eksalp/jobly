@@ -1,6 +1,7 @@
 import React from "react";
 import { Logo } from "../../components/ui/Logo";
 import { T } from "../../theme";
+import { t } from "../../i18n.js";
 
 const keHalaman = (path) => (e) => {
   e.preventDefault();
@@ -29,7 +30,7 @@ export function AuthWrap({ children }) {
           <a
             href="/"
             onClick={keHalaman("/")}
-            aria-label="Ke beranda Jobly"
+            aria-label={t("Ke beranda Jobly", "Go to Jobly home")}
             style={{ textDecoration: "none" }}
           >
             <Logo size={32} tagline />
@@ -39,7 +40,7 @@ export function AuthWrap({ children }) {
             onClick={keHalaman("/loker")}
             style={{ fontSize: 14, fontWeight: 600, color: T.ink, textDecoration: "none" }}
           >
-            Lihat loker ↗
+            {t("Lihat loker ↗", "Browse jobs ↗")}
           </a>
         </div>
       </header>
@@ -76,7 +77,7 @@ export function AuthWrap({ children }) {
           color: T.inkFaint,
         }}
       >
-        © {new Date().getFullYear()} Jobly · Dibuat oleh Eksal Pujianto
+        © {new Date().getFullYear()}{" "}{t("Jobly · Dibuat oleh Eksal Pujianto", "Jobly · Made by Eksal Pujianto")}
       </div>
     </div>
   );

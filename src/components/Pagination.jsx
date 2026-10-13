@@ -1,6 +1,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { T } from "../theme";
+import { t } from "../i18n.js";
 
 /**
  * Susun daftar nomor halaman dengan elipsis.
@@ -97,7 +98,7 @@ export function Pagination({
       <button
         onClick={() => onChange(Math.max(1, currentPage - 1))}
         disabled={diAwal}
-        aria-label="Halaman sebelumnya"
+        aria-label={t("Halaman sebelumnya", "Previous page")}
         style={tombolPanah(diAwal)}
       >
         <ChevronLeft size={16} />
@@ -132,7 +133,7 @@ export function Pagination({
                   : Math.min(totalPages, currentPage + 5),
               )
             }
-            title={h === "kiri" ? "Mundur 5 halaman" : "Maju 5 halaman"}
+            title={h === "kiri" ? t("Mundur 5 halaman", "Back 5 pages") : t("Maju 5 halaman", "Forward 5 pages")}
             style={{
               ...tombolDasar,
               border: "none",
@@ -150,7 +151,7 @@ export function Pagination({
       <button
         onClick={() => onChange(Math.min(totalPages, currentPage + 1))}
         disabled={diAkhir}
-        aria-label="Halaman berikutnya"
+        aria-label={t("Halaman berikutnya", "Next page")}
         style={tombolPanah(diAkhir)}
       >
         <ChevronRight size={16} />

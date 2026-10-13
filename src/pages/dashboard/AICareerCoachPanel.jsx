@@ -4,17 +4,18 @@ import { T } from "../../theme";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { Glass } from "../../components/ui/Glass";
+import { t } from "../../i18n.js";
 
-const SYSTEM_PROMPT = `Kamu adalah AI Career Coach untuk platform JobFinder AI di Indonesia. 
+const SYSTEM_PROMPT = `Kamu adalah AI Career Coach untuk platform Jobly di Indonesia.
 Kamu membantu user soal: strategi karier, persiapan interview, negosiasi gaji, perbaikan CV/LinkedIn, skill gap, dan transisi karier.
-Jawab dalam Bahasa Indonesia. Jawaban singkat, konkret, dan actionable. Maksimal 3-4 paragraf.
+${t("Jawab dalam Bahasa Indonesia yang lazim dan lugas, tanpa tanda pisah panjang (—).", "Answer in plain, natural English, without em dashes (—).")} Jawaban singkat, konkret, dan actionable. Maksimal 3-4 paragraf.
 Kalau user menyebut profil atau CV mereka, gunakan konteks itu untuk personalisasi saran.`;
 
 const STARTER_CHIPS = [
-  "Cara jawab 'kelemahan terbesar' saat interview",
-  "Tips negosiasi gaji kalau offer di bawah ekspektasi",
-  "Bagaimana transisi karier ke bidang tech?",
-  "Apa yang harus ada di LinkedIn supaya dilirik recruiter?",
+  t("Cara jawab 'kelemahan terbesar' saat interview", "How to answer 'your biggest weakness' in an interview"),
+  t("Tips negosiasi gaji kalau offer di bawah ekspektasi", "Salary negotiation tips when the offer is below expectations"),
+  t("Bagaimana transisi karier ke bidang tech?", "How do I move into tech?"),
+  t("Apa yang harus ada di LinkedIn supaya dilirik recruiter?", "What should my LinkedIn have to catch recruiters' eyes?"),
 ];
 
 export function AICareerCoachPanel() {
@@ -22,7 +23,7 @@ export function AICareerCoachPanel() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      text: "Halo! Aku siap bantu diskusi soal strategi karier, persiapan interview, negosiasi gaji, atau apapun seputar karier kamu. Mau mulai dari mana?",
+      text: t("Halo! Aku siap bantu diskusi soal strategi karier, persiapan interview, negosiasi gaji, atau apapun seputar karier kamu. Mau mulai dari mana?", "Hi! I can help with career strategy, interview prep, salary negotiation, or anything else about your career. Where would you like to start?"),
     },
   ]);
   const [input, setInput] = useState("");
@@ -47,7 +48,7 @@ export function AICareerCoachPanel() {
 
     try {
       if (!supabaseConfigured) {
-        throw new Error("Supabase belum dikonfigurasi.");
+        throw new Error(t("Supabase belum dikonfigurasi.", "Supabase isn't configured yet."));
       }
 
       // Bangun history untuk Anthropic API (max 10 pesan terakhir supaya hemat token)
@@ -78,11 +79,11 @@ export function AICareerCoachPanel() {
         .join("")
         .trim();
 
-      if (!replyText) throw new Error("Respons AI kosong.");
+      if (!replyText) throw new Error(t("Respons AI kosong.", "The AI returned an empty response."));
 
       setMessages((prev) => [...prev, { role: "assistant", text: replyText }]);
     } catch (err) {
-      setError(err?.message || "Gagal menghubungi AI. Coba lagi.");
+      setError(err?.message || t("Gagal menghubungi AI. Coba lagi.", "Couldn't reach the AI. Please try again."));
       // Rollback pesan user kalau gagal total
       setMessages(messages);
     } finally {
@@ -122,15 +123,14 @@ export function AICareerCoachPanel() {
           AI Career Coach
         </div>
         <div style={{ fontSize: 13, color: T.inkSoft }}>
-          Tanya apa saja soal kariermu, mulai dari interview, gaji, CV, sampai
-          pindah bidang.
+          {t("Tanya apa saja soal kariermu, mulai dari interview, gaji, CV, sampai pindah bidang.", "Ask anything about your career, from interviews and pay to your CV and switching fields.")}
           {cvText?.trim() && (
             <span style={{ color: T.accent, marginLeft: 6 }}>
               <Sparkles
                 size={12}
                 style={{ verticalAlign: -2, marginRight: 3 }}
               />
-              Profil CV kamu sudah terbaca.
+              {t("Profil CV kamu sudah terbaca.", "Your CV profile has been read.")}
             </span>
           )}
         </div>
@@ -198,7 +198,7 @@ export function AICareerCoachPanel() {
                 size={14}
                 style={{ animation: "spin 1s linear infinite" }}
               />
-              Sedang berpikir...
+              {t("Sedang berpikir...", "Thinking...")}
             </div>
           </div>
         )}
@@ -273,7 +273,7 @@ export function AICareerCoachPanel() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Tanya apapun soal kariermu... (Enter untuk kirim)"
+          placeholder={t("Tanya apapun soal kariermu... (Enter untuk kirim)", "Ask anything about your career... (Enter to send)")}
           rows={1}
           style={{
             flex: 1,

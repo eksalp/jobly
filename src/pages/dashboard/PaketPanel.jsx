@@ -15,6 +15,7 @@ import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useLangganan } from "../../hooks/useLangganan";
 import { DAFTAR_PAKET, SEMUA_TIER, PAKET, rupiah, labelDurasi } from "../../data/paket";
 import { RiwayatPembelian } from "../../components/RiwayatPembelian";
+import { lokal, t } from "../../i18n.js";
 
 /**
  * Memuat script Midtrans Snap sekali saja.
@@ -39,7 +40,7 @@ function useSnapScript() {
 
     const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY;
     if (!clientKey) {
-      setGalat("VITE_MIDTRANS_CLIENT_KEY belum diisi.");
+      setGalat(t("VITE_MIDTRANS_CLIENT_KEY belum diisi.", "VITE_MIDTRANS_CLIENT_KEY is not set."));
       return;
     }
 
@@ -63,7 +64,7 @@ function useSnapScript() {
     script.setAttribute("data-client-key", clientKey);
     script.onload = () => setSiap(true);
     script.onerror = () =>
-      setGalat("Gagal memuat Midtrans. Periksa koneksi internet.");
+      setGalat(t("Gagal memuat Midtrans. Periksa koneksi internet.", "Couldn't load Midtrans. Check your internet connection."));
     document.head.appendChild(script);
   }, []);
 
@@ -86,12 +87,12 @@ export function PaketPanel() {
 
   const beli = async (paketId) => {
     if (!supabaseConfigured) {
-      setGalat("Supabase belum dikonfigurasi.");
+      setGalat(t("Supabase belum dikonfigurasi.", "Supabase isn't configured yet."));
       return;
     }
     if (!snap.siap) {
       setGalat(
-        snap.galat || "Sistem pembayaran masih dimuat, tunggu sebentar.",
+        snap.galat || t("Sistem pembayaran masih dimuat, tunggu sebentar.", "The payment system is still loading, please wait a moment."),
       );
       return;
     }
@@ -106,7 +107,7 @@ export function PaketPanel() {
       const { data: sesiData } = await supabase.auth.getSession();
       if (!sesiData?.session) {
         setGalat(
-          "Sesi kamu sudah berakhir. Muat ulang halaman dan login lagi, lalu coba beli kembali.",
+          t("Sesi kamu sudah berakhir. Muat ulang halaman dan login lagi, lalu coba beli kembali.", "Your session has expired. Reload the page, sign in again, then try buying again."),
         );
         setProses(null);
         return;
@@ -133,7 +134,7 @@ export function PaketPanel() {
         // 401 spesifik: sesi tidak diterima server meski ada di klien.
         if (error.context?.status === 401 || /unauthorized/i.test(pesan)) {
           pesan =
-            "Sesi kamu sudah berakhir. Muat ulang halaman dan login lagi, lalu coba beli kembali.";
+            t("Sesi kamu sudah berakhir. Muat ulang halaman dan login lagi, lalu coba beli kembali.", "Your session has expired. Reload the page, sign in again, then try buying again.");
         }
         throw new Error(pesan);
       }
@@ -142,7 +143,7 @@ export function PaketPanel() {
       window.snap.pay(data.snapToken, {
         onSuccess: async () => {
           setProses(null);
-          setSukses("Pembayaran berhasil! Mengaktifkan paketmu...");
+          setSukses(t("Pembayaran berhasil! Mengaktifkan paketmu...", "Payment successful! Activating your plan..."));
 
           // Webhook Midtrans mengaktifkan langganan di server, dan waktu
           // tibanya tidak pasti — kadang instan, kadang beberapa detik.
@@ -161,25 +162,25 @@ export function PaketPanel() {
 
           setSukses(
             bertambah
-              ? "Pembayaran berhasil dan paketmu sudah aktif! Selamat menggunakan."
+              ? t("Pembayaran berhasil dan paketmu sudah aktif! Selamat menggunakan.", "Payment successful and your plan is active. Enjoy!")
               : "Pembayaran berhasil! Paketmu sedang diaktifkan. Muat ulang " +
                   "halaman ini sebentar kalau kuota belum terlihat bertambah.",
           );
         },
         onPending: () => {
           setGalat(
-            "Pembayaran belum selesai. Langganan aktif otomatis setelah pembayaran terkonfirmasi.",
+            t("Pembayaran belum selesai. Langganan aktif otomatis setelah pembayaran terkonfirmasi.", "Payment isn't finished yet. Your plan activates automatically once payment is confirmed."),
           );
           setProses(null);
         },
         onError: () => {
-          setGalat("Pembayaran gagal. Silakan coba lagi.");
+          setGalat(t("Pembayaran gagal. Silakan coba lagi.", "Payment failed. Please try again."));
           setProses(null);
         },
         onClose: () => setProses(null),
       });
     } catch (e) {
-      setGalat(e?.message || "Gagal membuat transaksi.");
+      setGalat(e?.message || t("Gagal membuat transaksi.", "Couldn't create the transaction."));
       setProses(null);
     }
   };
@@ -195,7 +196,7 @@ export function PaketPanel() {
             marginBottom: 6,
           }}
         >
-          Pilih paket yang sesuai
+          {t("Pilih paket yang sesuai", "Choose a plan")}
         </div>
         <div
           style={{
@@ -206,9 +207,7 @@ export function PaketPanel() {
             lineHeight: 1.65,
           }}
         >
-          5.000 loker, CV Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka seluruh loker.
-          Paket berbayar menambah kuota analisis AI, Pindah Karier, dan
-          simulasi interview.
+          {t("5.000 loker, CV Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka seluruh loker. Paket berbayar menambah kuota analisis AI, Pindah Karier, dan simulasi interview.", "5,000 jobs, the CV Builder, and the LinkedIn Builder are free forever. Paid plans unlock every job and add credits for AI analysis, Career Switch, and mock interviews.")}
         </div>
       </div>
 
@@ -229,14 +228,13 @@ export function PaketPanel() {
           <Check size={16} color={T.teal} />
           <div style={{ flex: 1, minWidth: 220 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>
-              {langganan.detailPaket?.nama} sedang aktif
+              {langganan.detailPaket?.nama}{" "}{t("sedang aktif", "is active")}
             </div>
             <div style={{ fontSize: 11.5, color: T.inkSoft, marginTop: 2 }}>
               {langganan.jumlahPaket > 1 &&
-                `${langganan.jumlahPaket} paket digabung · `}
-              {langganan.sisaAnalisis} dari {langganan.kuotaAnalisis} analisis
-              tersisa · berakhir{" "}
-              {new Date(langganan.berakhirAt).toLocaleDateString("id-ID", {
+                t(`${langganan.jumlahPaket} paket digabung · `, `${langganan.jumlahPaket} plans combined · `)}
+              {langganan.sisaAnalisis} dari {langganan.kuotaAnalisis}{" "}{t("analisis tersisa · berakhir", "analyses left · ends")}{" "}
+              {new Date(langganan.berakhirAt).toLocaleDateString(lokal(), {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -253,7 +251,7 @@ export function PaketPanel() {
                 gap: 5,
               }}
             >
-              <Clock size={12} /> Tinggal {langganan.sisaHari} hari
+              <Clock size={12} />{" "}{t("Tinggal", "Only")}{" "}{langganan.sisaHari} hari
             </span>
           )}
         </Glass>
@@ -278,11 +276,9 @@ export function PaketPanel() {
             style={{ flexShrink: 0, marginTop: 1 }}
           />
           <div style={{ fontSize: 12, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
-            Kuota kamu masih banyak:{" "}
-            <strong>{langganan.sisaAnalisis} analisis tersisa</strong> dan aktif{" "}
-            {langganan.sisaHari} hari lagi. Kalau tetap membeli, kuotanya
-            ditambahkan dan masa berlakunya disambung dari tanggal berakhir
-            sekarang. Tidak ada yang hangus, tapi mungkin belum perlu buru-buru.
+            {t("Kuota kamu masih banyak:", "You still have plenty of credits:")}{" "}
+            <strong>{langganan.sisaAnalisis}{" "}{t("analisis tersisa", "analyses left")}</strong>{" "}{t("dan aktif", "and active for")}{" "}
+            {langganan.sisaHari}{" "}{t("hari lagi. Kalau tetap membeli, kuotanya ditambahkan dan masa berlakunya disambung dari tanggal berakhir sekarang. Tidak ada yang hangus, tapi mungkin belum perlu buru-buru.", "more days. If you buy now, the credits are added and validity extends from your current end date. Nothing is lost, but there may be no need to rush.")}
           </div>
         </Glass>
       )}
@@ -317,7 +313,7 @@ export function PaketPanel() {
             onClick={() => window.location.reload()}
             style={{ fontSize: 12, padding: "7px 14px", flexShrink: 0 }}
           >
-            Muat ulang sekarang
+            {t("Muat ulang sekarang", "Reload now")}
           </Button>
         </Glass>
       )}
@@ -383,7 +379,7 @@ export function PaketPanel() {
                     letterSpacing: "0.03em",
                   }}
                 >
-                  PALING SESUAI
+                  {t("PALING SESUAI", "BEST FIT")}
                 </span>
               )}
 
@@ -426,8 +422,8 @@ export function PaketPanel() {
                 style={{ fontSize: 11, color: T.inkFaint, marginBottom: 16 }}
               >
                 {gratis
-                  ? "Selamanya · tanpa kartu"
-                  : `sekali bayar · berlaku ${labelDurasi(p.durasiHari)} · ${p.kuotaAnalisis} analisis AI`}
+                  ? t("Selamanya · tanpa kartu", "Forever · no card needed")
+                  : t(`sekali bayar · berlaku ${labelDurasi(p.durasiHari)} · ${p.kuotaAnalisis} analisis AI`, `one-time · valid ${labelDurasi(p.durasiHari)} · ${p.kuotaAnalisis} AI analyses`)}
               </div>
 
               <div style={{ flex: 1, marginBottom: 18 }}>
@@ -510,7 +506,7 @@ export function PaketPanel() {
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                   }}
                 >
-                  {iniTierSekarang ? "Paket kamu sekarang" : "Selalu aktif"}
+                  {iniTierSekarang ? t("Paket kamu sekarang", "Your current plan") : t("Selalu aktif", "Always active")}
                 </div>
               ) : (
                 <Button
@@ -525,14 +521,14 @@ export function PaketPanel() {
                         size={14}
                         style={{ animation: "spin 1s linear infinite" }}
                       />{" "}
-                      Memproses...
+                      {t("Memproses...", "Processing...")}
                     </>
                   ) : iniPaketAktif ? (
                     <>
-                      Perpanjang <Sparkles size={13} />
+                      {t("Perpanjang", "Renew")}{" "}<Sparkles size={13} />
                     </>
                   ) : (
-                    <>Pilih paket ini</>
+                    <>{t("Pilih paket ini", "Choose this plan")}</>
                   )}
                 </Button>
               )}
@@ -553,7 +549,7 @@ export function PaketPanel() {
         >
           <Receipt size={15} color={T.inkSoft} />
           <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
-            Riwayat Pembelian
+            {t("Riwayat Pembelian", "Purchase history")}
           </span>
         </div>
         <RiwayatPembelian />
@@ -568,13 +564,11 @@ export function PaketPanel() {
           lineHeight: 1.7,
         }}
       >
-        Pembayaran lewat QRIS, diproses dengan aman oleh Midtrans
+        {t("Pembayaran lewat QRIS, diproses dengan aman oleh Midtrans", "Pay by QRIS, processed securely by Midtrans")}
         <br />
-        Paket berlaku sejak pembayaran terkonfirmasi dan tidak diperpanjang
-        otomatis.
+        {t("Paket berlaku sejak pembayaran terkonfirmasi dan tidak diperpanjang otomatis.", "Plans start once payment is confirmed and never renew automatically.")}
         <br />
-        Membeli saat paket masih aktif akan menambah kuota dan menyambung masa
-        berlakunya. Sisa yang belum terpakai tidak hangus.
+        {t("Membeli saat paket masih aktif akan menambah kuota dan menyambung masa berlakunya. Sisa yang belum terpakai tidak hangus.", "Buying while a plan is active adds credits and extends validity. Unused credits never expire.")}
       </div>
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

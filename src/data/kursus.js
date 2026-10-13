@@ -8,6 +8,8 @@
  * Tulis dalam huruf kecil, dan sertakan variasi kata yang mungkin muncul
  * di hasil analisis AI (mis. "pajak" dan "tax").
  */
+import { bahasa } from "../i18n.js";
+
 export const KURSUS = [
   {
     id: "digital-marketing-fullstack-bootcamp",
@@ -949,5 +951,23 @@ export function cocokkanKursus(
   return dinilai
     .filter((k) => k.skor > 0)
     .sort((a, b) => b.skor - a.skor)
-    .slice(0, maks);
+    .slice(0, maks)
+    .map(tampilan);
+}
+
+const LEVEL_EN = { Pemula: "Beginner", Menengah: "Intermediate", "Semua Level": "All levels" };
+const BULAN_EN = {
+  Januari: "January", Februari: "February", Maret: "March", Mei: "May", Juni: "June", Juli: "July",
+  Agustus: "August", Oktober: "October", Desember: "December",
+};
+
+/** Label durasi & level dalam bahasa tampilan. Data asli tetap berbahasa Indonesia. */
+function tampilan(k) {
+  if (bahasa() !== "en") return k;
+  const durasi = String(k.durasi || "")
+    .replace("Video Course (akses fleksibel)", "Video course (flexible access)")
+    .replace(/(\d+) minggu/g, (_, n) => `${n} weeks`)
+    .replace(/(\d+) bulan/g, (_, n) => `${n} months`)
+    .replace(/\b(Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember)\b/g, (b) => BULAN_EN[b]);
+  return { ...k, durasi, level: LEVEL_EN[k.level] || k.level };
 }

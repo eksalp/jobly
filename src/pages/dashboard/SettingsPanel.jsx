@@ -14,6 +14,7 @@ import { useLangganan } from "../../hooks/useLangganan";
 import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
+import { t } from "../../i18n.js";
 
 export function SettingsField({ label, value, onChange, disabled }) {
   return (
@@ -81,11 +82,11 @@ function KartuKataSandi({ user }) {
     setGalat("");
 
     if (sandi.length < 8) {
-      setGalat("Kata sandi minimal 8 karakter.");
+      setGalat(t("Kata sandi minimal 8 karakter.", "Password must be at least 8 characters."));
       return;
     }
     if (sandi !== ulang) {
-      setGalat("Konfirmasi kata sandi tidak cocok.");
+      setGalat(t("Konfirmasi kata sandi tidak cocok.", "The passwords don't match."));
       return;
     }
 
@@ -130,7 +131,7 @@ function KartuKataSandi({ user }) {
       >
         <KeyRound size={15} color={T.inkSoft} />
         <span style={{ fontWeight: 600, fontSize: 14.5, color: T.ink }}>
-          Kata Sandi
+          {t("Kata Sandi", "Password")}
         </span>
       </div>
 
@@ -138,10 +139,8 @@ function KartuKataSandi({ user }) {
         /* Akun pihak ketiga: jelaskan kenapa tidak bisa diubah di sini,
            bukan sekadar menonaktifkan tombol tanpa keterangan. */
         <div style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.65 }}>
-          Kamu masuk menggunakan{" "}
-          <strong>{penyediaLain.map(namaPenyedia).join(" dan ")}</strong>, jadi
-          tidak ada kata sandi yang perlu diatur di sini. Untuk mengubahnya,
-          buka pengaturan keamanan di akun {namaPenyedia(penyediaLain[0])} kamu.
+          {t("Kamu masuk menggunakan", "You signed in with")}{" "}
+          <strong>{penyediaLain.map(namaPenyedia).join(" dan ")}</strong>{t(", jadi tidak ada kata sandi yang perlu diatur di sini. Untuk mengubahnya, buka pengaturan keamanan di akun", ", so there's no password to set here. To change it, open the security settings of your")}{" "}{namaPenyedia(penyediaLain[0])} kamu.
         </div>
       ) : sukses ? (
         <div
@@ -153,7 +152,7 @@ function KartuKataSandi({ user }) {
             color: T.teal,
           }}
         >
-          <Check size={14} /> Kata sandi berhasil diperbarui.
+          <Check size={14} />{" "}{t("Kata sandi berhasil diperbarui.", "Password updated.")}
         </div>
       ) : !buka ? (
         <>
@@ -165,10 +164,10 @@ function KartuKataSandi({ user }) {
               lineHeight: 1.6,
             }}
           >
-            Ganti kata sandi akunmu. Pakai minimal 8 karakter.
+            {t("Ganti kata sandi akunmu. Pakai minimal 8 karakter.", "Change your account password. Use at least 8 characters.")}
           </div>
           <Button variant="outline" onClick={() => setBuka(true)}>
-            Ganti kata sandi
+            {t("Ganti kata sandi", "Change password")}
           </Button>
         </>
       ) : (
@@ -178,13 +177,13 @@ function KartuKataSandi({ user }) {
               type={lihat ? "text" : "password"}
               value={sandi}
               onChange={(e) => setSandi(e.target.value)}
-              placeholder="Kata sandi baru"
+              placeholder={t("Kata sandi baru", "New password")}
               autoComplete="new-password"
               style={input}
             />
             <button
               onClick={() => setLihat(!lihat)}
-              aria-label={lihat ? "Sembunyikan" : "Tampilkan"}
+              aria-label={lihat ? t("Sembunyikan", "Hide") : t("Tampilkan", "Show")}
               style={{
                 position: "absolute",
                 right: 10,
@@ -207,7 +206,7 @@ function KartuKataSandi({ user }) {
             value={ulang}
             onChange={(e) => setUlang(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && simpan()}
-            placeholder="Ulangi kata sandi baru"
+            placeholder={t("Ulangi kata sandi baru", "Repeat new password")}
             autoComplete="new-password"
             style={{ ...input, paddingRight: 12, marginBottom: 10 }}
           />
@@ -237,7 +236,7 @@ function KartuKataSandi({ user }) {
               ) : (
                 <Check size={13} />
               )}
-              Simpan
+              {t("Simpan", "Save")}
             </Button>
             <Button
               variant="outline"
@@ -248,7 +247,7 @@ function KartuKataSandi({ user }) {
                 setGalat("");
               }}
             >
-              Batal
+              {t("Batal", "Cancel")}
             </Button>
           </div>
         </div>
@@ -304,10 +303,10 @@ export function SettingsPanel({ setActive }) {
             marginBottom: 16,
           }}
         >
-          Akun
+          {t("Akun", "Account")}
         </div>
         <SettingsField
-          label="Nama"
+          label={t("Nama", "Name")}
           value={nameDraft}
           onChange={(e) => setNameDraft(e.target.value)}
         />
@@ -319,7 +318,7 @@ export function SettingsPanel({ setActive }) {
             onClick={handleSaveName}
             disabled={!nameDraft.trim() || nameDraft === fullName}
           >
-            <Check size={13} /> {saved ? "Tersimpan" : "Simpan Nama"}
+            <Check size={13} /> {saved ? t("Tersimpan", "Saved") : t("Simpan Nama", "Save name")}
           </Button>
         </div>
       </Glass>
@@ -334,7 +333,7 @@ export function SettingsPanel({ setActive }) {
             marginBottom: 16,
           }}
         >
-          Paket Langganan
+          {t("Paket Langganan", "Plan")}
         </div>
         <div
           style={{
@@ -348,17 +347,17 @@ export function SettingsPanel({ setActive }) {
           <div>
             <div style={{ fontSize: 13.5, fontWeight: 600, color: T.ink }}>
               {langganan.aktif
-                ? (langganan.detailPaket?.nama ?? "Aktif")
-                : "Belum berlangganan"}
+                ? (langganan.detailPaket?.nama ?? t("Aktif", "Active"))
+                : t("Belum berlangganan", "No active plan")}
             </div>
             <div style={{ fontSize: 12, color: T.inkSoft, marginTop: 2 }}>
               {langganan.aktif
-                ? `${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`
-                : "5.000 loker & alat dasar gratis. Buka semua loker & fitur AI mulai Rp 9.000."}
+                ? t(`${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`, `${langganan.sisaAnalisis} of ${langganan.kuotaAnalisis} analyses left · active for ${langganan.sisaHari} more days`)
+                : t("5.000 loker & alat dasar gratis. Buka semua loker & fitur AI mulai Rp 9.000.", "5,000 jobs & the basic tools are free. Unlock every job & the AI features from Rp 9,000.")}
             </div>
           </div>
           <Button variant="outline" onClick={() => pergiKe("paket")}>
-            {langganan.aktif ? "Kelola" : "Lihat paket"}
+            {langganan.aktif ? t("Kelola", "Manage") : t("Lihat paket", "See plans")}
           </Button>
         </div>
       </Glass>
@@ -372,16 +371,16 @@ export function SettingsPanel({ setActive }) {
             marginBottom: 8,
           }}
         >
-          Hapus Akun
+          {t("Hapus Akun", "Delete account")}
         </div>
         <div style={{ fontSize: 12.5, color: T.inkSoft, marginBottom: 14 }}>
-          Tindakan ini permanen dan nggak bisa dibatalkan.
+          {t("Tindakan ini permanen dan nggak bisa dibatalkan.", "This is permanent and can't be undone.")}
         </div>
         <Button
           variant="outline"
           style={{ color: "var(--t-danger)", borderColor: "rgba(220,60,60,0.3)" }}
         >
-          Hapus Akun Saya
+          {t("Hapus Akun Saya", "Delete my account")}
         </Button>
       </Glass>
     </div>

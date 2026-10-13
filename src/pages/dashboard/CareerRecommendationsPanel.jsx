@@ -17,6 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useTeksProfil } from "../../hooks/useTeksProfil";
 import { detectCategory } from "../../utils/jobMatching";
 import { cocokkanKursus } from "../../data/kursus";
+import { t } from "../../i18n.js";
 
 /* ------------------------------------------------------------------ */
 /*  Kartu kursus                                                       */
@@ -180,7 +181,7 @@ export function CareerRecommendationsPanel({ setActive }) {
         }}
       >
         <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />{" "}
-        Memuat rekomendasi...
+        {t("Memuat rekomendasi...", "Loading suggestions...")}
       </div>
     );
   }
@@ -208,7 +209,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               marginBottom: 6,
             }}
           >
-            Belum ada rekomendasi
+            {t("Belum ada rekomendasi", "No suggestions yet")}
           </div>
           <div
             style={{
@@ -218,11 +219,10 @@ export function CareerRecommendationsPanel({ setActive }) {
               marginBottom: 18,
             }}
           >
-            Jalankan analisis CV atau LinkedIn dulu. Dari situ kami bisa
-            menentukan arah kariermu dan menyarankan apa yang perlu dipelajari.
+            {t("Jalankan analisis CV atau LinkedIn dulu. Dari situ kami bisa menentukan arah kariermu dan menyarankan apa yang perlu dipelajari.", "Run a CV or LinkedIn analysis first. From that we can work out your career direction and suggest what to learn.")}
           </div>
           <Button variant="primary" onClick={() => setActive?.("overview")}>
-            <Sparkles size={14} /> Mulai analisis
+            <Sparkles size={14} />{" "}{t("Mulai analisis", "Start an analysis")}
           </Button>
         </Glass>
       </div>
@@ -259,7 +259,7 @@ export function CareerRecommendationsPanel({ setActive }) {
             marginBottom: 6,
           }}
         >
-          Arah karier kamu
+          {t("Arah karier kamu", "Your career direction")}
         </div>
 
         {/* Judul — justify supaya rata kanan-kiri */}
@@ -303,7 +303,7 @@ export function CareerRecommendationsPanel({ setActive }) {
                 textTransform: "uppercase",
               }}
             >
-              Posisi yang realistis dilamar sekarang
+              {t("Posisi yang realistis dilamar sekarang", "Roles you can realistically apply for now")}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {posisiTarget.map((p) => (
@@ -338,7 +338,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               marginBottom: 4,
             }}
           >
-            Yang perlu kamu perkuat
+            {t("Yang perlu kamu perkuat", "What to strengthen")}
           </div>
           <div
             style={{
@@ -348,7 +348,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               marginBottom: 14,
             }}
           >
-            Diambil dari analisis CV kamu.
+            {t("Diambil dari analisis CV kamu.", "Taken from your CV analysis.")}
           </div>
 
           <div style={{ marginBottom: 18 }}>
@@ -395,7 +395,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               >
                 <GraduationCap size={14} color={T.inkSoft} />
                 <span style={{ fontSize: 12.5, fontWeight: 600, color: T.ink }}>
-                  Kursus yang relevan
+                  {t("Kursus yang relevan", "Relevant courses")}
                 </span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -419,8 +419,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  Tautan tersebut adalah rekomendasi dari sistem AI Jobly untuk
-                  mencari course yang cocok buat kamu!
+                  {t("Tautan tersebut adalah rekomendasi dari sistem AI Jobly untuk mencari course yang cocok buat kamu!", "These links are suggestions from Jobly's AI to help you find a course that fits you.")}
                 </span>
               </div>
             </>
@@ -439,7 +438,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               marginBottom: 4,
             }}
           >
-            Bidang lain yang masih terjangkau
+            {t("Bidang lain yang masih terjangkau", "Other fields within reach")}
           </div>
           <div
             style={{
@@ -449,7 +448,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               marginBottom: 14,
             }}
           >
-            Bisa dimasuki dengan bekal yang sudah kamu punya sekarang.
+            {t("Bisa dimasuki dengan bekal yang sudah kamu punya sekarang.", "You can get into these with what you already have.")}
           </div>
 
           {bidangAlternatif.map((b, idx) => {

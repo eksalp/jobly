@@ -32,6 +32,7 @@ import { Glass } from "../../components/ui/Glass";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { KATEGORI_INTERVIEW, TOTAL_PERTANYAAN } from "../../data/interviewBank";
 import { KartuPelatihan } from "../../components/ui/KartuPelatihan";
+import { t } from "../../i18n.js";
 
 // Peta nama ikon (string di file data) ke komponennya. File data sengaja
 // hanya menyimpan nama supaya tetap murni data tanpa impor React.
@@ -96,7 +97,7 @@ function KartuPertanyaan({ item, dibuka, onToggle, ditandai, onTandai }) {
           >
             {item.pertanyaan}
           </div>
-          {item.level === "neraka" && <span className="lt-level">Level neraka</span>}
+          {item.level === "neraka" && <span className="lt-level">{t("Level neraka", "Brutal")}</span>}
         </div>
 
         {/* Penanda "latih lagi" — dihentikan propagasinya supaya tidak
@@ -107,7 +108,7 @@ function KartuPertanyaan({ item, dibuka, onToggle, ditandai, onTandai }) {
             onTandai();
           }}
           title={
-            ditandai ? "Hapus dari daftar latihan" : "Tandai untuk dilatih"
+            ditandai ? t("Hapus dari daftar latihan", "Remove from practice list") : t("Tandai untuk dilatih", "Mark to practise")
           }
           style={{
             background: "none",
@@ -159,24 +160,24 @@ function IsiJawaban({ item }) {
       {item.jebakan && (
         <div className="lt-blok jebakan">
           <span>
-            <AlertTriangle size={12} /> Yang sebenarnya diuji
+            <AlertTriangle size={12} />{" "}{t("Yang sebenarnya diuji", "What's really being tested")}
           </span>
           <p>{item.jebakan}</p>
         </div>
       )}
       <div className="lt-blok">
         <span>
-          <Lightbulb size={12} /> Strategi menjawab
+          <Lightbulb size={12} />{" "}{t("Strategi menjawab", "How to answer")}
         </span>
         <p>{item.strategi}</p>
       </div>
       {item.contoh && (
         <div className="lt-blok contoh">
           <span>
-            <MessageSquareQuote size={12} /> Contoh jawaban
+            <MessageSquareQuote size={12} />{" "}{t("Contoh jawaban", "Sample answer")}
           </span>
           <p>{item.contoh}</p>
-          <small>Ini kerangka, bukan hafalan. Ganti dengan pengalamanmu sendiri.</small>
+          <small>{t("Ini kerangka, bukan hafalan. Ganti dengan pengalamanmu sendiri.", "This is a framework, not a script. Swap in your own experience.")}</small>
         </div>
       )}
     </div>
@@ -259,32 +260,32 @@ function ModeTantangan({ onTutup }) {
   const mm = `${Math.floor(sisa / 60)}:${String(sisa % 60).padStart(2, "0")}`;
 
   return (
-    <div className="lt-tantangan" role="region" aria-label="Mode tantangan">
+    <div className="lt-tantangan" role="region" aria-label={t("Mode tantangan", "Challenge mode")}>
       <div className="lt-t-atas">
         <div className="lt-t-judul">
-          <Zap size={16} /> Mode tantangan
+          <Zap size={16} />{" "}{t("Mode tantangan", "Challenge mode")}
         </div>
         <div className="lt-t-skor">
           <span>
-            <Trophy size={13} /> Beruntun <b>{skor.beruntun}</b>
+            <Trophy size={13} />{" "}{t("Beruntun", "Streak")}{" "}<b>{skor.beruntun}</b>
           </span>
           <span>
-            Terbaik <b>{skor.terbaik}</b>
+            {t("Terbaik", "Best")}{" "}<b>{skor.terbaik}</b>
           </span>
           <span>
-            Dijawab <b>{skor.dijawab}</b>
+            {t("Dijawab", "Answered")}{" "}<b>{skor.dijawab}</b>
           </span>
         </div>
         <button type="button" className="lt-t-tutup" onClick={onTutup}>
-          Tutup
+          {t("Tutup", "Close")}
         </button>
       </div>
 
-      <div className="lt-t-sumber" role="radiogroup" aria-label="Sumber pertanyaan">
+      <div className="lt-t-sumber" role="radiogroup" aria-label={t("Sumber pertanyaan", "Question pool")}>
         {[
-          ["neraka", "Level neraka"],
-          ["sulit", "Semua yang sulit"],
-          ["semua", "Semua pertanyaan"],
+          ["neraka", t("Level neraka", "Brutal")],
+          ["sulit", t("Semua yang sulit", "All hard ones")],
+          ["semua", t("Semua pertanyaan", "All questions")],
         ].map(([id, l]) => (
           <button key={id} type="button" role="radio" aria-checked={sumber === id} className={sumber === id ? "on" : ""} onClick={() => setSumber(id)}>
             {l}
@@ -316,7 +317,7 @@ function ModeTantangan({ onTutup }) {
             </svg>
             <div>
               <b>{mm}</b>
-              <span>{fase === "pikir" ? "Waktu berpikir, susun poin jawabanmu" : "Jawab dengan suara keras, seperti di ruang interview"}</span>
+              <span>{fase === "pikir" ? t("Waktu berpikir, susun poin jawabanmu", "Thinking time, outline your answer") : t("Jawab dengan suara keras, seperti di ruang interview", "Answer out loud, like in a real interview")}</span>
             </div>
           </div>
         )}
@@ -327,37 +328,37 @@ function ModeTantangan({ onTutup }) {
           {fase === "siap" && (
             <>
               <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => setFase("pikir")}>
-                <Play size={15} /> Mulai {FASE_DETIK.pikir} detik berpikir
+                <Play size={15} />{" "}{t("Mulai", "Start")}{" "}{FASE_DETIK.pikir}{" "}{t("detik berpikir", "seconds to think")}
               </button>
               <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={lanjut}>
-                <Shuffle size={15} /> Acak lagi
+                <Shuffle size={15} />{" "}{t("Acak lagi", "Shuffle")}
               </button>
             </>
           )}
           {fase === "pikir" && (
             <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => setFase("jawab")}>
-              <Timer size={15} /> Sudah siap, mulai menjawab
+              <Timer size={15} />{" "}{t("Sudah siap, mulai menjawab", "Ready, start answering")}
             </button>
           )}
           {fase === "jawab" && (
             <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => setFase("ulas")}>
-              <Eye size={15} /> Selesai, lihat pembahasan
+              <Eye size={15} />{" "}{t("Selesai, lihat pembahasan", "Done, show the breakdown")}
             </button>
           )}
           {fase === "ulas" && (
             <>
-              <span className="lt-t-tanya">Jawabanmu tadi sudah sekuat contoh?</span>
+              <span className="lt-t-tanya">{t("Jawabanmu tadi sudah sekuat contoh?", "Was your answer as strong as the sample?")}</span>
               <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => nilai(true)}>
-                Sudah kuat
+                {t("Sudah kuat", "Yes, strong")}
               </button>
               <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => nilai(false)}>
-                Perlu latihan lagi
+                {t("Perlu latihan lagi", "Needs more practice")}
               </button>
             </>
           )}
           {fase !== "siap" && fase !== "ulas" && (
             <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={lanjut}>
-              <SkipForward size={15} /> Lewati
+              <SkipForward size={15} />{" "}{t("Lewati", "Skip")}
             </button>
           )}
         </div>
@@ -438,7 +439,7 @@ export function LatihanInterviewPanel() {
         >
           <MessageSquareQuote size={17} color={T.accent} />
           <span style={{ fontSize: 16, fontWeight: 600, color: T.ink }}>
-            Latihan Pertanyaan Interview
+            {t("Latihan Pertanyaan Interview", "Interview Question Practice")}
           </span>
         </div>
         <div
@@ -449,10 +450,7 @@ export function LatihanInterviewPanel() {
             marginBottom: 14,
           }}
         >
-          {TOTAL_PERTANYAAN} pertanyaan, mulai dari yang sering menjebak sampai
-          level neraka, ditambah kasus hitung cepat dan interview bahasa Inggris. Klik
-          pertanyaan untuk melihat apa yang sebenarnya diuji, strategi, dan
-          contoh jawabannya.
+          {TOTAL_PERTANYAAN}{" "}{t("pertanyaan, mulai dari yang sering menjebak sampai level neraka, ditambah kasus hitung cepat dan interview bahasa Inggris. Klik pertanyaan untuk melihat apa yang sebenarnya diuji, strategi, dan contoh jawabannya.", "questions, from common traps to the brutal ones, plus quick-maths cases and English interviews. Click a question to see what's really being tested, a strategy, and a sample answer.")}
         </div>
         {!tantangan && (
           <button type="button" className="lt-mulai" onClick={() => setTantangan(true)}>
@@ -460,8 +458,8 @@ export function LatihanInterviewPanel() {
               <Zap size={18} />
             </span>
             <span>
-              <b>Mode tantangan</b>
-              <small>Pertanyaan acak, 20 detik berpikir, 2 menit menjawab. Berani?</small>
+              <b>{t("Mode tantangan", "Challenge mode")}</b>
+              <small>{t("Pertanyaan acak, 20 detik berpikir, 2 menit menjawab. Berani?", "A random question, 20 seconds to think, 2 minutes to answer. Up for it?")}</small>
             </span>
             <Play size={16} />
           </button>
@@ -482,7 +480,7 @@ export function LatihanInterviewPanel() {
           <input
             value={cari}
             onChange={(e) => setCari(e.target.value)}
-            placeholder="Cari pertanyaan atau kata kunci..."
+            placeholder={t("Cari pertanyaan atau kata kunci...", "Search questions or keywords...")}
             style={{
               width: "100%",
               border: `1px solid ${T.border}`,
@@ -518,7 +516,7 @@ export function LatihanInterviewPanel() {
             }}
           >
             <BookmarkCheck size={12} />
-            Ditandai ({ditandai.size})
+            {t("Ditandai (", "Marked (")}{ditandai.size})
           </button>
         )}
       </Glass>
@@ -572,10 +570,10 @@ export function LatihanInterviewPanel() {
       {/* Keterangan jumlah hasil */}
       <div style={{ fontSize: 11.5, color: T.inkFaint, marginBottom: 10 }}>
         {sedangMencari
-          ? `${jumlahHasil} pertanyaan cocok dengan pencarianmu`
+          ? t(`${jumlahHasil} pertanyaan cocok dengan pencarianmu`, `${jumlahHasil} questions match your search`)
           : hanyaDitandai
-            ? `${jumlahHasil} pertanyaan ditandai di kategori ini`
-            : `${jumlahHasil} pertanyaan di kategori ini`}
+            ? t(`${jumlahHasil} pertanyaan ditandai di kategori ini`, `${jumlahHasil} marked questions in this category`)
+            : t(`${jumlahHasil} pertanyaan di kategori ini`, `${jumlahHasil} questions in this category`)}
       </div>
 
       {/* Daftar pertanyaan */}
@@ -583,8 +581,8 @@ export function LatihanInterviewPanel() {
         <Glass style={{ padding: 28, textAlign: "center" }}>
           <div style={{ fontSize: 13, color: T.inkSoft, lineHeight: 1.7 }}>
             {hanyaDitandai
-              ? "Belum ada pertanyaan yang ditandai di kategori ini."
-              : "Tidak ada pertanyaan yang cocok. Coba kata kunci lain."}
+              ? t("Belum ada pertanyaan yang ditandai di kategori ini.", "No marked questions in this category yet.")
+              : t("Tidak ada pertanyaan yang cocok. Coba kata kunci lain.", "No matching questions. Try another keyword.")}
           </div>
         </Glass>
       ) : (

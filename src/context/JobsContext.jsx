@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { panggilApi, keJob } from "../utils/apiLoker";
 import { useAuth } from "./AuthContext";
 import { useLangganan } from "./LanggananContext";
+import { t } from "../i18n.js";
 
 /**
  * Akun gratis & pengunjung membuka BATAS_GRATIS loker terbaru. Paket
@@ -59,7 +60,7 @@ export function JobsProvider({ children }) {
         remoteContoh: (d.remoteContoh || []).map(keJob),
       });
     } catch (e) {
-      setError(e.message || "Data loker sedang tidak bisa dimuat.");
+      setError(e.message || t("Data loker sedang tidak bisa dimuat.", "Job data can't be loaded right now."));
     } finally {
       setLoading(false);
     }

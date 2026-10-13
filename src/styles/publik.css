@@ -4667,3 +4667,29 @@ html[data-tema="gelap"] .pb-gaji-legenda .pita {
 .pb-grup-strip .pb-grup-tautan {
   margin: 0;
 }
+
+/* ======================================================= pilihan bahasa */
+.pb-icon-btn.pb-bahasa-btn {
+  width: auto;
+  padding: 0 10px;
+  gap: 5px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.pb-bahasa-kode {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--brand);
+}
+.pb-foot-pilihan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.pb-hakcipta {
+  line-height: 1.6;
+}

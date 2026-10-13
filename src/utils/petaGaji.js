@@ -7,6 +7,7 @@
  */
 import { klasifikasiLoker } from "./petaLoker.js";
 import { kotaDari } from "./sumberLoker.js";
+import { lokal, t } from "../i18n.js";
 
 const PER_BULAN = {
   yearly: 1 / 12,
@@ -120,8 +121,8 @@ export function gajiPosisi(baris, kata) {
   const kunci = kata.toLowerCase().split(/\s+/).filter(Boolean);
   if (!kunci.length) return null;
   const cocok = baris.filter((b) => {
-    const t = `${b.job.posisi} ${b.job.kategori || ""}`.toLowerCase();
-    return kunci.every((k) => t.includes(k));
+    const tt = `${b.job.posisi} ${b.job.kategori || ""}`.toLowerCase();
+    return kunci.every((k) => tt.includes(k));
   });
   if (!cocok.length) return { n: 0, contoh: [] };
   return {
@@ -132,7 +133,7 @@ export function gajiPosisi(baris, kata) {
 
 /** "Rp 7,5 jt" — ringkas untuk label grafik. */
 export function jt(n) {
-  if (n >= 1e9) return `Rp ${(n / 1e9).toLocaleString("id-ID", { maximumFractionDigits: 1 })} M`;
-  if (n >= 1e6) return `Rp ${(n / 1e6).toLocaleString("id-ID", { maximumFractionDigits: 1 })} jt`;
-  return `Rp ${Math.round(n / 1e3).toLocaleString("id-ID")} rb`;
+  if (n >= 1e9) return `Rp ${(n / 1e9).toLocaleString(lokal(), { maximumFractionDigits: 1 })} M`;
+  if (n >= 1e6) return `Rp ${(n / 1e6).toLocaleString(lokal(), { maximumFractionDigits: 1 })} ${t("jt", "M")}`;
+  return `Rp ${Math.round(n / 1e3).toLocaleString(lokal())} ${t("rb", "K")}`;
 }

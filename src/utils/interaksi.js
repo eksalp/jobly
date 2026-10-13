@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { lokal } from "../i18n.js";
 
 /**
  * Pemuatan otomatis: begitu elemen penanda (biasanya tombol "Muat lebih
@@ -48,7 +49,7 @@ export function useHitungNaik(target, durasi = 900) {
     if (!el || !Number.isFinite(target)) return;
     const akhir = Math.round(target);
     const tulis = (n) => {
-      el.textContent = Math.round(n).toLocaleString("id-ID");
+      el.textContent = Math.round(n).toLocaleString(lokal());
     };
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches || akhir === 0) {
       tulis(akhir);

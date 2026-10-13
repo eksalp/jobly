@@ -27,6 +27,7 @@ import { useKurs, idrPer, rupiahRingkas } from "../../utils/kurs";
 import { tautan, bagikan, keHalaman } from "../../utils/navigasi";
 import { useAuth } from "../../context/AuthContext";
 import { useSavedJobs } from "../../context/SavedJobsContext";
+import { t } from "../../i18n.js";
 
 /**
  * Kartu loker Jobly — dipakai di Beranda, Semua loker, Cocok untukku,
@@ -72,10 +73,10 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
     henti(e);
     const hasil = await bagikan({
       judul: job.posisi,
-      teks: `${job.posisi} di ${job.perusahaan}`,
+      teks: t(`${job.posisi} di ${job.perusahaan}`, `${job.posisi} at ${job.perusahaan}`),
       url,
     });
-    if (hasil === "disalin") onToast?.("Tautan lowongan disalin");
+    if (hasil === "disalin") onToast?.(t("Tautan lowongan disalin", "Job link copied"));
   };
 
   const klikSimpan = (e) => {
@@ -85,7 +86,7 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
       return;
     }
     toggleSave(job.id);
-    onToast?.(tersimpan ? "Dihapus dari loker tersimpan" : "Disimpan ke Loker tersimpan");
+    onToast?.(tersimpan ? t("Dihapus dari loker tersimpan", "Removed from saved jobs") : t("Disimpan ke Loker tersimpan", "Added to saved jobs"));
   };
 
   const klikLacak = (e) => {
@@ -109,7 +110,7 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
             </span>
           </div>
         </div>
-        {lokerBaru(job.tanggal) && <span className="pb-badge-new">Baru</span>}
+        {lokerBaru(job.tanggal) && <span className="pb-badge-new">{t("Baru", "New")}</span>}
       </div>
 
       <h3>{job.posisi}</h3>
@@ -135,7 +136,7 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
       {cocok && cocok.persen > 0 && (
         <div className="pb-match">
           <div className="pb-match-top">
-            <b>{cocok.persen}% cocok</b>
+            <b>{t(`${cocok.persen}% cocok`, `${cocok.persen}% match`)}</b>
             <span className="pb-match-bar" aria-hidden="true">
               <i style={{ width: `${cocok.persen}%` }} />
             </span>
@@ -153,22 +154,22 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
             {rupiah && <small>{rupiah}</small>}
           </>
         ) : (
-          <span className="none">Gaji tidak dicantumkan</span>
+          <span className="none">{t("Gaji tidak dicantumkan", "Salary not listed")}</span>
         )}
       </div>
 
       <div className="pb-card-foot">
         <a className="pb-link" {...tautan(url)}>
-          Lihat detail <ArrowRight size={14} />
+          {t("Lihat detail", "View details")} <ArrowRight size={14} />
         </a>
         <div className="pb-card-acts">
           <button
             type="button"
             className={`pb-icon-btn ${tersimpan ? "on" : ""}`}
             onClick={klikSimpan}
-            aria-label={tersimpan ? "Hapus dari tersimpan" : "Simpan loker"}
+            aria-label={tersimpan ? t("Hapus dari tersimpan", "Remove from saved") : t("Simpan loker", "Save job")}
             aria-pressed={tersimpan}
-            title={tersimpan ? "Tersimpan" : "Simpan"}
+            title={tersimpan ? t("Tersimpan", "Saved") : t("Simpan", "Save")}
           >
             {tersimpan ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
           </button>
@@ -177,8 +178,8 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
               type="button"
               className={`pb-icon-btn ${dilamar ? "on" : ""}`}
               onClick={klikLacak}
-              aria-label={dilamar ? "Sudah dicatat di Lamaran saya" : "Catat ke Lamaran saya"}
-              title={dilamar ? "Sudah dicatat di Lamaran saya" : "Catat ke Lamaran saya"}
+              aria-label={dilamar ? t("Sudah dicatat di Lamaran saya", "Already logged in My applications") : t("Catat ke Lamaran saya", "Log in My applications")}
+              title={dilamar ? t("Sudah dicatat di Lamaran saya", "Already logged in My applications") : t("Catat ke Lamaran saya", "Log in My applications")}
               disabled={dilamar}
             >
               {dilamar ? <ListChecks size={15} /> : <ListPlus size={15} />}
@@ -188,8 +189,8 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
             type="button"
             className="pb-icon-btn"
             onClick={klikBagikan}
-            aria-label="Bagikan lowongan"
-            title="Bagikan"
+            aria-label={t("Bagikan lowongan", "Share job")}
+            title={t("Bagikan", "Share")}
           >
             <Share2 size={15} />
           </button>

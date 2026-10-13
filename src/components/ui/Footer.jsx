@@ -1,5 +1,6 @@
 import React from "react";
 import { T } from "../../theme";
+import { t } from "../../i18n.js";
 
 /**
  * Footer ringkas untuk dashboard. Halaman publik memakai PublicFooter
@@ -22,7 +23,7 @@ export function Footer() {
         marginTop: 24,
       }}
     >
-      © {tahun} Jobly · Dibuat oleh Eksal Pujianto
+      © {tahun}{" "}{t("Jobly · Dibuat oleh Eksal Pujianto", "Jobly · Made by Eksal Pujianto")}
     </div>
   );
 }

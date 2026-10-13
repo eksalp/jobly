@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "./AuthContext";
+import { t } from "../i18n.js";
 
 export const UserProfileContext = createContext({
   fullName: "",
@@ -23,7 +24,7 @@ export function useUserProfile() {
 export function defaultProfileFor(user) {
   return {
     fullName:
-      user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User baru",
+      user?.user_metadata?.full_name || user?.email?.split("@")[0] || t("User baru", "New user"),
     headline: "",
     location: "",
     summary: "",

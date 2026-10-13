@@ -1,3 +1,4 @@
+import { t } from "../i18n.js";
 /**
  * Pilihan font, tema, dan warna aksen CV.
  *
@@ -9,29 +10,29 @@
  * SIL Open Font License). Font tanpa `file` memakai font bawaan PDF.
  */
 export const FONT_CV = [
-  { id: "helvetica", nama: "Arial", ket: "Sans · bawaan", css: "Arial, Helvetica, sans-serif", pdf: "helvetica" },
-  { id: "carlito", nama: "Calibri", ket: "Sans · setara Calibri", css: "'Carlito', Calibri, sans-serif", file: "carlito" },
-  { id: "lato", nama: "Lato", ket: "Sans · modern", css: "'Lato', sans-serif", file: "lato" },
-  { id: "roboto", nama: "Roboto", ket: "Sans · rapat", css: "'Roboto', sans-serif", file: "roboto" },
-  { id: "times", nama: "Times New Roman", ket: "Serif · bawaan", css: "'Times New Roman', Times, serif", pdf: "times", skala: 1.04 },
-  { id: "caladea", nama: "Cambria", ket: "Serif · setara Cambria", css: "'Caladea', Cambria, serif", file: "caladea" },
-  { id: "gelasio", nama: "Georgia", ket: "Serif · setara Georgia", css: "'Gelasio', Georgia, serif", file: "gelasio", skala: 0.97 },
-  { id: "eb-garamond", nama: "Garamond", ket: "Serif · klasik", css: "'EB Garamond', Garamond, serif", file: "eb-garamond", skala: 1.08 },
+  { id: "helvetica", nama: "Arial", ket: t("Sans · bawaan", "Sans · built-in"), css: "Arial, Helvetica, sans-serif", pdf: "helvetica" },
+  { id: "carlito", nama: "Calibri", ket: t("Sans · setara Calibri", "Sans · Calibri equivalent"), css: "'Carlito', Calibri, sans-serif", file: "carlito" },
+  { id: "lato", nama: "Lato", ket: t("Sans · modern", "Sans · modern"), css: "'Lato', sans-serif", file: "lato" },
+  { id: "roboto", nama: "Roboto", ket: t("Sans · rapat", "Sans · compact"), css: "'Roboto', sans-serif", file: "roboto" },
+  { id: "times", nama: "Times New Roman", ket: t("Serif · bawaan", "Serif · built-in"), css: "'Times New Roman', Times, serif", pdf: "times", skala: 1.04 },
+  { id: "caladea", nama: "Cambria", ket: t("Serif · setara Cambria", "Serif · Cambria equivalent"), css: "'Caladea', Cambria, serif", file: "caladea" },
+  { id: "gelasio", nama: "Georgia", ket: t("Serif · setara Georgia", "Serif · Georgia equivalent"), css: "'Gelasio', Georgia, serif", file: "gelasio", skala: 0.97 },
+  { id: "eb-garamond", nama: "Garamond", ket: t("Serif · klasik", "Serif · classic"), css: "'EB Garamond', Garamond, serif", file: "eb-garamond", skala: 1.08 },
 ];
 
 export const TEMA_CV = [
-  { id: "klasik", nama: "Klasik", ket: "Rata kiri, garis di bawah judul bagian" },
-  { id: "modern", nama: "Modern", ket: "Nama & judul bagian berwarna aksen" },
-  { id: "eksekutif", nama: "Eksekutif", ket: "Kepala CV di tengah, judul diapit garis" },
-  { id: "ringkas", nama: "Ringkas", ket: "Tanpa garis, muat lebih banyak isi" },
+  { id: "klasik", nama: t("Klasik", "Classic"), ket: t("Rata kiri, garis di bawah judul bagian", "Left-aligned, rule under section headings") },
+  { id: "modern", nama: "Modern", ket: t("Nama & judul bagian berwarna aksen", "Name & headings in the accent colour") },
+  { id: "eksekutif", nama: t("Eksekutif", "Executive"), ket: t("Kepala CV di tengah, judul diapit garis", "Centred header, headings between rules") },
+  { id: "ringkas", nama: t("Ringkas", "Compact"), ket: t("Tanpa garis, muat lebih banyak isi", "No rules, fits more content") },
 ];
 
 export const AKSEN_CV = [
-  { id: "hitam", nama: "Hitam", hex: "#1A1A1A" },
+  { id: "hitam", nama: t("Hitam", "Black"), hex: "#1A1A1A" },
   { id: "navy", nama: "Navy", hex: "#1F3A5F" },
-  { id: "hijau", nama: "Hijau tua", hex: "#1E5B4F" },
-  { id: "marun", nama: "Marun", hex: "#7A2331" },
-  { id: "abu", nama: "Abu arang", hex: "#454B55" },
+  { id: "hijau", nama: t("Hijau tua", "Dark green"), hex: "#1E5B4F" },
+  { id: "marun", nama: t("Marun", "Maroon"), hex: "#7A2331" },
+  { id: "abu", nama: t("Abu arang", "Charcoal"), hex: "#454B55" },
 ];
 
 export const GAYA_AWAL = { font: "helvetica", tema: "klasik", aksen: "hitam" };
@@ -40,7 +41,7 @@ export function bacaGaya(g) {
   const gaya = { ...GAYA_AWAL, ...(g || {}) };
   return {
     font: FONT_CV.find((f) => f.id === gaya.font) || FONT_CV[0],
-    tema: TEMA_CV.find((t) => t.id === gaya.tema)?.id || "klasik",
+    tema: TEMA_CV.find((tt) => tt.id === gaya.tema)?.id || "klasik",
     aksen: AKSEN_CV.find((a) => a.id === gaya.aksen) || AKSEN_CV[0],
   };
 }

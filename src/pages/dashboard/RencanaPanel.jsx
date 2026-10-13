@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useJobs } from "../../context/JobsContext";
 import { useApplications } from "../../hooks/useApplications";
 import { tautan } from "../../utils/navigasi";
+import { lokal, t } from "../../i18n.js";
 
 /*
  * Rencana lamar — target mingguan, streak harian, dan misi kecil.
@@ -14,7 +15,7 @@ import { tautan } from "../../utils/navigasi";
  */
 
 const PILIHAN_TARGET = [5, 10, 15, 20];
-const HARI = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+const HARI = [t("Sen", "Mon"), t("Sel", "Tue"), t("Rab", "Wed"), t("Kam", "Thu"), t("Jum", "Fri"), t("Sab", "Sat"), t("Min", "Sun")];
 
 const tglLokal = (d) => {
   const x = new Date(d);
@@ -83,9 +84,9 @@ export function RencanaPanel() {
   const data = useMemo(() => {
     const perHari = new Map();
     for (const l of lamaran) {
-      const t = l.tanggal_lamar || (l.created_at || "").slice(0, 10);
-      if (!t) continue;
-      perHari.set(t, (perHari.get(t) || 0) + 1);
+      const tt = l.tanggal_lamar || (l.created_at || "").slice(0, 10);
+      if (!tt) continue;
+      perHari.set(tt, (perHari.get(tt) || 0) + 1);
     }
 
     // Minggu ini (Senin–Minggu)
@@ -122,8 +123,8 @@ export function RencanaPanel() {
 
     // Rekor minggu terbaik
     const perMinggu = new Map();
-    for (const [t, n] of perHari) {
-      const k = tglLokal(awalMinggu(new Date(`${t}T00:00:00`)));
+    for (const [tt, n] of perHari) {
+      const k = tglLokal(awalMinggu(new Date(`${tt}T00:00:00`)));
       perMinggu.set(k, (perMinggu.get(k) || 0) + n);
     }
     const rekor = Math.max(0, ...perMinggu.values());
@@ -141,15 +142,15 @@ export function RencanaPanel() {
   const MISI = [
     {
       id: "lamar",
-      t: `Kirim ${Math.max(1, perHariPerlu || 1)} lamaran hari ini`,
-      d: "Tercentang otomatis saat kamu mencatat lamaran.",
+      t: t(`Kirim ${Math.max(1, perHariPerlu || 1)} lamaran hari ini`, `Send ${Math.max(1, perHariPerlu || 1)} applications today`),
+      d: t("Tercentang otomatis saat kamu mencatat lamaran.", "Ticks itself when you log an application."),
       otomatis: data.hariIniN >= Math.max(1, perHariPerlu || 1),
       path: "/dashboard/jobfinder",
-      aksi: "Cari yang cocok",
+      aksi: t("Cari yang cocok", "Find a match"),
     },
-    { id: "simpan", t: "Simpan 3 loker yang menarik", d: "Bahan lamaran untuk besok.", path: "/loker", aksi: "Buka loker" },
-    { id: "latih", t: "Latih 1 pertanyaan level neraka", d: "Jawab dengan suara, maksimal 2 menit.", path: "/dashboard/interview", aksi: "Latihan" },
-    { id: "cv", t: "Perbaiki 1 bullet di CV", d: "Tambahkan angka: berapa, berapa banyak, berapa persen.", path: "/dashboard/cvbuilder", aksi: "Buka CV" },
+    { id: "simpan", t: t("Simpan 3 loker yang menarik", "Save 3 interesting jobs"), d: t("Bahan lamaran untuk besok.", "Material for tomorrow's applications."), path: "/loker", aksi: t("Buka loker", "Open jobs") },
+    { id: "latih", t: t("Latih 1 pertanyaan level neraka", "Practise 1 brutal question"), d: t("Jawab dengan suara, maksimal 2 menit.", "Answer out loud, 2 minutes max."), path: "/dashboard/interview", aksi: t("Latihan", "Practise") },
+    { id: "cv", t: t("Perbaiki 1 bullet di CV", "Improve 1 bullet in your CV"), d: t("Tambahkan angka: berapa, berapa banyak, berapa persen.", "Add numbers: how much, how many, what percentage."), path: "/dashboard/cvbuilder", aksi: t("Buka CV", "Open CV") },
   ];
   const selesai = MISI.filter((m) => m.otomatis || centang[m.id]).length;
 
@@ -161,26 +162,26 @@ export function RencanaPanel() {
             <Cincin nilai={data.mingguIni} target={target} />
             <div className="angka">
               <b>{loading ? "…" : data.mingguIni}</b>
-              <span>dari {target}</span>
+              <span>{t("dari", "of")} {target}</span>
             </div>
           </div>
           <div style={{ minWidth: 0 }}>
-            <span className="pb-label">Minggu ini</span>
+            <span className="pb-label">{t("Minggu ini", "This week")}</span>
             <h2>
               {tercapai
-                ? "Target minggu ini tercapai."
+                ? t("Target minggu ini tercapai.", "This week's target is reached.")
                 : data.mingguIni === 0
-                  ? "Mulai minggu ini dengan satu lamaran."
-                  : `${sisaTarget} lamaran lagi untuk mencapai target.`}
+                  ? t("Mulai minggu ini dengan satu lamaran.", "Start this week with one application.")
+                  : t(`${sisaTarget} lamaran lagi untuk mencapai target.`, `${sisaTarget} more applications to hit your target.`)}
             </h2>
             <p>
               {tercapai
-                ? "Pertahankan ritmenya. Biasanya yang paling rajin melamar yang paling sering dipanggil interview."
-                : `Sekitar ${perHariPerlu} lamaran per hari selama ${sisaHari} hari tersisa.`}
+                ? t("Pertahankan ritmenya. Biasanya yang paling rajin melamar yang paling sering dipanggil interview.", "Keep the rhythm. The most consistent applicants usually get the most interviews.")
+                : t(`Sekitar ${perHariPerlu} lamaran per hari selama ${sisaHari} hari tersisa.`, `About ${perHariPerlu} applications a day for the ${sisaHari} days left.`)}
             </p>
-            <div className="pb-rencana-target" role="radiogroup" aria-label="Target lamaran per minggu">
+            <div className="pb-rencana-target" role="radiogroup" aria-label={t("Target lamaran per minggu", "Weekly application target")}>
               <Target size={15} />
-              <span>Target per minggu</span>
+              <span>{t("Target per minggu", "Weekly target")}</span>
               {PILIHAN_TARGET.map((n) => (
                 <button key={n} type="button" role="radio" aria-checked={target === n} className={target === n ? "on" : ""} onClick={() => setTarget(n)}>
                   {n}
@@ -196,8 +197,8 @@ export function RencanaPanel() {
               <Flame size={26} />
             </span>
             <div>
-              <b>{data.streak} hari</b>
-              <span>streak melamar</span>
+              <b>{data.streak} {t("hari", data.streak === 1 ? "day" : "days")}</b>
+              <span>{t("streak melamar", "application streak")}</span>
             </div>
           </div>
           <div className="pb-rencana-minggu">
@@ -210,10 +211,10 @@ export function RencanaPanel() {
           </div>
           <div className="pb-rencana-mini">
             <span>
-              <Trophy size={14} /> Rekor seminggu: <b>{data.rekor}</b>
+              <Trophy size={14} />{" "}{t("Rekor seminggu:", "Best week:")}{" "}<b>{data.rekor}</b>
             </span>
             <span>
-              <CalendarDays size={14} /> Total: <b>{data.total}</b>
+              <CalendarDays size={14} />{" "}{t("Total:", "Total:")}{" "}<b>{data.total}</b>
             </span>
           </div>
         </div>
@@ -222,9 +223,9 @@ export function RencanaPanel() {
       <div className="pb-rencana-bawah">
         <div className="pb-rencana-kartu" data-muncul="">
           <div className="pb-rencana-judul">
-            <h3>Misi hari ini</h3>
+            <h3>{t("Misi hari ini", "Today's missions")}</h3>
             <span>
-              {selesai}/{MISI.length} selesai
+              {selesai}/{MISI.length} {t("selesai", "done")}
             </span>
           </div>
           <div className="pb-rencana-progres" aria-hidden="true">
@@ -240,7 +241,7 @@ export function RencanaPanel() {
                     className="cek"
                     aria-pressed={Boolean(ok)}
                     disabled={m.otomatis !== undefined}
-                    aria-label={ok ? `Batalkan: ${m.t}` : `Tandai selesai: ${m.t}`}
+                    aria-label={ok ? t(`Batalkan: ${m.t}`, `Undo: ${m.t}`) : t(`Tandai selesai: ${m.t}`, `Mark done: ${m.t}`)}
                     onClick={() => setCentang((c) => ({ ...c, [m.id]: !c[m.id] }))}
                   >
                     {ok ? <CheckCircle2 size={22} /> : <Circle size={22} />}
@@ -260,10 +261,10 @@ export function RencanaPanel() {
 
         <div className="pb-rencana-kartu" data-muncul="" style={{ "--tunda": "80ms" }}>
           <div className="pb-rencana-judul">
-            <h3>12 minggu terakhir</h3>
-            <span>tiap kotak = 1 hari</span>
+            <h3>{t("12 minggu terakhir", "Last 12 weeks")}</h3>
+            <span>{t("tiap kotak = 1 hari", "each box = 1 day")}</span>
           </div>
-          <div className="pb-peta-aktivitas" role="img" aria-label="Jumlah lamaran per hari selama 12 minggu terakhir">
+          <div className="pb-peta-aktivitas" role="img" aria-label={t("Jumlah lamaran per hari selama 12 minggu terakhir", "Applications per day over the last 12 weeks")}>
             {data.kolom.map((kol, i) => (
               <div key={i}>
                 {kol.map((h) => (
@@ -277,16 +278,16 @@ export function RencanaPanel() {
             ))}
           </div>
           <div className="pb-peta-legenda">
-            Sedikit
+            {t("Sedikit", "Fewer")}
             {[0, 1, 2, 3, 4].map((n) => (
               <i key={n} className={`l${n}`} />
             ))}
-            Banyak
+            {t("Banyak", "More")}
           </div>
           <div className="pb-rencana-segar">
-            <b>{lokerSegar.toLocaleString("id-ID")}</b> loker baru masuk dalam 2 hari terakhir.{" "}
+            <b>{lokerSegar.toLocaleString(lokal())}</b>{" "}{t("loker baru masuk dalam 2 hari terakhir.", "new jobs in the last 2 days.")}{" "}
             <a className="pb-link" {...tautan("/dashboard/jobfinder")}>
-              Lihat yang cocok <ArrowRight size={14} />
+              {t("Lihat yang cocok", "See matches")}{" "}<ArrowRight size={14} />
             </a>
           </div>
         </div>

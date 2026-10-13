@@ -1,3 +1,4 @@
+import { t } from "../i18n.js";
 /**
  * Taxonomy bidang pekerjaan.
  *
@@ -1107,3 +1108,38 @@ export const TAXONOMY = [
     ],
   },
 ];
+
+/*
+ * Nama bidang dalam bahasa Inggris. Label asli (Indonesia) tetap dipakai
+ * sebagai kunci di server dan pencocokan; terjemahan hanya untuk tampilan.
+ */
+const LABEL_EN = {
+  "Umum / belum terdeteksi spesifik": "General / no specific field detected",
+  "Administrasi & Sekretariat": "Administration & Secretarial",
+  "Transaksi, Keuangan & Treasury": "Transactions, Finance & Treasury",
+  "Human Resources & People": "Human Resources & People",
+  "Sales & Business Development": "Sales & Business Development",
+  "Marketing & Brand": "Marketing & Brand",
+  "Customer Service & Support": "Customer Service & Support",
+  "Retail & E-commerce": "Retail & E-commerce",
+  "Perhotelan, Pariwisata & F&B": "Hospitality, Tourism & F&B",
+  "Logistik & Transportasi": "Logistics & Transportation",
+  "Manufaktur & Produksi": "Manufacturing & Production",
+  "Teknik & Konstruksi": "Engineering & Construction",
+  "Kesehatan & Medis": "Healthcare & Medical",
+  "Pendidikan & Pelatihan": "Education & Training",
+  "Hukum & Legal": "Law & Legal",
+  "Media, Jurnalistik & Penyiaran": "Media, Journalism & Broadcasting",
+  "Desain & Kreatif": "Design & Creative",
+  "IT & Rekayasa Perangkat Lunak": "IT & Software Engineering",
+  "Data & Keamanan Siber": "Data & Cybersecurity",
+  "AI Training & Otomasi": "AI Training & Automation",
+  "Teknologi Masa Depan & Riset": "Emerging Tech & Research",
+  "Di kantor": "On-site",
+  "Lainnya": "Other",
+};
+
+/** Label bidang/kelompok sesuai bahasa tampilan. */
+export function labelTampil(label) {
+  return t(label, LABEL_EN[label] ?? label);
+}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { lokal, t } from "../i18n.js";
 
 /**
  * Kurs mata uang asing → rupiah.
@@ -100,21 +101,21 @@ export function idrPer(kode, rates) {
 export function rupiahRingkas(n) {
   const v = Number(n);
   if (!Number.isFinite(v)) return "-";
-  const f = (x) => x.toLocaleString("id-ID", { maximumFractionDigits: 1 });
-  if (Math.abs(v) >= 1e9) return `Rp ${f(v / 1e9)} M`;
-  if (Math.abs(v) >= 1e6) return `Rp ${f(v / 1e6)} jt`;
-  return `Rp ${Math.round(v).toLocaleString("id-ID")}`;
+  const f = (x) => x.toLocaleString(lokal(), { maximumFractionDigits: 1 });
+  if (Math.abs(v) >= 1e9) return `Rp ${f(v / 1e9)} ${t("M", "B")}`;
+  if (Math.abs(v) >= 1e6) return `Rp ${f(v / 1e6)} ${t("jt", "M")}`;
+  return `Rp ${Math.round(v).toLocaleString(lokal())}`;
 }
 
 export function rupiahPenuh(n) {
   const v = Number(n);
   if (!Number.isFinite(v)) return "-";
-  return `Rp ${Math.round(v).toLocaleString("id-ID")}`;
+  return `Rp ${Math.round(v).toLocaleString(lokal())}`;
 }
 
 export function formatWaktuKurs(ms) {
   if (!ms) return null;
-  return new Date(ms).toLocaleDateString("id-ID", {
+  return new Date(ms).toLocaleDateString(lokal(), {
     day: "numeric",
     month: "short",
     year: "numeric",

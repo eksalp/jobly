@@ -5,10 +5,11 @@ import { Glass } from "./ui/Glass";
 import { Button } from "./ui/Button";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import { lokal, t } from "../i18n.js";
 
 const tglIndo = (s) =>
   s
-    ? new Date(s).toLocaleDateString("id-ID", {
+    ? new Date(s).toLocaleDateString(lokal(), {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -17,7 +18,7 @@ const tglIndo = (s) =>
 
 const jamIndo = (s) =>
   s
-    ? new Date(s).toLocaleTimeString("id-ID", {
+    ? new Date(s).toLocaleTimeString(lokal(), {
         hour: "2-digit",
         minute: "2-digit",
       })
@@ -62,7 +63,7 @@ function Cuplikan({ draft, bahasa, ringkas = false }) {
           marginBottom: 5,
         }}
       >
-        CUPLIKAN {bahasa === "en" ? "VERSI INGGRIS" : "VERSI INDONESIA"}
+        {t("CUPLIKAN", "PREVIEW")}{" "}{bahasa === "en" ? t("VERSI INGGRIS", "ENGLISH VERSION") : t("VERSI INDONESIA", "INDONESIAN VERSION")}
       </div>
       {judul && (
         <div
@@ -194,8 +195,7 @@ export function PilihDraftAi({
           <div
             style={{ flex: 1, fontSize: 12, color: T.ink, lineHeight: 1.45 }}
           >
-            Draft {bahasa === "en" ? "versi Inggris" : "versi Indonesia"} sudah
-            diterapkan. Periksa tiap bagian, lalu klik Simpan.
+            {t("Draft", "The")}{" "}{bahasa === "en" ? t("versi Inggris", "English draft") : t("versi Indonesia", "Indonesian draft")}{" "}{t("sudah diterapkan. Periksa tiap bagian, lalu klik Simpan.", "has been applied. Review each section, then click Save.")}
           </div>
         </div>
 
@@ -209,7 +209,7 @@ export function PilihDraftAi({
             flexWrap: "wrap",
           }}
         >
-          <span style={{ fontSize: 11, color: T.inkSoft }}>Bahasa</span>
+          <span style={{ fontSize: 11, color: T.inkSoft }}>{t("Bahasa", "Language")}</span>
           <div
             style={{
               display: "flex",
@@ -275,7 +275,7 @@ export function PilihDraftAi({
                 padding: 0,
               }}
             >
-              Pilih analisis lain
+              {t("Pilih analisis lain", "Choose another analysis")}
             </button>
           )}
         </div>
@@ -294,13 +294,13 @@ export function PilihDraftAi({
     // yang sama — tanpa jam, entrinya terlihat identik dan user tidak tahu
     // mana yang mereka pilih.
     const bagian = [`${tglIndo(d.created_at)} ${jamIndo(d.created_at)}`];
-    if (d.source_type === "linkedin") bagian.push("dari LinkedIn");
+    if (d.source_type === "linkedin") bagian.push(t("dari LinkedIn", "from LinkedIn"));
 
     const punyaId = Boolean(d[kolom]);
     const punyaEn = Boolean(d[`${kolom}_en`]);
-    if (punyaId && punyaEn) bagian.push("ID + EN");
-    else if (punyaEn) bagian.push("EN saja");
-    else bagian.push("ID saja");
+    if (punyaId && punyaEn) bagian.push(t("ID + EN", "ID + EN"));
+    else if (punyaEn) bagian.push(t("EN saja", "EN only"));
+    else bagian.push(t("ID saja", "ID only"));
 
     return bagian.join(" · ");
   };
@@ -377,7 +377,7 @@ export function PilihDraftAi({
               >
                 {terpilih?.arah_karier ||
                   terpilih?.kategori_label ||
-                  "Analisis"}
+                  t("Analisis", "Analysis")}
               </div>
               <div style={{ fontSize: 10.5, color: T.inkFaint, marginTop: 1 }}>
                 {labelRingkas(terpilih)}
@@ -440,7 +440,7 @@ export function PilihDraftAi({
                           lineHeight: 1.4,
                         }}
                       >
-                        {d.arah_karier || d.kategori_label || "Analisis"}
+                        {d.arah_karier || d.kategori_label || t("Analisis", "Analysis")}
                       </div>
                       <div
                         style={{
@@ -453,7 +453,7 @@ export function PilihDraftAi({
                         {i === 0 && (
                           <span style={{ color: T.teal, fontWeight: 600 }}>
                             {" "}
-                            · terbaru
+                            {t("· terbaru", "· latest")}
                           </span>
                         )}
                       </div>
@@ -483,7 +483,7 @@ export function PilihDraftAi({
           marginBottom: 11,
         }}
       >
-        <span style={{ fontSize: 11, color: T.inkSoft }}>Bahasa</span>
+        <span style={{ fontSize: 11, color: T.inkSoft }}>{t("Bahasa", "Language")}</span>
         <div
           style={{
             display: "flex",
@@ -508,7 +508,7 @@ export function PilihDraftAi({
                 title={
                   tersedia
                     ? ""
-                    : "Analisis ini dibuat sebelum ada fitur dua bahasa. Pilih analisis yang lebih baru."
+                    : t("Analisis ini dibuat sebelum ada fitur dua bahasa. Pilih analisis yang lebih baru.", "This analysis was made before two-language drafts existed. Choose a newer one.")
                 }
                 style={{
                   padding: "4px 11px",
@@ -548,14 +548,14 @@ export function PilihDraftAi({
           disabled={!draftAktif(terpilih)}
           style={{ fontSize: 12, padding: "8px 14px" }}
         >
-          <Sparkles size={12} /> Terapkan saran AI
+          <Sparkles size={12} />{" "}{t("Terapkan saran AI", "Apply AI suggestions")}
         </Button>
         <Button
           variant="outline"
           onClick={() => setTutup(true)}
           style={{ fontSize: 12, padding: "8px 14px" }}
         >
-          Nanti saja
+          {t("Nanti saja", "Not now")}
         </Button>
       </div>
     </Glass>

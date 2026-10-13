@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { lokal, t } from "../i18n.js";
 
 /**
  * Koneksi Gemini Live API lewat SDK resmi (@google/genai).
@@ -231,7 +232,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
             responseModalities: [Modality.AUDIO],
             speechConfig: {
               voiceConfig: { prebuiltVoiceConfig: { voiceName: suara } },
-              languageCode: "id-ID",
+              languageCode: lokal(),
             },
             systemInstruction: instruksi,
             inputAudioTranscription: {},
@@ -300,7 +301,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
             },
 
             onerror: (e) => {
-              const pesan = e?.message || "Koneksi suara bermasalah.";
+              const pesan = e?.message || t("Koneksi suara bermasalah.", "There's a problem with the voice connection.");
               setGalat(pesan);
               cb.current.onGalat?.(pesan, !s.siap);
             },
@@ -310,8 +311,8 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
               setMendengar(false);
               if (!s.ditutupSengaja) {
                 const pesan = e?.reason
-                  ? `Sesi terputus: ${e.reason}`
-                  : "Sesi terputus.";
+                  ? t(`Sesi terputus: ${e.reason}`, `Session disconnected: ${e.reason}`)
+                  : t("Sesi terputus.", "Session disconnected.");
                 setGalat(pesan);
                 cb.current.onGalat?.(pesan, !s.siap);
               }
@@ -377,8 +378,8 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       } catch (e) {
         const pesan =
           e?.name === "NotAllowedError"
-            ? "Izin mikrofon ditolak. Aktifkan izin mikrofon di pengaturan browser."
-            : e?.message || "Gagal memulai sesi suara.";
+            ? t("Izin mikrofon ditolak. Aktifkan izin mikrofon di pengaturan browser.", "Microphone access was denied. Allow the microphone in your browser settings.")
+            : e?.message || t("Gagal memulai sesi suara.", "Couldn't start the voice session.");
         setGalat(pesan);
         cb.current.onGalat?.(pesan, true);
         throw e;
@@ -434,7 +435,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     } catch {
       /* abaikan */
     }
-    s.stream?.getTracks().forEach((t) => t.stop());
+    s.stream?.getTracks().forEach((trek) => trek.stop());
 
     try {
       s.ctxMasuk?.close();

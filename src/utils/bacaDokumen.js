@@ -1,4 +1,5 @@
 import mammoth from "mammoth";
+import { t } from "../i18n.js";
 
 /**
  * Membaca teks dari berkas CV yang diunggah.
@@ -95,7 +96,7 @@ async function bacaPdf(file, onProgres) {
   } catch (e) {
     console.error("Gagal membuka berkas PDF:", e);
     throw new Error(
-      "Gagal membuka berkas PDF. Berkasnya mungkin rusak, atau coba tempel teksnya langsung.",
+      t("Gagal membuka berkas PDF. Berkasnya mungkin rusak, atau coba tempel teksnya langsung.", "Couldn't open the PDF. The file may be damaged; try pasting the text instead."),
     );
   }
 
@@ -123,10 +124,10 @@ async function bacaPdf(file, onProgres) {
 const MAKS_UKURAN = 10 * 1024 * 1024; // 10 MB
 
 export async function bacaDokumen(file, onProgres) {
-  if (!file) throw new Error("Tidak ada berkas yang dipilih.");
+  if (!file) throw new Error(t("Tidak ada berkas yang dipilih.", "No file selected."));
 
   if (file.size > MAKS_UKURAN) {
-    throw new Error("Ukuran berkas melebihi 10 MB. Coba kompres dulu.");
+    throw new Error(t("Ukuran berkas melebihi 10 MB. Coba kompres dulu.", "The file is larger than 10 MB. Try compressing it first."));
   }
 
   const nama = file.name.toLowerCase();
@@ -160,12 +161,12 @@ export async function bacaDokumen(file, onProgres) {
 
   if (nama.endsWith(".doc")) {
     throw new Error(
-      "Format .doc lama belum didukung. Buka di Word lalu simpan sebagai .docx atau PDF.",
+      t("Format .doc lama belum didukung. Buka di Word lalu simpan sebagai .docx atau PDF.", "Old .doc files aren't supported. Open it in Word and save as .docx or PDF."),
     );
   }
 
   throw new Error(
-    "Format tidak didukung. Gunakan PDF, DOCX, atau tempel teksnya langsung.",
+    t("Format tidak didukung. Gunakan PDF, DOCX, atau tempel teksnya langsung.", "Unsupported format. Use PDF, DOCX, or paste the text directly."),
   );
 }
 

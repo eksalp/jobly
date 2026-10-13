@@ -1,3 +1,4 @@
+import { t } from "../i18n.js";
 // Aturan review lokal — berjalan tanpa AI.
 // Hasil AI (kalau ada) ditambahkan sebagai temuan terpisah di panel.
 
@@ -32,7 +33,7 @@ export function auditProfile(p) {
     experience: auditExperience(p.experiences),
     education: auditEducation(p.education),
     certifications: auditCertifications(p.certifications),
-    volunteering: auditDaftar(p.volunteering, "pengalaman sukarela", 1, 8),
+    volunteering: auditDaftar(p.volunteering, t("pengalaman sukarela", "volunteer experience"), 1, 8),
     skills: auditSkills(p.skills),
     publications: auditDaftar(p.publications, "publikasi", 0, 5),
     awards: auditDaftar(p.awards, "penghargaan", 1, 6),
@@ -45,16 +46,16 @@ function auditCover(p) {
   if (!p.coverUrl)
     return {
       status: BAD,
-      ringkas: "Belum ada foto sampul",
+      ringkas: t("Belum ada foto sampul", "No cover photo yet"),
       temuan: [
-        "Sampul kosong menyisakan ruang abu-abu polos di bagian paling atas profil.",
+        t("Sampul kosong menyisakan ruang abu-abu polos di bagian paling atas profil.", "An empty cover leaves a plain grey space at the very top of your profile."),
       ],
     };
   return {
     status: OK,
-    ringkas: "Sampul terpasang",
+    ringkas: t("Sampul terpasang", "Cover photo added"),
     temuan: [
-      "Pastikan resolusi minimal 1584 × 396 px supaya tidak pecah di layar besar.",
+      t("Pastikan resolusi minimal 1584 × 396 px supaya tidak pecah di layar besar.", "Make sure it's at least 1584 × 396 px so it doesn't pixelate on large screens."),
     ],
   };
 }
@@ -63,67 +64,67 @@ function auditPhoto(p) {
   if (!p.photoUrl)
     return {
       status: BAD,
-      ringkas: "Belum ada foto profil",
+      ringkas: t("Belum ada foto profil", "No profile photo yet"),
       temuan: [
-        "Profil tanpa foto jarang dilirik recruiter dan terlihat belum selesai.",
+        t("Profil tanpa foto jarang dilirik recruiter dan terlihat belum selesai.", "Profiles without a photo rarely get a recruiter's attention and look unfinished."),
       ],
     };
-  return { status: OK, ringkas: "Foto profil terpasang", temuan: [] };
+  return { status: OK, ringkas: t("Foto profil terpasang", "Profile photo added"), temuan: [] };
 }
 
 function auditHeadline(h) {
-  const t = (h || "").trim();
-  if (!t)
+  const tt = (h || "").trim();
+  if (!tt)
     return {
       status: BAD,
-      ringkas: "Headline kosong",
-      temuan: ["Bagian dengan bobot pencarian tertinggi setelah nama."],
+      ringkas: t("Headline kosong", "Headline is empty"),
+      temuan: [t("Bagian dengan bobot pencarian tertinggi setelah nama.", "The section with the highest search weight after your name.")],
     };
   const temuan = [];
-  if (t.length < 80)
+  if (tt.length < 80)
     temuan.push(
-      `Baru ${t.length} dari 220 karakter. Masih banyak ruang untuk kata kunci.`,
+      t(`Baru ${tt.length} dari 220 karakter. Masih banyak ruang untuk kata kunci.`, `Only ${tt.length} of 220 characters. Plenty of room left for keywords.`),
     );
-  if (/fresh graduate|jobseeker|looking for/i.test(t))
-    temuan.push("Mengandung frasa generik yang tidak dicari recruiter.");
-  if (!t.includes("|") && t.length > 40)
+  if (/fresh graduate|jobseeker|looking for/i.test(tt))
+    temuan.push(t("Mengandung frasa generik yang tidak dicari recruiter.", "Contains generic phrases recruiters don't search for."));
+  if (!tt.includes("|") && tt.length > 40)
     temuan.push(
-      "Coba pisahkan dengan tanda | supaya tiap bagian mudah dipindai.",
+      t("Coba pisahkan dengan tanda | supaya tiap bagian mudah dipindai.", "Try separating parts with | so each one is easy to scan."),
     );
-  if (t.length > 220)
-    temuan.push(`Kelebihan ${t.length - 220} karakter, akan terpotong.`);
+  if (tt.length > 220)
+    temuan.push(t(`Kelebihan ${tt.length - 220} karakter, akan terpotong.`, `${tt.length - 220} characters over, it will be cut off.`));
   return {
-    status: temuan.length === 0 ? OK : t.length < 60 ? BAD : WARN,
-    ringkas: `${t.length} / 220 karakter`,
+    status: temuan.length === 0 ? OK : tt.length < 60 ? BAD : WARN,
+    ringkas: `${tt.length} / 220 ${t("karakter", "characters")}`,
     temuan,
   };
 }
 
 function auditAbout(a) {
-  const t = (a || "").trim();
-  if (!t)
+  const tt = (a || "").trim();
+  if (!tt)
     return {
       status: BAD,
-      ringkas: "Bagian Tentang kosong",
+      ringkas: t("Bagian Tentang kosong", "About section is empty"),
       temuan: [
-        "Ada 2.600 karakter dan ikut terbaca oleh pencarian LinkedIn. Sayang kalau dilewatkan.",
+        t("Ada 2.600 karakter dan ikut terbaca oleh pencarian LinkedIn. Sayang kalau dilewatkan.", "You get 2,600 characters and LinkedIn search reads them. A shame to skip it."),
       ],
     };
   const temuan = [];
-  const paragraf = t.split(/\n\s*\n/).filter(Boolean).length;
-  if (t.length < 600)
-    temuan.push(`Baru ${t.length} dari 2.600 karakter. Idealnya minimal 600.`);
+  const paragraf = tt.split(/\n\s*\n/).filter(Boolean).length;
+  if (tt.length < 600)
+    temuan.push(t(`Baru ${tt.length} dari 2.600 karakter. Idealnya minimal 600.`, `Only ${tt.length} of 2,600 characters. Ideally at least 600.`));
   if (paragraf < 3)
     temuan.push(
-      `Baru ${paragraf} paragraf. Pisahkan jadi 3–4 supaya enak dibaca.`,
+      t(`Baru ${paragraf} paragraf. Pisahkan jadi 3–4 supaya enak dibaca.`, `Only ${paragraf} paragraph(s). Split it into 3–4 so it reads easily.`),
     );
-  if (!/\d/.test(t))
-    temuan.push("Belum ada angka. Pencapaian terukur jauh lebih meyakinkan.");
-  if (!/\bsaya\b|\baku\b/i.test(t))
-    temuan.push("Tulis dengan sudut pandang orang pertama, bukan gaya CV.");
+  if (!/\d/.test(tt))
+    temuan.push(t("Belum ada angka. Pencapaian terukur jauh lebih meyakinkan.", "No numbers yet. Measurable achievements are far more convincing."));
+  if (!/\bsaya\b|\baku\b/i.test(tt))
+    temuan.push(t("Tulis dengan sudut pandang orang pertama, bukan gaya CV.", "Write in the first person, not CV style."));
   return {
-    status: temuan.length === 0 ? OK : t.length < 400 ? BAD : WARN,
-    ringkas: `${t.length} / 2.600 karakter · ${paragraf} paragraf`,
+    status: temuan.length === 0 ? OK : tt.length < 400 ? BAD : WARN,
+    ringkas: t(`${tt.length} / 2.600 karakter · ${paragraf} paragraf`, `${tt.length} / 2,600 characters · ${paragraf} paragraph(s)`),
     temuan,
   };
 }
@@ -133,30 +134,30 @@ function auditExperience(list) {
   if (terisi.length === 0)
     return {
       status: BAD,
-      ringkas: "Belum ada pengalaman",
-      temuan: ["Tambahkan minimal satu posisi."],
+      ringkas: t("Belum ada pengalaman", "No experience yet"),
+      temuan: [t("Tambahkan minimal satu posisi.", "Add at least one position.")],
     };
   const temuan = [];
   const tanpaDesk = terisi.filter((e) => teksDesk(e.desc).length < 40);
   if (tanpaDesk.length)
     temuan.push(
-      `${tanpaDesk.length} posisi belum punya deskripsi memadai: ${tanpaDesk.map((e) => e.role).join(", ")}.`,
+      t(`${tanpaDesk.length} posisi belum punya deskripsi memadai: ${tanpaDesk.map((e) => e.role).join(", ")}.`, `${tanpaDesk.length} position(s) lack a proper description: ${tanpaDesk.map((e) => e.role).join(", ")}.`),
     );
   const tanpaSkill = terisi.filter((e) => !e.skills || e.skills.length === 0);
   if (tanpaSkill.length)
     temuan.push(
-      `${tanpaSkill.length} posisi belum mencantumkan skill. Kolom ini dipakai untuk pencocokan lowongan.`,
+      t(`${tanpaSkill.length} posisi belum mencantumkan skill. Kolom ini dipakai untuk pencocokan lowongan.`, `${tanpaSkill.length} position(s) list no skills. This field is used for job matching.`),
     );
   const tanpaAngka = terisi.filter(
     (e) => teksDesk(e.desc) && !/\d/.test(teksDesk(e.desc)),
   );
   if (tanpaAngka.length)
     temuan.push(
-      `${tanpaAngka.length} deskripsi belum memuat angka atau dampak terukur.`,
+      t(`${tanpaAngka.length} deskripsi belum memuat angka atau dampak terukur.`, `${tanpaAngka.length} description(s) have no numbers or measurable impact.`),
     );
   return {
     status: temuan.length === 0 ? OK : temuan.length >= 3 ? BAD : WARN,
-    ringkas: `${terisi.length} posisi tercatat`,
+    ringkas: t(`${terisi.length} posisi tercatat`, `${terisi.length} position(s) listed`),
     temuan,
   };
 }
@@ -166,21 +167,21 @@ function auditEducation(list) {
   if (terisi.length === 0)
     return {
       status: BAD,
-      ringkas: "Belum ada pendidikan",
-      temuan: ["Recruiter sering menyaring berdasarkan jenjang pendidikan."],
+      ringkas: t("Belum ada pendidikan", "No education yet"),
+      temuan: [t("Recruiter sering menyaring berdasarkan jenjang pendidikan.", "Recruiters often filter by education level.")],
     };
   const temuan = [];
   const tanpaGelar = terisi.filter((e) => !e.degree || !e.field);
   if (tanpaGelar.length)
     temuan.push(
-      `${tanpaGelar.length} entri belum lengkap gelar atau bidang studinya.`,
+      t(`${tanpaGelar.length} entri belum lengkap gelar atau bidang studinya.`, `${tanpaGelar.length} entry(ies) missing a degree or field of study.`),
     );
   const tanpaPeriode = terisi.filter((e) => !e.start && !e.end);
   if (tanpaPeriode.length)
-    temuan.push(`${tanpaPeriode.length} entri belum mencantumkan periode.`);
+    temuan.push(t(`${tanpaPeriode.length} entri belum mencantumkan periode.`, `${tanpaPeriode.length} entry(ies) missing dates.`));
   return {
     status: temuan.length === 0 ? OK : WARN,
-    ringkas: `${terisi.length} institusi tercatat`,
+    ringkas: t(`${terisi.length} institusi tercatat`, `${terisi.length} institution(s) listed`),
     temuan,
   };
 }
@@ -190,23 +191,23 @@ function auditCertifications(list) {
   if (terisi.length === 0)
     return {
       status: WARN,
-      ringkas: "Belum ada sertifikasi",
-      temuan: ["Sertifikasi relevan menaikkan peluang lolos penyaringan awal."],
+      ringkas: t("Belum ada sertifikasi", "No certifications yet"),
+      temuan: [t("Sertifikasi relevan menaikkan peluang lolos penyaringan awal.", "Relevant certifications improve your odds in early screening.")],
     };
   const temuan = [];
   const tanpaUrl = terisi.filter((c) => !c.url);
   if (tanpaUrl.length)
     temuan.push(
-      `${tanpaUrl.length} sertifikasi belum ada URL kredensial. Yang bisa diklik lebih dipercaya.`,
+      t(`${tanpaUrl.length} sertifikasi belum ada URL kredensial. Yang bisa diklik lebih dipercaya.`, `${tanpaUrl.length} certification(s) have no credential URL. Clickable ones are trusted more.`),
     );
   const tanpaPenerbit = terisi.filter((c) => !c.issuer);
   if (tanpaPenerbit.length)
     temuan.push(
-      `${tanpaPenerbit.length} sertifikasi belum mencantumkan penerbit.`,
+      t(`${tanpaPenerbit.length} sertifikasi belum mencantumkan penerbit.`, `${tanpaPenerbit.length} certification(s) list no issuer.`),
     );
   return {
     status: temuan.length === 0 ? OK : WARN,
-    ringkas: `${terisi.length} sertifikasi tercatat`,
+    ringkas: t(`${terisi.length} sertifikasi tercatat`, `${terisi.length} certification(s) listed`),
     temuan,
   };
 }
@@ -216,12 +217,12 @@ function auditSkills(s) {
   if (n === 0)
     return {
       status: BAD,
-      ringkas: "Belum ada keahlian",
-      temuan: ["Isi minimal 15 keahlian."],
+      ringkas: t("Belum ada keahlian", "No skills yet"),
+      temuan: [t("Isi minimal 15 keahlian.", "Add at least 15 skills.")],
     };
   const temuan = [];
   if (n < 15)
-    temuan.push(`Baru ${n} dari 50. LinkedIn menyarankan minimal 15.`);
+    temuan.push(t(`Baru ${n} dari 50. LinkedIn menyarankan minimal 15.`, `Only ${n} of 50. LinkedIn recommends at least 15.`));
   const generik = (s || []).filter((x) =>
     /^(komunikasi|kerja ?sama|teamwork|leadership|microsoft office)$/i.test(
       x.trim(),
@@ -229,7 +230,7 @@ function auditSkills(s) {
   );
   if (generik.length)
     temuan.push(
-      `Terlalu umum: ${generik.join(", ")}. Ganti dengan nama tools spesifik.`,
+      t(`Terlalu umum: ${generik.join(", ")}. Ganti dengan nama tools spesifik.`, `Too generic: ${generik.join(", ")}. Replace them with specific tool names.`),
     );
   return {
     status: temuan.length === 0 ? OK : n < 8 ? BAD : WARN,
@@ -243,22 +244,22 @@ function auditLanguages(list) {
   if (terisi.length === 0)
     return {
       status: WARN,
-      ringkas: "Belum ada bahasa",
-      temuan: ["Perusahaan multinasional menyaring kandidat lewat kolom ini."],
+      ringkas: t("Belum ada bahasa", "No languages yet"),
+      temuan: [t("Perusahaan multinasional menyaring kandidat lewat kolom ini.", "Multinationals filter candidates by this field.")],
     };
   const temuan = [];
   const tanpaTingkat = terisi.filter((l) => !l.proficiency);
   if (tanpaTingkat.length)
     temuan.push(
-      `${tanpaTingkat.length} bahasa belum ada tingkat kemahirannya.`,
+      t(`${tanpaTingkat.length} bahasa belum ada tingkat kemahirannya.`, `${tanpaTingkat.length} language(s) have no proficiency level.`),
     );
   if (terisi.length === 1)
     temuan.push(
-      "Baru satu bahasa. Tambahkan bahasa lain yang kamu kuasai, sekecil apa pun tingkatnya.",
+      t("Baru satu bahasa. Tambahkan bahasa lain yang kamu kuasai, sekecil apa pun tingkatnya.", "Only one language. Add others you know, however basic."),
     );
   return {
     status: temuan.length === 0 ? OK : WARN,
-    ringkas: `${terisi.length} bahasa tercatat`,
+    ringkas: t(`${terisi.length} bahasa tercatat`, `${terisi.length} language(s) listed`),
     temuan,
   };
 }
@@ -276,11 +277,11 @@ function auditDaftar(list, nama, minimal, ideal) {
   if (n === 0) {
     return {
       status: minimal > 0 ? WARN : OK,
-      ringkas: `Belum ada ${nama}`,
+      ringkas: t(`Belum ada ${nama}`, `No ${nama} yet`),
       temuan:
         minimal > 0
           ? [
-              `Bagian ini masih kosong. Mengisinya membuat profil terlihat lebih lengkap.`,
+              t(`Bagian ini masih kosong. Mengisinya membuat profil terlihat lebih lengkap.`, `This section is empty. Filling it makes your profile look more complete.`),
             ]
           : [],
     };
@@ -290,10 +291,10 @@ function auditDaftar(list, nama, minimal, ideal) {
     (i) => "desc" in i && teksDesk(i.desc).length < 30,
   );
   if (tanpaDesk.length)
-    temuan.push(`${tanpaDesk.length} entri belum punya deskripsi memadai.`);
+    temuan.push(t(`${tanpaDesk.length} entri belum punya deskripsi memadai.`, `${tanpaDesk.length} entry(ies) lack a proper description.`));
   if (n < ideal && n < 3)
     temuan.push(
-      `Baru ${n} entri. Menambah beberapa lagi memperkuat bagian ini.`,
+      t(`Baru ${n} entri. Menambah beberapa lagi memperkuat bagian ini.`, `Only ${n} entry(ies). Adding a few more strengthens this section.`),
     );
   return {
     status: temuan.length === 0 ? OK : WARN,

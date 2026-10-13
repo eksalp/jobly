@@ -4,8 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useJobs } from "../../context/JobsContext";
 import { tautan } from "../../utils/navigasi";
 import { DAFTAR_PAKET, rupiah } from "../../data/paket";
+import { lokal, t } from "../../i18n.js";
 
-const angka = (n) => Number(n || 0).toLocaleString("id-ID");
+const angka = (n) => Number(n || 0).toLocaleString(lokal());
 const termurah = Math.min(...DAFTAR_PAKET.map((p) => p.harga));
 
 /** Ke mana tombol "buka semua" mengarah. */
@@ -26,7 +27,7 @@ export function KartuKunci({ jumlah }) {
   const tujuan = useTujuanBuka();
   if (!terkunci) return null;
   return (
-    <div className="pb-kunci" role="region" aria-label="Loker terkunci">
+    <div className="pb-kunci" role="region" aria-label={t("Loker terkunci", "Locked jobs")}>
       <div className="pb-kunci-bayang" aria-hidden="true">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i}>
@@ -41,18 +42,23 @@ export function KartuKunci({ jumlah }) {
         <span className="pb-kunci-ic">
           <Lock size={20} />
         </span>
-        <h3>{angka(terkunci)} loker lagi {jumlah != null ? "cocok dengan pencarianmu" : "menunggumu"}</h3>
+        <h3>
+          {jumlah != null
+            ? t(`${angka(terkunci)} loker lagi cocok dengan pencarianmu`, `${angka(terkunci)} more jobs match your search`)
+            : t(`${angka(terkunci)} loker lagi menunggumu`, `${angka(terkunci)} more jobs are waiting`)}
+        </h3>
         <p>
-          Akun gratis bisa membuka {angka(batasGratis)} loker terbaru, diambil merata dari setiap sumber.
-          Mau lihat semuanya, termasuk loker yang baru masuk tiap hari? Pilih paket mana saja, mulai{" "}
-          {rupiah(termurah)} sekali bayar.
+          {t(
+            `Akun gratis bisa membuka ${angka(batasGratis)} loker terbaru, diambil merata dari setiap sumber. Mau lihat semuanya, termasuk loker yang baru masuk tiap hari? Pilih paket mana saja, mulai ${rupiah(termurah)} sekali bayar.`,
+            `A free account opens the ${angka(batasGratis)} newest jobs, taken evenly from every source. Want to see them all, including jobs added every day? Any plan works, from ${rupiah(termurah)} one-time.`,
+          )}
         </p>
         <div className="pb-kunci-act">
           <a className="pb-btn pb-btn-primary" {...tautan(tujuan)}>
-            <Unlock size={16} /> Buka semua loker
+            <Unlock size={16} /> {t("Buka semua loker", "Unlock all jobs")}
           </a>
           <a className="pb-btn pb-btn-outline" {...tautan("/#harga")}>
-            Lihat paket
+            {t("Lihat paket", "See plans")}
           </a>
         </div>
       </div>
@@ -69,10 +75,13 @@ export function InfoKuotaLoker() {
     <div className="pb-kuota-loker">
       <Lock size={15} />
       <span>
-        Kamu sedang melihat <b>{angka(batasGratis)}</b> dari <b>{angka(total)}</b> loker, yaitu
-        yang terbaru dari setiap sumber. Pencarian dan filter hanya berlaku untuk loker yang terbuka.
+        {t("Kamu sedang melihat", "You're viewing")} <b>{angka(batasGratis)}</b> {t("dari", "of")} <b>{angka(total)}</b>{" "}
+        {t(
+          "loker, yaitu yang terbaru dari setiap sumber. Pencarian dan filter hanya berlaku untuk loker yang terbuka.",
+          "jobs, the newest from each source. Search and filters only apply to unlocked jobs.",
+        )}
       </span>
-      <a {...tautan(tujuan)}>Buka semua</a>
+      <a {...tautan(tujuan)}>{t("Buka semua", "Unlock all")}</a>
     </div>
   );
 }

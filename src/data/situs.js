@@ -1,3 +1,4 @@
+import { t } from "../i18n.js";
 /**
  * Informasi situs yang dipakai di footer dan dokumen hukum.
  *
@@ -10,7 +11,7 @@ export const SITUS = {
   nama: "Jobly",
   pembuat: "Eksal Pujianto",
   emailKontak: "", // contoh: "halo@domainmu.com"
-  dokumenBerlaku: "12 Oktober 2026",
+  dokumenBerlaku: t("12 Oktober 2026", "12 October 2026"),
 };
 
 /**
@@ -30,8 +31,8 @@ export const SOSIAL = [
 export const GRUP = [
   {
     jenis: "telegram",
-    label: "Gabung Telegram",
-    ket: "Productive by Eksal: info loker dan tips karier",
+    label: t("Gabung Telegram", "Join on Telegram"),
+    ket: t("Productive by Eksal: info loker dan tips karier", "Productive by Eksal: job updates and career tips"),
     anggota: "",
     url: "https://t.me/productivebyeksal",
   },
@@ -39,8 +40,8 @@ export const GRUP = [
     // wa.me = chat pribadi. Kalau nanti punya grup/saluran WhatsApp,
     // ganti url ke tautan chat.whatsapp.com/… atau whatsapp.com/channel/…
     jenis: "whatsapp",
-    label: "Chat WhatsApp",
-    ket: "Tanya seputar Jobly atau minta info grup",
+    label: t("Chat WhatsApp", "WhatsApp chat"),
+    ket: t("Tanya seputar Jobly atau minta info grup", "Ask about Jobly or the group"),
     aksi: "Chat",
     anggota: "",
     url: "https://wa.me/6285811858064",

@@ -2,7 +2,7 @@ import React from "react";
 import { T } from "../../theme";
 import { TandaJobly } from "./TandaJobly";
 
-/** Tanda Jobly: tas kerja dengan petir (komponen bersama, lihat TandaJobly). */
+/** Tanda Jobly: huruf "j" dari pita (komponen bersama, lihat TandaJobly). */
 export function LogoMark({ size = 32 }) {
   return <TandaJobly ukuran={size} />;
 }

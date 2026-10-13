@@ -3,6 +3,7 @@ import { Lock, Sparkles } from "lucide-react";
 import { T } from "../theme";
 import { Glass } from "./ui/Glass";
 import { Button } from "./ui/Button";
+import { t } from "../i18n.js";
 
 /**
  * Menutup sebuah fitur untuk user yang belum berlangganan.
@@ -69,7 +70,7 @@ export function GerbangFitur({
       </div>
 
       <Button variant="primary" onClick={onLangganan}>
-        <Sparkles size={14} /> Lihat paket langganan
+        <Sparkles size={14} />{" "}{t("Lihat paket langganan", "See plans")}
       </Button>
     </Glass>
   );
@@ -107,10 +108,10 @@ export function BilahLangganan({ langganan, onLangganan }) {
       }}
     >
       <span style={{ fontSize: 12, fontWeight: 600, color: T.ink }}>
-        {detailPaket?.nama ?? "Langganan aktif"}
+        {detailPaket?.nama ?? t("Langganan aktif", "Active plan")}
       </span>
       <span style={{ fontSize: 11.5, color: T.inkSoft }}>
-        {sisaAnalisis} analisis tersisa · aktif {sisaHari} hari lagi
+        {sisaAnalisis}{" "}{t("analisis tersisa · aktif", "analyses left · active for")}{" "}{sisaHari}{" "}{t("hari lagi", "more days")}
       </span>
       <div style={{ flex: 1 }} />
       {perluPerhatian && (
@@ -127,7 +128,7 @@ export function BilahLangganan({ langganan, onLangganan }) {
             padding: 0,
           }}
         >
-          {kuotaMenipis ? "Tambah kuota" : "Perpanjang"}
+          {kuotaMenipis ? t("Tambah kuota", "Add credits") : t("Perpanjang", "Renew")}
         </button>
       )}
     </div>

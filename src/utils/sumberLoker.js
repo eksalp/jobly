@@ -1,3 +1,4 @@
+import { lokal, t } from "../i18n.js";
 /**
  * Helper tampilan loker: sumber (logo platform), logo perusahaan, gaji,
  * tanggal, dan label lokasi/tipe kerja.
@@ -77,7 +78,7 @@ export function infoSumber(job) {
   // Sumber langsung dari situs karier perusahaan
   const domain = domainDari(job?.situsPerusahaan) || domainDari(job?.link);
   return {
-    nama: "Situs karier resmi",
+    nama: t("Situs karier resmi", "Official career site"),
     logo: faviconDari(domain, 64),
     domain,
     langsung: true,
@@ -112,25 +113,25 @@ export function inisial(nama) {
 // ---------------------------------------------------------------- gaji
 
 const INTERVAL = {
-  yearly: "tahun",
-  year: "tahun",
-  annual: "tahun",
-  monthly: "bulan",
-  month: "bulan",
-  bulan: "bulan",
-  weekly: "minggu",
-  week: "minggu",
-  daily: "hari",
-  day: "hari",
-  hourly: "jam",
-  hour: "jam",
+  yearly: t("tahun", "year"),
+  year: t("tahun", "year"),
+  annual: t("tahun", "year"),
+  monthly: t("bulan", "month"),
+  month: t("bulan", "month"),
+  bulan: t("bulan", "month"),
+  weekly: t("minggu", "week"),
+  week: t("minggu", "week"),
+  daily: t("hari", "day"),
+  day: t("hari", "day"),
+  hourly: t("jam", "hour"),
+  hour: t("jam", "hour"),
 };
 
 function angka(n, mataUang) {
   const v = Number(n);
   if (!Number.isFinite(v)) return null;
   const awalan = !mataUang || mataUang === "IDR" ? "Rp " : `${mataUang} `;
-  return awalan + v.toLocaleString("id-ID", { maximumFractionDigits: 0 });
+  return awalan + v.toLocaleString(lokal(), { maximumFractionDigits: 0 });
 }
 
 /**
@@ -142,7 +143,7 @@ export function formatGaji(job) {
   const min = job?.gajiMin;
   const max = job?.gajiMax;
   const per = INTERVAL[(job?.intervalGaji || "").toLowerCase()];
-  const ekor = per ? ` per ${per}` : "";
+  const ekor = per ? ` ${t("per", "per")} ${per}` : "";
 
   if (min && max && Number(min) !== Number(max)) {
     return `${angka(min, job.mataUang)} – ${angka(max, job.mataUang)}${ekor}`;
@@ -151,7 +152,7 @@ export function formatGaji(job) {
 
   // Tabel lain menyimpan gaji sebagai teks jadi
   const teks = (job?.gajiTeks || "").toString().trim();
-  if (teks && !/tidak disebutkan/i.test(teks)) return teks;
+  if (teks && !/tidak disebutkan|not specified/i.test(teks)) return teks;
   return null;
 }
 
@@ -161,7 +162,7 @@ export function formatTanggal(tgl) {
   if (!tgl) return null;
   const d = new Date(tgl);
   if (Number.isNaN(d.getTime())) return null;
-  return d.toLocaleDateString("id-ID", {
+  return d.toLocaleDateString(lokal(), {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -173,26 +174,29 @@ export function waktuRelatif(tgl) {
   const d = new Date(tgl);
   if (Number.isNaN(d.getTime())) return null;
   const hari = Math.floor((Date.now() - d.getTime()) / 86400000);
-  if (hari <= 0) return "Hari ini";
-  if (hari === 1) return "Kemarin";
-  if (hari < 7) return `${hari} hari lalu`;
-  if (hari < 30) return `${Math.floor(hari / 7)} minggu lalu`;
+  if (hari <= 0) return t("Hari ini", "Today");
+  if (hari === 1) return t("Kemarin", "Yesterday");
+  if (hari < 7) return t(`${hari} hari lalu`, `${hari} days ago`);
+  if (hari < 30) {
+    const m = Math.floor(hari / 7);
+    return t(`${m} minggu lalu`, m === 1 ? "1 week ago" : `${m} weeks ago`);
+  }
   return formatTanggal(tgl);
 }
 
 // -------------------------------------------------------------- label
 
 export const LABEL_LOKASI_KERJA = {
-  onsite: "Di kantor",
+  onsite: t("Di kantor", "On-site"),
   remote: "Remote",
   hybrid: "Hybrid",
 };
 
 export const LABEL_TIPE_KERJA = {
   "full-time": "Full time",
-  kontrak: "Kontrak",
+  kontrak: t("Kontrak", "Contract"),
   freelance: "Freelance",
-  magang: "Magang",
+  magang: t("Magang", "Internship"),
   "part-time": "Part time",
 };
 
@@ -241,8 +245,8 @@ export function konversiGaji(job, rates, idrPerFn, ringkasFn) {
 /** Loker dianggap baru kalau diposting dalam 2 hari terakhir. */
 export function lokerBaru(tgl) {
   if (!tgl) return false;
-  const t = new Date(tgl).getTime();
-  return Number.isFinite(t) && Date.now() - t < 2 * 86400000;
+  const tt = new Date(tgl).getTime();
+  return Number.isFinite(tt) && Date.now() - tt < 2 * 86400000;
 }
 
 /** Nama kota dari kolom lokasi: "Jakarta Selatan, Indonesia" → "Jakarta Selatan". */
@@ -265,11 +269,12 @@ export function gajiRingkas(job) {
   const dua = min && max && min !== max;
 
   if (kode === "IDR") {
-    const jt = (v) => (v / 1e6).toLocaleString("id-ID", { maximumFractionDigits: 1 });
+    const jt = (v) => (v / 1e6).toLocaleString(lokal(), { maximumFractionDigits: 1 });
     if ((dua ? Math.min(min, max) : min || max) >= 1e6) {
-      return dua ? `Rp ${jt(min)}–${jt(max)} jt${ekor}` : `Rp ${jt(min || max)} jt${ekor}`;
+      const s = t("jt", "M");
+      return dua ? `Rp ${jt(min)}–${jt(max)} ${s}${ekor}` : `Rp ${jt(min || max)} ${s}${ekor}`;
     }
-    const p = (v) => v.toLocaleString("id-ID");
+    const p = (v) => v.toLocaleString(lokal());
     return dua ? `Rp ${p(min)}–${p(max)}${ekor}` : `Rp ${p(min || max)}${ekor}`;
   }
   const p = (v) => v.toLocaleString("en-US");

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Plus, Check, Trash2, ExternalLink, X } from "lucide-react";
 import { T } from "../../theme";
 import { Button } from "../ui/Button";
+import { t } from "../../i18n.js";
 
 const LI = {
   blue: "#0A66C2",
@@ -92,7 +93,7 @@ export function EditorPoin({ label, items, onChange, placeholder }) {
           />
           <button
             onClick={() => onChange(poin.filter((_, j) => j !== i))}
-            title="Hapus poin"
+            title={t("Hapus poin", "Remove point")}
             style={{
               background: "none",
               border: "none",
@@ -119,7 +120,7 @@ export function EditorPoin({ label, items, onChange, placeholder }) {
             }
           }}
           rows={2}
-          placeholder={placeholder || "Tulis satu poin, lalu Enter"}
+          placeholder={placeholder || t("Tulis satu poin, lalu Enter", "Write one point, then press Enter")}
           style={{ ...inputStyle, resize: "vertical", lineHeight: 1.5 }}
         />
         <Button
@@ -280,14 +281,14 @@ export function SectionBerulang({
                       padding: 0,
                     }}
                   >
-                    <Trash2 size={11} /> Hapus
+                    <Trash2 size={11} />{" "}{t("Hapus", "Delete")}
                   </button>
                   <Button
                     variant="outline"
                     onClick={() => setEditId(null)}
                     style={{ fontSize: 11.5, padding: "6px 12px" }}
                   >
-                    <Check size={12} /> Selesai
+                    <Check size={12} />{" "}{t("Selesai", "Done")}
                   </Button>
                 </div>
               </div>
@@ -298,7 +299,7 @@ export function SectionBerulang({
                 >
                   {judul || (
                     <span style={{ color: "rgba(0,0,0,0.3)" }}>
-                      Klik untuk mengisi
+                      {t("Klik untuk mengisi", "Click to fill in")}
                     </span>
                   )}
                 </div>
@@ -370,7 +371,7 @@ export function SectionBerulang({
                       color: LI.text,
                     }}
                   >
-                    Tampilkan kredensial <ExternalLink size={11} />
+                    {t("Tampilkan kredensial", "Show credential")}{" "}<ExternalLink size={11} />
                   </div>
                 )}
               </div>

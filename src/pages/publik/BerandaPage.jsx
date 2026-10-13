@@ -28,6 +28,7 @@ import { useJobs } from "../../context/JobsContext";
 import { useAuth } from "../../context/AuthContext";
 import { useHitungNaik, usePintasanCari, bacaDilihat } from "../../utils/interaksi";
 import { jt } from "../../utils/petaGaji";
+import { labelTampil } from "../../data/taxonomy";
 import { infoSumber, urlDetail } from "../../utils/sumberLoker";
 import { usePetaGaji } from "../../hooks/useLoker";
 import { SEMUA_TIER, rupiah, labelDurasi } from "../../data/paket";
@@ -37,10 +38,11 @@ import { keHalaman, tautan } from "../../utils/navigasi";
 import { logoPerusahaan, waktuRelatif, kotaDari } from "../../utils/sumberLoker";
 import { useKurs, rupiahPenuh, formatWaktuKurs } from "../../utils/kurs";
 import { keTahunan } from "../../utils/hitungGaji";
+import { lokal, t } from "../../i18n.js";
 
 const POPULER = [
   ["Remote", "/loker?lokasi=remote"],
-  ["Magang", "/loker?tipe=magang"],
+  [t("Magang", "Internship"), "/loker?tipe=magang"],
   ["Fresh graduate", "/loker?q=fresh%20graduate"],
   ["Admin", "/loker?q=admin"],
   ["Finance", "/loker?q=finance"],
@@ -48,10 +50,10 @@ const POPULER = [
 ];
 
 const waktuDari = (j) => {
-  const t = j.tanggal ? new Date(j.tanggal).getTime() : 0;
-  return Number.isFinite(t) ? t : 0;
+  const w = j.tanggal ? new Date(j.tanggal).getTime() : 0;
+  return Number.isFinite(w) ? w : 0;
 };
-const angka = (n) => Number(n || 0).toLocaleString("id-ID");
+const angka = (n) => Number(n || 0).toLocaleString(lokal());
 
 /* ---------------------------------------------------------------- */
 
@@ -65,17 +67,17 @@ function KalkulatorMini() {
   return (
     <div className="pb-panel" style={{ display: "grid", gap: 18 }}>
       <label className="pb-field">
-        <span>Gaji dalam dolar AS</span>
+        <span>{t("Gaji dalam dolar AS", "Salary in US dollars")}</span>
         <div className="pb-input">
           <input id="mini-usd" inputMode="decimal" value={teks} onChange={(e) => setTeks(e.target.value)} />
           <span className="unit">USD</span>
         </div>
       </label>
-      <div className="pb-seg" role="group" aria-label="Periode gaji">
+      <div className="pb-seg" role="group" aria-label={t("Periode gaji", "Pay period")}>
         {[
-          ["jam", "Per jam"],
-          ["bulan", "Per bulan"],
-          ["tahun", "Per tahun"],
+          ["jam", t("Per jam", "Hourly")],
+          ["bulan", t("Per bulan", "Monthly")],
+          ["tahun", t("Per tahun", "Yearly")],
         ].map(([id, l]) => (
           <button key={id} type="button" className={periode === id ? "on" : ""} aria-pressed={periode === id} onClick={() => setPeriode(id)}>
             {l}
@@ -83,13 +85,13 @@ function KalkulatorMini() {
         ))}
       </div>
       <div style={{ borderTop: "1px solid var(--line2)", paddingTop: 16 }}>
-        <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--ink2)" }}>Setara per bulan</div>
+        <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--ink2)" }}>{t("Setara per bulan", "Monthly equivalent")}</div>
         <div className="pb-big" style={{ marginTop: 4 }}>
           {rupiahPenuh(perBulan)}
         </div>
         <div className="pb-kurs" style={{ marginTop: 6 }}>
-          1 USD = {rupiahPenuh(idrPerUsd)} · {live ? `kurs ${formatWaktuKurs(waktu) || "hari ini"}` : "kurs cadangan"}
-          {periode === "jam" ? " · 40 jam/minggu" : ""}
+          1 USD = {rupiahPenuh(idrPerUsd)} · {live ? t(`kurs ${formatWaktuKurs(waktu) || "hari ini"}`, `rate ${formatWaktuKurs(waktu) || "today"}`) : t("kurs cadangan", "fallback rate")}
+          {periode === "jam" ? t(" · 40 jam/minggu", " · 40 hrs/week") : ""}
         </div>
       </div>
     </div>
@@ -109,12 +111,12 @@ function MiniCek() {
   return (
     <div className="mv-cek" aria-hidden="true">
       <div className="bubble">
-        DIBUKA LOWONGAN PT BESAR!!! Lulusan SMA, gaji 9 jt. Wajib{" "}
-        <mark>bayar biaya seragam Rp 350.000</mark>, kirim CV ke{" "}
-        <mark>hrd.ptbesar@gmail.com</mark>. <mark>Kuota terbatas hari ini</mark>!
+        {t("DIBUKA LOWONGAN PT BESAR!!! Lulusan SMA, gaji 9 jt. Wajib", "HIRING NOW AT PT BESAR!!! High school grads, 9 million salary. You must")}{" "}
+        <mark>{t("bayar biaya seragam Rp 350.000", "pay a Rp 350,000 uniform fee")}</mark>, {t("kirim CV ke", "send your CV to")}{" "}
+        <mark>hrd.ptbesar@gmail.com</mark>. <mark>{t("Kuota terbatas hari ini", "Limited spots today")}</mark>!
       </div>
       <div className="vonis">
-        <ShieldX size={16} /> Bahaya · 3 tanda penipuan
+        <ShieldX size={16} /> {t("Bahaya · 3 tanda penipuan", "Danger · 3 scam signs")}
       </div>
     </div>
   );
@@ -122,17 +124,17 @@ function MiniCek() {
 
 function MiniGaji({ data }) {
   const baris = data.length ? data : [
-    { label: "Teknologi", p25: 9e6, median: 14e6, p75: 22e6 },
-    { label: "Keuangan", p25: 6e6, median: 9e6, p75: 13e6 },
-    { label: "Pemasaran", p25: 5e6, median: 7.5e6, p75: 11e6 },
-    { label: "Administrasi", p25: 4.5e6, median: 5.5e6, p75: 7e6 },
+    { label: t("Teknologi", "Technology"), p25: 9e6, median: 14e6, p75: 22e6 },
+    { label: t("Keuangan", "Finance"), p25: 6e6, median: 9e6, p75: 13e6 },
+    { label: t("Pemasaran", "Marketing"), p25: 5e6, median: 7.5e6, p75: 11e6 },
+    { label: t("Administrasi", "Administration"), p25: 4.5e6, median: 5.5e6, p75: 7e6 },
   ];
   const maks = Math.max(...baris.map((b) => b.p75)) * 1.1;
   return (
     <div className="mv-gaji" aria-hidden="true">
       {baris.map((b, i) => (
         <div key={b.label} style={{ "--i": i }}>
-          <span>{b.label}</span>
+          <span>{labelTampil(b.label)}</span>
           <div className="trek">
             <i className="pita" style={{ left: `${(b.p25 / maks) * 100}%`, width: `${((b.p75 - b.p25) / maks) * 100}%` }} />
             <i className="med" style={{ left: `${(b.median / maks) * 100}%` }} />
@@ -154,8 +156,8 @@ function MiniCv() {
   const [i, setI] = useState(0);
   useEffect(() => {
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => setI((x) => (x + 1) % FONT_CV.length), 1800);
-    return () => clearInterval(t);
+    const jeda = setInterval(() => setI((x) => (x + 1) % FONT_CV.length), 1800);
+    return () => clearInterval(jeda);
   }, []);
   const [nama, keluarga] = FONT_CV[i];
   return (
@@ -176,26 +178,26 @@ function MiniCv() {
 function MiniLatihan() {
   return (
     <div className="mv-latihan" aria-hidden="true">
-      <span className="tag">Level neraka</span>
-      <p>“Kalau kami bisa merekrut kandidat internal dengan gaji lebih rendah, kenapa harus kamu?”</p>
+      <span className="tag">{t("Level neraka", "Hardcore")}</span>
+      <p>{t("“Kalau kami bisa merekrut kandidat internal dengan gaji lebih rendah, kenapa harus kamu?”", "“If we could hire an internal candidate for less, why should we pick you?”")}</p>
       <div className="timer">
         <svg viewBox="0 0 36 36" width="34" height="34">
           <circle cx="18" cy="18" r="15" fill="none" stroke="var(--bar-bg)" strokeWidth="4" />
           <circle cx="18" cy="18" r="15" fill="none" stroke="var(--brand)" strokeWidth="4" strokeLinecap="round" strokeDasharray="94" className="putar" transform="rotate(-90 18 18)" />
         </svg>
-        <span>2:00 untuk menjawab</span>
+        <span>{t("2:00 untuk menjawab", "2:00 to answer")}</span>
       </div>
     </div>
   );
 }
 
 function MiniRencana() {
-  const hari = ["S", "S", "R", "K", "J", "S", "M"];
+  const hari = t("S S R K J S M", "M T W T F S S").split(" ");
   const isi = [2, 1, 3, 0, 2, 1, 0];
   return (
     <div className="mv-rencana" aria-hidden="true">
       <div className="api">
-        <Flame size={20} /> <b>5 hari</b> streak
+        <Flame size={20} /> <b>{t("5 hari", "5 days")}</b> streak
       </div>
       <div className="hari">
         {hari.map((h, i) => (
@@ -208,7 +210,7 @@ function MiniRencana() {
       <div className="bar">
         <i style={{ width: "90%" }} />
       </div>
-      <small>9 dari 10 lamaran minggu ini</small>
+      <small>{t("9 dari 10 lamaran minggu ini", "9 of 10 applications this week")}</small>
     </div>
   );
 }
@@ -222,9 +224,9 @@ function MiniSkor() {
         <text x="40" y="46" textAnchor="middle">82</text>
       </svg>
       <ul>
-        <li className="ok">Format terbaca ATS</li>
-        <li className="ok">Kata kunci posisi</li>
-        <li className="no">Pencapaian tanpa angka</li>
+        <li className="ok">{t("Format terbaca ATS", "ATS-readable format")}</li>
+        <li className="ok">{t("Kata kunci posisi", "Role keywords")}</li>
+        <li className="no">{t("Pencapaian tanpa angka", "Achievements without numbers")}</li>
       </ul>
     </div>
   );
@@ -292,7 +294,7 @@ export function BerandaPage() {
     keHalaman(`/loker${s ? `?${s}` : ""}`);
   };
 
-  const hariIni = new Date().toLocaleDateString("id-ID", {
+  const hariIni = new Date().toLocaleDateString(lokal(), {
     weekday: "long",
     day: "numeric",
     month: "short",
@@ -310,32 +312,33 @@ export function BerandaPage() {
       <section className="pb-wrap pb-hero">
         <div>
           <h1>
-            In this economy, cari kerja itu susah.{" "}
-            <span>Biar Jobly yang cariin ribuan loker buat kamu.</span>
+            {t("In this economy, cari kerja itu susah.", "In this economy, job hunting is hard.")}{" "}
+            <span>{t("Biar Jobly yang cariin ribuan loker buat kamu.", "Let Jobly find thousands of jobs for you.")}</span>
           </h1>
           <p className="pb-lede">
-            Setiap hari Jobly mengumpulkan lowongan dari situs karier perusahaan,
-            BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek
-            gajinya, lalu lamar langsung ke sumbernya. Gratis.
+            {t(
+              "Setiap hari Jobly mengumpulkan lowongan dari situs karier perusahaan, BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek gajinya, lalu lamar langsung ke sumbernya. Gratis.",
+              "Every day Jobly collects openings from company career sites, state-owned enterprises, LinkedIn, and Indeed. Search in one place, check the pay, then apply directly at the source. Free.",
+            )}
           </p>
 
           <form className="pb-searchbar" onSubmit={cari} role="search">
             <label>
               <Search size={18} color="var(--muted)" aria-hidden="true" />
-              <span className="pb-sr">Posisi atau perusahaan</span>
+              <span className="pb-sr">{t("Posisi atau perusahaan", "Role or company")}</span>
               <input
                 id="cari-beranda"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Posisi, perusahaan, atau skill"
+                placeholder={t("Posisi, perusahaan, atau skill", "Role, company, or skill")}
                 autoComplete="off"
               />
             </label>
             <label>
               <MapPin size={18} color="var(--muted)" aria-hidden="true" />
-              <span className="pb-sr">Kota</span>
+              <span className="pb-sr">{t("Kota", "City")}</span>
               <select id="kota-beranda" value={kota} onChange={(e) => setKota(e.target.value)}>
-                <option value="">Semua kota</option>
+                <option value="">{t("Semua kota", "All cities")}</option>
                 {KOTA_POPULER.map((k) => (
                   <option key={k} value={k}>
                     {k}
@@ -344,12 +347,12 @@ export function BerandaPage() {
               </select>
             </label>
             <button type="submit" className="pb-btn pb-btn-primary">
-              Cari loker
+              {t("Cari loker", "Find jobs")}
             </button>
           </form>
 
           <div className="pb-popular">
-            <span>Populer:</span>
+            <span>{t("Populer:", "Popular:")}</span>
             {POPULER.map(([l, path]) => (
               <a key={l} {...tautan(path)}>
                 {l}
@@ -358,23 +361,23 @@ export function BerandaPage() {
           </div>
         </div>
 
-        <aside className="pb-today" aria-label="Ringkasan lowongan hari ini">
+        <aside className="pb-today" aria-label={t("Ringkasan lowongan hari ini", "Today's job summary")}>
           <div className="pb-today-head">
-            Hari ini di Jobly
+            {t("Hari ini di Jobly", "Today on Jobly")}
             <time>{hariIni}</time>
           </div>
           <div className="pb-today-stats">
             <div>
               <Angka nilai={total} loading={loading} />
-              <span>lowongan</span>
+              <span>{t("lowongan", "jobs")}</span>
             </div>
             <div>
               <Angka nilai={data.baru} loading={loading} />
-              <span>baru 7 hari</span>
+              <span>{t("baru 7 hari", "new in 7 days")}</span>
             </div>
             <div>
               <Angka nilai={data.jumlahSumber} loading={loading} />
-              <span>sumber</span>
+              <span>{t("sumber", "sources")}</span>
             </div>
           </div>
           <ul className="pb-today-list">
@@ -411,15 +414,15 @@ export function BerandaPage() {
           </ul>
           <div className="pb-today-foot">
             <a className="pb-link" {...tautan("/loker")}>
-              Lihat semua lowongan <ArrowRight size={15} />
+              {t("Lihat semua lowongan", "See all jobs")} <ArrowRight size={15} />
             </a>
           </div>
         </aside>
       </section>
 
       {/* ============================================ pita sumber */}
-      <div className="pb-pita" aria-label="Sumber lowongan">
-        <span className="pb-pita-label">Dikumpulkan dari</span>
+      <div className="pb-pita" aria-label={t("Sumber lowongan", "Job sources")}>
+        <span className="pb-pita-label">{t("Dikumpulkan dari", "Collected from")}</span>
         <div className="pb-pita-trek">
           <div className="pb-pita-isi">
             {[...sumberPita, ...sumberPita].map((n, i) => (
@@ -435,7 +438,7 @@ export function BerandaPage() {
       {dilihat.length > 0 && (
         <section className="pb-wrap pb-dilihat" data-muncul="">
           <span className="pb-dilihat-h">
-            <History size={15} /> Terakhir kamu lihat
+            <History size={15} /> {t("Terakhir kamu lihat", "Recently viewed")}
           </span>
           <div className="pb-dilihat-list">
             {dilihat.map((d) => (
@@ -453,11 +456,11 @@ export function BerandaPage() {
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
-              <span className="pb-label">Lowongan terbaru</span>
-              <h2>Loker yang baru masuk</h2>
+              <span className="pb-label">{t("Lowongan terbaru", "Latest jobs")}</span>
+              <h2>{t("Loker yang baru masuk", "Just added")}</h2>
             </div>
             <a className="pb-link" {...tautan("/loker")}>
-              Lihat semua <ArrowRight size={15} />
+              {t("Lihat semua", "See all")} <ArrowRight size={15} />
             </a>
           </div>
           <div className="pb-grid pb-grid-ringkas">
@@ -474,16 +477,20 @@ export function BerandaPage() {
           <div className="pb-remote-band-head" data-muncul="">
             <div>
               <span className="pb-label terang">
-                <Globe size={14} /> Khusus remote
+                <Globe size={14} /> {t("Khusus remote", "Remote only")}
               </span>
-              <h2>Kerja dari rumah, kafe, atau kampung halaman.</h2>
+              <h2>{t("Kerja dari rumah, kafe, atau kampung halaman.", "Work from home, a café, or your hometown.")}</h2>
               <p>
-                {loading ? "Memuat…" : `${angka(data.jumlahRemote)} loker full remote`} dari
-                perusahaan Indonesia dan luar negeri. Sebagian dibayar dalam dolar.
+                {loading
+                  ? t("Memuat…", "Loading…")
+                  : t(
+                      `${angka(data.jumlahRemote)} loker full remote dari perusahaan Indonesia dan luar negeri. Sebagian dibayar dalam dolar.`,
+                      `${angka(data.jumlahRemote)} fully remote jobs from Indonesian and overseas companies. Some pay in dollars.`,
+                    )}
               </p>
             </div>
             <a className="pb-btn pb-btn-putih" {...tautan("/remote")}>
-              Lihat loker remote <ArrowRight size={16} />
+              {t("Lihat loker remote", "See remote jobs")} <ArrowRight size={16} />
             </a>
           </div>
           <div className="pb-grid pb-grid-ringkas">
@@ -499,55 +506,55 @@ export function BerandaPage() {
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
-              <span className="pb-label">Kenapa Jobly</span>
-              <h2>Bukan cuma daftar loker.</h2>
-              <p>Semua yang kamu butuhkan buat melamar ada di sini, dan sebagian besar gratis.</p>
+              <span className="pb-label">{t("Kenapa Jobly", "Why Jobly")}</span>
+              <h2>{t("Bukan cuma daftar loker.", "More than a job list.")}</h2>
+              <p>{t("Semua yang kamu butuhkan buat melamar ada di sini, dan sebagian besar gratis.", "Everything you need to apply is here, and most of it is free.")}</p>
             </div>
           </div>
 
           <div className="pb-bento">
             <a className="pb-bento-item lebar" data-muncul="" {...tautan("/cek-loker")}>
               <div className="teks">
-                <span className="pb-tag baru">Gratis · tanpa daftar</span>
-                <h3>Cek loker palsu</h3>
-                <p>Ragu sama loker dari WhatsApp atau Instagram? Tempel teksnya di sini. Jobly akan menandai ciri-ciri penipuan, misalnya minta biaya, pakai travel agent, atau tugas like berbayar.</p>
-                <span className="go">Coba cek sekarang <ArrowRight size={15} /></span>
+                <span className="pb-tag baru">{t("Gratis · tanpa daftar", "Free · no sign-up")}</span>
+                <h3>{t("Cek loker palsu", "Fake job checker")}</h3>
+                <p>{t("Ragu sama loker dari WhatsApp atau Instagram? Tempel teksnya di sini. Jobly akan menandai ciri-ciri penipuan, misalnya minta biaya, pakai travel agent, atau tugas like berbayar.", "Unsure about a job post from WhatsApp or Instagram? Paste it here. Jobly flags common scam signs, like upfront fees, travel agents, or paid like-tasks.")}</p>
+                <span className="go">{t("Coba cek sekarang", "Check one now")} <ArrowRight size={15} /></span>
               </div>
               <MiniCek />
             </a>
 
             <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan("/peta-gaji")}>
               <div className="teks">
-                <span className="pb-tag baru">Gratis</span>
-                <h3>Peta gaji</h3>
-                <p>Lihat kisaran gaji per bidang dan kota, dihitung dari loker yang benar-benar ada.</p>
+                <span className="pb-tag baru">{t("Gratis", "Free")}</span>
+                <h3>{t("Peta gaji", "Salary map")}</h3>
+                <p>{t("Lihat kisaran gaji per bidang dan kota, dihitung dari loker yang benar-benar ada.", "See salary ranges by field and city, calculated from real job posts.")}</p>
               </div>
               <MiniGaji data={gajiMini} />
             </a>
 
             <a className="pb-bento-item" data-muncul="" {...tautan(fitur("interview"))}>
               <div className="teks">
-                <span className="pb-tag">Gratis</span>
-                <h3>Latihan interview level neraka</h3>
-                <p>140+ pertanyaan lengkap dengan contoh jawaban, plus mode tantangan dengan batas waktu.</p>
+                <span className="pb-tag">{t("Gratis", "Free")}</span>
+                <h3>{t("Latihan interview level neraka", "Hardcore interview practice")}</h3>
+                <p>{t("140+ pertanyaan lengkap dengan contoh jawaban, plus mode tantangan dengan batas waktu.", "140+ questions with sample answers, plus a timed challenge mode.")}</p>
               </div>
               <MiniLatihan />
             </a>
 
             <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan(fitur("cvbuilder"))}>
               <div className="teks">
-                <span className="pb-tag">Gratis</span>
-                <h3>Bikin CV yang lolos ATS</h3>
-                <p>Pilih font dan tema sesukamu. PDF-nya tetap rapi dan terbaca oleh sistem penyaring HRD.</p>
+                <span className="pb-tag">{t("Gratis", "Free")}</span>
+                <h3>{t("Bikin CV yang lolos ATS", "Build a CV that passes ATS")}</h3>
+                <p>{t("Pilih font dan tema sesukamu. PDF-nya tetap rapi dan terbaca oleh sistem penyaring HRD.", "Pick any font and theme. The PDF stays clean and readable by applicant tracking systems.")}</p>
               </div>
               <MiniCv />
             </a>
 
             <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "160ms" }} {...tautan(fitur("rencana"))}>
               <div className="teks">
-                <span className="pb-tag baru">Gratis</span>
-                <h3>Rencana lamar</h3>
-                <p>Pasang target mingguan dan jaga streak harian, supaya kamu tetap rajin melamar.</p>
+                <span className="pb-tag baru">{t("Gratis", "Free")}</span>
+                <h3>{t("Rencana lamar", "Application plan")}</h3>
+                <p>{t("Pasang target mingguan dan jaga streak harian, supaya kamu tetap rajin melamar.", "Set a weekly target and keep a daily streak so you keep applying.")}</p>
               </div>
               <MiniRencana />
             </a>
@@ -556,9 +563,9 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag pro">Pro</span>
                 <h3>
-                  <FileSearch size={17} /> Review CV dengan AI
+                  <FileSearch size={17} /> {t("Review CV dengan AI", "AI CV review")}
                 </h3>
-                <p>Dapat skor ATS, tahu bagian CV yang masih lemah, plus versi perbaikannya dalam bahasa Indonesia dan Inggris.</p>
+                <p>{t("Dapat skor ATS, tahu bagian CV yang masih lemah, plus versi perbaikannya dalam bahasa Indonesia dan Inggris.", "Get an ATS score, see the weak parts of your CV, plus an improved version in Indonesian and English.")}</p>
               </div>
               <MiniSkor />
             </a>
@@ -567,10 +574,10 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag pro">Pro</span>
                 <h3>
-                  <Mic size={17} /> Simulasi interview bersuara
+                  <Mic size={17} /> {t("Simulasi interview bersuara", "Voice mock interview")}
                 </h3>
-                <p>Latihan ngobrol langsung dengan pewawancara AI. Di akhir sesi, kamu dapat nilai dan masukan untuk tiap jawaban.</p>
-                <span className="go">Mulai dari {rupiah(SEMUA_TIER[2].harga)} <ArrowRight size={15} /></span>
+                <p>{t("Latihan ngobrol langsung dengan pewawancara AI. Di akhir sesi, kamu dapat nilai dan masukan untuk tiap jawaban.", "Talk live with an AI interviewer. At the end you get a score and feedback on every answer.")}</p>
+                <span className="go">{t("Mulai dari", "From")} {rupiah(SEMUA_TIER[2].harga)} <ArrowRight size={15} /></span>
               </div>
               <MiniSuara />
             </a>
@@ -581,13 +588,13 @@ export function BerandaPage() {
               <FilePlus2 size={16} /> LinkedIn Builder
             </a>
             <a {...tautan(fitur("pindahkarier"))}>
-              <BarChart3 size={16} /> Pindah karier <span className="pb-tag pro">Pro</span>
+              <BarChart3 size={16} /> {t("Pindah karier", "Career switch")} <span className="pb-tag pro">Pro</span>
             </a>
             <a {...tautan(fitur("applications"))}>
-              <MessageSquareQuote size={16} /> Pelacak lamaran
+              <MessageSquareQuote size={16} /> {t("Pelacak lamaran", "Application tracker")}
             </a>
             <a {...tautan("/kalkulator-gaji")}>
-              <Globe size={16} /> Kalkulator gaji USD
+              <Globe size={16} /> {t("Kalkulator gaji USD", "USD salary calculator")}
             </a>
           </div>
         </div>
@@ -598,8 +605,8 @@ export function BerandaPage() {
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
-              <span className="pb-label">Lokasi</span>
-              <h2>Cari di kota tujuanmu</h2>
+              <span className="pb-label">{t("Lokasi", "Location")}</span>
+              <h2>{t("Cari di kota tujuanmu", "Search in your city")}</h2>
             </div>
           </div>
           <div className="pb-cities-grid" data-muncul="">
@@ -625,15 +632,16 @@ export function BerandaPage() {
       <section className="pb-section">
         <div className="pb-wrap pb-calc-teaser">
           <div data-muncul="">
-            <span className="pb-label">Kalkulator gaji</span>
-            <h2 className="pb-h2">Ditawari gaji dalam dolar? Cek dulu berapa rupiahnya.</h2>
+            <span className="pb-label">{t("Kalkulator gaji", "Salary calculator")}</span>
+            <h2 className="pb-h2">{t("Ditawari gaji dalam dolar? Cek dulu berapa rupiahnya.", "Offered a salary in dollars? See what it is in rupiah.")}</h2>
             <p className="pb-sub">
-              Hitung gaji per jam sampai per tahun, sudah dipotong biaya platform
-              dan transfer. Kursnya ikut kurs hari ini, atau bisa kamu ganti
-              dengan kurs bankmu sendiri.
+              {t(
+                "Hitung gaji per jam sampai per tahun, sudah dipotong biaya platform dan transfer. Kursnya ikut kurs hari ini, atau bisa kamu ganti dengan kurs bankmu sendiri.",
+                "Work out hourly to yearly pay after platform and transfer fees. It uses today's exchange rate, or you can enter your bank's rate.",
+              )}
             </p>
             <a className="pb-link" style={{ marginTop: 20 }} {...tautan("/kalkulator-gaji")}>
-              Buka kalkulator lengkap <ArrowRight size={15} />
+              {t("Buka kalkulator lengkap", "Open the full calculator")} <ArrowRight size={15} />
             </a>
           </div>
           <div data-muncul="" style={{ "--tunda": "100ms" }}>
@@ -647,22 +655,22 @@ export function BerandaPage() {
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
-              <span className="pb-label">Cara kerja</span>
-              <h2>Dari cari loker sampai lamaran terkirim</h2>
+              <span className="pb-label">{t("Cara kerja", "How it works")}</span>
+              <h2>{t("Dari cari loker sampai lamaran terkirim", "From job search to application sent")}</h2>
             </div>
           </div>
           <ol className="pb-steps" data-muncul="">
             <li>
-              <h3>Cari lowongan</h3>
-              <p>Cari berdasarkan posisi, kota, atau jenis kerja. Setiap loker mencantumkan sumber dan tanggal tayangnya.</p>
+              <h3>{t("Cari lowongan", "Find a job")}</h3>
+              <p>{t("Cari berdasarkan posisi, kota, atau jenis kerja. Setiap loker mencantumkan sumber dan tanggal tayangnya.", "Search by role, city, or job type. Every post shows its source and the date it went live.")}</p>
             </li>
             <li>
-              <h3>Siapkan lamaranmu</h3>
-              <p>Pastikan lokernya asli, bandingkan gajinya, rapikan CV, lalu latihan menjawab pertanyaan yang paling sulit.</p>
+              <h3>{t("Siapkan lamaranmu", "Get your application ready")}</h3>
+              <p>{t("Pastikan lokernya asli, bandingkan gajinya, rapikan CV, lalu latihan menjawab pertanyaan yang paling sulit.", "Make sure the post is real, compare the pay, polish your CV, then practise the toughest questions.")}</p>
             </li>
             <li>
-              <h3>Lamar di sumbernya</h3>
-              <p>Tombol Lamar langsung membuka halaman loker aslinya. Jangan lupa catat lamaranmu supaya mudah dipantau.</p>
+              <h3>{t("Lamar di sumbernya", "Apply at the source")}</h3>
+              <p>{t("Tombol Lamar langsung membuka halaman loker aslinya. Jangan lupa catat lamaranmu supaya mudah dipantau.", "The Apply button opens the original job page. Log your application so it's easy to track.")}</p>
             </li>
           </ol>
         </div>
@@ -673,12 +681,13 @@ export function BerandaPage() {
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
-              <span className="pb-label">Harga</span>
-              <h2>Mulai gratis. Buka semuanya mulai {rupiah(SEMUA_TIER[1].harga)}.</h2>
+              <span className="pb-label">{t("Harga", "Pricing")}</span>
+              <h2>{t(`Mulai gratis. Buka semuanya mulai ${rupiah(SEMUA_TIER[1].harga)}.`, `Start free. Unlock everything from ${rupiah(SEMUA_TIER[1].harga)}.`)}</h2>
               <p>
-                Akun gratis membuka {angka(BATAS_GRATIS)} loker
-                {terkunci ? ` dari ${angka(total)}` : ""}. Paket berbayar cukup sekali bayar, tanpa
-                langganan otomatis, dan membuka semua loker.
+                {t(
+                  `Akun gratis membuka ${angka(BATAS_GRATIS)} loker${terkunci ? ` dari ${angka(total)}` : ""}. Paket berbayar cukup sekali bayar, tanpa langganan otomatis, dan membuka semua loker.`,
+                  `A free account opens ${angka(BATAS_GRATIS)} jobs${terkunci ? ` out of ${angka(total)}` : ""}. Paid plans are a one-time payment, never auto-renew, and unlock every job.`,
+                )}
               </p>
             </div>
           </div>
@@ -687,10 +696,10 @@ export function BerandaPage() {
               <div key={p.id} className={`pb-price ${p.populer ? "rek" : ""}`} data-muncul="" style={{ "--tunda": `${i * 70}ms` }}>
                 <div className="pb-price-top">
                   <h3>{p.nama}</h3>
-                  {p.populer && <span className="pb-tag">Rekomendasi</span>}
+                  {p.populer && <span className="pb-tag">{t("Rekomendasi", "Recommended")}</span>}
                 </div>
                 <div className="amt">{rupiah(p.harga)}</div>
-                <div className="per">{p.selamanya ? "selamanya" : `sekali bayar · berlaku ${labelDurasi(p.durasiHari)}`}</div>
+                <div className="per">{p.selamanya ? t("selamanya", "forever") : t(`sekali bayar · berlaku ${labelDurasi(p.durasiHari)}`, `one-time · valid ${labelDurasi(p.durasiHari)}`)}</div>
                 <ul>
                   {p.fitur.map((f) =>
                     f.endsWith(":") ? (
@@ -709,7 +718,7 @@ export function BerandaPage() {
                   className={`pb-btn ${p.populer ? "pb-btn-primary" : "pb-btn-outline"}`}
                   {...tautan(p.harga === 0 ? (masuk ? "/loker" : "/register") : masuk ? "/dashboard/paket" : "/register")}
                 >
-                  {p.harga === 0 ? (masuk ? "Cari loker" : "Daftar gratis") : `Pilih ${p.nama}`}
+                  {p.harga === 0 ? (masuk ? t("Cari loker", "Find jobs") : t("Daftar gratis", "Sign up free")) : t(`Pilih ${p.nama}`, `Choose ${p.nama}`)}
                 </a>
               </div>
             ))}
@@ -725,10 +734,10 @@ export function BerandaPage() {
         <div className="pb-wrap pb-split">
           <div className="pb-split-aside" data-muncul="">
             <span className="pb-label">FAQ</span>
-            <h2 className="pb-h2">Pertanyaan yang sering diajukan</h2>
-            <p className="pb-sub">Belum menemukan jawabannya? Lihat daftar lengkapnya.</p>
+            <h2 className="pb-h2">{t("Pertanyaan yang sering diajukan", "Frequently asked questions")}</h2>
+            <p className="pb-sub">{t("Belum menemukan jawabannya? Lihat daftar lengkapnya.", "Didn't find your answer? See the full list.")}</p>
             <a className="pb-link" style={{ marginTop: 18 }} {...tautan("/faq")}>
-              Semua pertanyaan <ArrowRight size={15} />
+              {t("Semua pertanyaan", "All questions")} <ArrowRight size={15} />
             </a>
           </div>
           <DaftarFaq items={FAQ_BERANDA} />

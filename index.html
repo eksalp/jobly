@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0B3C6E" />
+    <meta name="theme-color" content="#1D5BF0" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="icon" type="image/svg+xml" href="/logo-jobly.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo-jobly-j.svg" />
     <script>
       // Pasang tema sebelum halaman digambar, supaya mode gelap tidak
       // berkedip putih saat dibuka. Logikanya sama dengan src/utils/tema.js.
@@ -14,6 +14,8 @@
           var p = localStorage.getItem("jobly:tema") || "sistem";
           var gelap = p === "gelap" || (p === "sistem" && window.matchMedia("(prefers-color-scheme: dark)").matches);
           document.documentElement.setAttribute("data-tema", gelap ? "gelap" : "terang");
+          // Bahasa tampilan (lihat src/i18n.js)
+          if (localStorage.getItem("jobly:bahasa") === "en") document.documentElement.lang = "en";
         } catch (e) {}
       })();
     </script>
@@ -21,7 +23,7 @@
       name="description"
       content="Jobly mengumpulkan lowongan kerja dari situs karier resmi perusahaan, LinkedIn, dan Indeed setiap hari. Cari gratis, lamar langsung di sumbernya, dan siapkan CV serta interview dengan bantuan AI."
     />
-    <title>Jobly — Lowongan kerja dari sumber resmi</title>
+    <title>Jobly · Lowongan kerja dari sumber resmi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -37,6 +37,7 @@ import {
   EditorPoin,
 } from "../../components/linkedin/SectionBerulang";
 import { auditProfile, skorProfil } from "../../utils/linkedinAudit";
+import { t } from "../../i18n.js";
 
 /* LinkedIn punya bahasa visual sendiri — di dalam mockup kita ikuti persis,
    di luar mockup (panel review) kita pakai bahasa visual JobFinder. */
@@ -55,19 +56,19 @@ const STATUS = {
   ok: {
     warna: "#0F7B4F",
     bg: "rgba(15,123,79,0.1)",
-    label: "Sudah baik",
+    label: t("Sudah baik", "Good"),
     Ikon: CircleCheck,
   },
   warn: {
     warna: "#B45309",
     bg: "rgba(180,83,9,0.1)",
-    label: "Bisa lebih baik",
+    label: t("Bisa lebih baik", "Could be better"),
     Ikon: AlertTriangle,
   },
   bad: {
     warna: "#B23A3A",
     bg: "rgba(178,58,58,0.1)",
-    label: "Perlu diperbaiki",
+    label: t("Perlu diperbaiki", "Needs work"),
     Ikon: AlertCircle,
   },
 };
@@ -127,28 +128,28 @@ const PROFIL_KOSONG = {
 
 // Urutan bagian berulang, mengikuti urutan asli di profil LinkedIn
 const SECTION_BERULANG = [
-  { id: "education", judul: "Pendidikan", tambah: "Tambah pendidikan" },
+  { id: "education", judul: t("Pendidikan", "Education"), tambah: t("Tambah pendidikan", "Add education") },
   {
     id: "certifications",
-    judul: "Lisensi & sertifikasi",
-    tambah: "Tambah sertifikasi",
+    judul: t("Lisensi & sertifikasi", "Licenses & certifications"),
+    tambah: t("Tambah sertifikasi", "Add certification"),
   },
   {
     id: "volunteering",
-    judul: "Pengalaman sukarela",
-    tambah: "Tambah kegiatan",
+    judul: t("Pengalaman sukarela", "Volunteer experience"),
+    tambah: t("Tambah kegiatan", "Add activity"),
   },
 ];
 
 const SECTION_BERULANG_BAWAH = [
-  { id: "publications", judul: "Publikasi", tambah: "Tambah publikasi" },
+  { id: "publications", judul: t("Publikasi", "Publications"), tambah: t("Tambah publikasi", "Add publication") },
   {
     id: "awards",
-    judul: "Penghargaan & prestasi",
-    tambah: "Tambah penghargaan",
+    judul: t("Penghargaan & prestasi", "Honors & awards"),
+    tambah: t("Tambah penghargaan", "Add award"),
   },
-  { id: "languages", judul: "Bahasa", tambah: "Tambah bahasa" },
-  { id: "organizations", judul: "Organisasi", tambah: "Tambah organisasi" },
+  { id: "languages", judul: t("Bahasa", "Languages"), tambah: t("Tambah bahasa", "Add language") },
+  { id: "organizations", judul: t("Organisasi", "Organizations"), tambah: t("Tambah organisasi", "Add organization") },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -282,8 +283,7 @@ function PanelReview({
       >
         <Info size={22} style={{ marginBottom: 10, opacity: 0.5 }} />
         <div>
-          Klik bagian mana pun di profil sebelah kiri untuk melihat ukuran yang
-          benar, temuan, dan saran perbaikan.
+          {t("Klik bagian mana pun di profil sebelah kiri untuk melihat ukuran yang benar, temuan, dan saran perbaikan.", "Click any section of the profile on the left to see the right length, findings, and suggestions.")}
         </div>
       </div>
     );
@@ -309,7 +309,7 @@ function PanelReview({
         {onTutup && (
           <button
             onClick={onTutup}
-            aria-label="Tutup"
+            aria-label={t("Tutup", "Close")}
             style={{
               background: "none",
               border: "none",
@@ -339,7 +339,7 @@ function PanelReview({
             letterSpacing: "0.03em",
           }}
         >
-          Ketentuan LinkedIn
+          {t("Ketentuan LinkedIn", "LinkedIn rules")}
         </div>
         <div
           style={{
@@ -390,9 +390,9 @@ function PanelReview({
               letterSpacing: "0.03em",
             }}
           >
-            Temuan di profilmu
+            {t("Temuan di profilmu", "Findings in your profile")}
           </div>
-          {review.temuan.map((t, i) => (
+          {review.temuan.map((tt, i) => (
             <div
               key={i}
               style={{
@@ -408,7 +408,7 @@ function PanelReview({
               <span style={{ color: s.warna, flexShrink: 0, marginTop: 1 }}>
                 •
               </span>
-              <span>{t}</span>
+              <span>{tt}</span>
             </div>
           ))}
         </div>
@@ -425,9 +425,9 @@ function PanelReview({
             letterSpacing: "0.03em",
           }}
         >
-          Cara memperbaiki
+          {t("Cara memperbaiki", "How to fix it")}
         </div>
-        {spec.panduan.map((t, i) => (
+        {spec.panduan.map((tt, i) => (
           <div
             key={i}
             style={{
@@ -442,7 +442,7 @@ function PanelReview({
             <span style={{ color: T.accent, flexShrink: 0, marginTop: 1 }}>
               •
             </span>
-            <span>{t}</span>
+            <span>{tt}</span>
           </div>
         ))}
       </div>
@@ -470,7 +470,7 @@ function PanelReview({
           >
             <Sparkles size={13} color={T.teal} />
             <span style={{ fontSize: 12, fontWeight: 600, color: T.ink }}>
-              {bisaDiterapkan ? "Versi tulis ulang dari AI" : "Saran dari AI"}
+              {bisaDiterapkan ? t("Versi tulis ulang dari AI", "AI rewrite") : t("Saran dari AI", "AI suggestion")}
             </span>
           </div>
           <div
@@ -496,7 +496,7 @@ function PanelReview({
               onClick={onTerapkanSaran}
               style={{ fontSize: 11.5, padding: "7px 13px", width: "100%" }}
             >
-              <Check size={12} /> Pakai versi ini
+              <Check size={12} />{" "}{t("Pakai versi ini", "Use this version")}
             </Button>
           )}
         </div>
@@ -692,7 +692,7 @@ export function LinkedInBuilderPanel({ setActive }) {
     }));
     loaded.current = true;
     setDirty(true);
-    setPesan("Draft AI diterapkan");
+    setPesan(t("Draft AI diterapkan", "AI draft applied"));
     setTimeout(() => setPesan(""), 2000);
   };
 
@@ -731,7 +731,7 @@ export function LinkedInBuilderPanel({ setActive }) {
       return;
     }
 
-    setPesan("Saran diterapkan");
+    setPesan(t("Saran diterapkan", "Suggestion applied"));
     setTimeout(() => setPesan(""), 1800);
   };
 
@@ -743,7 +743,7 @@ export function LinkedInBuilderPanel({ setActive }) {
       .update({ linkedin_json: p, updated_at: new Date().toISOString() })
       .eq("id", user.id);
     setSaving(false);
-    setPesan(error ? "Gagal menyimpan" : "Tersimpan");
+    setPesan(error ? t("Gagal menyimpan", "Couldn't save") : t("Tersimpan", "Saved"));
     if (!error) setDirty(false);
     setTimeout(() => setPesan(""), 2200);
   }, [user?.id, p]);
@@ -774,7 +774,7 @@ export function LinkedInBuilderPanel({ setActive }) {
             .filter(Boolean)
             .map((d) => `• ${d}`)
             .join("\n");
-          return `${e.role || "Posisi"}, ${e.company || ""}\n${isi}`;
+          return `${e.role || t("Posisi", "Position")}, ${e.company || ""}\n${isi}`;
         })
         .join("\n\n");
     }
@@ -860,7 +860,7 @@ export function LinkedInBuilderPanel({ setActive }) {
             <span style={{ fontSize: 11, color: T.inkFaint }}>/100</span>
           </div>
           <div style={{ fontSize: 10, color: T.inkFaint, marginTop: 3 }}>
-            Kekuatan profil
+            {t("Kekuatan profil", "Profile strength")}
           </div>
         </div>
         {!layarKecil && (
@@ -882,18 +882,18 @@ export function LinkedInBuilderPanel({ setActive }) {
               marginBottom: 2,
             }}
           >
-            Pratinjau profil LinkedIn kamu
+            {t("Pratinjau profil LinkedIn kamu", "Your LinkedIn profile preview")}
           </div>
           <div style={{ fontSize: 11.5, color: pesan ? T.teal : T.inkSoft }}>
             {saving
-              ? "Menyimpan..."
+              ? t("Menyimpan...", "Saving...")
               : pesan ||
-                "Klik bagian mana pun untuk melihat ukuran yang benar dan saran perbaikan."}
+                t("Klik bagian mana pun untuk melihat ukuran yang benar dan saran perbaikan.", "Click any section to see the right length and suggestions.")}
           </div>
         </div>
         {dirty && (
           <span style={{ fontSize: 11, color: "var(--t-warn)", flexShrink: 0 }}>
-            Belum tersimpan
+            {t("Belum tersimpan", "Not saved yet")}
           </span>
         )}
         <Button
@@ -917,7 +917,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           ) : (
             <Save size={13} />
           )}{" "}
-          Simpan
+          {t("Simpan", "Save")}
         </Button>
       </div>
 
@@ -926,8 +926,8 @@ export function LinkedInBuilderPanel({ setActive }) {
       {langganan.aktif ? (
         <PilihDraftAi
           kolom="linkedin_draft"
-          judul="AI sudah menyiapkan draft LinkedIn kamu"
-          keterangan="Headline, Tentang, pengalaman, dan keahlian ditulis ulang agar lebih mudah ditemukan recruiter."
+          judul={t("AI sudah menyiapkan draft LinkedIn kamu", "AI has prepared your LinkedIn draft")}
+          keterangan={t("Headline, Tentang, pengalaman, dan keahlian ditulis ulang agar lebih mudah ditemukan recruiter.", "Headline, About, experience, and skills rewritten so recruiters find you more easily.")}
           onTerapkan={(draft) => {
             setAiDraft(draft);
             terapkanSemuaDariDraft(draft);
@@ -938,8 +938,8 @@ export function LinkedInBuilderPanel({ setActive }) {
         <GerbangFitur
           terbuka={false}
           tinggiMinimal={160}
-          judul="LinkedIn Builder dengan arahan AI"
-          keterangan="AI menulis ulang headline, bagian Tentang, dan keahlianmu supaya lebih mudah ditemukan recruiter. Tersedia dalam bahasa Indonesia dan Inggris."
+          judul={t("LinkedIn Builder dengan arahan AI", "AI-guided LinkedIn Builder")}
+          keterangan={t("AI menulis ulang headline, bagian Tentang, dan keahlianmu supaya lebih mudah ditemukan recruiter. Tersedia dalam bahasa Indonesia dan Inggris.", "AI rewrites your headline, About section, and skills so recruiters find you more easily. Available in Indonesian and English.")}
           onLangganan={() => setActive?.("paket")}
         />
       )}
@@ -1082,7 +1082,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                   <input
                     value={p.nama}
                     onChange={ubah("nama")}
-                    placeholder="Nama lengkap"
+                    placeholder={t("Nama lengkap", "Full name")}
                     style={{ ...inputStyle, fontSize: 20, fontWeight: 600 }}
                   />
                   <textarea
@@ -1118,7 +1118,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                       onClick={() => setEdit(null)}
                       style={{ fontSize: 11.5, padding: "6px 12px" }}
                     >
-                      <Check size={12} /> Selesai
+                      <Check size={12} />{" "}{t("Selesai", "Done")}
                     </Button>
                   </div>
                   <input
@@ -1147,7 +1147,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                   >
                     {p.nama || (
                       <span style={{ color: "rgba(0,0,0,0.3)" }}>
-                        Nama lengkap
+                        {t("Nama lengkap", "Full name")}
                       </span>
                     )}
                   </div>
@@ -1161,12 +1161,12 @@ export function LinkedInBuilderPanel({ setActive }) {
                   >
                     {p.headline || (
                       <span style={{ color: "rgba(0,0,0,0.3)" }}>
-                        Headline kamu muncul di sini (maks. 220 karakter)
+                        {t("Headline kamu muncul di sini (maks. 220 karakter)", "Your headline shows here (max. 220 characters)")}
                       </span>
                     )}
                   </div>
                   <div style={{ fontSize: 13, color: LI.textSoft }}>
-                    {p.lokasi || "Kota, Provinsi, Negara"}
+                    {p.lokasi || t("Kota, Provinsi, Negara", "City, Province, Country")}
                   </div>
                   <div
                     style={{
@@ -1191,7 +1191,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         gap: 4,
                       }}
                     >
-                      <Pencil size={10} /> Klik untuk mengubah
+                      <Pencil size={10} />{" "}{t("Klik untuk mengubah", "Click to edit")}
                     </span>
                   </div>
                 </div>
@@ -1202,7 +1202,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           {/* Tentang */}
           <KartuLI
             id="about"
-            judul={"Tentang"}
+            judul={t("Tentang", "About")}
             review={review.about}
             dipilih={dipilih}
             onPilih={setDipilih}
@@ -1215,7 +1215,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                   onChange={ubah("about")}
                   rows={11}
                   placeholder={
-                    "Saya lulusan Manajemen dengan pengalaman di bidang keuangan, pajak, dan treasury...\n\nSelama bekerja, saya...\n\nSaat ini saya terbuka untuk..."
+                    t("Saya lulusan Manajemen dengan pengalaman di bidang keuangan, pajak, dan treasury...\n\nSelama bekerja, saya...\n\nSaat ini saya terbuka untuk...", "I'm a Management graduate with experience in finance, tax, and treasury... In my roles, I... I'm currently open to...")
                   }
                   style={{
                     ...inputStyle,
@@ -1245,7 +1245,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                     onClick={() => setEdit(null)}
                     style={{ fontSize: 11.5, padding: "6px 12px" }}
                   >
-                    <Check size={12} /> Selesai
+                    <Check size={12} />{" "}{t("Selesai", "Done")}
                   </Button>
                 </div>
               </div>
@@ -1272,7 +1272,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         <span style={{ color: LI.textSoft }}>
                           …{" "}
                           <span style={{ fontWeight: 600 }}>
-                            lihat selengkapnya
+                            {t("lihat selengkapnya", "see more")}
                           </span>
                         </span>
                       )}
@@ -1288,8 +1288,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                           fontFamily: "'IBM Plex Mono', monospace",
                         }}
                       >
-                        Garis ini menandai batas 270 karakter yang terlihat
-                        tanpa klik
+                        {t("Garis ini menandai batas 270 karakter yang terlihat tanpa klik", "This line marks the 270 characters visible without clicking")}
                       </div>
                     )}
                   </>
@@ -1301,8 +1300,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                       lineHeight: 1.65,
                     }}
                   >
-                    Belum ada tulisan. Klik untuk mulai menulis, maksimal 2.600
-                    karakter.
+                    {t("Belum ada tulisan. Klik untuk mulai menulis, maksimal 2.600 karakter.", "Nothing written yet. Click to start, up to 2,600 characters.")}
                   </div>
                 )}
               </div>
@@ -1312,7 +1310,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           {/* Pengalaman */}
           <KartuLI
             id="experience"
-            judul={"Pengalaman"}
+            judul={t("Pengalaman", "Experience")}
             review={review.experience}
             dipilih={dipilih}
             onPilih={setDipilih}
@@ -1378,7 +1376,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         onChange={(ev) =>
                           expUbah(e.id, { ...e, role: ev.target.value })
                         }
-                        placeholder="Posisi"
+                        placeholder={t("Posisi", "Position")}
                         style={inputStyle}
                       />
                       <input
@@ -1386,7 +1384,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         onChange={(ev) =>
                           expUbah(e.id, { ...e, company: ev.target.value })
                         }
-                        placeholder="Perusahaan"
+                        placeholder={t("Perusahaan", "Company")}
                         style={inputStyle}
                       />
                       <input
@@ -1394,7 +1392,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         onChange={(ev) =>
                           expUbah(e.id, { ...e, start: ev.target.value })
                         }
-                        placeholder="Okt 2024"
+                        placeholder={t("Okt 2024", "Oct 2024")}
                         style={inputStyle}
                       />
                       <input
@@ -1402,7 +1400,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                         onChange={(ev) =>
                           expUbah(e.id, { ...e, end: ev.target.value })
                         }
-                        placeholder="Sekarang"
+                        placeholder={t("Sekarang", "Present")}
                         style={inputStyle}
                       />
                     </div>
@@ -1415,10 +1413,10 @@ export function LinkedInBuilderPanel({ setActive }) {
                       style={inputStyle}
                     />
                     <EditorPoin
-                      label="Deskripsi"
+                      label={t("Deskripsi", "Description")}
                       items={e.desc}
                       onChange={(poin) => expUbah(e.id, { ...e, desc: poin })}
-                      placeholder="Menyusun laporan kinerja keuangan menggunakan 5 indikator utama"
+                      placeholder={t("Menyusun laporan kinerja keuangan menggunakan 5 indikator utama", "Prepared financial performance reports using 5 key indicators")}
                     />
                     <input
                       value={(e.skills || []).join(", ")}
@@ -1431,7 +1429,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                             .filter(Boolean),
                         })
                       }
-                      placeholder="Skill di posisi ini, pisahkan koma (maks 5)"
+                      placeholder={t("Skill di posisi ini, pisahkan koma (maks 5)", "Skills in this role, comma separated (max 5)")}
                       style={inputStyle}
                     />
                     <div
@@ -1455,14 +1453,14 @@ export function LinkedInBuilderPanel({ setActive }) {
                           padding: 0,
                         }}
                       >
-                        <Trash2 size={11} /> Hapus posisi
+                        <Trash2 size={11} />{" "}{t("Hapus posisi", "Remove position")}
                       </button>
                       <Button
                         variant="outline"
                         onClick={() => setEdit(null)}
                         style={{ fontSize: 11.5, padding: "6px 12px" }}
                       >
-                        <Check size={12} /> Selesai
+                        <Check size={12} />{" "}{t("Selesai", "Done")}
                       </Button>
                     </div>
                   </div>
@@ -1476,16 +1474,16 @@ export function LinkedInBuilderPanel({ setActive }) {
                       }}
                     >
                       {e.role || (
-                        <span style={{ color: "rgba(0,0,0,0.3)" }}>Posisi</span>
+                        <span style={{ color: "rgba(0,0,0,0.3)" }}>{t("Posisi", "Position")}</span>
                       )}
                     </div>
                     <div style={{ fontSize: 13, color: LI.text }}>
-                      {e.company || "Perusahaan"}
+                      {e.company || t("Perusahaan", "Company")}
                       {e.jenis ? ` · ${e.jenis}` : ""}
                     </div>
                     <div style={{ fontSize: 12.5, color: LI.textSoft }}>
                       {[e.start, e.end].filter(Boolean).join(" - ") ||
-                        "Periode"}
+                        t("Periode", "Period")}
                     </div>
                     {e.lokasi && (
                       <div style={{ fontSize: 12.5, color: LI.textSoft }}>
@@ -1555,7 +1553,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                           marginTop: 8,
                         }}
                       >
-                        Belum ada skill di posisi ini
+                        {t("Belum ada skill di posisi ini", "No skills for this position yet")}
                       </div>
                     )}
                   </div>
@@ -1582,7 +1580,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                 fontFamily: LI.font,
               }}
             >
-              <Plus size={13} /> Tambah posisi
+              <Plus size={13} />{" "}{t("Tambah posisi", "Add position")}
             </button>
           </KartuLI>
 
@@ -1616,7 +1614,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           {/* Keahlian */}
           <KartuLI
             id="skills"
-            judul={`Keahlian`}
+            judul={t(`Keahlian`, `Skills`)}
             review={review.skills}
             dipilih={dipilih}
             onPilih={setDipilih}
@@ -1651,7 +1649,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                           fontWeight: 600,
                         }}
                       >
-                        3 teratas
+                        {t("3 teratas", "Top 3")}
                       </span>
                       <button
                         onClick={(ev) => {
@@ -1732,7 +1730,7 @@ export function LinkedInBuilderPanel({ setActive }) {
                 value={skillBaru}
                 onChange={(e) => setSkillBaru(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && tambahSkill()}
-                placeholder="Tambah keahlian, lalu Enter"
+                placeholder={t("Tambah keahlian, lalu Enter", "Add a skill, then press Enter")}
                 style={inputStyle}
               />
               <Button
@@ -1822,7 +1820,7 @@ export function LinkedInBuilderPanel({ setActive }) {
 
           <div
             role="dialog"
-            aria-label="Ulasan bagian profil"
+            aria-label={t("Ulasan bagian profil", "Profile section review")}
             style={{
               position: "fixed",
               top: 0,

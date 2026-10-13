@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { lokal, t } from "../i18n.js";
 
 /**
  * Pengenalan suara dan pembacaan suara lewat Web Speech API.
@@ -14,7 +15,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
  * jalur mengetik sebagai cadangan.
  */
 export function usePengenalanSuara({
-  bahasa = "id-ID",
+  bahasa = lokal(),
   // Jeda dasar sebelum jawaban dianggap selesai. Dinaikkan ke 3 detik
   // karena 1,8 detik terbukti terlalu agresif — orang berhenti sejenak
   // untuk berpikir di tengah jawaban, terutama saat menjawab pertanyaan
@@ -45,7 +46,7 @@ export function usePengenalanSuara({
   const mulai = useCallback(() => {
     if (!didukung) {
       setGalat(
-        "Browser ini belum mendukung pengenalan suara. Gunakan Chrome, Edge, atau Safari.",
+        t("Browser ini belum mendukung pengenalan suara. Gunakan Chrome, Edge, atau Safari.", "This browser doesn't support speech recognition yet. Use Chrome, Edge, or Safari."),
       );
       return;
     }
@@ -139,10 +140,10 @@ export function usePengenalanSuara({
       if (e.error === "no-speech") return; // wajar saat user diam sejenak
       if (e.error === "not-allowed") {
         setGalat(
-          "Izin mikrofon ditolak. Aktifkan izin mikrofon di pengaturan browser.",
+          t("Izin mikrofon ditolak. Aktifkan izin mikrofon di pengaturan browser.", "Microphone access was denied. Allow the microphone in your browser settings."),
         );
       } else {
-        setGalat(`Pengenalan suara bermasalah: ${e.error}`);
+        setGalat(t(`Pengenalan suara bermasalah: ${e.error}`, `Speech recognition error: ${e.error}`));
       }
       setMendengar(false);
     };
@@ -214,7 +215,7 @@ export function usePengukurSuara(aktif) {
           audio: true,
         });
         if (batal) {
-          stream.getTracks().forEach((t) => t.stop());
+          stream.getTracks().forEach((trek) => trek.stop());
           return;
         }
 
@@ -248,7 +249,7 @@ export function usePengukurSuara(aktif) {
       batal = true;
       const { stream, ctx, frame } = rujukan.current;
       if (frame) cancelAnimationFrame(frame);
-      stream?.getTracks().forEach((t) => t.stop());
+      stream?.getTracks().forEach((trek) => trek.stop());
       ctx?.close();
       rujukan.current = {};
       setTingkat(0);
@@ -259,7 +260,7 @@ export function usePengukurSuara(aktif) {
 }
 
 /** Membacakan teks dengan suara bawaan browser. */
-export function usePembacaSuara({ bahasa = "id-ID" } = {}) {
+export function usePembacaSuara({ bahasa = lokal() } = {}) {
   const [berbicara, setBerbicara] = useState(false);
 
   const didukung = typeof window !== "undefined" && "speechSynthesis" in window;

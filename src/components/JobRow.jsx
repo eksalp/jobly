@@ -15,6 +15,7 @@ import { Button } from "./ui/Button";
 import { LogoKotak } from "./publik/LogoKotak";
 import { formatGaji, logoPerusahaan, urlDetail } from "../utils/sumberLoker";
 import { tautan } from "../utils/navigasi";
+import { t } from "../i18n.js";
 
 export function JobRow({
   job,
@@ -67,7 +68,7 @@ export function JobRow({
             <a
               {...tautan(urlDetail(job))}
               style={{ color: "inherit", textDecoration: "none" }}
-              title="Lihat detail lowongan"
+              title={t("Lihat detail lowongan", "View job details")}
             >
               {job.posisi}
             </a>
@@ -93,7 +94,7 @@ export function JobRow({
           </span>
           <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
             <DollarSign size={10} />
-            {formatGaji(job) || "Gaji tidak disebutkan"}
+            {formatGaji(job) || t("Gaji tidak disebutkan", "Salary not listed")}
           </span>
         </div>
         {job.alasan && (
@@ -105,7 +106,7 @@ export function JobRow({
       {!locked && onToggleSave && (
         <button
           onClick={() => onToggleSave(job.id)}
-          title={saved ? "Hapus dari tersimpan" : "Simpan loker ini"}
+          title={saved ? t("Hapus dari tersimpan", "Remove from saved") : t("Simpan loker ini", "Save this job")}
           style={{
             flexShrink: 0,
             background: saved ? T.accentSoft : "transparent",
@@ -134,8 +135,8 @@ export function JobRow({
           disabled={sudahDilamar}
           title={
             sudahDilamar
-              ? "Sudah ada di menu Applications"
-              : "Simpan ke menu Applications untuk dilacak"
+              ? t("Sudah ada di menu Applications", "Already in My applications")
+              : t("Simpan ke menu Applications untuk dilacak", "Add to My applications to track it")
           }
           style={{
             flexShrink: 0,
@@ -155,11 +156,11 @@ export function JobRow({
         >
           {sudahDilamar ? (
             <>
-              <Check size={12} /> Tersimpan
+              <Check size={12} />{" "}{t("Tersimpan", "Saved")}
             </>
           ) : (
             <>
-              <Plus size={12} /> Lacak lamaran
+              <Plus size={12} />{" "}{t("Lacak lamaran", "Track application")}
             </>
           )}
         </button>
@@ -175,7 +176,7 @@ export function JobRow({
             variant="outline"
             style={{ padding: "7px 12px", fontSize: 12 }}
           >
-            Lihat <ExternalLink size={12} />
+            {t("Lihat", "View")}{" "}<ExternalLink size={12} />
           </Button>
         </a>
       )}
@@ -224,7 +225,7 @@ export function JobRow({
           }}
         >
           <Lock size={12} />
-          Buka dengan analisis lengkap
+          {t("Buka dengan analisis lengkap", "Unlock with a full analysis")}
         </div>
       </div>
     </div>

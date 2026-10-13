@@ -1,46 +1,47 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import { t } from "../i18n.js";
 
 /* Tahapan lamaran. Urutannya menentukan urutan kolom di papan. */
 export const TAHAPAN = [
   {
     id: "dilamar",
-    label: "Dilamar",
+    label: t("Dilamar", "Applied"),
     warna: "#8891A8",
-    deskripsi: "Lamaran sudah dikirim",
+    deskripsi: t("Lamaran sudah dikirim", "Application sent"),
   },
   {
     id: "ditinjau",
-    label: "Ditinjau",
+    label: t("Ditinjau", "In review"),
     warna: "#0B3C6E",
-    deskripsi: "Sedang diproses HR",
+    deskripsi: t("Sedang diproses HR", "Being processed by HR"),
   },
   {
     id: "interview",
     label: "Interview",
     warna: "#C98A1E",
-    deskripsi: "Dijadwalkan atau sudah wawancara",
+    deskripsi: t("Dijadwalkan atau sudah wawancara", "Scheduled or interviewed"),
   },
   {
     id: "offer",
     label: "Offer",
     warna: "#14B8A6",
-    deskripsi: "Menerima penawaran",
+    deskripsi: t("Menerima penawaran", "Received an offer"),
   },
   {
     id: "selesai",
-    label: "Selesai",
+    label: t("Selesai", "Done"),
     warna: "#6B7280",
-    deskripsi: "Diterima atau ditolak",
+    deskripsi: t("Diterima atau ditolak", "Accepted or rejected"),
   },
 ];
 
 /* Hasil akhir, hanya relevan untuk tahap "selesai" */
 export const HASIL = [
-  { id: "diterima", label: "Diterima", warna: "#0F7B4F" },
-  { id: "ditolak", label: "Ditolak", warna: "#B23A3A" },
-  { id: "batal", label: "Batal", warna: "#8891A8" },
+  { id: "diterima", label: t("Diterima", "Accepted"), warna: "#0F7B4F" },
+  { id: "ditolak", label: t("Ditolak", "Rejected"), warna: "#B23A3A" },
+  { id: "batal", label: t("Batal", "Withdrawn"), warna: "#8891A8" },
 ];
 
 export function useApplications() {
@@ -78,7 +79,7 @@ export function useApplications() {
      maupun form input manual. */
   const tambah = useCallback(
     async (data) => {
-      if (!user || !supabaseConfigured) return { error: "Belum masuk akun." };
+      if (!user || !supabaseConfigured) return { error: t("Belum masuk akun.", "Not signed in.") };
 
       const baris = {
         user_id: user.id,

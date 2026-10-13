@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { T } from "../../theme";
 import { Button } from "./Button";
+import { t } from "../../i18n.js";
 
 export function Field({
   label,
@@ -119,7 +120,7 @@ export function GoogleButton({ onClick, disabled }) {
           d="M43.6 20.5H24v8h11.3c-1 3.1-3.3 5.6-6.3 7.1l6.5 5.5C39.6 37.4 43 31.2 43 24c0-1.2-.1-2.4-.4-3.5z"
         />
       </svg>
-      Lanjutkan dengan Google
+      {t("Lanjutkan dengan Google", "Continue with Google")}
     </Button>
   );
 }

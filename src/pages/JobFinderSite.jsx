@@ -25,6 +25,7 @@ import {
   adaProsesBerjalan,
   keteranganProses,
 } from "../hooks/useCegahTinggalkan";
+import { t } from "../i18n.js";
 
 const DASH_IDS = Object.keys(PANEL_META);
 
@@ -106,9 +107,10 @@ function JobFinderApp() {
       // Analisis AI sedang berjalan: minta konfirmasi sebelum pindah
       if (url.pathname !== window.location.pathname && adaProsesBerjalan()) {
         const lanjut = window.confirm(
-          `${keteranganProses()}\n\nKalau pindah sekarang, hasilnya tetap diproses ` +
-            "di server dan bisa kamu lihat saat kembali, tapi sebaiknya ditunggu.\n\n" +
-            "Tetap pindah halaman?",
+          t(
+            `${keteranganProses()}\n\nKalau pindah sekarang, hasilnya tetap diproses di server dan bisa kamu lihat saat kembali, tapi sebaiknya ditunggu.\n\nTetap pindah halaman?`,
+            `${keteranganProses()}\n\nIf you leave now, it keeps processing on the server and you can see the result when you come back, but it's better to wait.\n\nLeave this page anyway?`,
+          ),
         );
         if (!lanjut) return;
       }
@@ -178,10 +180,10 @@ function JobFinderApp() {
 
   // Judul tab untuk halaman non-publik (halaman publik mengatur sendiri)
   React.useEffect(() => {
-    if (page === "beranda") document.title = "Jobly · Lowongan kerja dari sumber resmi";
+    if (page === "beranda") document.title = t("Jobly · Lowongan kerja dari sumber resmi", "Jobly · Jobs from official sources");
     else if (page === "dashboard")
       document.title = `${PANEL_META[rute.dashActive]?.title || "Dashboard"} · Jobly`;
-    else if (HALAMAN_AUTH.includes(page)) document.title = "Masuk · Jobly";
+    else if (HALAMAN_AUTH.includes(page)) document.title = t("Masuk · Jobly", "Sign in · Jobly");
   }, [page, rute.dashActive]);
 
   const publik = HALAMAN_PUBLIK.includes(page);
@@ -202,7 +204,7 @@ function JobFinderApp() {
         }}
       >
         <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
-        Memuat sesi...
+        {t("Memuat sesi...", "Loading session...")}
         <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </div>
     );

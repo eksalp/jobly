@@ -19,23 +19,25 @@ import { useApplications } from "../../hooks/useApplications";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
 import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
+import { lokal, t } from "../../i18n.js";
+import { labelTampil } from "../../data/taxonomy.js";
 
 // Kelipatan 4 supaya baris terakhir grid 4 kolom selalu penuh
 const PER_MUAT = 24;
 
 const LOKASI = [
-  ["Semua", "Semua lokasi"],
+  ["Semua", t("Semua lokasi", "All locations")],
   ["remote", "Remote"],
-  ["onsite", "Di kantor"],
+  ["onsite", t("Di kantor", "On-site")],
   ["hybrid", "Hybrid"],
 ];
 // Kunci = nilai persis di kolom employment_type database
 const TIPE = [
-  ["Semua", "Semua tipe"],
-  ["full-time", "Full time"],
-  ["kontrak", "Kontrak"],
+  ["Semua", t("Semua tipe", "All types")],
+  ["full-time", t("Full time", "Full-time")],
+  ["kontrak", t("Kontrak", "Contract")],
   ["freelance", "Freelance"],
-  ["magang", "Magang"],
+  ["magang", t("Magang", "Internship")],
 ];
 
 // Kota-kota besar Indonesia, diprioritaskan di urutan atas daftar filter.
@@ -131,7 +133,7 @@ export function JobFinderPanel({ setActive }) {
       lokasi: job.lokasi,
       link: job.link,
     });
-    toast("Dicatat di Lamaran saya");
+    toast(t("Dicatat di Lamaran saya", "Logged in My applications"));
   };
 
   const kotaOptions = KOTA_POPULER;
@@ -217,7 +219,7 @@ export function JobFinderPanel({ setActive }) {
     const alasan = alasanKecocokan(j.matchedTerms, 4, j.matchedKategori);
     return {
       persen: persenKecocokan(j.skorInti),
-      alasan: [j.kategoriLoker ? `Bidang ${j.kategoriLoker}` : null, alasan.length ? alasan.join(", ") : null]
+      alasan: [j.kategoriLoker ? t(`Bidang ${j.kategoriLoker}`, `Field: ${labelTampil(j.kategoriLoker)}`) : null, alasan.length ? alasan.join(", ") : null]
         .filter(Boolean)
         .join(" · "),
     };
@@ -237,17 +239,17 @@ export function JobFinderPanel({ setActive }) {
         <div className="pb-hint">
           <Sparkles size={18} />
           <div>
-            Loker belum bisa diurutkan sesuai keahlianmu. Isi skill di{" "}
+            {t("Loker belum bisa diurutkan sesuai keahlianmu. Isi skill di", "Jobs can't be matched to your skills yet. Add skills in")}{" "}
             <button type="button" onClick={() => setActive?.("profile")}>
-              Profil karier
+              {t("Profil karier", "Career profile")}
             </button>
-            , lengkapi{" "}
+            {t(", lengkapi", ", complete the")}{" "}
             <button type="button" onClick={() => setActive?.("cvbuilder")}>
               CV Builder
             </button>
-            , atau unggah CV di{" "}
+            {t(", atau unggah CV di", ", or upload a CV in")}{" "}
             <button type="button" onClick={() => setActive?.("overview")}>
-              Review CV
+              {t("Review CV", "CV Review")}
             </button>
             .
           </div>
@@ -258,19 +260,19 @@ export function JobFinderPanel({ setActive }) {
         <div className="pb-filter-row">
           <label className="pb-input">
             <Search size={17} color="var(--muted)" aria-hidden="true" />
-            <span className="pb-sr">Cari loker</span>
+            <span className="pb-sr">{t("Cari loker", "Find jobs")}</span>
             <input
               id="cari-cocok"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Cari posisi atau perusahaan"
+              placeholder={t("Cari posisi atau perusahaan", "Search role or company")}
               autoComplete="off"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                aria-label="Hapus pencarian"
+                aria-label={t("Hapus pencarian", "Clear search")}
                 style={{ border: 0, background: "none", cursor: "pointer", color: "var(--muted)", display: "flex" }}
               >
                 <X size={16} />
@@ -278,10 +280,10 @@ export function JobFinderPanel({ setActive }) {
             )}
           </label>
           <label className="pb-sr" htmlFor="kota-cocok">
-            Kota
+            {t("Kota", "City")}
           </label>
           <select id="kota-cocok" className="pb-select" value={filterKota} onChange={(e) => setFilterKota(e.target.value)}>
-            <option value="Semua">Semua kota</option>
+            <option value="Semua">{t("Semua kota", "All cities")}</option>
             {kotaOptions.map((k) => (
               <option key={k} value={k}>
                 {k}
@@ -308,11 +310,11 @@ export function JobFinderPanel({ setActive }) {
       <div className="pb-toolbar">
         <span className="count">
           {loading ? (
-            "Memuat lowongan…"
+            t("Memuat lowongan…", "Loading jobs…")
           ) : (
             <>
-              <b>{jumlah.toLocaleString("id-ID")}</b>{" "}
-              {matchOnly && hasProfile ? "loker cocok dengan profilmu" : "lowongan"}
+              <b>{jumlah.toLocaleString(lokal())}</b>{" "}
+              {matchOnly && hasProfile ? t("loker cocok dengan profilmu", "jobs match your profile") : "lowongan"}
               {adaFilter && (
                 <>
                   {" · "}
@@ -321,14 +323,14 @@ export function JobFinderPanel({ setActive }) {
                     onClick={reset}
                     style={{ border: 0, background: "none", padding: 0, font: "inherit", color: "var(--brand)", fontWeight: 600, cursor: "pointer" }}
                   >
-                    Hapus filter
+                    {t("Hapus filter", "Clear filters")}
                   </button>
                 </>
               )}
             </>
           )}
         </span>
-        <div className="pb-seg" role="group" aria-label="Tampilkan">
+        <div className="pb-seg" role="group" aria-label={t("Tampilkan", "Show")}>
           <button
             type="button"
             className={matchOnly && hasProfile ? "on" : ""}
@@ -336,9 +338,9 @@ export function JobFinderPanel({ setActive }) {
             disabled={!hasProfile}
             onClick={() => setMatchOnly(true)}
             style={!hasProfile ? { opacity: 0.5, cursor: "not-allowed" } : undefined}
-            title={!hasProfile ? "Lengkapi profil atau CV dulu" : undefined}
+            title={!hasProfile ? t("Lengkapi profil atau CV dulu", "Complete your profile or CV first") : undefined}
           >
-            Sesuai keahlianku
+            {t("Sesuai keahlianku", "Matching my skills")}
           </button>
           <button
             type="button"
@@ -346,7 +348,7 @@ export function JobFinderPanel({ setActive }) {
             aria-pressed={!(matchOnly && hasProfile)}
             onClick={() => setMatchOnly(false)}
           >
-            Semua loker
+            {t("Semua loker", "All jobs")}
           </button>
         </div>
       </div>
@@ -368,20 +370,20 @@ export function JobFinderPanel({ setActive }) {
 
         {!loading && filtered.length === 0 && (
           <div className="pb-empty">
-            <h3>{matchOnly && hasProfile ? "Belum ada loker yang cocok" : "Tidak ada loker yang sesuai"}</h3>
+            <h3>{matchOnly && hasProfile ? t("Belum ada loker yang cocok", "No matching jobs yet") : t("Tidak ada loker yang sesuai", "No jobs match")}</h3>
             <p style={{ margin: "0 0 18px" }}>
               {matchOnly && hasProfile
-                ? "Tambah skill di Profil karier, atau lihat semua loker."
-                : "Coba kata kunci yang lebih umum, atau longgarkan filternya."}
+                ? t("Tambah skill di Profil karier, atau lihat semua loker.", "Add skills in Career profile, or browse all jobs.")
+                : t("Coba kata kunci yang lebih umum, atau longgarkan filternya.", "Try a broader keyword, or loosen the filters.")}
             </p>
             {matchOnly && hasProfile ? (
               <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => setMatchOnly(false)}>
-                Lihat semua loker
+                {t("Lihat semua loker", "See all jobs")}
               </button>
             ) : (
               adaFilter && (
                 <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={reset}>
-                  Hapus filter
+                  {t("Hapus filter", "Clear filters")}
                 </button>
               )
             )}
@@ -392,9 +394,9 @@ export function JobFinderPanel({ setActive }) {
       {!loading && adaLagi && (
         <div className="pb-more" ref={sentinel}>
           <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={daftar.memuatLagi}>
-            {daftar.memuatLagi ? "Memuat…" : "Muat lebih banyak"}
+            {daftar.memuatLagi ? t("Memuat…", "Loading…") : t("Muat lebih banyak", "Load more")}
           </button>
-          Menampilkan {tampilkan.length.toLocaleString("id-ID")} dari {jumlah.toLocaleString("id-ID")}
+          {t("Menampilkan", "Showing")}{" "}{tampilkan.length.toLocaleString(lokal())} {t("dari", "of")} {jumlah.toLocaleString(lokal())}
         </div>
       )}
       {!loading && !adaLagi && !modeCocok && daftar.terkunci > 0 && (
@@ -405,8 +407,8 @@ export function JobFinderPanel({ setActive }) {
       {!loading && !adaLagi && filtered.length > 0 && (
         <div className="pb-more">
           {modeCocok
-            ? "Itu semua loker yang cocok dengan profilmu. Lihat “Semua loker” untuk pilihan lain."
-            : "Semua loker yang terbuka sudah ditampilkan."}
+            ? t("Itu semua loker yang cocok dengan profilmu. Lihat “Semua loker” untuk pilihan lain.", "That's every job matching your profile. Check “All jobs” for more.")
+            : t("Semua loker yang terbuka sudah ditampilkan.", "All open jobs are shown.")}
         </div>
       )}
 

@@ -3,6 +3,7 @@ import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { T } from "../theme";
 import { supabaseConfigured } from "../lib/supabaseClient";
 import { useJobs } from "../context/JobsContext";
+import { t } from "../i18n.js";
 
 export default function DataSourceBanner() {
   const { loading, error, usingDemo, refresh } = useJobs();
@@ -23,7 +24,7 @@ export default function DataSourceBanner() {
         }}
       >
         <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-        Menyiapkan daftar loker terbaru...
+        {t("Menyiapkan daftar loker terbaru...", "Preparing the latest jobs...")}
       </div>
     );
   }
@@ -50,8 +51,7 @@ export default function DataSourceBanner() {
             size={13}
             style={{ verticalAlign: -2, marginRight: 6 }}
           />
-          Sedang menampilkan data contoh. Sambungan ke sumber loker belum
-          dikonfigurasi.
+          {t("Sedang menampilkan data contoh. Sambungan ke sumber loker belum dikonfigurasi.", "Showing sample data. The job source connection isn't configured yet.")}
         </span>
       </div>
     );
@@ -79,7 +79,7 @@ export default function DataSourceBanner() {
             size={13}
             style={{ verticalAlign: -2, marginRight: 6 }}
           />
-          Loker terbaru gagal dimuat, jadi untuk sementara yang tampil data contoh.
+          {t("Loker terbaru gagal dimuat, jadi untuk sementara yang tampil data contoh.", "The latest jobs failed to load, so sample data is shown for now.")}
         </span>
         <button
           onClick={refresh}
@@ -97,7 +97,7 @@ export default function DataSourceBanner() {
             cursor: "pointer",
           }}
         >
-          <RefreshCw size={12} /> Coba lagi
+          <RefreshCw size={12} />{" "}{t("Coba lagi", "Try again")}
         </button>
       </div>
     );

@@ -3,6 +3,7 @@ import { ShieldCheck, ShieldAlert, ShieldX, ClipboardPaste, Check, Eraser, Arrow
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { cekLoker, LABEL_LEVEL, LANGKAH_VERIFIKASI } from "../../utils/cekLoker";
 import { tautan } from "../../utils/navigasi";
+import { lokal, t } from "../../i18n.js";
 
 const CONTOH = [
   {
@@ -10,11 +11,11 @@ const CONTOH = [
     teks: "DIBUKA LOWONGAN PT PERTAMINA (PERSERO)!!! Posisi admin gudang, lulusan SMA/SMK, gaji Rp 9.500.000 + mess. Peserta wajib membayar biaya seragam Rp 350.000 yang dikembalikan setelah diterima. Kirim foto KTP & KK ke WA 0812-3456-7890 atau email rekrutmen.pertamina@gmail.com. Kuota terbatas hari ini juga!!!",
   },
   {
-    nama: "Undangan interview",
+    nama: t("Undangan interview", "Interview invite"),
     teks: "Selamat, Anda lolos seleksi administrasi PT Astra International. Psikotes dan interview dilaksanakan di Jakarta. Untuk tiket pesawat dan hotel silakan pesan melalui travel agen resmi kami, PT Cahaya Wisata, hubungi 0813-1111-2222. Biaya akan diganti saat hari interview.",
   },
   {
-    nama: "Lowongan resmi",
+    nama: t("Lowongan resmi", "Genuine job post"),
     teks: "PT Bank Central Asia Tbk membuka posisi Relationship Officer di Jakarta. Tanggung jawab: mengelola portofolio nasabah dan menawarkan produk perbankan. Kualifikasi: S1 semua jurusan, IPK min. 3,00. BCA tidak memungut biaya apa pun dalam proses rekrutmen. Lamar melalui karir.bca.co.id.",
   },
 ];
@@ -35,14 +36,14 @@ export function HasilCek({ hasil, ringkas = false }) {
           <div className="pb-cek-level">{LABEL_LEVEL[hasil.level].label}</div>
           <div className="pb-cek-sub">
             {hasil.temuan.length
-              ? `${hasil.temuan.length} tanda ditemukan`
-              : "Tidak ada pola penipuan umum yang terdeteksi"}
+              ? t(`${hasil.temuan.length} tanda ditemukan`, `${hasil.temuan.length} signs found`)
+              : t("Tidak ada pola penipuan umum yang terdeteksi", "No common scam patterns detected")}
           </div>
         </div>
         {!ringkas && (
-          <div className="pb-cek-meter" aria-label={`Skor risiko ${hasil.skor} dari 100`}>
+          <div className="pb-cek-meter" aria-label={t(`Skor risiko ${hasil.skor} dari 100`, `Risk score ${hasil.skor} out of 100`)}>
             <b>{hasil.skor}</b>
-            <span>/100 risiko</span>
+            <span>{t("/100 risiko", "/100 risk")}</span>
           </div>
         )}
       </div>
@@ -53,11 +54,11 @@ export function HasilCek({ hasil, ringkas = false }) {
       )}
       {tampil.length > 0 && (
         <ul className="pb-cek-list">
-          {tampil.map((t, i) => (
-            <li key={t.id} style={{ "--tunda": `${i * 70}ms` }}>
-              <b>{t.judul}</b>
-              {!ringkas && <p>{t.detail}</p>}
-              {!ringkas && t.kutipan && <q>{t.kutipan}</q>}
+          {tampil.map((tt, i) => (
+            <li key={tt.id} style={{ "--tunda": `${i * 70}ms` }}>
+              <b>{tt.judul}</b>
+              {!ringkas && <p>{tt.detail}</p>}
+              {!ringkas && tt.kutipan && <q>{tt.kutipan}</q>}
             </li>
           ))}
         </ul>
@@ -80,13 +81,13 @@ export function CekLokerPage() {
   const [diperiksa, setDiperiksa] = useState("");
 
   useEffect(() => {
-    document.title = "Cek loker palsu · Jobly";
+    document.title = t("Cek loker palsu · Jobly", "Fake job checker · Jobly");
   }, []);
 
   // Periksa otomatis sebentar setelah berhenti mengetik
   useEffect(() => {
-    const t = setTimeout(() => setDiperiksa(teks), 350);
-    return () => clearTimeout(t);
+    const tt = setTimeout(() => setDiperiksa(teks), 350);
+    return () => clearTimeout(tt);
   }, [teks]);
 
   const hasil = useMemo(() => (diperiksa.trim().length >= 40 ? cekLoker({ teks: diperiksa }) : null), [diperiksa]);
@@ -103,44 +104,43 @@ export function CekLokerPage() {
   return (
     <PublicLayout aktif="/cek-loker">
       <div className="pb-wrap pb-pagehead">
-        <span className="pb-label">Gratis · tanpa daftar</span>
-        <h1>Cek loker palsu sebelum kamu melamar</h1>
+        <span className="pb-label">{t("Gratis · tanpa daftar", "Free · no sign-up")}</span>
+        <h1>{t("Cek loker palsu sebelum kamu melamar", "Check for fake jobs before you apply")}</h1>
         <p>
-          Dapat info loker dari WhatsApp, Instagram, Telegram, atau email? Tempel
-          teksnya di sini. Jobly akan mencocokkannya dengan 16 modus penipuan loker
-          yang paling sering beredar, mulai dari minta biaya, travel agent untuk
-          interview, tugas like berbayar, sampai “jalur orang dalam”. Teksnya
-          diperiksa di HP atau laptopmu sendiri dan tidak dikirim ke mana pun.
+          {t(
+            "Dapat info loker dari WhatsApp, Instagram, Telegram, atau email? Tempel teksnya di sini. Jobly akan mencocokkannya dengan 16 modus penipuan loker yang paling sering beredar, mulai dari minta biaya, travel agent untuk interview, tugas like berbayar, sampai “jalur orang dalam”. Teksnya diperiksa di HP atau laptopmu sendiri dan tidak dikirim ke mana pun.",
+            "Got a job post from WhatsApp, Instagram, Telegram, or email? Paste it here. Jobly checks it against 16 of the most common job scams in Indonesia, from upfront fees and interview travel agents to paid like-tasks and “insider routes”. The check runs on your own phone or laptop and the text is never sent anywhere. Works best on Indonesian-language posts.",
+          )}
         </p>
       </div>
 
       <div className="pb-wrap pb-cek">
         <div className="pb-cek-kiri">
           <label className="pb-field" htmlFor="teks-loker">
-            <span>Teks lowongan</span>
+            <span>{t("Teks lowongan", "Job post text")}</span>
           </label>
           <div className="pb-cek-area">
             <textarea
               id="teks-loker"
               value={teks}
               onChange={(e) => setTeks(e.target.value)}
-              placeholder="Tempel isi lowongan di sini…"
+              placeholder={t("Tempel isi lowongan di sini…", "Paste the job post here…")}
               rows={12}
             />
             <div className="pb-cek-tools">
               <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={tempel}>
-                <ClipboardPaste size={15} /> Tempel
+                <ClipboardPaste size={15} /> {t("Tempel", "Paste")}
               </button>
               {teks && (
                 <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => setTeks("")}>
-                  <Eraser size={15} /> Kosongkan
+                  <Eraser size={15} /> {t("Kosongkan", "Clear")}
                 </button>
               )}
-              <span className="pb-cek-count">{teks.length.toLocaleString("id-ID")} karakter</span>
+              <span className="pb-cek-count">{teks.length.toLocaleString(lokal())} {t("karakter", "characters")}</span>
             </div>
           </div>
           <div className="pb-cek-contoh">
-            <span>Coba contoh:</span>
+            <span>{t("Coba contoh:", "Try an example:")}</span>
             {CONTOH.map((c) => (
               <button key={c.nama} type="button" className="pb-chip" onClick={() => setTeks(c.teks)}>
                 {c.nama}
@@ -155,21 +155,23 @@ export function CekLokerPage() {
           ) : (
             <div className="pb-cek-kosong">
               <ShieldCheck size={28} />
-              <b>Hasil pemeriksaan muncul di sini</b>
-              <span>Tempel minimal satu-dua kalimat lowongan.</span>
+              <b>{t("Hasil pemeriksaan muncul di sini", "Results appear here")}</b>
+              <span>{t("Tempel minimal satu-dua kalimat lowongan.", "Paste at least a sentence or two of the job post.")}</span>
             </div>
           )}
 
           <div className="pb-box tint" style={{ marginTop: 16 }}>
-            <h3>Apa pun hasilnya, lakukan ini</h3>
+            <h3>{t("Apa pun hasilnya, lakukan ini", "Whatever the result, do this")}</h3>
             <ol className="pb-cek-langkah">
               {LANGKAH_VERIFIKASI.map((l) => (
                 <li key={l}>{l}</li>
               ))}
             </ol>
             <p style={{ fontSize: 12.5, color: "var(--muted)", margin: "10px 0 0", lineHeight: 1.55 }}>
-              Pemeriksaan ini mengenali pola, bukan memastikan keaslian. Loker
-              asli bisa memicu satu-dua tanda, dan penipu bisa menulis dengan rapi.
+              {t(
+                "Pemeriksaan ini mengenali pola, bukan memastikan keaslian. Loker asli bisa memicu satu-dua tanda, dan penipu bisa menulis dengan rapi.",
+                "This check spots patterns; it can't prove a job is real. Genuine posts can trigger a sign or two, and scammers can write neatly.",
+              )}
             </p>
           </div>
         </div>
@@ -178,15 +180,16 @@ export function CekLokerPage() {
       <section className="pb-section tint" style={{ marginTop: 56 }}>
         <div className="pb-wrap pb-cek-cta" data-muncul="">
           <div>
-            <h2 className="pb-h2">Lebih aman: cari dari sumber resmi</h2>
+            <h2 className="pb-h2">{t("Lebih aman: cari dari sumber resmi", "Safer: search official sources")}</h2>
             <p className="pb-sub">
-              Setiap loker di Jobly menampilkan sumbernya dan diarahkan ke situs
-              karier perusahaan atau portal tepercaya. Kamu tidak pernah membayar
-              apa pun untuk melamar.
+              {t(
+                "Setiap loker di Jobly menampilkan sumbernya dan diarahkan ke situs karier perusahaan atau portal tepercaya. Kamu tidak pernah membayar apa pun untuk melamar.",
+                "Every job on Jobly shows its source and links to the company's career site or a trusted portal. You never pay anything to apply.",
+              )}
             </p>
           </div>
           <a className="pb-btn pb-btn-primary" {...tautan("/loker")}>
-            Cari loker <ArrowRight size={16} />
+            {t("Cari loker", "Find jobs")} <ArrowRight size={16} />
           </a>
         </div>
       </section>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { t } from "../i18n.js";
 
 /**
  * Mencegah user meninggalkan halaman saat analisis sedang berjalan.
@@ -30,7 +31,7 @@ export function keteranganProses() {
   return keterangan;
 }
 
-export function useCegahTinggalkan(aktif, pesan = "Analisis sedang berjalan.") {
+export function useCegahTinggalkan(aktif, pesan = t("Analisis sedang berjalan.", "An analysis is running.")) {
   useEffect(() => {
     sedangBerjalan = Boolean(aktif);
     keterangan = aktif ? pesan : "";

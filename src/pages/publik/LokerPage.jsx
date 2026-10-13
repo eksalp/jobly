@@ -13,11 +13,12 @@ import { TautanGrup } from "../../components/publik/Komunitas";
 import { grupAktif } from "../../data/situs";
 import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
 import { infoSumber, LABEL_LOKASI_KERJA, LABEL_TIPE_KERJA } from "../../utils/sumberLoker";
+import { lokal, t } from "../../i18n.js";
 
 
-const OPSI_LOKASI = [["", "Semua"], ...Object.entries(LABEL_LOKASI_KERJA)];
+const OPSI_LOKASI = [["", t("Semua", "All")], ...Object.entries(LABEL_LOKASI_KERJA)];
 const OPSI_TIPE = [
-  ["", "Semua"],
+  ["", t("Semua", "All")],
   ["full-time", LABEL_TIPE_KERJA["full-time"]],
   ["kontrak", LABEL_TIPE_KERJA.kontrak],
   ["magang", LABEL_TIPE_KERJA.magang],
@@ -104,26 +105,27 @@ export function LokerPage() {
 
   // Judul halaman mengikuti filter, mis. "Loker di Bandung"
   const judul = f.kota
-    ? `Loker di ${f.kota}`
+    ? t(`Loker di ${f.kota}`, `Jobs in ${f.kota}`)
     : f.lokasi === "remote"
-      ? "Loker remote"
+      ? t("Loker remote", "Remote jobs")
       : f.q
-        ? `Loker “${f.q}”`
-        : "Semua lowongan";
+        ? t(`Loker “${f.q}”`, `“${f.q}” jobs`)
+        : t("Semua lowongan", "All jobs");
 
   useEffect(() => {
-    document.title = `${f.kota || f.q ? judul : "Semua loker"} · Jobly`;
+    document.title = `${f.kota || f.q ? judul : t("Semua loker", "All jobs")} · Jobly`;
   }, [judul, f.kota, f.q]);
 
   return (
     <PublicLayout aktif="/loker">
       <div className="pb-wrap pb-pagehead">
-        <span className="pb-label">Lowongan kerja</span>
+        <span className="pb-label">{t("Lowongan kerja", "Job openings")}</span>
         <h1>{judul}</h1>
         <p>
-          Loker dari situs karier resmi perusahaan dan platform kerja,
-          diperbarui setiap hari. Buka detailnya, lalu lamar langsung di
-          situs aslinya. Gratis, tanpa biaya dari Jobly.
+          {t(
+            "Loker dari situs karier resmi perusahaan dan platform kerja, diperbarui setiap hari.",
+            "Openings from official company career sites and job platforms, updated every day.",
+          )}
         </p>
       </div>
 
@@ -132,19 +134,19 @@ export function LokerPage() {
           <div className="pb-filter-row">
             <label className="pb-input">
               <Search size={17} color="#7A8597" />
-              <span className="pb-sr">Cari loker</span>
+              <span className="pb-sr">{t("Cari loker", "Search jobs")}</span>
               <input
                 id="cari-loker"
                 value={f.q}
                 onChange={(e) => ubah({ q: e.target.value })}
-                placeholder="Posisi, perusahaan, atau kata kunci…  (tekan / )"
+                placeholder={t("Posisi, perusahaan, atau kata kunci…  (tekan / )", "Role, company, or keyword…  (press / )")}
                 autoComplete="off"
               />
               {f.q && (
                 <button
                   type="button"
                   onClick={() => ubah({ q: "" })}
-                  aria-label="Hapus pencarian"
+                  aria-label={t("Hapus pencarian", "Clear search")}
                   style={{ border: 0, background: "none", cursor: "pointer", color: "#7A8597", display: "flex" }}
                 >
                   <X size={16} />
@@ -152,14 +154,14 @@ export function LokerPage() {
               )}
             </label>
 
-            <label className="pb-sr" htmlFor="filter-kota">Kota</label>
+            <label className="pb-sr" htmlFor="filter-kota">{t("Kota", "City")}</label>
             <select
               id="filter-kota"
               className="pb-select"
               value={f.kota}
               onChange={(e) => ubah({ kota: e.target.value })}
             >
-              <option value="">Semua kota</option>
+              <option value="">{t("Semua kota", "All cities")}</option>
               {KOTA_POPULER.map((k) => (
                 <option key={k} value={k}>
                   {k}
@@ -167,33 +169,33 @@ export function LokerPage() {
               ))}
             </select>
 
-            <label className="pb-sr" htmlFor="filter-sumber">Sumber</label>
+            <label className="pb-sr" htmlFor="filter-sumber">{t("Sumber", "Source")}</label>
             <select
               id="filter-sumber"
               className="pb-select"
               value={f.sumber}
               onChange={(e) => ubah({ sumber: e.target.value })}
             >
-              <option value="">Semua sumber</option>
+              <option value="">{t("Semua sumber", "All sources")}</option>
               {daftarSumber.some((s) => s.langsung) && (
-                <option value="_langsung">Situs karier resmi</option>
+                <option value="_langsung">{t("Situs karier resmi", "Official career sites")}</option>
               )}
               {daftarSumber.map((s) => (
                 <option key={s.site} value={s.site}>
-                  {s.langsung ? `· ${s.label}` : s.label} ({s.n.toLocaleString("id-ID")})
+                  {s.langsung ? `· ${s.label}` : s.label} ({s.n.toLocaleString(lokal())})
                 </option>
               ))}
             </select>
 
-            <label className="pb-sr" htmlFor="filter-urut">Urutkan</label>
+            <label className="pb-sr" htmlFor="filter-urut">{t("Urutkan", "Sort by")}</label>
             <select
               id="filter-urut"
               className="pb-select"
               value={f.urut}
               onChange={(e) => ubah({ urut: e.target.value })}
             >
-              <option value="terbaru">Terbaru</option>
-              <option value="gaji">Gaji tertinggi</option>
+              <option value="terbaru">{t("Terbaru", "Newest")}</option>
+              <option value="gaji">{t("Gaji tertinggi", "Highest pay")}</option>
             </select>
           </div>
 
@@ -205,7 +207,7 @@ export function LokerPage() {
                 className={`pb-chip ${f.lokasi === v ? "on" : ""}`}
                 onClick={() => ubah({ lokasi: v })}
               >
-                {v ? l : "Semua lokasi"}
+                {v ? l : t("Semua lokasi", "Any location")}
               </button>
             ))}
             <span className="pb-chip-sep" />
@@ -216,7 +218,7 @@ export function LokerPage() {
                 className={`pb-chip ${f.tipe === v ? "on" : ""}`}
                 onClick={() => ubah({ tipe: v })}
               >
-                {v ? l : "Semua tipe"}
+                {v ? l : t("Semua tipe", "Any type")}
               </button>
             ))}
             <span className="pb-chip-sep" />
@@ -225,7 +227,7 @@ export function LokerPage() {
               className={`pb-chip ${f.gaji ? "on" : ""}`}
               onClick={() => ubah({ gaji: !f.gaji })}
             >
-              Ada info gaji
+              {t("Ada info gaji", "Shows salary")}
             </button>
           </div>
         </div>
@@ -236,11 +238,10 @@ export function LokerPage() {
         <div className="pb-result">
           <span>
             {loading ? (
-              "Memuat lowongan…"
+              t("Memuat lowongan…", "Loading jobs…")
             ) : (
               <>
-                <b>{(total ?? 0).toLocaleString("id-ID")}</b> lowongan
-                ditemukan
+                <b>{(total ?? 0).toLocaleString(lokal())}</b> {t("lowongan ditemukan", "jobs found")}
               </>
             )}
           </span>
@@ -251,7 +252,7 @@ export function LokerPage() {
               onClick={reset}
               style={{ border: 0, background: "none", cursor: "pointer", color: "#14549A", fontSize: 13.5 }}
             >
-              <X size={14} /> Hapus semua filter
+              <X size={14} /> {t("Hapus semua filter", "Clear all filters")}
             </button>
           )}
         </div>
@@ -266,15 +267,15 @@ export function LokerPage() {
 
           {!loading && hasil.length === 0 && (
             <div className="pb-empty">
-              <h3>Belum ada loker yang cocok</h3>
+              <h3>{t("Belum ada loker yang cocok", "No matching jobs yet")}</h3>
               <p style={{ margin: "0 0 18px" }}>
                 {error
-                  ? "Data loker sedang tidak bisa dimuat. Coba muat ulang halaman sebentar lagi."
-                  : "Coba kata kunci yang lebih umum, atau kurangi filternya."}
+                  ? t("Data loker sedang tidak bisa dimuat. Coba muat ulang halaman sebentar lagi.", "Jobs can't be loaded right now. Try reloading the page in a moment.")
+                  : t("Coba kata kunci yang lebih umum, atau kurangi filternya.", "Try a broader keyword, or remove some filters.")}
               </p>
               {adaFilter && (
                 <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={reset}>
-                  Hapus semua filter
+                  {t("Hapus semua filter", "Clear all filters")}
                 </button>
               )}
             </div>
@@ -284,9 +285,12 @@ export function LokerPage() {
         {!loading && adaLagi && (
           <div className="pb-more" ref={sentinel}>
             <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={memuatLagi}>
-              {memuatLagi ? "Memuat…" : "Muat lebih banyak"}
+              {memuatLagi ? t("Memuat…", "Loading…") : t("Muat lebih banyak", "Load more")}
             </button>
-            Menampilkan {hasil.length.toLocaleString("id-ID")} dari {(total ?? 0).toLocaleString("id-ID")} lowongan
+            {t(
+              `Menampilkan ${hasil.length.toLocaleString(lokal())} dari ${(total ?? 0).toLocaleString(lokal())} lowongan`,
+              `Showing ${hasil.length.toLocaleString(lokal())} of ${(total ?? 0).toLocaleString(lokal())} jobs`,
+            )}
           </div>
         )}
         {!loading && !adaLagi && terkunci > 0 && (
@@ -295,12 +299,12 @@ export function LokerPage() {
           </div>
         )}
         {!loading && !adaLagi && hasil.length > 0 && (
-          <div className="pb-more">Semua lowongan yang terbuka sudah ditampilkan.</div>
+          <div className="pb-more">{t("Semua lowongan yang terbuka sudah ditampilkan.", "All open jobs are shown.")}</div>
         )}
         {!loading && grupAktif().length > 0 && (
           <div className="pb-grup-strip">
             <span>
-              <b>Mau dapat info loker tiap hari?</b> Gabung grup Jobly, gratis.
+              <b>{t("Mau dapat info loker tiap hari?", "Want job alerts every day?")}</b> {t("Gabung grup Jobly, gratis.", "Join the Jobly group, it's free.")}
             </span>
             <TautanGrup ringkas />
           </div>

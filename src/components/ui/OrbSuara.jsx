@@ -1,6 +1,7 @@
 import React from "react";
 import { Mic, Volume2, Loader2 } from "lucide-react";
 import { T } from "../../theme";
+import { t } from "../../i18n.js";
 
 /**
  * Orb suara — penanda giliran bicara.
@@ -19,25 +20,25 @@ export function OrbSuara({ keadaan, tingkat = 0, ukuran = 150 }) {
     diam: {
       warna: "#94A3B8",
       warna2: "#CBD5E1",
-      label: "Bersiap...",
+      label: t("Bersiap...", "Getting ready..."),
       Ikon: Mic,
     },
     mendengar: {
       warna: "#0B3C6E",
       warna2: "#818CF8",
-      label: "Mendengarkan",
+      label: t("Mendengarkan", "Listening"),
       Ikon: Mic,
     },
     berpikir: {
       warna: "#B45309",
       warna2: "#F59E0B",
-      label: "Sedang berpikir",
+      label: t("Sedang berpikir", "Thinking"),
       Ikon: Loader2,
     },
     bicara: {
       warna: "#0F7B4F",
       warna2: "#5B9BE0",
-      label: "AI sedang bicara",
+      label: t("AI sedang bicara", "AI is speaking"),
       Ikon: Volume2,
     },
   };

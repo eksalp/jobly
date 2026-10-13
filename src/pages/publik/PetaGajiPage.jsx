@@ -2,18 +2,20 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Search, ArrowRight, Info } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { jt, MIN_DATA } from "../../utils/petaGaji";
+import { labelTampil } from "../../data/taxonomy";
 import { usePetaGaji, useTunda } from "../../hooks/useLoker";
 import { tautan } from "../../utils/navigasi";
 import { urlDetail } from "../../utils/sumberLoker";
 import { usePintasanCari } from "../../utils/interaksi";
+import { lokal, t } from "../../i18n.js";
 
 const TAB = [
-  ["perBidang", "Per bidang"],
-  ["perKota", "Per kota"],
-  ["perCara", "Remote vs kantor"],
+  ["perBidang", t("Per bidang", "By field")],
+  ["perKota", t("Per kota", "By city")],
+  ["perCara", t("Remote vs kantor", "Remote vs office")],
 ];
 
-const SARAN = ["Akuntan", "Frontend", "Data analyst", "Admin", "Marketing", "Customer service"];
+const SARAN = [t("Akuntan", "Accountant"), "Frontend", "Data analyst", "Admin", "Marketing", "Customer service"];
 
 /**
  * Grafik rentang: satu baris per kelompok. Pita = 50% gaji di tengah
@@ -29,7 +31,7 @@ function GrafikRentang({ data, periode }) {
   const pos = (v) => `${(v / atas) * 100}%`;
 
   return (
-    <div className="pb-rentang" role="table" aria-label="Kisaran gaji">
+    <div className="pb-rentang" role="table" aria-label={t("Kisaran gaji", "Salary ranges")}>
       <div className="pb-rentang-sumbu" aria-hidden="true">
         <span />
         <div className="trek">
@@ -42,10 +44,10 @@ function GrafikRentang({ data, periode }) {
         <span />
       </div>
       {data.map((g, i) => (
-        <div key={g.label} className="pb-rentang-baris" role="row" data-muncul="" style={{ "--tunda": `${Math.min(i, 10) * 35}ms` }}>
-          <span className="lbl" role="rowheader" title={g.label}>
-            {g.label}
-            <small>{g.n} loker</small>
+        <div key={labelTampil(g.label)} className="pb-rentang-baris" role="row" data-muncul="" style={{ "--tunda": `${Math.min(i, 10) * 35}ms` }}>
+          <span className="lbl" role="rowheader" title={labelTampil(g.label)}>
+            {labelTampil(g.label)}
+            <small>{t(`${g.n} loker`, `${g.n} jobs`)}</small>
           </span>
           <div className="trek" role="cell">
             {bantu.map((v) => (
@@ -57,14 +59,14 @@ function GrafikRentang({ data, periode }) {
             />
             <span className="med" style={{ left: pos(g.median * kali) }} />
             <span className="tip" role="tooltip">
-              <b>{g.label}</b>
+              <b>{labelTampil(g.label)}</b>
               Median {jt(g.median * kali)}
               <br />
-              Tengah 50%: {jt(g.p25 * kali)} – {jt(g.p75 * kali)}
+              {t("Tengah 50%", "Middle 50%")}: {jt(g.p25 * kali)} – {jt(g.p75 * kali)}
               <br />
-              Terendah–tertinggi: {jt(g.min * kali)} – {jt(g.max * kali)}
+              {t("Terendah–tertinggi", "Lowest–highest")}: {jt(g.min * kali)} – {jt(g.max * kali)}
               <br />
-              Dari {g.n} loker
+              {t(`Dari ${g.n} loker`, `From ${g.n} jobs`)}
             </span>
           </div>
           <span className="val" role="cell">
@@ -83,7 +85,7 @@ export function PetaGajiPage() {
   usePintasanCari("cari-gaji");
 
   useEffect(() => {
-    document.title = "Peta gaji · Jobly";
+    document.title = t("Peta gaji · Jobly", "Salary map · Jobly");
   }, []);
 
   useEffect(() => {
@@ -103,12 +105,13 @@ export function PetaGajiPage() {
   return (
     <PublicLayout aktif="/peta-gaji">
       <div className="pb-wrap pb-pagehead">
-        <span className="pb-label">Peta gaji</span>
-        <h1>Berapa gaji yang wajar untuk posisimu?</h1>
+        <span className="pb-label">{t("Peta gaji", "Salary map")}</span>
+        <h1>{t("Berapa gaji yang wajar untuk posisimu?", "What's a fair salary for your role?")}</h1>
         <p>
-          Angkanya diambil langsung dari loker di Jobly yang mencantumkan gaji,
-          bukan dari survei atau perkiraan. Gaji dalam mata uang asing sudah
-          diubah ke rupiah dengan kurs hari ini.
+          {t(
+            "Angkanya diambil langsung dari loker di Jobly yang mencantumkan gaji, bukan dari survei atau perkiraan. Gaji dalam mata uang asing sudah diubah ke rupiah dengan kurs hari ini.",
+            "The numbers come straight from Jobly listings that show a salary, not from surveys or estimates. Foreign-currency pay is converted to rupiah at today's rate.",
+          )}
         </p>
       </div>
 
@@ -116,12 +119,12 @@ export function PetaGajiPage() {
         <div className="pb-gaji-cari">
           <label className="pb-input">
             <Search size={17} color="var(--muted)" aria-hidden="true" />
-            <span className="pb-sr">Cari posisi</span>
+            <span className="pb-sr">{t("Cari posisi", "Search a role")}</span>
             <input
               id="cari-gaji"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Ketik posisi, mis. akuntan, frontend, admin…"
+              placeholder={t("Ketik posisi, mis. akuntan, frontend, admin…", "Type a role, e.g. accountant, frontend, admin…")}
               autoComplete="off"
             />
           </label>
@@ -138,27 +141,27 @@ export function PetaGajiPage() {
           <div className="pb-gaji-posisi" data-muncul="">
             {posisi.n === 0 ? (
               <p style={{ margin: 0, color: "var(--ink2)" }}>
-                Belum ada loker “{q}” yang mencantumkan gaji. Coba kata yang lebih umum.
+                {t(`Belum ada loker “${q}” yang mencantumkan gaji. Coba kata yang lebih umum.`, `No “${q}” jobs list a salary yet. Try a broader term.`)}
               </p>
             ) : (
               <>
                 <div className="pb-gaji-angka">
                   <div>
-                    <span>Median gaji “{q}”</span>
+                    <span>{t(`Median gaji “${q}”`, `Median “${q}” salary`)}</span>
                     <b>{jt(posisi.median * kali)}</b>
-                    <small>per {periode}</small>
+                    <small>{periode === "tahun" ? t("per tahun", "per year") : t("per bulan", "per month")}</small>
                   </div>
                   <div>
-                    <span>Kisaran umum</span>
+                    <span>{t("Kisaran umum", "Typical range")}</span>
                     <b className="kecil">
                       {jt(posisi.p25 * kali)} – {jt(posisi.p75 * kali).replace("Rp ", "")}
                     </b>
-                    <small>50% loker di tengah</small>
+                    <small>{t("50% loker di tengah", "middle 50% of jobs")}</small>
                   </div>
                   <div>
                     <span>Data</span>
-                    <b className="kecil">{posisi.n} loker</b>
-                    <small>{posisi.n < MIN_DATA ? "datanya masih sedikit, jadikan gambaran kasar saja" : "dengan gaji tercantum"}</small>
+                    <b className="kecil">{t(`${posisi.n} loker`, `${posisi.n} jobs`)}</b>
+                    <small>{posisi.n < MIN_DATA ? t("datanya masih sedikit, jadikan gambaran kasar saja", "not much data yet, treat it as a rough guide") : t("dengan gaji tercantum", "with a listed salary")}</small>
                   </div>
                 </div>
                 <div className="pb-gaji-contoh">
@@ -178,17 +181,17 @@ export function PetaGajiPage() {
         )}
 
         <div className="pb-toolbar" style={{ marginTop: 34 }}>
-          <div className="pb-seg" role="tablist" aria-label="Kelompokkan">
+          <div className="pb-seg" role="tablist" aria-label={t("Kelompokkan", "Group by")}>
             {TAB.map(([id, l]) => (
               <button key={id} type="button" role="tab" aria-selected={tab === id} className={tab === id ? "on" : ""} onClick={() => setTab(id)}>
                 {l}
               </button>
             ))}
           </div>
-          <div className="pb-seg" role="group" aria-label="Periode">
+          <div className="pb-seg" role="group" aria-label={t("Periode", "Period")}>
             {[
-              ["bulan", "Per bulan"],
-              ["tahun", "Per tahun"],
+              ["bulan", t("Per bulan", "Monthly")],
+              ["tahun", t("Per tahun", "Yearly")],
             ].map(([id, l]) => (
               <button key={id} type="button" aria-pressed={periode === id} className={periode === id ? "on" : ""} onClick={() => setPeriode(id)}>
                 {l}
@@ -199,13 +202,13 @@ export function PetaGajiPage() {
 
         <div className="pb-gaji-legenda">
           <span>
-            <i className="pita" /> 50% gaji di tengah
+            <i className="pita" /> {t("50% gaji di tengah", "Middle 50% of salaries")}
           </span>
           <span>
             <i className="med" /> Median
           </span>
           <span className="ket">
-            <Info size={13} /> Arahkan kursor ke baris untuk rincian. Kelompok dengan kurang dari {MIN_DATA} data disembunyikan.
+            <Info size={13} /> {t(`Arahkan kursor ke baris untuk rincian. Kelompok dengan kurang dari ${MIN_DATA} data disembunyikan.`, `Hover a row for details. Groups with fewer than ${MIN_DATA} data points are hidden.`)}
           </span>
         </div>
 
@@ -219,17 +222,17 @@ export function PetaGajiPage() {
           <GrafikRentang data={kelompok.tampil} periode={periode} />
         ) : (
           <div className="pb-empty">
-            <h3>Data gaji belum cukup</h3>
-            <p style={{ margin: 0 }}>Belum banyak loker yang mencantumkan angka gaji untuk pengelompokan ini.</p>
+            <h3>{t("Data gaji belum cukup", "Not enough salary data")}</h3>
+            <p style={{ margin: 0 }}>{t("Belum banyak loker yang mencantumkan angka gaji untuk pengelompokan ini.", "Few jobs list a salary for this grouping yet.")}</p>
           </div>
         )}
 
         {!loading && (
           <p className="pb-gaji-catatan">
-            Dihitung dari {peta.total.toLocaleString("id-ID")} loker terbaru yang mencantumkan gaji.
-            Nilai tengah dari
-            kisaran yang tercantum dipakai sebagai gaji satu loker. Gaji dari perusahaan
-            luar negeri ikut dihitung, jadi angka remote cenderung lebih tinggi.
+            {t(
+              `Dihitung dari ${peta.total.toLocaleString(lokal())} loker terbaru yang mencantumkan gaji. Nilai tengah dari kisaran yang tercantum dipakai sebagai gaji satu loker. Gaji dari perusahaan luar negeri ikut dihitung, jadi angka remote cenderung lebih tinggi.`,
+              `Based on the ${peta.total.toLocaleString(lokal())} latest jobs that list a salary. The midpoint of each listed range counts as that job's salary. Overseas companies are included, so remote figures tend to be higher.`,
+            )}
           </p>
         )}
       </div>
@@ -237,11 +240,11 @@ export function PetaGajiPage() {
       <section className="pb-section tint" style={{ marginTop: 40 }}>
         <div className="pb-wrap pb-cek-cta" data-muncul="">
           <div>
-            <h2 className="pb-h2">Ditawari gaji dalam dolar?</h2>
-            <p className="pb-sub">Hitung berapa yang benar-benar kamu terima dalam rupiah, per jam sampai per tahun, setelah dipotong biaya platform dan transfer.</p>
+            <h2 className="pb-h2">{t("Ditawari gaji dalam dolar?", "Offered pay in dollars?")}</h2>
+            <p className="pb-sub">{t("Hitung berapa yang benar-benar kamu terima dalam rupiah, per jam sampai per tahun, setelah dipotong biaya platform dan transfer.", "See what you actually take home in rupiah, hourly to yearly, after platform and transfer fees.")}</p>
           </div>
           <a className="pb-btn pb-btn-primary" {...tautan("/kalkulator-gaji")}>
-            Buka kalkulator <ArrowRight size={16} />
+            {t("Buka kalkulator", "Open the calculator")} <ArrowRight size={16} />
           </a>
         </div>
       </section>

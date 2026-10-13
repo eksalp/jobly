@@ -9,6 +9,7 @@ import {
   GoogleButton,
 } from "../../components/ui/FormControls";
 import { AuthWrap } from "./AuthWrap";
+import { t } from "../../i18n.js";
 
 export function LoginPage({ go }) {
   const { signInWithEmail, signInWithGoogle } = useAuth();
@@ -20,7 +21,7 @@ export function LoginPage({ go }) {
 
   const handleSubmit = async () => {
     if (!email.trim() || !password) {
-      setError("Isi email dan kata sandi dulu ya.");
+      setError(t("Isi email dan kata sandi dulu ya.", "Please enter your email and password."));
       return;
     }
     setError("");
@@ -57,22 +58,22 @@ export function LoginPage({ go }) {
           marginBottom: 4,
         }}
       >
-        Selamat datang kembali
+        {t("Selamat datang kembali", "Welcome back")}
       </h1>
       <p style={{ fontSize: 13.5, color: T.inkSoft, marginBottom: 24 }}>
-        Masuk untuk melanjutkan pencarian kariermu.
+        {t("Masuk untuk melanjutkan pencarian kariermu.", "Sign in to continue your job search.")}
       </p>
       <ErrorNote message={error} />
       <Field
         label="Email"
         icon={<Mail size={16} color={T.inkFaint} />}
-        placeholder="nama@email.com"
+        placeholder={t("nama@email.com", "name@email.com")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         autoComplete="email"
       />
       <Field
-        label="Kata sandi"
+        label={t("Kata sandi", "Password")}
         type="password"
         toggle
         icon={<Lock size={16} color={T.inkFaint} />}
@@ -91,7 +92,7 @@ export function LoginPage({ go }) {
           }}
           onClick={() => go("forgot")}
         >
-          Lupa kata sandi?
+          {t("Lupa kata sandi?", "Forgot password?")}
         </span>
       </div>
       <Button
@@ -104,7 +105,7 @@ export function LoginPage({ go }) {
           <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
         ) : (
           <>
-            Masuk <ArrowRight size={15} />
+            {t("Masuk", "Sign in")}{" "}<ArrowRight size={15} />
           </>
         )}
       </Button>
@@ -142,15 +143,15 @@ export function LoginPage({ go }) {
             fontSize: 12.5,
           }}
         >
-          ← Kembali ke beranda
+          {t("← Kembali ke beranda", "← Back to home")}
         </span>
         <br />
-        Belum punya akun?{" "}
+        {t("Belum punya akun?", "Don't have an account?")}{" "}
         <span
           style={{ color: T.accent, fontWeight: 600, cursor: "pointer" }}
           onClick={() => go("register")}
         >
-          Daftar
+          {t("Daftar", "Sign up")}
         </span>
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

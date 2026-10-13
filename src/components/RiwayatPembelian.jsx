@@ -13,18 +13,19 @@ import { Glass } from "./ui/Glass";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { PAKET, rupiah } from "../data/paket";
+import { lokal, t } from "../i18n.js";
 
 const STATUS = {
-  aktif: { label: "Aktif", warna: "#0F7B4F", Ikon: Check },
-  kedaluwarsa: { label: "Kedaluwarsa", warna: "#8891A8", Ikon: Clock },
-  pending: { label: "Menunggu bayar", warna: "#B45309", Ikon: Clock },
-  batal: { label: "Dibatalkan", warna: "#8891A8", Ikon: X },
-  expired: { label: "Kedaluwarsa", warna: "#8891A8", Ikon: Clock },
+  aktif: { label: t("Aktif", "Active"), warna: "#0F7B4F", Ikon: Check },
+  kedaluwarsa: { label: t("Kedaluwarsa", "Expired"), warna: "#8891A8", Ikon: Clock },
+  pending: { label: t("Menunggu bayar", "Awaiting payment"), warna: "#B45309", Ikon: Clock },
+  batal: { label: t("Dibatalkan", "Cancelled"), warna: "#8891A8", Ikon: X },
+  expired: { label: t("Kedaluwarsa", "Expired"), warna: "#8891A8", Ikon: Clock },
 };
 
 const tglLengkap = (s) =>
   s
-    ? new Date(s).toLocaleDateString("id-ID", {
+    ? new Date(s).toLocaleDateString(lokal(), {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -33,7 +34,7 @@ const tglLengkap = (s) =>
 
 const tglSingkat = (s) =>
   s
-    ? new Date(s).toLocaleDateString("id-ID", {
+    ? new Date(s).toLocaleDateString(lokal(), {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -86,7 +87,7 @@ export function RiwayatPembelian() {
         }}
       >
         <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />{" "}
-        Memuat riwayat...
+        {t("Memuat riwayat...", "Loading history...")}
       </div>
     );
   }
@@ -104,7 +105,7 @@ export function RiwayatPembelian() {
           lineHeight: 1.6,
         }}
       >
-        Belum ada pembelian. Riwayat paket yang kamu beli akan muncul di sini.
+        {t("Belum ada pembelian. Riwayat paket yang kamu beli akan muncul di sini.", "No purchases yet. Plans you buy will appear here.")}
       </div>
     );
   }
@@ -129,7 +130,7 @@ export function RiwayatPembelian() {
       >
         <span>{daftar.length} transaksi</span>
         <span style={{ width: 1, height: 12, background: T.border }} />
-        <span>Total belanja {rupiah(totalBelanja)}</span>
+        <span>{t("Total belanja", "Total spent")}{" "}{rupiah(totalBelanja)}</span>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -213,7 +214,7 @@ export function RiwayatPembelian() {
 
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>
-                    {d.harga > 0 ? rupiah(d.harga) : "Gratis"}
+                    {d.harga > 0 ? rupiah(d.harga) : t("Gratis", "Free")}
                   </div>
                 </div>
 
@@ -249,7 +250,7 @@ export function RiwayatPembelian() {
                       >
                         <Zap size={11} color={T.inkFaint} />
                         <span style={{ fontSize: 11.5, color: T.inkSoft }}>
-                          {terpakai} dari {total} analisis terpakai
+                          {terpakai} dari {total}{" "}{t("analisis terpakai", "analyses used")}
                         </span>
                       </div>
                       <div
@@ -272,9 +273,9 @@ export function RiwayatPembelian() {
                   )}
 
                   {[
-                    ["Mulai berlaku", tglLengkap(d.mulai_at)],
-                    ["Berakhir", tglLengkap(d.berakhir_at)],
-                    ["Nomor pesanan", d.order_id ?? "-"],
+                    [t("Mulai berlaku", "Starts"), tglLengkap(d.mulai_at)],
+                    [t("Berakhir", "Ends"), tglLengkap(d.berakhir_at)],
+                    [t("Nomor pesanan", "Order number"), d.order_id ?? "-"],
                   ].map(([k, v]) => (
                     <div
                       key={k}
@@ -315,8 +316,7 @@ export function RiwayatPembelian() {
                         lineHeight: 1.55,
                       }}
                     >
-                      Pembayaran belum terkonfirmasi. Kalau kamu sudah membayar,
-                      paket akan aktif otomatis dalam beberapa menit.
+                      {t("Pembayaran belum terkonfirmasi. Kalau kamu sudah membayar, paket akan aktif otomatis dalam beberapa menit.", "Payment isn't confirmed yet. If you've already paid, the plan will activate automatically within a few minutes.")}
                     </div>
                   )}
                 </div>

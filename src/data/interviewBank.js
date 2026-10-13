@@ -9,7 +9,9 @@
  * komponennya diimpor di panel, bukan di sini, supaya file data ini
  * tetap murni data tanpa ketergantungan React.
  */
-import { KATEGORI_SULIT } from "./interviewSulit";
+import { KATEGORI_SULIT } from "./interviewSulit.js";
+import { KATEGORI_EN, PERTANYAAN_EN } from "./interviewBank.en.js";
+import { bahasa } from "../i18n.js";
 
 const KATEGORI_DASAR = [
   {
@@ -851,7 +853,17 @@ const KATEGORI_DASAR = [
 ];
 
 /** Semua kategori: 11 kategori dasar + kategori sulit (level neraka, kasus, bahasa Inggris). */
-export const KATEGORI_INTERVIEW = [...KATEGORI_DASAR, ...KATEGORI_SULIT];
+const KATEGORI_ID = [...KATEGORI_DASAR, ...KATEGORI_SULIT];
+
+/** Terapkan terjemahan bahasa Inggris; field yang tidak diterjemahkan tetap memakai aslinya. */
+const keInggris = (daftar) =>
+  daftar.map((k) => ({
+    ...k,
+    ...(KATEGORI_EN[k.id] || {}),
+    pertanyaan: k.pertanyaan.map((p) => ({ ...p, ...(PERTANYAAN_EN[p.nomor] || {}) })),
+  }));
+
+export const KATEGORI_INTERVIEW = bahasa() === "en" ? keInggris(KATEGORI_ID) : KATEGORI_ID;
 
 /** Total pertanyaan, dihitung otomatis supaya tidak perlu diperbarui manual. */
 export const TOTAL_PERTANYAAN = KATEGORI_INTERVIEW.reduce(

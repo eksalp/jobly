@@ -32,17 +32,19 @@ import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { detectCategory } from "../../utils/jobMatching";
 import { cocokkanKursus } from "../../data/kursus";
 import { TAXONOMY } from "../../data/taxonomy";
+import { lokal, t } from "../../i18n.js";
+import { labelTampil } from "../../data/taxonomy.js";
 
 const KESULITAN = {
-  mudah: { label: "Relatif mudah", warna: "#0F7B4F" },
-  sedang: { label: "Sedang", warna: "#B45309" },
-  sulit: { label: "Menantang", warna: "#B23A3A" },
+  mudah: { label: t("Relatif mudah", "Fairly easy"), warna: "#0F7B4F" },
+  sedang: { label: t("Sedang", "Moderate"), warna: "#B45309" },
+  sulit: { label: t("Menantang", "Challenging"), warna: "#B23A3A" },
 };
 
 const PRIORITAS = {
-  wajib: { label: "Wajib", warna: "#B23A3A" },
-  penting: { label: "Penting", warna: "#B45309" },
-  "nilai tambah": { label: "Nilai tambah", warna: "#8891A8" },
+  wajib: { label: t("Wajib", "Must have"), warna: "#B23A3A" },
+  penting: { label: t("Penting", "Important"), warna: "#B45309" },
+  "nilai tambah": { label: t("Nilai tambah", "Nice to have"), warna: "#8891A8" },
 };
 
 // Menjamin field array (skill_transfer, skill_kurang, tahapan,
@@ -92,7 +94,7 @@ export function PindahKarierPanel({ setActive }) {
   // Harus setelah `loading` dideklarasikan: pemanggilan hook di atas
   // deklarasi state yang dipakainya melanggar temporal dead zone dan
   // membuat seluruh komponen gagal dirender.
-  useCegahTinggalkan(loading, "Analisis Pindah Karier sedang berjalan.");
+  useCegahTinggalkan(loading, t("Analisis Pindah Karier sedang berjalan.", "A Career Switch analysis is running."));
 
   const bidangAsal = cvText ? detectCategory(cvText)?.label : null;
 
@@ -166,17 +168,17 @@ export function PindahKarierPanel({ setActive }) {
 
           if (klaim?.jumlah > 0) {
             setGalat(
-              "Analisis sebelumnya tidak selesai, jadi kuotamu sudah dikembalikan. Silakan coba lagi.",
+              t("Analisis sebelumnya tidak selesai, jadi kuotamu sudah dikembalikan. Silakan coba lagi.", "The previous analysis didn't finish, so your quota was refunded. Please try again."),
             );
             langganan.refresh();
           } else {
             setGalat(
-              "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+              t("Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.", "The previous analysis didn't finish. If your quota was deducted, contact us and we'll refund it."),
             );
           }
         } catch {
           setGalat(
-            "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+            t("Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.", "The previous analysis didn't finish. If your quota was deducted, contact us and we'll refund it."),
           );
         }
 
@@ -194,7 +196,7 @@ export function PindahKarierPanel({ setActive }) {
 
   const analisis = async () => {
     if (!tujuan.trim()) {
-      setGalat("Pilih atau tulis bidang yang ingin kamu tuju.");
+      setGalat(t("Pilih atau tulis bidang yang ingin kamu tuju.", "Pick or type the field you want to move into."));
       return;
     }
     if (!adaProfil) {
@@ -218,7 +220,7 @@ export function PindahKarierPanel({ setActive }) {
       const batasWaktu = new Promise((_, tolak) =>
         setTimeout(
           () =>
-            tolak(new Error("Permintaan terlalu lama. Coba lagi sebentar.")),
+            tolak(new Error(t("Permintaan terlalu lama. Coba lagi sebentar.", "The request took too long. Try again in a moment."))),
           100000,
         ),
       );
@@ -278,7 +280,7 @@ export function PindahKarierPanel({ setActive }) {
         ...r,
       ]);
     } catch (e) {
-      setGalat(e?.message || "Analisis gagal.");
+      setGalat(e?.message || t("Analisis gagal.", "Analysis failed."));
     } finally {
       setLoading(false);
     }
@@ -315,15 +317,15 @@ export function PindahKarierPanel({ setActive }) {
           tinggiMinimal={240}
           judul={
             kuotaHabis
-              ? "Kuota Pindah Karier kamu sudah habis"
-              : "Rencana Pindah Karier"
+              ? t("Kuota Pindah Karier kamu sudah habis", "Your Career Switch quota is used up")
+              : t("Rencana Pindah Karier", "Career Switch Plan")
           }
           keterangan={
             kuotaHabis
-              ? `Kamu sudah memakai seluruh ${langganan.kuotaPindah} analisis Pindah Karier di paket ini. Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, dan kuotanya digabung.`
+              ? t(`Kamu sudah memakai seluruh ${langganan.kuotaPindah} analisis Pindah Karier di paket ini. Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, dan kuotanya digabung.`, `You've used all ${langganan.kuotaPindah} Career Switch analyses in this plan. Buy a new plan to add quota. Your remaining active days carry over and the quotas are combined.`)
               : sudahLangganan
-                ? "Fitur ini tersedia di paket Pro dan Max. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya."
-                : "AI menilai keahlian mana dari pengalamanmu sekarang yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya. Termasuk penilaian jujur soal risikonya."
+                ? t("Fitur ini tersedia di paket Pro dan Max. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya.", "Available on Pro and Max. AI assesses which of your skills still apply in the target field, what you need to learn, and how long it takes.")
+                : t("AI menilai keahlian mana dari pengalamanmu sekarang yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya. Termasuk penilaian jujur soal risikonya.", "AI assesses which of your current skills still apply in the target field, what you need to learn, and how long it takes. Including an honest look at the risks.")
           }
           onLangganan={() => setActive?.("paket")}
         />
@@ -365,9 +367,7 @@ export function PindahKarierPanel({ setActive }) {
             style={{ flexShrink: 0, marginTop: 1 }}
           />
           <div style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
-            <strong>Jangan tinggalkan halaman ini dulu.</strong> Analisis sedang
-            berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang,
-            hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.
+            <strong>{t("Jangan tinggalkan halaman ini dulu.", "Please stay on this page.")}</strong>{" "}{t("Analisis sedang berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang, hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.", "The analysis is running and takes up to a minute. If you leave now, it keeps processing and shows up when you come back.")}
           </div>
         </Glass>
       )}
@@ -393,8 +393,7 @@ export function PindahKarierPanel({ setActive }) {
             style={{ animation: "spin 1s linear infinite", flexShrink: 0 }}
           />
           <span style={{ fontSize: 12.5, color: T.inkSoft, lineHeight: 1.6 }}>
-            Mengambil hasil analisis yang tadi kamu tinggalkan. Prosesnya tetap
-            berjalan di server, sebentar lagi hasilnya muncul.
+            {t("Mengambil hasil analisis yang tadi kamu tinggalkan. Prosesnya tetap berjalan di server, sebentar lagi hasilnya muncul.", "Fetching the analysis you left earlier. It kept running on the server and will appear shortly.")}
           </span>
         </Glass>
       )}
@@ -409,7 +408,7 @@ export function PindahKarierPanel({ setActive }) {
             marginBottom: 5,
           }}
         >
-          Mau pindah ke bidang apa?
+          {t("Mau pindah ke bidang apa?", "Which field do you want to move into?")}
         </div>
         <div
           style={{
@@ -421,12 +420,11 @@ export function PindahKarierPanel({ setActive }) {
         >
           {bidangAsal ? (
             <>
-              Bidangmu sekarang terdeteksi sebagai <strong>{bidangAsal}</strong>
-              . Pilih tujuanmu, nanti dinilai apa yang bisa dibawa dan apa yang
-              perlu dikejar.
+              {t("Bidangmu sekarang terdeteksi sebagai", "Your current field looks like")}{" "}<strong>{labelTampil(bidangAsal)}</strong>
+              {t(". Pilih tujuanmu, nanti dinilai apa yang bisa dibawa dan apa yang perlu dikejar.", ". Pick your target and we'll assess what carries over and what you need to catch up on.")}
             </>
           ) : (
-            "Isi dulu CV kamu di CV Builder, atau jalankan analisis di halaman Review CV."
+            t("Isi dulu CV kamu di CV Builder, atau jalankan analisis di halaman Review CV.", "Fill in your CV in the CV Builder first, or run an analysis in CV Review.")
           )}
         </div>
 
@@ -445,8 +443,8 @@ export function PindahKarierPanel({ setActive }) {
           >
             <Info size={11} style={{ flexShrink: 0 }} />
             {sumberProfil === "cv_builder"
-              ? "Memakai CV yang tersimpan di CV Builder."
-              : "Memakai data dari analisis terakhir kamu."}
+              ? t("Memakai CV yang tersimpan di CV Builder.", "Using the CV saved in the CV Builder.")
+              : t("Memakai data dari analisis terakhir kamu.", "Using data from your latest analysis.")}
           </div>
         )}
 
@@ -475,7 +473,7 @@ export function PindahKarierPanel({ setActive }) {
                 color: tujuan === c.label ? T.accent : T.inkSoft,
               }}
             >
-              {c.label}
+              {labelTampil(c.label)}
             </button>
           ))}
         </div>
@@ -483,7 +481,7 @@ export function PindahKarierPanel({ setActive }) {
         <input
           value={tujuan}
           onChange={(e) => setTujuan(e.target.value)}
-          placeholder="Atau tulis sendiri, misal: UX Researcher, Product Manager..."
+          placeholder={t("Atau tulis sendiri, misal: UX Researcher, Product Manager...", "Or type your own, e.g. UX Researcher, Product Manager...")}
           style={{
             width: "100%",
             border: `1px solid ${T.border}`,
@@ -526,7 +524,7 @@ export function PindahKarierPanel({ setActive }) {
                 size={15}
                 style={{ animation: "spin 1s linear infinite" }}
               />{" "}
-              Mengambil hasil sebelumnya...
+              {t("Mengambil hasil sebelumnya...", "Fetching the previous result...")}
             </>
           ) : loading ? (
             <>
@@ -534,13 +532,13 @@ export function PindahKarierPanel({ setActive }) {
                 size={15}
                 style={{ animation: "spin 1s linear infinite" }}
               />{" "}
-              Menilai kelayakan, bisa sampai 1 menit...
+              {t("Menilai kelayakan, bisa sampai 1 menit...", "Assessing feasibility, may take up to 1 minute...")}
             </>
           ) : langganan.sisaPindah <= 0 ? (
-            <>Kuota Pindah Karier habis</>
+            <>{t("Kuota Pindah Karier habis", "Career Switch quota used up")}</>
           ) : (
             <>
-              Nilai kelayakan pindah <ArrowRight size={15} />
+              {t("Nilai kelayakan pindah", "Assess the switch")}{" "}<ArrowRight size={15} />
             </>
           )}
         </Button>
@@ -552,7 +550,7 @@ export function PindahKarierPanel({ setActive }) {
             textAlign: "center",
           }}
         >
-          Memakai 1 kuota Pindah Karier · {langganan.sisaPindah} tersisa
+          {t("Memakai 1 kuota Pindah Karier ·", "Uses 1 Career Switch credit ·")}{" "}{langganan.sisaPindah} tersisa
         </div>
       </Glass>
 
@@ -590,7 +588,7 @@ export function PindahKarierPanel({ setActive }) {
               {[
                 {
                   angka: `${hasil.peluang_persen}%`,
-                  label: "Peluang berhasil",
+                  label: t("Peluang berhasil", "Chance of success"),
                   warna:
                     hasil.peluang_persen >= 65
                       ? "var(--t-ok)"
@@ -600,12 +598,12 @@ export function PindahKarierPanel({ setActive }) {
                 },
                 {
                   angka: `${hasil.estimasi_bulan} bln`,
-                  label: "Perkiraan waktu",
+                  label: t("Perkiraan waktu", "Estimated time"),
                   warna: T.ink,
                 },
                 {
                   angka: KESULITAN[hasil.tingkat_kesulitan]?.label,
-                  label: "Tingkat kesulitan",
+                  label: t("Tingkat kesulitan", "Difficulty"),
                   warna: KESULITAN[hasil.tingkat_kesulitan]?.warna,
                   kecil: true,
                 },
@@ -649,12 +647,11 @@ export function PindahKarierPanel({ setActive }) {
               >
                 <Check size={15} color={T.teal} />
                 <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
-                  Yang sudah kamu bawa
+                  {t("Yang sudah kamu bawa", "What you already bring")}
                 </span>
               </div>
               <div style={{ fontSize: 12, color: T.inkSoft, marginBottom: 14 }}>
-                Keahlian dari pengalamanmu sekarang yang tetap terpakai di
-                bidang tujuan.
+                {t("Keahlian dari pengalamanmu sekarang yang tetap terpakai di bidang tujuan.", "Skills from your current experience that still apply in the target field.")}
               </div>
 
               {hasil.skill_transfer.map((s, i) => (
@@ -695,7 +692,7 @@ export function PindahKarierPanel({ setActive }) {
                   marginBottom: 14,
                 }}
               >
-                Yang perlu kamu kejar
+                {t("Yang perlu kamu kejar", "What you need to catch up on")}
               </div>
 
               {hasil.skill_kurang.map((s, i) => {
@@ -828,8 +825,7 @@ export function PindahKarierPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  Sebagian tautan kursus adalah tautan afiliasi. Rekomendasi
-                  kami disusun berdasarkan kecocokan dengan kebutuhanmu.
+                  {t("Sebagian tautan kursus adalah tautan afiliasi. Rekomendasi kami disusun berdasarkan kecocokan dengan kebutuhanmu.", "Some course links are affiliate links. Our recommendations are based on what fits your needs.")}
                 </span>
               </div>
             </Glass>
@@ -846,9 +842,9 @@ export function PindahKarierPanel({ setActive }) {
                   marginBottom: 16,
                 }}
               >
-                Tahapan yang disarankan
+                {t("Tahapan yang disarankan", "Suggested roadmap")}
               </div>
-              {hasil.tahapan.map((t, i) => (
+              {hasil.tahapan.map((tt, i) => (
                 <div
                   key={i}
                   style={{
@@ -905,10 +901,10 @@ export function PindahKarierPanel({ setActive }) {
                       <span
                         style={{ fontSize: 13, fontWeight: 600, color: T.ink }}
                       >
-                        {t.fase}
+                        {tt.fase}
                       </span>
                       <span style={{ fontSize: 11, color: T.inkFaint }}>
-                        {t.durasi}
+                        {tt.durasi}
                       </span>
                     </div>
                     <div
@@ -919,7 +915,7 @@ export function PindahKarierPanel({ setActive }) {
                         marginTop: 4,
                       }}
                     >
-                      {t.fokus}
+                      {tt.fokus}
                     </div>
                   </div>
                 </div>
@@ -938,10 +934,10 @@ export function PindahKarierPanel({ setActive }) {
                   marginBottom: 4,
                 }}
               >
-                Posisi yang bisa kamu incar
+                {t("Posisi yang bisa kamu incar", "Roles you can aim for")}
               </div>
               <div style={{ fontSize: 12, color: T.inkSoft, marginBottom: 14 }}>
-                Setelah kekurangan wajib terpenuhi.
+                {t("Setelah kekurangan wajib terpenuhi.", "Once the must-have gaps are covered.")}
               </div>
               {hasil.posisi_masuk.map((p, i) => (
                 <div
@@ -1010,7 +1006,7 @@ export function PindahKarierPanel({ setActive }) {
               >
                 <AlertTriangle size={15} color="var(--t-warn)" />
                 <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
-                  Yang perlu kamu pertimbangkan
+                  {t("Yang perlu kamu pertimbangkan", "What to consider")}
                 </span>
               </div>
 
@@ -1067,7 +1063,7 @@ export function PindahKarierPanel({ setActive }) {
           >
             <History size={14} color={T.inkSoft} />
             <span style={{ fontSize: 13.5, fontWeight: 600, color: T.ink }}>
-              Analisis sebelumnya
+              {t("Analisis sebelumnya", "Previous analyses")}
             </span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -1095,7 +1091,7 @@ export function PindahKarierPanel({ setActive }) {
                     <div
                       style={{ fontSize: 11, color: T.inkFaint, marginTop: 2 }}
                     >
-                      {new Date(r.created_at).toLocaleDateString("id-ID", {
+                      {new Date(r.created_at).toLocaleDateString(lokal(), {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

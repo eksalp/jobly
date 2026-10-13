@@ -7,6 +7,7 @@
  */
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { mapSupabaseJob } from "./petaLoker.js";
+import { t } from "../i18n.js";
 
 const memori = new Map(); // url → { waktu, data } — mencegah ambil ulang saat bolak-balik halaman
 const UMUR = 60 * 1000;
@@ -26,12 +27,12 @@ export async function panggilApi(aksi, params = {}, { penuh = false, segar = fal
   const headers = {};
   if (penuh && supabaseConfigured) {
     const { data } = await supabase.auth.getSession();
-    const t = data?.session?.access_token;
-    if (t) headers.Authorization = `Bearer ${t}`;
+    const token = data?.session?.access_token;
+    if (token) headers.Authorization = `Bearer ${token}`;
   }
   const res = await fetch(url, { headers });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok && res.status !== 404) throw new Error(data?.error || `Gagal memuat (${res.status})`);
+  if (!res.ok && res.status !== 404) throw new Error(data?.error || t(`Gagal memuat (${res.status})`, `Failed to load (${res.status})`));
   if (memori.size > 200) memori.clear();
   memori.set(url, { waktu: Date.now(), data });
   return data;

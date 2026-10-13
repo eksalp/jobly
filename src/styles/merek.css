@@ -1,34 +1,43 @@
-/* Tanda Jobly — lihat src/components/ui/TandaJobly.jsx */
+/* Tanda Jobly: lihat src/components/ui/TandaJobly.jsx */
 .tj {
-  --tj-bg: #0b3c6e;
-  display: inline-grid;
-  place-items: center;
+  display: inline-block;
   flex-shrink: 0;
-  background: var(--tj-bg);
+  line-height: 0;
 }
-html[data-tema="gelap"] .tj {
-  --tj-bg: #2f6db5;
+.tj svg {
+  display: block;
 }
-/* Petir = "lubang" berwarna latar di badan tas */
-.tj-petir {
-  fill: var(--tj-bg);
-  transform-origin: 12px 14.2px;
+.tj-titik {
+  transform-origin: 38.5px 14.5px;
   transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .tj:not(.tj-diam) .tj-petir {
-    animation: tj-muncul 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+  /* Sekali saat halaman dibuka: ekor pita tergambar, lalu titik jatuh */
+  .tj:not(.tj-diam) .tj-ekor {
+    stroke-dasharray: 100;
+    animation: tj-gambar 0.7s cubic-bezier(0.3, 0.7, 0.2, 1) 0.1s both;
   }
-  a:hover > .tj .tj-petir {
-    transform: scale(1.1);
+  .tj:not(.tj-diam) .tj-titik {
+    animation: tj-jatuh 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) 0.55s both;
+  }
+  a:hover > .tj .tj-titik {
+    transform: translateY(-2px) scale(1.08);
   }
 }
 
-@keyframes tj-muncul {
+@keyframes tj-gambar {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes tj-jatuh {
   from {
     opacity: 0;
-    transform: translateY(-2px) scale(0.7);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;

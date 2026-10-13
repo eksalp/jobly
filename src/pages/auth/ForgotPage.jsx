@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { Field, ErrorNote } from "../../components/ui/FormControls";
 import { AuthWrap } from "./AuthWrap";
+import { t } from "../../i18n.js";
 
 export function ForgotPage({ go }) {
   const { resetPassword } = useAuth();
@@ -15,7 +16,7 @@ export function ForgotPage({ go }) {
 
   const handleSubmit = async () => {
     if (!email.trim()) {
-      setError("Isi email dulu ya.");
+      setError(t("Isi email dulu ya.", "Please enter your email."));
       return;
     }
     setError("");
@@ -40,10 +41,10 @@ export function ForgotPage({ go }) {
           marginBottom: 4,
         }}
       >
-        Reset kata sandi
+        {t("Reset kata sandi", "Reset password")}
       </h1>
       <p style={{ fontSize: 13.5, color: T.inkSoft, marginBottom: 24 }}>
-        Kami akan kirim tautan reset ke emailmu.
+        {t("Kami akan kirim tautan reset ke emailmu.", "We'll send a reset link to your email.")}
       </p>
       <ErrorNote message={error} />
       {sent ? (
@@ -58,15 +59,14 @@ export function ForgotPage({ go }) {
             marginBottom: 4,
           }}
         >
-          Tautan reset sudah dikirim ke {email}. Cek inbox (atau folder spam)
-          kamu.
+          {t("Tautan reset sudah dikirim ke", "A reset link has been sent to")}{" "}{email}{t(". Cek inbox (atau folder spam) kamu.", ". Check your inbox (or spam folder).")}
         </div>
       ) : (
         <>
           <Field
             label="Email"
             icon={<Mail size={16} color={T.inkFaint} />}
-            placeholder="nama@email.com"
+            placeholder={t("nama@email.com", "name@email.com")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
@@ -83,7 +83,7 @@ export function ForgotPage({ go }) {
                 style={{ animation: "spin 1s linear infinite" }}
               />
             ) : (
-              "Kirim Tautan Reset"
+              t("Kirim Tautan Reset", "Send reset link")
             )}
           </Button>
           <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
@@ -97,12 +97,12 @@ export function ForgotPage({ go }) {
           color: T.inkSoft,
         }}
       >
-        Ingat kata sandimu?{" "}
+        {t("Ingat kata sandimu?", "Remember your password?")}{" "}
         <span
           style={{ color: T.accent, fontWeight: 600, cursor: "pointer" }}
           onClick={() => go("login")}
         >
-          Masuk
+          {t("Masuk", "Sign in")}
         </span>
       </div>
     </AuthWrap>

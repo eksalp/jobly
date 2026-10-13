@@ -41,6 +41,7 @@ import { useTema } from "../../utils/tema";
 import { SITUS, grupAktif } from "../../data/situs";
 import { IkonSosial, TautanGrup } from "./Komunitas";
 import { TandaJobly } from "../ui/TandaJobly";
+import { lokal, t, bahasa, setBahasa, DAFTAR_BAHASA } from "../../i18n.js";
 
 /* ------------------------------------------------------------------ */
 /*  Struktur menu                                                      */
@@ -49,73 +50,73 @@ import { TandaJobly } from "../ui/TandaJobly";
 const ke = (panel) => `/dashboard/${panel}`;
 
 const I = {
-  semua: { t: "Semua loker", d: "Dari situs karier, LinkedIn, Indeed, dan lainnya", path: "/loker", Ikon: Search },
-  remote: { t: "Loker remote", d: "Kerja dari mana saja, digaji rupiah atau dolar", path: "/remote", Ikon: Globe },
-  magang: { t: "Magang & fresh graduate", d: "Cocok buat yang baru mulai kerja", path: "/loker?tipe=magang", Ikon: GraduationCap },
-  cocok: { t: "Cocok untukku", d: "Loker yang paling sesuai dengan CV-mu", path: ke("jobfinder"), Ikon: Sparkles },
-  simpan: { t: "Tersimpan", d: "Loker yang sudah kamu simpan", path: ke("saved"), Ikon: Bookmark },
-  lamaran: { t: "Lamaran saya", d: "Pantau status setiap lamaran", path: ke("applications"), Ikon: Send },
-  rencana: { t: "Rencana lamar", d: "Target mingguan dan streak harian", path: ke("rencana"), Ikon: CalendarCheck, baru: true },
-  peta: { t: "Peta gaji", d: "Kisaran gaji per bidang dan kota", path: "/peta-gaji", Ikon: BarChart3, baru: true },
-  cek: { t: "Cek loker palsu", d: "Cek dulu sebelum kamu kirim data diri", path: "/cek-loker", Ikon: ShieldCheck, baru: true },
-  kalkulator: { t: "Kalkulator gaji", d: "Ubah gaji dolar ke rupiah", path: "/kalkulator-gaji", Ikon: Calculator },
-  profil: { t: "Profil karier", d: "Data diri, skill, dan pengalaman", path: ke("profile"), Ikon: User },
-  cv: { t: "CV Builder", d: "Bikin CV rapi, unduh dalam PDF", path: ke("cvbuilder"), Ikon: FilePlus2 },
-  linkedin: { t: "LinkedIn Builder", d: "Bikin profil LinkedIn lebih menarik", path: ke("linkedinbuilder"), Ikon: Linkedin },
-  latihan: { t: "Latihan interview", d: "140+ pertanyaan, dari yang mudah sampai yang paling sulit", path: ke("interview"), Ikon: MessageSquareQuote },
-  review: { t: "Review CV", d: "Skor ATS dan saran perbaikan CV", path: ke("overview"), Ikon: FileSearch, pro: true },
-  pindah: { t: "Pindah karier", d: "Skill apa yang perlu ditambah untuk bidang baru", path: ke("pindahkarier"), Ikon: Route, pro: true },
-  rekomendasi: { t: "Rekomendasi karier", d: "Posisi yang cocok untuk kamu incar", path: ke("recommendations"), Ikon: TrendingUp },
-  simulasi: { t: "Simulasi interview", d: "Latihan interview pakai suara", path: ke("simulasi"), Ikon: Mic, pro: true },
+  semua: { t: t("Semua loker", "All jobs"), d: t("Dari situs karier, LinkedIn, Indeed, dan lainnya", "From career sites, LinkedIn, Indeed, and more"), path: "/loker", Ikon: Search },
+  remote: { t: t("Loker remote", "Remote jobs"), d: t("Kerja dari mana saja, digaji rupiah atau dolar", "Work from anywhere, paid in rupiah or dollars"), path: "/remote", Ikon: Globe },
+  magang: { t: t("Magang & fresh graduate", "Internships & fresh graduates"), d: t("Cocok buat yang baru mulai kerja", "For people starting their first job"), path: "/loker?tipe=magang", Ikon: GraduationCap },
+  cocok: { t: t("Cocok untukku", "Matched for me"), d: t("Loker yang paling sesuai dengan CV-mu", "Jobs that best fit your CV"), path: ke("jobfinder"), Ikon: Sparkles },
+  simpan: { t: t("Tersimpan", "Saved"), d: t("Loker yang sudah kamu simpan", "Jobs you have saved"), path: ke("saved"), Ikon: Bookmark },
+  lamaran: { t: t("Lamaran saya", "My applications"), d: t("Pantau status setiap lamaran", "Track the status of each application"), path: ke("applications"), Ikon: Send },
+  rencana: { t: t("Rencana lamar", "Application plan"), d: t("Target mingguan dan streak harian", "Weekly targets and daily streaks"), path: ke("rencana"), Ikon: CalendarCheck, baru: true },
+  peta: { t: t("Peta gaji", "Salary map"), d: t("Kisaran gaji per bidang dan kota", "Salary ranges by field and city"), path: "/peta-gaji", Ikon: BarChart3, baru: true },
+  cek: { t: t("Cek loker palsu", "Fake job checker"), d: t("Cek dulu sebelum kamu kirim data diri", "Check before you send personal details"), path: "/cek-loker", Ikon: ShieldCheck, baru: true },
+  kalkulator: { t: t("Kalkulator gaji", "Salary calculator"), d: t("Ubah gaji dolar ke rupiah", "Convert dollar pay to rupiah"), path: "/kalkulator-gaji", Ikon: Calculator },
+  profil: { t: t("Profil karier", "Career profile"), d: t("Data diri, skill, dan pengalaman", "Personal details, skills, and experience"), path: ke("profile"), Ikon: User },
+  cv: { t: "CV Builder", d: t("Bikin CV rapi, unduh dalam PDF", "Build a clean CV, download as PDF"), path: ke("cvbuilder"), Ikon: FilePlus2 },
+  linkedin: { t: "LinkedIn Builder", d: t("Bikin profil LinkedIn lebih menarik", "Make your LinkedIn profile stand out"), path: ke("linkedinbuilder"), Ikon: Linkedin },
+  latihan: { t: t("Latihan interview", "Interview practice"), d: t("140+ pertanyaan, dari yang mudah sampai yang paling sulit", "140+ questions, from easy to the hardest"), path: ke("interview"), Ikon: MessageSquareQuote },
+  review: { t: t("Review CV", "CV review"), d: t("Skor ATS dan saran perbaikan CV", "ATS score and CV improvement tips"), path: ke("overview"), Ikon: FileSearch, pro: true },
+  pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
+  rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
+  simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
 };
 
 // Menu untuk pengguna yang sudah masuk — dikelompokkan per tujuan.
 export const MENU_APLIKASI = [
   {
-    label: "Loker",
+    label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: "Cari", items: [I.semua, I.remote, I.cocok] },
-      { judul: "Punyaku", items: [I.simpan, I.lamaran, I.rencana] },
+      { judul: t("Cari", "Search"), items: [I.semua, I.remote, I.cocok] },
+      { judul: t("Punyaku", "Mine"), items: [I.simpan, I.lamaran, I.rencana] },
     ],
   },
-  { label: "Profil & CV", kolom: [{ items: [I.profil, I.cv, I.linkedin] }] },
+  { label: t("Profil & CV", "Profile & CV"), kolom: [{ items: [I.profil, I.cv, I.linkedin] }] },
   {
-    label: "Persiapan",
+    label: t("Persiapan", "Prepare"),
     kolom: [
-      { judul: "Gratis", items: [I.latihan, I.rekomendasi] },
-      { judul: "Dengan AI", items: [I.review, I.pindah, I.simulasi] },
+      { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi] },
+      { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
     ],
   },
-  { label: "Riset", kolom: [{ items: [I.peta, I.cek, I.kalkulator] }] },
+  { label: t("Riset", "Research"), kolom: [{ items: [I.peta, I.cek, I.kalkulator] }] },
 ];
 
 // Menu untuk pengunjung — sama kayanya, tujuan yang butuh akun
 // diarahkan ke halaman masuk lalu kembali ke tujuan semula.
 export const MENU_PUBLIK = [
   {
-    label: "Loker",
+    label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: "Cari loker", items: [I.semua, I.remote, I.magang] },
-      { judul: "Riset sebelum melamar", items: [I.peta, I.cek, I.kalkulator] },
+      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.remote, I.magang] },
+      { judul: t("Riset sebelum melamar", "Research before applying"), items: [I.peta, I.cek, I.kalkulator] },
     ],
   },
   {
-    label: "Alat",
+    label: "Tools",
     kolom: [
-      { judul: "Gratis", items: [I.cv, I.linkedin, I.latihan, I.rencana] },
-      { judul: "Dengan AI", items: [I.review, I.pindah, I.simulasi] },
+      { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.rencana] },
+      { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
     ],
   },
-  { label: "Peta gaji", path: "/peta-gaji" },
-  { label: "Harga", path: "/#harga" },
+  { label: t("Peta gaji", "Salary map"), path: "/peta-gaji" },
+  { label: t("Harga", "Pricing"), path: "/#harga" },
   { label: "FAQ", path: "/faq" },
 ];
 
 const MENU_AKUN = [
-  { t: "Paket & langganan", path: ke("paket"), Ikon: CreditCard },
-  { t: "Pengaturan", path: ke("settings"), Ikon: Settings },
+  { t: t("Paket & langganan", "Plans & billing"), path: ke("paket"), Ikon: CreditCard },
+  { t: t("Pengaturan", "Settings"), path: ke("settings"), Ikon: Settings },
 ];
 
 const itemsDari = (m) => (m.kolom ? m.kolom.flatMap((k) => k.items) : []);
@@ -156,10 +157,10 @@ const cocok = (path, aktif) => {
   return aktif === p || aktif.startsWith(p + "/");
 };
 
-const angka = (n) => Number(n || 0).toLocaleString("id-ID");
+const angka = (n) => Number(n || 0).toLocaleString(lokal());
 
 function ItemMenu({ item, aktif }) {
-  const { t, d, path, Ikon, pro, baru } = item;
+  const { t: judul, d, path, Ikon, pro, baru } = item;
   return (
     <a role="menuitem" className={cocok(path, aktif) ? "on" : ""} {...tautan(path)}>
       <span className="pb-dd-ic">
@@ -167,9 +168,9 @@ function ItemMenu({ item, aktif }) {
       </span>
       <span>
         <span className="pb-dd-t">
-          {t}
+          {judul}
           {pro && <span className="pb-tag pro">Pro</span>}
-          {baru && <span className="pb-tag baru">Baru</span>}
+          {baru && <span className="pb-tag baru">{t("Baru", "New")}</span>}
         </span>
         <span className="pb-dd-d">{d}</span>
       </span>
@@ -182,11 +183,11 @@ function PromoLoker() {
   const { total, loading } = useJobs();
   return (
     <a className="pb-dd-promo" {...tautan("/loker")}>
-      <span className="k">Hari ini di Jobly</span>
+      <span className="k">{t("Hari ini di Jobly", "Today on Jobly")}</span>
       <b>{loading ? "…" : angka(total)}</b>
-      <span className="s">lowongan dari situs karier resmi, LinkedIn, Indeed, dan lainnya</span>
+      <span className="s">{t("lowongan dari situs karier resmi, LinkedIn, Indeed, dan lainnya", "jobs from official career sites, LinkedIn, Indeed, and more")}</span>
       <span className="go">
-        Mulai cari <ArrowRight size={14} />
+        {t("Mulai cari", "Start searching")} <ArrowRight size={14} />
       </span>
     </a>
   );
@@ -235,7 +236,7 @@ function MenuTurun({ grup, aktif, kecuali = [] }) {
               <div key={i} className="pb-dd-col">
                 {k.judul && <div className="pb-dd-h">{k.judul}</div>}
                 {k.items.map((item) => (
-                  <ItemMenu key={item.t} item={item} aktif={aktif} />
+                  <ItemMenu key={item.path} item={item} aktif={aktif} />
                 ))}
               </div>
             ))}
@@ -249,9 +250,9 @@ function MenuTurun({ grup, aktif, kecuali = [] }) {
 
 /** Pilihan tema: terang, gelap, atau ikut perangkat. */
 const OPSI_TEMA = [
-  ["terang", "Terang", Sun],
-  ["gelap", "Gelap", Moon],
-  ["sistem", "Sistem", Monitor],
+  ["terang", t("Terang", "Light"), Sun],
+  ["gelap", t("Gelap", "Dark"), Moon],
+  ["sistem", t("Sistem", "System"), Monitor],
 ];
 
 function TombolTema() {
@@ -264,10 +265,10 @@ function TombolTema() {
       <button
         type="button"
         className="pb-icon-btn"
-        aria-label="Ganti tema tampilan"
+        aria-label={t("Ganti tema tampilan", "Change theme")}
         aria-expanded={buka}
         aria-haspopup="true"
-        title="Tema tampilan"
+        title={t("Tema tampilan", "Theme")}
         onClick={() => setBuka((v) => !v)}
       >
         <IkonNow size={17} />
@@ -291,7 +292,7 @@ function TombolTema() {
               </span>
               <span className="pb-dd-t">
                 {label}
-                {id === "sistem" && <span className="pb-dd-d" style={{ margin: 0 }}>ikut perangkat</span>}
+                {id === "sistem" && <span className="pb-dd-d" style={{ margin: 0 }}>{t("ikut perangkat", "match device")}</span>}
               </span>
             </button>
           ))}
@@ -305,7 +306,7 @@ function TombolTema() {
 export function PilihTema({ kecil }) {
   const [pilihan, , setTema] = useTema();
   return (
-    <div className={`pb-seg ${kecil ? "kecil" : ""}`} role="radiogroup" aria-label="Tema tampilan">
+    <div className={`pb-seg ${kecil ? "kecil" : ""}`} role="radiogroup" aria-label={t("Tema tampilan", "Theme")}>
       {OPSI_TEMA.map(([id, label, Ikon]) => (
         <button
           key={id}
@@ -322,6 +323,66 @@ export function PilihTema({ kecil }) {
   );
 }
 
+/** Pilihan bahasa: tombol kecil "ID"/"EN" dengan menu turun (header). */
+function TombolBahasa() {
+  const [buka, setBuka] = useState(false);
+  const ref = useTutupLuar(buka, setBuka);
+  const kode = bahasa().toUpperCase();
+  return (
+    <div className="pb-dd pb-tema" ref={ref}>
+      <button
+        type="button"
+        className="pb-icon-btn pb-bahasa-btn"
+        aria-label={t("Ganti bahasa", "Change language")}
+        aria-expanded={buka}
+        aria-haspopup="true"
+        title={t("Bahasa", "Language")}
+        onClick={() => setBuka((v) => !v)}
+      >
+        <Globe size={15} />
+        <span>{kode}</span>
+      </button>
+      {buka && (
+        <div className="pb-dd-menu kanan pb-tema-menu" role="menu">
+          {DAFTAR_BAHASA.map(([id, nama, singkat]) => (
+            <button
+              key={id}
+              type="button"
+              role="menuitemradio"
+              aria-checked={bahasa() === id}
+              className={`item ${bahasa() === id ? "on" : ""}`}
+              onClick={() => setBahasa(id)}
+            >
+              <span className="pb-dd-ic pb-bahasa-kode">{singkat}</span>
+              <span className="pb-dd-t">{nama}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Versi segmen untuk menu HP & footer. */
+export function PilihBahasa({ kecil }) {
+  return (
+    <div className={`pb-seg ${kecil ? "kecil" : ""}`} role="radiogroup" aria-label={t("Bahasa", "Language")}>
+      {DAFTAR_BAHASA.map(([id, nama]) => (
+        <button
+          key={id}
+          type="button"
+          role="radio"
+          aria-checked={bahasa() === id}
+          className={bahasa() === id ? "on" : ""}
+          onClick={() => setBahasa(id)}
+        >
+          {nama}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function MenuAkun({ aktif }) {
   const { user, signOut } = useAuth();
   const { fullName } = useUserProfile();
@@ -330,10 +391,10 @@ function MenuAkun({ aktif }) {
   const ref = useTutupLuar(buka, setBuka);
   useEffect(() => setBuka(false), [aktif]);
 
-  const nama = fullName || user?.email?.split("@")[0] || "Akun";
+  const nama = fullName || user?.email?.split("@")[0] || t("Akun", "Account");
   const adaKuota = l?.aktif || l?.punyaKuota;
   const berakhir = l?.berakhirAt
-    ? new Date(l.berakhirAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })
+    ? new Date(l.berakhirAt).toLocaleDateString(lokal(), { day: "numeric", month: "short", year: "numeric" })
     : null;
 
   const keluar = async () => {
@@ -347,7 +408,7 @@ function MenuAkun({ aktif }) {
       <button
         type="button"
         className="pb-avatar"
-        aria-label="Menu akun"
+        aria-label={t("Menu akun", "Account menu")}
         aria-expanded={buka}
         aria-haspopup="true"
         onClick={() => setBuka((v) => !v)}
@@ -364,38 +425,38 @@ function MenuAkun({ aktif }) {
             {adaKuota ? (
               <>
                 <div className="row">
-                  <span>Review CV (AI)</span>
+                  <span>{t("Review CV (AI)", "CV review (AI)")}</span>
                   <b>{l.sisaAnalisis ?? 0}x</b>
                 </div>
                 <div className="row">
-                  <span>Pindah karier</span>
+                  <span>{t("Pindah karier", "Career switch")}</span>
                   <b>{l.sisaPindah ?? 0}x</b>
                 </div>
                 <div className="row">
-                  <span>Simulasi interview</span>
+                  <span>{t("Simulasi interview", "Mock interview")}</span>
                   <b>{l.sisaInterview ?? 0}x</b>
                 </div>
                 {berakhir && (
                   <div className="exp">
-                    Paket {l.detailPaket?.nama || ""} berlaku sampai {berakhir}
+                    {t(`Paket ${l.detailPaket?.nama || ""} berlaku sampai ${berakhir}`, `${l.detailPaket?.nama || ""} plan active until ${berakhir}`)}
                   </div>
                 )}
               </>
             ) : (
               <>
-                <div style={{ fontWeight: 600, color: "var(--ink)" }}>Paket Free</div>
+                <div style={{ fontWeight: 600, color: "var(--ink)" }}>{t("Paket Free", "Free plan")}</div>
                 <div className="exp" style={{ marginTop: 2 }}>
-                  5.000 loker dan alat dasar sudah gratis. Mau buka semua loker dan fitur AI? Mulai Rp 9.000.
+                  {t("5.000 loker dan alat dasar sudah gratis. Mau buka semua loker dan fitur AI? Mulai Rp 9.000.", "5,000 jobs and the basic tools are free. Want every job and the AI features? From Rp 9,000.")}
                 </div>
               </>
             )}
           </div>
-          {MENU_AKUN.map(({ t, path, Ikon }) => (
-            <a key={t} role="menuitem" className={cocok(path, aktif) ? "on" : ""} {...tautan(path)}>
+          {MENU_AKUN.map(({ t: judul, path, Ikon }) => (
+            <a key={path} role="menuitem" className={cocok(path, aktif) ? "on" : ""} {...tautan(path)}>
               <span className="pb-dd-ic">
                 <Ikon size={17} />
               </span>
-              <span className="pb-dd-t">{t}</span>
+              <span className="pb-dd-t">{judul}</span>
             </a>
           ))}
           <div className="pb-dd-sep" />
@@ -403,7 +464,7 @@ function MenuAkun({ aktif }) {
             <span className="pb-dd-ic">
               <LogOut size={17} />
             </span>
-            <span className="pb-dd-t">Keluar</span>
+            <span className="pb-dd-t">{t("Keluar", "Sign out")}</span>
           </button>
         </div>
       )}
@@ -435,12 +496,12 @@ export function SiteHeader({ aktif }) {
     <header className={`pb-header ${gulir ? "bergulir" : ""}`}>
       <div className="pb-wrap">
         <div className="pb-header-in">
-          <a className="pb-brand" {...tautan("/")} aria-label="Jobly, ke beranda">
+          <a className="pb-brand" {...tautan("/")} aria-label={t("Jobly, ke beranda", "Jobly home")}>
             <TandaMerek />
             Jobly
           </a>
 
-          <nav className="pb-nav" aria-label="Menu utama">
+          <nav className="pb-nav" aria-label={t("Menu utama", "Main menu")}>
             {menu.map((m) =>
               m.kolom ? (
                 <MenuTurun key={m.label} grup={m} aktif={aktif} kecuali={menu.filter((x) => x.path).map((x) => x.path)} />
@@ -453,12 +514,13 @@ export function SiteHeader({ aktif }) {
           </nav>
 
           <div className="pb-actions">
+            <TombolBahasa />
             <TombolTema />
             {masuk ? (
               <>
                 {(l?.aktif || l?.punyaKuota) && (
-                  <a className="pb-quota" {...tautan(ke("paket"))} title="Sisa kuota fitur AI">
-                    Kuota AI <b>{l.sisaAnalisis ?? 0}</b> review · <b>{l.sisaInterview ?? 0}</b> simulasi
+                  <a className="pb-quota" {...tautan(ke("paket"))} title={t("Sisa kuota fitur AI", "Remaining AI credits")}>
+                    {t("Kuota AI", "AI credits")} <b>{l.sisaAnalisis ?? 0}</b> {t("review", "reviews")} · <b>{l.sisaInterview ?? 0}</b> {t("simulasi", "mock")}
                   </a>
                 )}
                 <MenuAkun aktif={aktif} />
@@ -466,10 +528,10 @@ export function SiteHeader({ aktif }) {
             ) : (
               <>
                 <a className="pb-login" {...tautan("/login")}>
-                  Masuk
+                  {t("Masuk", "Sign in")}
                 </a>
                 <a className="pb-btn pb-btn-primary pb-btn-sm" {...tautan("/register")}>
-                  Daftar gratis
+                  {t("Daftar gratis", "Sign up free")}
                 </a>
               </>
             )}
@@ -477,7 +539,7 @@ export function SiteHeader({ aktif }) {
               type="button"
               className="pb-burger"
               onClick={() => setBuka((v) => !v)}
-              aria-label={buka ? "Tutup menu" : "Buka menu"}
+              aria-label={buka ? t("Tutup menu", "Close menu") : t("Buka menu", "Open menu")}
               aria-expanded={buka}
             >
               {buka ? <X size={18} /> : <Menu size={18} />}
@@ -491,12 +553,12 @@ export function SiteHeader({ aktif }) {
               <React.Fragment key={m.label}>
                 <div className="pb-mm-group">{m.label}</div>
                 <div className="pb-mm-grid">
-                  {itemsDari(m).map(({ t, path, Ikon, pro, baru }) => (
-                    <a key={t} className="pb-mm-item" {...tautan(path)}>
+                  {itemsDari(m).map(({ t: judul, path, Ikon, pro, baru }) => (
+                    <a key={path} className="pb-mm-item" {...tautan(path)}>
                       <Ikon size={16} />
-                      <span>{t}</span>
+                      <span>{judul}</span>
                       {pro && <span className="pb-tag pro">Pro</span>}
-                      {baru && <span className="pb-tag baru">Baru</span>}
+                      {baru && <span className="pb-tag baru">{t("Baru", "New")}</span>}
                     </a>
                   ))}
                 </div>
@@ -509,23 +571,25 @@ export function SiteHeader({ aktif }) {
           )}
           {masuk && (
             <>
-              <div className="pb-mm-group">Akun</div>
+              <div className="pb-mm-group">{t("Akun", "Account")}</div>
               {MENU_AKUN.map((i) => (
-                <a key={i.t} {...tautan(i.path)}>
+                <a key={i.path} {...tautan(i.path)}>
                   {i.t}
                 </a>
               ))}
             </>
           )}
-          <div className="pb-mm-group">Tampilan</div>
+          <div className="pb-mm-group">{t("Tampilan", "Theme")}</div>
           <PilihTema kecil />
+          <div className="pb-mm-group">{t("Bahasa", "Language")}</div>
+          <PilihBahasa kecil />
           {!masuk && (
             <div className="pb-mobile-cta">
               <a className="pb-btn pb-btn-outline" {...tautan("/login")}>
-                Masuk
+                {t("Masuk", "Sign in")}
               </a>
               <a className="pb-btn pb-btn-primary" {...tautan("/register")}>
-                Daftar gratis
+                {t("Daftar gratis", "Sign up free")}
               </a>
             </div>
           )}
@@ -552,34 +616,34 @@ export function SiteFooter() {
 
   const kolom = [
     {
-      judul: "Lowongan",
+      judul: t("Lowongan", "Jobs"),
       tautan: [
-        ["Semua loker", "/loker"],
-        ["Loker remote", "/remote"],
-        ["Magang", "/loker?tipe=magang"],
+        [t("Semua loker", "All jobs"), "/loker"],
+        [t("Loker remote", "Remote jobs"), "/remote"],
+        [t("Magang", "Internships"), "/loker?tipe=magang"],
         ["Fresh graduate", "/loker?q=fresh%20graduate"],
-        ["Peta gaji", "/peta-gaji"],
-        ["Cek loker palsu", "/cek-loker"],
+        [t("Peta gaji", "Salary map"), "/peta-gaji"],
+        [t("Cek loker palsu", "Fake job checker"), "/cek-loker"],
       ],
     },
     {
-      judul: "Alat",
+      judul: "Tools",
       tautan: [
         ["CV Builder", ke("cvbuilder")],
         ["LinkedIn Builder", ke("linkedinbuilder")],
-        ["Latihan interview", ke("interview")],
-        ["Rencana lamar", ke("rencana")],
-        ["Review CV dengan AI", ke("overview")],
-        ["Kalkulator gaji USD", "/kalkulator-gaji"],
+        [t("Latihan interview", "Interview practice"), ke("interview")],
+        [t("Rencana lamar", "Application plan"), ke("rencana")],
+        [t("Review CV dengan AI", "AI CV review"), ke("overview")],
+        [t("Kalkulator gaji USD", "USD salary calculator"), "/kalkulator-gaji"],
       ],
     },
     {
       judul: "Jobly",
       tautan: [
-        ["Harga", "/#harga"],
+        [t("Harga", "Pricing"), "/#harga"],
         ["FAQ", "/faq"],
-        ["Syarat & ketentuan", "/syarat-ketentuan"],
-        ["Kebijakan privasi", "/kebijakan-privasi"],
+        [t("Syarat & ketentuan", "Terms of service"), "/syarat-ketentuan"],
+        [t("Kebijakan privasi", "Privacy policy"), "/kebijakan-privasi"],
         ["Disclaimer", "/disclaimer"],
       ],
     },
@@ -595,14 +659,16 @@ export function SiteFooter() {
               Jobly
             </a>
             <p>
-              In this economy, cari kerja itu susah. Jobly mengumpulkan lowongan
-              dari situs karier resmi dan platform terpercaya setiap hari, lalu
-              membantumu bersiap dari CV sampai interview.
+              {t(
+                "In this economy, cari kerja itu semakin sulit. Jobly mengumpulkan lowongan dari situs karier resmi dan platform terpercaya setiap hari buat bantu kamu dapat pekerjaan.",
+                "In this economy, finding a job keeps getting harder. Every day Jobly collects openings from official career sites and trusted job platforms to help you land your next job.",
+              )}
             </p>
             <IkonSosialFooter />
             <TautanGrup />
-            <div style={{ marginTop: 18 }}>
+            <div className="pb-foot-pilihan">
               <PilihTema kecil />
+              <PilihBahasa kecil />
             </div>
           </div>
           {kolom.map((k) => (
@@ -617,13 +683,19 @@ export function SiteFooter() {
           ))}
         </div>
         <div className="pb-foot-bottom">
-          <span>
-            © {tahun} {SITUS.nama} · Dibuat oleh {SITUS.pembuat}
+          <span className="pb-hakcipta">
+            {t(
+              `© ${tahun} ${SITUS.nama}. Hak cipta dilindungi undang-undang.`,
+              `© ${tahun} ${SITUS.nama}. All rights reserved.`,
+            )}
+            <br />
+            {t(`Dibuat oleh ${SITUS.pembuat}`, `Made by ${SITUS.pembuat}`)}
           </span>
           <p>
-            Jobly bukan agen penyalur kerja dan tidak terhubung dengan perusahaan
-            yang lowongannya ditampilkan. Kamu selalu melamar langsung di situs
-            aslinya, dan Jobly tidak memungut biaya apa pun.
+            {t(
+              "Jobly bukan agen penyalur kerja dan tidak terhubung dengan perusahaan yang lowongannya ditampilkan. Kamu selalu melamar langsung di situs aslinya, dan Jobly tidak memungut biaya apa pun.",
+              "Jobly is not a recruitment agency and is not affiliated with the companies whose jobs are listed. You always apply directly on the original site, and Jobly never charges you anything.",
+            )}
           </p>
         </div>
       </div>
@@ -677,7 +749,7 @@ function KeAtas() {
     <button
       type="button"
       className={`pb-keatas ${tampil ? "on" : ""}`}
-      aria-label="Kembali ke atas"
+      aria-label={t("Kembali ke atas", "Back to top")}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
       <ArrowUp size={18} />
@@ -704,8 +776,8 @@ export function useToast() {
   const [pesan, setPesan] = useState("");
   useEffect(() => {
     if (!pesan) return;
-    const t = setTimeout(() => setPesan(""), 2400);
-    return () => clearTimeout(t);
+    const tt = setTimeout(() => setPesan(""), 2400);
+    return () => clearTimeout(tt);
   }, [pesan]);
   const elemen = pesan ? (
     <div className="pb-toast" role="status">
@@ -721,9 +793,9 @@ export function useGulirKeHash(siap = true) {
     if (!siap) return;
     const id = window.location.hash.slice(1);
     if (!id) return;
-    const t = setTimeout(() => {
+    const tt = setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 60);
-    return () => clearTimeout(t);
+    return () => clearTimeout(tt);
   }, [siap]);
 }

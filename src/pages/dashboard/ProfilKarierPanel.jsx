@@ -18,6 +18,7 @@ import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { getInitials } from "../../utils/format";
 import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
+import { t } from "../../i18n.js";
 
 function uid() {
   return Math.random().toString(36).slice(2, 9);
@@ -82,25 +83,25 @@ function ExpForm({ draft, onChange, onSave, onCancel, saving }) {
         <input
           value={draft.role}
           onChange={(e) => onChange({ ...draft, role: e.target.value })}
-          placeholder="Posisi / Jabatan"
+          placeholder={t("Posisi / Jabatan", "Role / Title")}
           style={inputStyle}
         />
         <input
           value={draft.company}
           onChange={(e) => onChange({ ...draft, company: e.target.value })}
-          placeholder="Perusahaan"
+          placeholder={t("Perusahaan", "Company")}
           style={inputStyle}
         />
         <input
           value={draft.start}
           onChange={(e) => onChange({ ...draft, start: e.target.value })}
-          placeholder="Mulai, mis. Jan 2023"
+          placeholder={t("Mulai, mis. Jan 2023", "Start, e.g. Jan 2023")}
           style={inputStyle}
         />
         <input
           value={draft.end}
           onChange={(e) => onChange({ ...draft, end: e.target.value })}
-          placeholder="Selesai, mis. Sekarang"
+          placeholder={t("Selesai, mis. Sekarang", "End, e.g. Present")}
           style={inputStyle}
         />
       </div>
@@ -110,7 +111,7 @@ function ExpForm({ draft, onChange, onSave, onCancel, saving }) {
           style={{ fontSize: 12, padding: "7px 12px" }}
           onClick={onCancel}
         >
-          Batal
+          {t("Batal", "Cancel")}
         </Button>
         <Button
           variant="primary"
@@ -126,7 +127,7 @@ function ExpForm({ draft, onChange, onSave, onCancel, saving }) {
           ) : (
             <Check size={13} />
           )}{" "}
-          Simpan
+          {t("Simpan", "Save")}
         </Button>
       </div>
     </div>
@@ -310,7 +311,7 @@ export function ProfilKarierPanel() {
     setPrefDraft((prev) => ({
       ...prev,
       tipeKerja: prev.tipeKerja.includes(opt)
-        ? prev.tipeKerja.filter((t) => t !== opt)
+        ? prev.tipeKerja.filter((tt) => tt !== opt)
         : [...prev.tipeKerja, opt],
     }));
   };
@@ -322,12 +323,12 @@ export function ProfilKarierPanel() {
   };
 
   const tipeKerjaDisplay =
-    jobPref.tipeKerja.length > 0 ? jobPref.tipeKerja.join(", ") : "Belum diisi";
+    jobPref.tipeKerja.length > 0 ? jobPref.tipeKerja.join(", ") : t("Belum diisi", "Not filled in");
   const gajiDisplay =
     jobPref.gajiMin || jobPref.gajiMax
       ? `Rp ${jobPref.gajiMin || "?"}–${jobPref.gajiMax || "?"} jt`
-      : "Belum diisi";
-  const lokasiPrefDisplay = jobPref.location || location || "Belum diisi";
+      : t("Belum diisi", "Not filled in");
+  const lokasiPrefDisplay = jobPref.location || location || t("Belum diisi", "Not filled in");
 
   return (
     <div style={{ padding: 28, maxWidth: 840, margin: "0 auto" }}>
@@ -343,7 +344,7 @@ export function ProfilKarierPanel() {
           }}
         >
           <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-          Memuat profil...
+          {t("Memuat profil...", "Loading profile...")}
         </div>
       ) : null}
       <Glass
@@ -387,7 +388,7 @@ export function ProfilKarierPanel() {
             <input
               value={draft.fullName}
               onChange={(e) => setDraft({ ...draft, fullName: e.target.value })}
-              placeholder="Nama lengkap"
+              placeholder={t("Nama lengkap", "Full name")}
               style={{
                 border: `1px solid ${T.border}`,
                 borderRadius: 10,
@@ -403,7 +404,7 @@ export function ProfilKarierPanel() {
             <input
               value={draft.headline}
               onChange={(e) => setDraft({ ...draft, headline: e.target.value })}
-              placeholder="Headline, mis. Finance & Tax Staff"
+              placeholder={t("Headline, mis. Finance & Tax Staff", "Headline, e.g. Finance & Tax Staff")}
               style={{
                 border: `1px solid ${T.border}`,
                 borderRadius: 10,
@@ -418,7 +419,7 @@ export function ProfilKarierPanel() {
             <input
               value={draft.location}
               onChange={(e) => setDraft({ ...draft, location: e.target.value })}
-              placeholder="Lokasi, mis. Jakarta, Indonesia"
+              placeholder={t("Lokasi, mis. Jakarta, Indonesia", "Location, e.g. Jakarta, Indonesia")}
               style={{
                 border: `1px solid ${T.border}`,
                 borderRadius: 10,
@@ -434,11 +435,11 @@ export function ProfilKarierPanel() {
         ) : (
           <div style={{ flex: 1, minWidth: 180 }}>
             <div style={{ fontSize: 18, fontWeight: 600, color: T.ink }}>
-              {fullName || "Lengkapi nama kamu"}
+              {fullName || t("Lengkapi nama kamu", "Add your name")}
             </div>
             <div style={{ fontSize: 13, color: T.inkSoft }}>
               {[headline, location].filter(Boolean).join(" · ") ||
-                "Belum ada headline & lokasi"}
+                t("Belum ada headline & lokasi", "No headline & location yet")}
             </div>
           </div>
         )}
@@ -449,19 +450,19 @@ export function ProfilKarierPanel() {
               style={{ fontSize: 12.5, padding: "8px 14px" }}
               onClick={() => setEditing(false)}
             >
-              Batal
+              {t("Batal", "Cancel")}
             </Button>
             <Button
               variant="primary"
               style={{ fontSize: 12.5, padding: "8px 14px" }}
               onClick={saveEdit}
             >
-              <Check size={13} /> Simpan
+              <Check size={13} />{" "}{t("Simpan", "Save")}
             </Button>
           </div>
         ) : (
           <Button variant="outline" onClick={startEdit}>
-            <Pencil size={14} /> Edit Profil
+            <Pencil size={14} />{" "}{t("Edit Profil", "Edit profile")}
           </Button>
         )}
       </Glass>
@@ -474,13 +475,13 @@ export function ProfilKarierPanel() {
             marginBottom: 12,
           }}
         >
-          Ringkasan
+          {t("Ringkasan", "Summary")}
         </div>
         {editing ? (
           <textarea
             value={draft.summary}
             onChange={(e) => setDraft({ ...draft, summary: e.target.value })}
-            placeholder="Deskripsikan dirimu secara singkat..."
+            placeholder={t("Deskripsikan dirimu secara singkat...", "Describe yourself briefly...")}
             rows={4}
             style={{
               width: "100%",
@@ -505,11 +506,11 @@ export function ProfilKarierPanel() {
             }}
           >
             {displayedSummary ||
-              "Belum ada ringkasan. Klik Edit Profil buat isi, atau isi lewat CV Builder."}
+              t("Belum ada ringkasan. Klik Edit Profil buat isi, atau isi lewat CV Builder.", "No summary yet. Click Edit profile to add one, or fill it in through the CV Builder.")}
           </p>
         )}
         <div style={{ fontSize: 11.5, color: T.inkFaint, marginTop: 10 }}>
-          Ringkasan ini otomatis sinkron dengan Ringkasan Profil di CV Builder.
+          {t("Ringkasan ini otomatis sinkron dengan Ringkasan Profil di CV Builder.", "This summary syncs automatically with the Profile Summary in the CV Builder.")}
         </div>
       </Glass>
       <Glass style={{ padding: 22, marginBottom: 16 }}>
@@ -521,7 +522,7 @@ export function ProfilKarierPanel() {
             marginBottom: 12,
           }}
         >
-          Keahlian
+          {t("Keahlian", "Skills")}
         </div>
 
         {/* Daftar chip skill */}
@@ -558,7 +559,7 @@ export function ProfilKarierPanel() {
           ))}
           {skills.length === 0 && (
             <span style={{ fontSize: 12.5, color: T.inkFaint }}>
-              Belum ada skill ditambahkan.
+              {t("Belum ada skill ditambahkan.", "No skills added yet.")}
             </span>
           )}
         </div>
@@ -574,7 +575,7 @@ export function ProfilKarierPanel() {
                 setNewSkill("");
               }
             }}
-            placeholder="Tambah skill, lalu Enter..."
+            placeholder={t("Tambah skill, lalu Enter...", "Add a skill, then press Enter...")}
             style={{
               flex: "1 1 160px",
               minWidth: 0,
@@ -604,13 +605,12 @@ export function ProfilKarierPanel() {
               setNewSkill("");
             }}
           >
-            <Plus size={13} /> Tambah
+            <Plus size={13} />{" "}{t("Tambah", "Add")}
           </Button>
         </div>
 
         <div style={{ fontSize: 11.5, color: T.inkFaint, marginTop: 10 }}>
-          Skill ini dipakai buat menyaring loker yang cocok di halaman Job
-          Finder.
+          {t("Skill ini dipakai buat menyaring loker yang cocok di halaman Job Finder.", "These skills are used to filter matching jobs in Matched for me.")}
         </div>
       </Glass>
       <Glass style={{ padding: 22, marginBottom: 16 }}>
@@ -623,7 +623,7 @@ export function ProfilKarierPanel() {
           }}
         >
           <div style={{ fontWeight: 600, fontSize: 14.5, color: T.ink }}>
-            Pengalaman Kerja
+            {t("Pengalaman Kerja", "Work experience")}
           </div>
           {expSaving && (
             <div
@@ -639,13 +639,12 @@ export function ProfilKarierPanel() {
                 size={11}
                 style={{ animation: "spin 1s linear infinite" }}
               />
-              Menyimpan...
+              {t("Menyimpan...", "Saving...")}
             </div>
           )}
         </div>
         <div style={{ fontSize: 11.5, color: T.inkFaint, marginBottom: 14 }}>
-          Data ini otomatis tersambung dengan Pengalaman Kerja di CV Builder. Kamu
-          bisa isi atau ubah di sini maupun di CV Builder, hasilnya tetap sama.
+          {t("Data ini otomatis tersambung dengan Pengalaman Kerja di CV Builder. Kamu bisa isi atau ubah di sini maupun di CV Builder, hasilnya tetap sama.", "This syncs automatically with Work Experience in the CV Builder. Edit it here or there, the result is the same.")}
         </div>
 
         {expLoading ? (
@@ -663,7 +662,7 @@ export function ProfilKarierPanel() {
               size={14}
               style={{ animation: "spin 1s linear infinite" }}
             />
-            Memuat pengalaman kerja...
+            {t("Memuat pengalaman kerja...", "Loading work experience...")}
           </div>
         ) : (
           <>
@@ -671,8 +670,7 @@ export function ProfilKarierPanel() {
               <div
                 style={{ fontSize: 12.5, color: T.inkFaint, marginBottom: 14 }}
               >
-                Belum ada pengalaman kerja. Tambahkan di sini atau lewat CV
-                Builder.
+                {t("Belum ada pengalaman kerja. Tambahkan di sini atau lewat CV Builder.", "No work experience yet. Add it here or through the CV Builder.")}
               </div>
             )}
 
@@ -714,7 +712,7 @@ export function ProfilKarierPanel() {
                     <div
                       style={{ fontWeight: 600, fontSize: 13.5, color: T.ink }}
                     >
-                      {e.role || "Posisi belum diisi"}
+                      {e.role || t("Posisi belum diisi", "Role not filled in")}
                     </div>
                     <div style={{ fontSize: 12.5, color: T.inkSoft }}>
                       {[e.company, [e.start, e.end].filter(Boolean).join(" – ")]
@@ -733,7 +731,7 @@ export function ProfilKarierPanel() {
                         padding: 4,
                         display: "flex",
                       }}
-                      title="Edit"
+                      title={t("Edit", "Edit")}
                     >
                       <Pencil size={13} />
                     </button>
@@ -747,7 +745,7 @@ export function ProfilKarierPanel() {
                         padding: 4,
                         display: "flex",
                       }}
-                      title="Hapus"
+                      title={t("Hapus", "Delete")}
                     >
                       <Trash2 size={13} />
                     </button>
@@ -775,7 +773,7 @@ export function ProfilKarierPanel() {
                 style={{ fontSize: 12.5, padding: "8px 14px" }}
                 onClick={() => setAddingExp(true)}
               >
-                <Plus size={13} /> Tambah Pengalaman
+                <Plus size={13} />{" "}{t("Tambah Pengalaman", "Add experience")}
               </Button>
             )}
           </>
@@ -791,7 +789,7 @@ export function ProfilKarierPanel() {
           }}
         >
           <div style={{ fontWeight: 600, fontSize: 14.5, color: T.ink }}>
-            Preferensi Kerja
+            {t("Preferensi Kerja", "Work preferences")}
           </div>
           {editingPref ? (
             <div style={{ display: "flex", gap: 8 }}>
@@ -800,7 +798,7 @@ export function ProfilKarierPanel() {
                 style={{ fontSize: 12, padding: "6px 12px" }}
                 onClick={() => setEditingPref(false)}
               >
-                Batal
+                {t("Batal", "Cancel")}
               </Button>
               <Button
                 variant="primary"
@@ -816,7 +814,7 @@ export function ProfilKarierPanel() {
                 ) : (
                   <Check size={12} />
                 )}{" "}
-                Simpan
+                {t("Simpan", "Save")}
               </Button>
             </div>
           ) : (
@@ -825,7 +823,7 @@ export function ProfilKarierPanel() {
               style={{ fontSize: 12, padding: "6px 12px" }}
               onClick={startEditPref}
             >
-              <Pencil size={12} /> Edit
+              <Pencil size={12} />{" "}{t("Edit", "Edit")}
             </Button>
           )}
         </div>
@@ -842,7 +840,7 @@ export function ProfilKarierPanel() {
                   marginBottom: 6,
                 }}
               >
-                Lokasi
+                {t("Lokasi", "Location")}
               </div>
               <input
                 value={prefDraft.location}
@@ -875,7 +873,7 @@ export function ProfilKarierPanel() {
                   marginBottom: 6,
                 }}
               >
-                Tipe Kerja
+                {t("Tipe Kerja", "Work type")}
               </div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                 {TIPE_KERJA_OPTIONS.map((opt) => {
@@ -913,7 +911,7 @@ export function ProfilKarierPanel() {
                   marginBottom: 6,
                 }}
               >
-                Ekspektasi Gaji (juta/bulan)
+                {t("Ekspektasi Gaji (juta/bulan)", "Salary expectation (million/month)")}
               </div>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                 <input
@@ -921,7 +919,7 @@ export function ProfilKarierPanel() {
                   onChange={(e) =>
                     setPrefDraft({ ...prefDraft, gajiMin: e.target.value })
                   }
-                  placeholder="Min, mis. 8"
+                  placeholder={t("Min, mis. 8", "Min, e.g. 8")}
                   inputMode="numeric"
                   style={{
                     width: "100%",
@@ -942,7 +940,7 @@ export function ProfilKarierPanel() {
                   onChange={(e) =>
                     setPrefDraft({ ...prefDraft, gajiMax: e.target.value })
                   }
-                  placeholder="Max, mis. 14"
+                  placeholder={t("Max, mis. 14", "Max, e.g. 14")}
                   inputMode="numeric"
                   style={{
                     width: "100%",
@@ -968,10 +966,10 @@ export function ProfilKarierPanel() {
               gap: 14,
             }}
           >
-            <PrefItem label="Lokasi" value={lokasiPrefDisplay} icon={MapPin} />
-            <PrefItem label="Tipe" value={tipeKerjaDisplay} icon={Briefcase} />
+            <PrefItem label={t("Lokasi", "Location")} value={lokasiPrefDisplay} icon={MapPin} />
+            <PrefItem label={t("Tipe", "Type")} value={tipeKerjaDisplay} icon={Briefcase} />
             <PrefItem
-              label="Ekspektasi Gaji"
+              label={t("Ekspektasi Gaji", "Salary expectation")}
               value={gajiDisplay}
               icon={DollarSign}
             />

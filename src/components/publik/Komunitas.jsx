@@ -2,6 +2,7 @@ import React from "react";
 import { AtSign, ArrowUpRight, Users } from "lucide-react";
 import { sosialAktif, grupAktif } from "../../data/situs";
 import { JALUR_MEREK, VIEWBOX_MEREK } from "../../data/ikonMerek";
+import { t } from "../../i18n.js";
 
 /** Ikon merek satu warna (mengikuti currentColor). */
 function IkonMerek({ jenis, size = 18 }) {
@@ -24,7 +25,7 @@ export function IkonSosial() {
   const daftar = sosialAktif();
   if (!daftar.length) return null;
   return (
-    <div className="pb-sosial" aria-label="Media sosial Jobly">
+    <div className="pb-sosial" aria-label={t("Media sosial Jobly", "Jobly on social media")}>
       {daftar.map(({ jenis, label, url, handle }) => {
         const Ikon = IKON_SOSIAL[jenis] || AtSign;
         return (
@@ -65,15 +66,17 @@ export function BagianKomunitas() {
       <div className="pb-wrap">
         <div className="pb-komunitas" data-muncul="">
           <div className="pb-komunitas-teks">
-            <span className="pb-label">Komunitas</span>
-            <h2 className="pb-h2">Cari kerja nggak harus sendirian.</h2>
+            <span className="pb-label">{t("Komunitas", "Community")}</span>
+            <h2 className="pb-h2">{t("Cari kerja nggak harus sendirian.", "You don't have to job hunt alone.")}</h2>
             <p className="pb-sub">
-              Gabung grup Jobly. Dapat info loker pilihan, rekrutmen yang lagi
-              buka, dan tips melamar, langsung di HP-mu.
+              {t(
+                "Gabung grup Jobly. Dapat info loker pilihan, rekrutmen yang lagi buka, dan tips melamar, langsung di HP-mu.",
+                "Join the Jobly group for handpicked jobs, open recruitment drives, and application tips, right on your phone.",
+              )}
             </p>
             {sosial.length > 0 && (
               <div className="pb-komunitas-sosial">
-                <span>Ikuti juga</span>
+                <span>{t("Ikuti juga", "Also follow")}</span>
                 <IkonSosial />
               </div>
             )}
@@ -93,7 +96,7 @@ export function BagianKomunitas() {
                       {anggota && <small>{anggota}</small>}
                     </span>
                     <span className="go">
-                      {aksi || "Gabung"} <ArrowUpRight size={15} />
+                      {aksi || t("Gabung", "Join")} <ArrowUpRight size={15} />
                     </span>
                   </a>
                 );

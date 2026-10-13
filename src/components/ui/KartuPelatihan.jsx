@@ -2,6 +2,7 @@ import React from "react";
 import { UserCheck, ExternalLink, Check, Info } from "lucide-react";
 import { T } from "../../theme";
 import { Glass } from "./Glass";
+import { t } from "../../i18n.js";
 
 /**
  * Tawaran pelatihan interview dengan pewawancara sungguhan.
@@ -21,16 +22,16 @@ const HARGA = "Rp 30.000";
 export function KartuPelatihan({ skor }) {
   const pembuka =
     skor != null && skor < 60
-      ? "Latihan dengan AI bagus untuk membiasakan diri, tapi untuk memperbaiki hal-hal di atas, masukan dari pewawancara sungguhan jauh lebih tajam."
+      ? t("Latihan dengan AI bagus untuk membiasakan diri, tapi untuk memperbaiki hal-hal di atas, masukan dari pewawancara sungguhan jauh lebih tajam.", "Practising with AI is great for building habits, but to fix the points above, feedback from a real interviewer is much sharper.")
       : skor != null && skor >= 80
-        ? "Penampilanmu sudah kuat. Untuk mengasahnya sampai siap menghadapi wawancara sungguhan, latihan dengan pewawancara berpengalaman bisa menemukan hal yang tidak tertangkap AI."
-        : "AI bisa melatih kebiasaanmu, tapi pewawancara sungguhan bisa membaca hal yang tidak terekam di transkrip, seperti cara membawa diri, jeda bicara, dan rasa percaya diri saat menjawab.";
+        ? t("Penampilanmu sudah kuat. Untuk mengasahnya sampai siap menghadapi wawancara sungguhan, latihan dengan pewawancara berpengalaman bisa menemukan hal yang tidak tertangkap AI.", "You performed strongly. To sharpen it for a real interview, practising with an experienced interviewer can catch things AI misses.")
+        : t("AI bisa melatih kebiasaanmu, tapi pewawancara sungguhan bisa membaca hal yang tidak terekam di transkrip, seperti cara membawa diri, jeda bicara, dan rasa percaya diri saat menjawab.", "AI can train your habits, but a real interviewer reads things a transcript can't capture, like how you carry yourself, your pauses, and how confident you sound.");
 
   const isi = [
-    "Sesi 1-on-1 lewat Zoom bersama profesional berpengalaman di BUMN dan startup",
-    "Panduan interview berbasis praktik langsung",
-    "Perbaikan langsung saat sesi, dengan form checklist",
-    "Gratis e-book kumpulan pertanyaan interview kerja dan magang",
+    t("Sesi 1-on-1 lewat Zoom bersama profesional berpengalaman di BUMN dan startup", "1-on-1 Zoom sessions with professionals experienced at state-owned enterprises and startups"),
+    t("Panduan interview berbasis praktik langsung", "Hands-on, practice-based interview guidance"),
+    t("Perbaikan langsung saat sesi, dengan form checklist", "Live corrections during the session, with a checklist form"),
+    t("Gratis e-book kumpulan pertanyaan interview kerja dan magang", "Free e-book of job and internship interview questions"),
   ];
 
   return (
@@ -52,7 +53,7 @@ export function KartuPelatihan({ skor }) {
       >
         <UserCheck size={16} color={T.teal} />
         <span style={{ fontSize: 14.5, fontWeight: 600, color: T.ink }}>
-          Latihan langsung dengan pewawancara
+          {t("Latihan langsung dengan pewawancara", "Practise with a real interviewer")}
         </span>
       </div>
 
@@ -68,9 +69,9 @@ export function KartuPelatihan({ skor }) {
       </div>
 
       <div style={{ marginBottom: 16 }}>
-        {isi.map((t) => (
+        {isi.map((butir) => (
           <div
-            key={t}
+            key={butir}
             style={{
               display: "flex",
               gap: 8,
@@ -85,7 +86,7 @@ export function KartuPelatihan({ skor }) {
               color={T.teal}
               style={{ flexShrink: 0, marginTop: 3 }}
             />
-            <span>{t}</span>
+            <span>{butir}</span>
           </div>
         ))}
       </div>
@@ -114,7 +115,7 @@ export function KartuPelatihan({ skor }) {
             {HARGA}
           </div>
           <div style={{ fontSize: 11, color: T.inkFaint, marginTop: 2 }}>
-            jadwal konsultasi bisa diatur sendiri
+            {t("jadwal konsultasi bisa diatur sendiri", "you choose the session time")}
           </div>
         </div>
 
@@ -138,7 +139,7 @@ export function KartuPelatihan({ skor }) {
             boxShadow: "0 4px 14px rgba(20,184,166,0.3)",
           }}
         >
-          Atur jadwal <ExternalLink size={13} />
+          {t("Atur jadwal", "Book a session")}{" "}<ExternalLink size={13} />
         </a>
       </div>
 
@@ -160,8 +161,7 @@ export function KartuPelatihan({ skor }) {
       >
         <Info size={11} style={{ flexShrink: 0, marginTop: 2 }} />
         <span>
-          Layanan ini disediakan oleh mitra Jobly. Jobly bisa mendapat komisi
-          kalau kamu mendaftar lewat tautan di atas, tanpa biaya tambahan untukmu.
+          {t("Layanan ini disediakan oleh mitra Jobly. Jobly bisa mendapat komisi kalau kamu mendaftar lewat tautan di atas, tanpa biaya tambahan untukmu.", "This service is provided by a Jobly partner. Jobly may earn a commission if you sign up through the link above, at no extra cost to you.")}
         </span>
       </div>
     </Glass>

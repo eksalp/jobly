@@ -3,10 +3,11 @@ import { PublicLayout } from "../../components/publik/PublicLayout";
 import { DOKUMEN } from "../../data/dokumen";
 import { SITUS } from "../../data/situs";
 import { tautan } from "../../utils/navigasi";
+import { t } from "../../i18n.js";
 
 const URUTAN = [
-  ["syarat-ketentuan", "Syarat & ketentuan"],
-  ["kebijakan-privasi", "Kebijakan privasi"],
+  ["syarat-ketentuan", t("Syarat & ketentuan", "Terms of service")],
+  ["kebijakan-privasi", t("Kebijakan privasi", "Privacy policy")],
   ["disclaimer", "Disclaimer"],
 ];
 
@@ -21,7 +22,7 @@ function Teks({ s }) {
         (SITUS.emailKontak ? (
           <a href={`mailto:${SITUS.emailKontak}`}>{SITUS.emailKontak}</a>
         ) : (
-          <strong>email kontak Jobly</strong>
+          <strong>{t("email kontak Jobly", "Jobly's contact email")}</strong>
         ))}
     </React.Fragment>
   ));
@@ -46,15 +47,15 @@ export function DokumenPage({ jenis }) {
   return (
     <PublicLayout aktif={`/${jenis}`}>
       <div className="pb-wrap pb-pagehead">
-        <span className="pb-label">Dokumen</span>
+        <span className="pb-label">{t("Dokumen", "Document")}</span>
         <h1>{doc.judul}</h1>
         <p>{doc.ringkas}</p>
-        <div className="pb-doc-meta">Berlaku sejak {SITUS.dokumenBerlaku}</div>
+        <div className="pb-doc-meta">{t(`Berlaku sejak ${SITUS.dokumenBerlaku}`, `Effective from ${SITUS.dokumenBerlaku}`)}</div>
       </div>
 
       <div className="pb-wrap pb-doc" style={{ marginTop: 36 }}>
-        <nav className="pb-toc" aria-label="Daftar isi">
-          <b>Di halaman ini</b>
+        <nav className="pb-toc" aria-label={t("Daftar isi", "Contents")}>
+          <b>{t("Di halaman ini", "On this page")}</b>
           <ol>
             {doc.bagian.map((b) => (
               <li key={b.id}>
@@ -93,7 +94,7 @@ export function DokumenPage({ jenis }) {
             </section>
           ))}
 
-          <h2>Dokumen lainnya</h2>
+          <h2>{t("Dokumen lainnya", "Other documents")}</h2>
           <ul>
             {URUTAN.filter(([id]) => id !== jenis).map(([id, label]) => (
               <li key={id}>
@@ -101,7 +102,7 @@ export function DokumenPage({ jenis }) {
               </li>
             ))}
             <li>
-              <a {...tautan("/faq")}>Pertanyaan yang sering diajukan</a>
+              <a {...tautan("/faq")}>{t("Pertanyaan yang sering diajukan", "Frequently asked questions")}</a>
             </li>
           </ul>
         </article>

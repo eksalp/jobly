@@ -37,6 +37,8 @@ import { Button } from "../../components/ui/Button";
 import { JobRow } from "../../components/JobRow";
 import { Section } from "../../components/Section";
 import DataSourceBanner from "../../components/DataSourceBanner";
+import { lokal, t } from "../../i18n.js";
+import { labelTampil } from "../../data/taxonomy.js";
 
 // Kartu audit — menampilkan skor + daftar masalah & perbaikannya
 function AuditCard({ judul, skor, masalah }) {
@@ -217,7 +219,7 @@ export function AnalyzerPanel({ setActive }) {
   // Harus setelah `aiLoading` dideklarasikan: memanggil hook di atas
   // deklarasi state yang dipakainya melanggar temporal dead zone dan
   // membuat seluruh komponen gagal dirender.
-  useCegahTinggalkan(aiLoading, "Analisis CV sedang berjalan.");
+  useCegahTinggalkan(aiLoading, t("Analisis CV sedang berjalan.", "A CV analysis is running."));
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
@@ -225,18 +227,18 @@ export function AnalyzerPanel({ setActive }) {
 
     setFileName(file.name);
     setBacaGalat("");
-    setBacaProgres("Membaca berkas...");
+    setBacaProgres(t("Membaca berkas...", "Reading file..."));
 
     try {
       const teks = await bacaDokumen(file, (hal, total) => {
         if (total > 1)
-          setBacaProgres(`Membaca halaman ${hal} dari ${total}...`);
+          setBacaProgres(t(`Membaca halaman ${hal} dari ${total}...`, `Reading page ${hal} of ${total}...`));
       });
       setText(teks);
       setBacaProgres("");
     } catch (err) {
       setBacaProgres("");
-      setBacaGalat(err?.message || "Gagal membaca berkas.");
+      setBacaGalat(err?.message || t("Gagal membaca berkas.", "Couldn't read the file."));
       setFileName("");
     } finally {
       // Reset supaya berkas yang sama bisa dipilih ulang setelah gagal
@@ -345,17 +347,17 @@ export function AnalyzerPanel({ setActive }) {
 
           if (klaim?.jumlah > 0) {
             setAiError(
-              "Analisis sebelumnya tidak selesai, jadi kuotamu sudah dikembalikan. Silakan coba lagi.",
+              t("Analisis sebelumnya tidak selesai, jadi kuotamu sudah dikembalikan. Silakan coba lagi.", "The previous analysis didn't finish, so your quota was refunded. Please try again."),
             );
             langganan.refresh();
           } else {
             setAiError(
-              "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+              t("Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.", "The previous analysis didn't finish. If your quota was deducted, contact us and we'll refund it."),
             );
           }
         } catch {
           setAiError(
-            "Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.",
+            t("Analisis sebelumnya tidak selesai. Kalau kuotamu terpotong, hubungi kami dan akan kami kembalikan.", "The previous analysis didn't finish. If your quota was deducted, contact us and we'll refund it."),
           );
         }
 
@@ -413,7 +415,7 @@ export function AnalyzerPanel({ setActive }) {
         throw new Error(data.error);
       }
       if (!data?.arah_karier)
-        throw new Error("Hasil analisis kosong. Coba lagi.");
+        throw new Error(t("Hasil analisis kosong. Coba lagi.", "The analysis came back empty. Try again."));
 
       console.log("Analisis selesai lewat:", data._penyedia);
 
@@ -453,7 +455,7 @@ export function AnalyzerPanel({ setActive }) {
         console.error("Gagal menyimpan riwayat:", e);
       }
     } catch (err) {
-      setAiError(err?.message || "Analisis gagal diproses.");
+      setAiError(err?.message || t("Analisis gagal diproses.", "The analysis couldn't be processed."));
     } finally {
       setAiLoading(false);
     }
@@ -473,7 +475,7 @@ export function AnalyzerPanel({ setActive }) {
       return (
         <>
           <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
-          Mengambil hasil sebelumnya...
+          {t("Mengambil hasil sebelumnya...", "Fetching the previous result...")}
         </>
       );
     }
@@ -481,24 +483,24 @@ export function AnalyzerPanel({ setActive }) {
       return (
         <>
           <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />{" "}
-          Menganalisis CV...
+          {t("Menganalisis CV...", "Analysing CV...")}
         </>
       );
     if (langganan.sisaAnalisis <= 0) {
       // Bedakan "belum pernah punya" dari "kuota habis" — dua pesan berbeda.
       return langganan.aktif || langganan.punyaKuota ? (
         <>
-          Kuota habis, tambah paket <ChevronRight size={15} />
+          {t("Kuota habis, tambah paket", "Quota used up, add a plan")}{" "}<ChevronRight size={15} />
         </>
       ) : (
         <>
-          Lihat paket langganan <ChevronRight size={15} />
+          {t("Lihat paket langganan", "See plans")}{" "}<ChevronRight size={15} />
         </>
       );
     }
     return (
       <>
-        Analisis Lengkap dengan AI <ChevronRight size={15} />
+        {t("Analisis Lengkap dengan AI", "Full AI Analysis")}{" "}<ChevronRight size={15} />
       </>
     );
   };
@@ -529,9 +531,7 @@ export function AnalyzerPanel({ setActive }) {
             style={{ flexShrink: 0, marginTop: 1 }}
           />
           <div style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
-            <strong>Jangan tinggalkan halaman ini dulu.</strong> Analisis sedang
-            berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang,
-            hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.
+            <strong>{t("Jangan tinggalkan halaman ini dulu.", "Please stay on this page.")}</strong>{" "}{t("Analisis sedang berjalan dan butuh hingga satu menit. Kalau kamu pindah sekarang, hasilnya tetap diproses tapi baru muncul saat kamu kembali ke sini.", "The analysis is running and takes up to a minute. If you leave now, it keeps processing and shows up when you come back.")}
           </div>
         </Glass>
       )}
@@ -546,10 +546,10 @@ export function AnalyzerPanel({ setActive }) {
             marginBottom: 4,
           }}
         >
-          Upload atau paste CV / profil LinkedIn
+          {t("Upload atau paste CV / profil LinkedIn", "Upload or paste your CV / LinkedIn profile")}
         </div>
         <div style={{ fontSize: 13, color: T.inkSoft, marginBottom: 14 }}>
-          Langsung ketahuan arah kariermu dan loker yang cocok.
+          {t("Langsung ketahuan arah kariermu dan loker yang cocok.", "See your career direction and matching jobs right away.")}
         </div>
 
         {/* Toggle: ini CV atau salinan LinkedIn? */}
@@ -565,8 +565,8 @@ export function AnalyzerPanel({ setActive }) {
           }}
         >
           {[
-            { key: "cv", label: "Ini CV saya" },
-            { key: "linkedin", label: "Ini profil LinkedIn" },
+            { key: "cv", label: t("Ini CV saya", "This is my CV") },
+            { key: "linkedin", label: t("Ini profil LinkedIn", "This is a LinkedIn profile") },
           ].map((opt) => (
             <button
               key={opt.key}
@@ -619,7 +619,7 @@ export function AnalyzerPanel({ setActive }) {
                 letterSpacing: "0.02em",
               }}
             >
-              <Info size={13} /> CARA ANALISIS PROFIL LINKEDIN
+              <Info size={13} />{" "}{t("CARA ANALISIS PROFIL LINKEDIN", "HOW TO ANALYSE A LINKEDIN PROFILE")}
             </div>
             <div
               style={{
@@ -629,13 +629,12 @@ export function AnalyzerPanel({ setActive }) {
                 marginBottom: 10,
               }}
             >
-              AI tidak bisa membuka tautan LinkedIn. Yang dibutuhkan adalah isi
-              profilnya. Ada dua cara:
+              {t("AI tidak bisa membuka tautan LinkedIn. Yang dibutuhkan adalah isi profilnya. Ada dua cara:", "AI can't open LinkedIn links. It needs the profile content. Two ways:")}
             </div>
             {[
-              "Cara cepat: buka profilmu, salin bagian Tentang & Pengalaman, tempel ke kotak di bawah.",
-              "Cara lengkap: unduh profil sebagai PDF, lalu unggah di sini.",
-            ].map((t, i) => (
+              t("Cara cepat: buka profilmu, salin bagian Tentang & Pengalaman, tempel ke kotak di bawah.", "Quick: open your profile, copy the About & Experience sections, paste them below."),
+              t("Cara lengkap: unduh profil sebagai PDF, lalu unggah di sini.", "Complete: download your profile as PDF, then upload it here."),
+            ].map((tt, i) => (
               <div
                 key={i}
                 style={{
@@ -648,7 +647,7 @@ export function AnalyzerPanel({ setActive }) {
                 }}
               >
                 <span style={{ color: T.accent, flexShrink: 0 }}>•</span>
-                <span>{t}</span>
+                <span>{tt}</span>
               </div>
             ))}
             <div
@@ -662,15 +661,15 @@ export function AnalyzerPanel({ setActive }) {
                 marginBottom: 6,
               }}
             >
-              Langkah unduh PDF:
+              {t("Langkah unduh PDF:", "How to download the PDF:")}
             </div>
             {[
-              "Buka profil LinkedIn kamu (aplikasi HP atau browser).",
-              'Ketuk "Saya" (Me) lalu buka halaman profilmu.',
-              'Ketuk "Lainnya" (More) di bawah foto profil.',
-              'Pilih "Simpan ke PDF" (Save to PDF).',
-              "Unggah file PDF-nya di kotak unggah di bawah.",
-            ].map((t, i) => (
+              t("Buka profil LinkedIn kamu (aplikasi HP atau browser).", "Open your LinkedIn profile (mobile app or browser)."),
+              t("Ketuk \"Saya\" (Me) lalu buka halaman profilmu.", "Tap \"Me\" and open your profile page."),
+              t("Ketuk \"Lainnya\" (More) di bawah foto profil.", "Tap \"More\" below your profile photo."),
+              t("Pilih \"Simpan ke PDF\" (Save to PDF).", "Choose \"Save to PDF\"."),
+              t("Unggah file PDF-nya di kotak unggah di bawah.", "Upload the PDF in the box below."),
+            ].map((tt, i) => (
               <div
                 key={i}
                 style={{
@@ -700,7 +699,7 @@ export function AnalyzerPanel({ setActive }) {
                 >
                   {i + 1}
                 </span>
-                <span>{t}</span>
+                <span>{tt}</span>
               </div>
             ))}
           </div>
@@ -732,7 +731,7 @@ export function AnalyzerPanel({ setActive }) {
           <span
             style={{ fontSize: 13.5, color: fileName ? T.ink : T.inkFaint }}
           >
-            {bacaProgres || fileName || "Pilih file PDF, DOCX, atau TXT"}
+            {bacaProgres || fileName || t("Pilih file PDF, DOCX, atau TXT", "Choose a PDF, DOCX, or TXT file")}
           </span>
           <input
             ref={fileRef}
@@ -762,7 +761,7 @@ export function AnalyzerPanel({ setActive }) {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Atau tempel teks CV / LinkedIn kamu di sini..."
+          placeholder={t("Atau tempel teks CV / LinkedIn kamu di sini...", "Or paste your CV / LinkedIn text here...")}
           rows={6}
           style={{
             width: "100%",
@@ -797,9 +796,7 @@ export function AnalyzerPanel({ setActive }) {
               <div
                 style={{ fontSize: 12.5, color: "var(--t-warn-ink)", lineHeight: 1.6 }}
               >
-                <strong>Itu tautan, bukan isi profil.</strong> AI tidak bisa
-                membuka halaman LinkedIn, jadi yang dibutuhkan teks profilnya. Salin
-                isinya, atau unduh sebagai PDF lalu unggah di sini.
+                <strong>{t("Itu tautan, bukan isi profil.", "That's a link, not the profile content.")}</strong>{" "}{t("AI tidak bisa membuka halaman LinkedIn, jadi yang dibutuhkan teks profilnya. Salin isinya, atau unduh sebagai PDF lalu unggah di sini.", "AI can't open LinkedIn pages, so it needs the profile text. Copy the content, or download it as PDF and upload it here.")}
               </div>
             </div>
             <button
@@ -817,8 +814,8 @@ export function AnalyzerPanel({ setActive }) {
               }}
             >
               {tampilPanduanLi
-                ? "Sembunyikan panduan"
-                : "Cara unduh PDF LinkedIn"}
+                ? t("Sembunyikan panduan", "Hide guide")
+                : t("Cara unduh PDF LinkedIn", "How to download your LinkedIn PDF")}
             </button>
 
             {tampilPanduanLi && (
@@ -830,12 +827,12 @@ export function AnalyzerPanel({ setActive }) {
                 }}
               >
                 {[
-                  "Buka profil LinkedIn kamu lewat aplikasi HP atau browser.",
-                  'Ketuk tombol "Saya" (Me) lalu buka halaman profilmu.',
-                  'Ketuk tombol "Lainnya" (More) di bawah foto profil.',
-                  'Pilih "Simpan ke PDF" (Save to PDF).',
-                  "Unggah file PDF itu di kotak unggah di atas.",
-                ].map((t, i) => (
+                  t("Buka profil LinkedIn kamu lewat aplikasi HP atau browser.", "Open your LinkedIn profile in the mobile app or browser."),
+                  t("Ketuk tombol \"Saya\" (Me) lalu buka halaman profilmu.", "Tap \"Me\" and open your profile page."),
+                  t("Ketuk tombol \"Lainnya\" (More) di bawah foto profil.", "Tap \"More\" below your profile photo."),
+                  t("Pilih \"Simpan ke PDF\" (Save to PDF).", "Choose \"Save to PDF\"."),
+                  t("Unggah file PDF itu di kotak unggah di atas.", "Upload that PDF in the box above."),
+                ].map((tt, i) => (
                   <div
                     key={i}
                     style={{
@@ -865,7 +862,7 @@ export function AnalyzerPanel({ setActive }) {
                     >
                       {i + 1}
                     </span>
-                    <span>{t}</span>
+                    <span>{tt}</span>
                   </div>
                 ))}
               </div>
@@ -889,7 +886,7 @@ export function AnalyzerPanel({ setActive }) {
             onClick={runFree}
             disabled={text.trim().length < 30 || cumaTautan}
           >
-            Analisis Gratis <Sparkles size={15} />
+            {t("Analisis Gratis", "Free Analysis")}{" "}<Sparkles size={15} />
           </Button>
         </div>
       </Glass>
@@ -920,8 +917,8 @@ export function AnalyzerPanel({ setActive }) {
             >
               {unlocked && <Sparkles size={12} />}
               {unlocked
-                ? "Arah karier menurut analisis AI"
-                : "Arah karier terdeteksi"}
+                ? t("Arah karier menurut analisis AI", "Career direction from the AI analysis")
+                : t("Arah karier terdeteksi", "Detected career direction")}
             </div>
             <div
               style={{
@@ -934,7 +931,7 @@ export function AnalyzerPanel({ setActive }) {
             >
               {unlocked && aiResult?.arah_karier
                 ? aiResult.arah_karier
-                : freeResult.cat.label}
+                : labelTampil(freeResult.cat.label)}
             </div>
 
             {unlocked && aiResult?.arah_karier_alasan && (
@@ -961,7 +958,7 @@ export function AnalyzerPanel({ setActive }) {
                     letterSpacing: "0.03em",
                   }}
                 >
-                  Posisi yang realistis kamu lamar sekarang
+                  {t("Posisi yang realistis kamu lamar sekarang", "Roles you can realistically apply for now")}
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {aiResult.posisi_target.map((p) => (
@@ -1000,7 +997,7 @@ export function AnalyzerPanel({ setActive }) {
                     letterSpacing: "0.03em",
                   }}
                 >
-                  Bidang lain yang masih terjangkau
+                  {t("Bidang lain yang masih terjangkau", "Other fields within reach")}
                 </div>
                 {aiResult.bidang_alternatif.map((b) => (
                   <div key={b.bidang} style={{ marginBottom: 7 }}>
@@ -1060,8 +1057,8 @@ export function AnalyzerPanel({ setActive }) {
                 }}
               >
                 {jobsLoading && freeResult.matchCount === 0
-                  ? "Mencocokkan loker..."
-                  : `${freeResult.matchCount} loker cocok dengan CV kamu`}
+                  ? t("Mencocokkan loker...", "Matching jobs...")
+                  : t(`${freeResult.matchCount} loker cocok dengan CV kamu`, `${freeResult.matchCount} jobs match your CV`)}
                 {sisaTerkunci > 0 && (
                   <span
                     style={{
@@ -1071,7 +1068,7 @@ export function AnalyzerPanel({ setActive }) {
                       marginLeft: 8,
                     }}
                   >
-                    {LOKER_GRATIS} terbuka · {sisaTerkunci} terkunci
+                    {LOKER_GRATIS}{" "}{t("terbuka ·", "open ·")}{" "}{sisaTerkunci} terkunci
                   </span>
                 )}
               </div>
@@ -1101,8 +1098,7 @@ export function AnalyzerPanel({ setActive }) {
                       size={14}
                       style={{ animation: "spin 1s linear infinite" }}
                     />
-                    Memuat daftar loker. Kamu tetap bisa lanjut ke analisis
-                    lengkap.
+                    {t("Memuat daftar loker. Kamu tetap bisa lanjut ke analisis lengkap.", "Loading jobs. You can still continue to the full analysis.")}
                   </div>
                 )}
 
@@ -1150,8 +1146,7 @@ export function AnalyzerPanel({ setActive }) {
               <span
                 style={{ fontSize: 12.5, color: T.ink, flex: 1, minWidth: 200 }}
               >
-                <strong>{freeResult.matchCount} loker</strong> cocok dengan
-                profilmu, semuanya terbuka.
+                <strong>{freeResult.matchCount} loker</strong>{" "}{t("cocok dengan profilmu, semuanya terbuka.", "match your profile, all of them open.")}
               </span>
               <button
                 onClick={() => pergiKe("jobfinder")}
@@ -1167,7 +1162,7 @@ export function AnalyzerPanel({ setActive }) {
                   flexShrink: 0,
                 }}
               >
-                Buka di Job Finder →
+                {t("Buka di Job Finder →", "Open in Matched for me →")}
               </button>
             </div>
           )}
@@ -1201,7 +1196,7 @@ export function AnalyzerPanel({ setActive }) {
                       style={{ verticalAlign: -2, marginRight: 6 }}
                       color={T.accent}
                     />
-                    Perbaiki CV dan LinkedIn kamu
+                    {t("Perbaiki CV dan LinkedIn kamu", "Improve your CV and LinkedIn")}
                   </div>
                   <div
                     style={{
@@ -1215,17 +1210,17 @@ export function AnalyzerPanel({ setActive }) {
                   >
                     {[
                       sisaTerkunci > 0
-                        ? `${sisaTerkunci} loker cocok lainnya yang masih terkunci`
-                        : "Semua loker yang cocok dengan profilmu",
-                      "Arah karier lengkap: posisi target dan bidang alternatif",
+                        ? t(`${sisaTerkunci} loker cocok lainnya yang masih terkunci`, `${sisaTerkunci} more matching jobs still locked`)
+                        : t("Semua loker yang cocok dengan profilmu", "Every job matching your profile"),
+                      t("Arah karier lengkap: posisi target dan bidang alternatif", "Full career direction: target roles and alternative fields"),
                       sourceType === "cv"
-                        ? "Skor ATS dan temuan spesifik per bagian CV"
-                        : "Skor profil LinkedIn dan temuan per bagian",
-                      "CV ditulis ulang supaya lolos ATS, dalam versi Indonesia dan Inggris",
-                      "Profil LinkedIn siap pakai dalam dua bahasa",
-                    ].map((t) => (
+                        ? t("Skor ATS dan temuan spesifik per bagian CV", "ATS score and specific findings per CV section")
+                        : t("Skor profil LinkedIn dan temuan per bagian", "LinkedIn profile score and findings per section"),
+                      t("CV ditulis ulang supaya lolos ATS, dalam versi Indonesia dan Inggris", "CV rewritten to pass ATS, in Indonesian and English"),
+                      t("Profil LinkedIn siap pakai dalam dua bahasa", "Ready-to-use LinkedIn profile in two languages"),
+                    ].map((tt) => (
                       <div
-                        key={t}
+                        key={tt}
                         style={{ display: "flex", gap: 8, marginBottom: 5 }}
                       >
                         <Check
@@ -1233,7 +1228,7 @@ export function AnalyzerPanel({ setActive }) {
                           color={T.teal}
                           style={{ flexShrink: 0, marginTop: 3 }}
                         />
-                        <span>{t}</span>
+                        <span>{tt}</span>
                       </div>
                     ))}
                   </div>
@@ -1254,7 +1249,7 @@ export function AnalyzerPanel({ setActive }) {
                     style={{ verticalAlign: -2, marginRight: 6 }}
                     color={T.accent}
                   />
-                  Siap dianalisis lengkap dengan AI
+                  {t("Siap dianalisis lengkap dengan AI", "Ready for the full AI analysis")}
                 </div>
               )}
 
@@ -1283,7 +1278,7 @@ export function AnalyzerPanel({ setActive }) {
                           marginBottom: 8,
                         }}
                       >
-                        Kuota kamu sudah dikembalikan otomatis. Silakan ulangi.
+                        {t("Kuota kamu sudah dikembalikan otomatis. Silakan ulangi.", "Your quota was refunded automatically. Please try again.")}
                       </div>
                       <Button
                         variant="outline"
@@ -1291,7 +1286,7 @@ export function AnalyzerPanel({ setActive }) {
                         disabled={aiLoading}
                         style={{ fontSize: 12, padding: "8px 16px" }}
                       >
-                        Ulangi analisis
+                        {t("Ulangi analisis", "Run again")}
                       </Button>
                     </div>
                   )}
@@ -1307,8 +1302,8 @@ export function AnalyzerPanel({ setActive }) {
               </Button>
               <div style={{ fontSize: 11, color: T.inkFaint, marginTop: 10 }}>
                 {langganan.aktif
-                  ? `${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`
-                  : "Termasuk dalam semua paket langganan"}
+                  ? t(`${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`, `${langganan.sisaAnalisis} of ${langganan.kuotaAnalisis} analyses left · active for ${langganan.sisaHari} more days`)
+                  : t("Termasuk dalam semua paket langganan", "Included in every plan")}
               </div>
             </Glass>
           )}
@@ -1325,22 +1320,22 @@ export function AnalyzerPanel({ setActive }) {
                     marginBottom: 14,
                   }}
                 >
-                  Ringkasan Analisis
+                  {t("Ringkasan Analisis", "Analysis Summary")}
                 </div>
                 <Section
-                  title="Kekuatan"
+                  title={t("Kekuatan", "Strengths")}
                   color={T.teal}
                   items={aiResult.kekuatan}
                   icon={<Check size={13} />}
                 />
                 <Section
-                  title="Kekurangan"
+                  title={t("Kekurangan", "Weaknesses")}
                   color={T.accent}
                   items={aiResult.kekurangan}
                   icon={<AlertCircle size={13} />}
                 />
                 <Section
-                  title="Saran Perbaikan"
+                  title={t("Saran Perbaikan", "Suggestions")}
                   color={T.ink}
                   items={aiResult.saran_perbaikan}
                   icon={<Sparkles size={13} />}
@@ -1353,7 +1348,7 @@ export function AnalyzerPanel({ setActive }) {
                   penilaiannya cuma tebakan dari isi CV. */}
               {sourceType === "cv" && aiResult.cv_audit && (
                 <AuditCard
-                  judul="Audit CV (ATS)"
+                  judul={t("Audit CV (ATS)", "CV Audit (ATS)")}
                   skor={aiResult.cv_audit.skor_ats}
                   masalah={aiResult.cv_audit.masalah}
                 />
@@ -1361,7 +1356,7 @@ export function AnalyzerPanel({ setActive }) {
 
               {sourceType === "linkedin" && aiResult.linkedin_audit && (
                 <AuditCard
-                  judul="Audit Profil LinkedIn"
+                  judul={t("Audit Profil LinkedIn", "LinkedIn Profile Audit")}
                   skor={aiResult.linkedin_audit.skor}
                   masalah={aiResult.linkedin_audit.masalah}
                 />
@@ -1392,7 +1387,7 @@ export function AnalyzerPanel({ setActive }) {
                           marginBottom: 4,
                         }}
                       >
-                        Draft CV dan LinkedIn sudah siap
+                        {t("Draft CV dan LinkedIn sudah siap", "Your CV and LinkedIn drafts are ready")}
                       </div>
                       <div
                         style={{
@@ -1401,9 +1396,7 @@ export function AnalyzerPanel({ setActive }) {
                           lineHeight: 1.6,
                         }}
                       >
-                        AI sudah menulis ulang CV kamu agar lebih ATS-friendly,
-                        sekaligus menyiapkan versi LinkedIn yang lebih naratif.
-                        Buka salah satu builder untuk melihat dan menerapkannya.
+                        {t("AI sudah menulis ulang CV kamu agar lebih ATS-friendly, sekaligus menyiapkan versi LinkedIn yang lebih naratif. Buka salah satu builder untuk melihat dan menerapkannya.", "AI rewrote your CV to be more ATS-friendly and prepared a more narrative LinkedIn version. Open either builder to review and apply them.")}
                       </div>
                     </div>
                   </div>
@@ -1413,14 +1406,14 @@ export function AnalyzerPanel({ setActive }) {
                       onClick={() => pergiKe("cvbuilder")}
                       style={{ flex: 1 }}
                     >
-                      Buka di CV Builder <ChevronRight size={15} />
+                      {t("Buka di CV Builder", "Open in CV Builder")}{" "}<ChevronRight size={15} />
                     </Button>
                     <Button
                       variant="outline"
                       onClick={() => pergiKe("linkedinbuilder")}
                       style={{ flex: 1 }}
                     >
-                      Buka di LinkedIn Builder <ChevronRight size={15} />
+                      {t("Buka di LinkedIn Builder", "Open in LinkedIn Builder")}{" "}<ChevronRight size={15} />
                     </Button>
                   </div>
                 </Glass>
@@ -1440,7 +1433,7 @@ export function AnalyzerPanel({ setActive }) {
             marginBottom: 10,
           }}
         >
-          Riwayat Analisis
+          {t("Riwayat Analisis", "Analysis History")}
         </div>
         {historyLoading ? (
           <div
@@ -1456,7 +1449,7 @@ export function AnalyzerPanel({ setActive }) {
               size={14}
               style={{ animation: "spin 1s linear infinite" }}
             />{" "}
-            Memuat riwayat...
+            {t("Memuat riwayat...", "Loading history...")}
           </div>
         ) : history.length === 0 ? (
           <div
@@ -1469,14 +1462,13 @@ export function AnalyzerPanel({ setActive }) {
               padding: "16px 18px",
             }}
           >
-            Belum ada riwayat. Hasil "Analisis Lengkap" yang sudah kamu buka
-            akan muncul di sini supaya bisa dilihat lagi kapan saja.
+            {t("Belum ada riwayat. Hasil \"Analisis Lengkap\" yang sudah kamu buka akan muncul di sini supaya bisa dilihat lagi kapan saja.", "No history yet. \"Full Analysis\" results you've opened will appear here so you can revisit them anytime.")}
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {history.map((h) => {
               const isOpen = expandedHistoryId === h.id;
-              const date = new Date(h.created_at).toLocaleDateString("id-ID", {
+              const date = new Date(h.created_at).toLocaleDateString(lokal(), {
                 day: "numeric",
                 month: "short",
                 year: "numeric",
@@ -1511,7 +1503,7 @@ export function AnalyzerPanel({ setActive }) {
                           color: T.ink,
                         }}
                       >
-                        {h.arah_karier || "Analisis karier"}
+                        {h.arah_karier || t("Analisis karier", "Career analysis")}
                       </div>
                     </div>
                     <button
@@ -1540,19 +1532,19 @@ export function AnalyzerPanel({ setActive }) {
                       }}
                     >
                       <Section
-                        title="Kekuatan"
+                        title={t("Kekuatan", "Strengths")}
                         color={T.teal}
                         items={h.kekuatan}
                         icon={<Check size={13} />}
                       />
                       <Section
-                        title="Kekurangan"
+                        title={t("Kekurangan", "Weaknesses")}
                         color={T.accent}
                         items={h.kekurangan}
                         icon={<AlertCircle size={13} />}
                       />
                       <Section
-                        title="Saran Perbaikan"
+                        title={t("Saran Perbaikan", "Suggestions")}
                         color={T.ink}
                         items={h.saran_perbaikan}
                         icon={<Sparkles size={13} />}

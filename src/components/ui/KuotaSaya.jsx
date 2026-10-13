@@ -3,6 +3,7 @@ import { FileText, Route, Bot, Clock } from "lucide-react";
 import { T } from "../../theme";
 import { Glass } from "./Glass";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
+import { t } from "../../i18n.js";
 
 /**
  * Ringkasan kuota per jenis analisis.
@@ -59,7 +60,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
         <span
           style={{ fontSize: 12.5, color: T.inkSoft, flex: 1, minWidth: 180 }}
         >
-          Belum berlangganan, jadi fitur AI masih terkunci.
+          {t("Belum berlangganan, jadi fitur AI masih terkunci.", "No active plan yet, so AI features are locked.")}
         </span>
         <button
           onClick={onLangganan}
@@ -75,7 +76,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
             flexShrink: 0,
           }}
         >
-          Lihat paket →
+          {t("Lihat paket →", "See plans →")}
         </button>
       </Glass>
     );
@@ -87,19 +88,19 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
   const daftar = [
     {
       Ikon: FileText,
-      label: "Analisis CV",
+      label: t("Analisis CV", "CV analysis"),
       sisa: langganan.sisaAnalisis,
       total: langganan.kuotaAnalisis,
     },
     {
       Ikon: Route,
-      label: "Pindah Karier",
+      label: t("Pindah Karier", "Career Switch"),
       sisa: langganan.sisaPindah,
       total: langganan.kuotaPindah,
     },
     {
       Ikon: Bot,
-      label: "Simulasi Interview",
+      label: t("Simulasi Interview", "Mock Interview"),
       sisa: langganan.sisaInterview,
       total: langganan.kuotaInterview,
     },
@@ -121,11 +122,11 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>
-            {langganan.detailPaket?.nama ?? "Paket aktif"}
+            {langganan.detailPaket?.nama ?? t("Paket aktif", "Active plan")}
           </span>
           {langganan.jumlahPaket > 1 && (
             <span
-              title={`${langganan.jumlahPaket} paket aktif, kuotanya digabung`}
+              title={t(`${langganan.jumlahPaket} paket aktif, kuotanya digabung`, `${langganan.jumlahPaket} active plans, credits combined`)}
               style={{
                 fontSize: 9.5,
                 fontWeight: 700,
@@ -151,7 +152,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
           }}
         >
           <Clock size={11} />
-          Aktif {langganan.sisaHari} hari lagi
+          {t("Aktif", "Active for")}{" "}{langganan.sisaHari}{" "}{t("hari lagi", "more days")}
         </span>
       </div>
 
@@ -242,7 +243,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
                 </div>
               ) : (
                 <div style={{ fontSize: 10, color: T.inkFaint, marginTop: 7 }}>
-                  Tidak di paket ini
+                  {t("Tidak di paket ini", "Not in this plan")}
                 </div>
               )}
             </div>
@@ -271,7 +272,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
               padding: 0,
             }}
           >
-            Tambah kuota →
+            {t("Tambah kuota →", "Add credits →")}
           </button>
         </div>
       )}

@@ -16,10 +16,11 @@ import { T } from "../../theme";
 import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
 import { useApplications, TAHAPAN, HASIL } from "../../hooks/useApplications";
+import { lokal, t } from "../../i18n.js";
 
 const tglIndo = (s) =>
   s
-    ? new Date(s).toLocaleDateString("id-ID", {
+    ? new Date(s).toLocaleDateString(lokal(), {
         day: "numeric",
         month: "short",
       })
@@ -110,7 +111,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
         >
           <span style={{ fontSize: 10.5, color: T.inkFaint }}>
             {tglIndo(item.tanggal_lamar)}
-            {umur !== null && umur > 0 && ` · ${umur} hari lalu`}
+            {umur !== null && umur > 0 && t(` · ${umur} hari lalu`, ` · ${umur} days ago`)}
           </span>
           {hasil && (
             <span
@@ -138,7 +139,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               lineHeight: 1.4,
             }}
           >
-            Sudah {umur} hari tanpa kabar. Mungkin waktunya follow up.
+            {t("Sudah", "It's been")}{" "}{umur}{" "}{t("hari tanpa kabar. Mungkin waktunya follow up.", "days with no reply. Maybe it's time to follow up.")}
           </div>
         )}
       </div>
@@ -161,7 +162,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               marginBottom: 5,
             }}
           >
-            Tahap saat ini
+            {t("Tahap saat ini", "Current stage")}
           </label>
           <select
             value={item.status}
@@ -179,9 +180,9 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               marginBottom: 10,
             }}
           >
-            {TAHAPAN.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.label}
+            {TAHAPAN.map((tt) => (
+              <option key={tt.id} value={tt.id}>
+                {tt.label}
               </option>
             ))}
           </select>
@@ -198,7 +199,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
                   marginBottom: 5,
                 }}
               >
-                Hasil
+                {t("Hasil", "Outcome")}
               </label>
               <div style={{ display: "flex", gap: 5, marginBottom: 10 }}>
                 {HASIL.map((h) => (
@@ -236,7 +237,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               marginBottom: 5,
             }}
           >
-            Jadwal berikutnya
+            {t("Jadwal berikutnya", "Next scheduled step")}
           </label>
           <input
             type="date"
@@ -268,14 +269,14 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
               marginBottom: 5,
             }}
           >
-            Catatan
+            {t("Catatan", "Notes")}
           </label>
           <textarea
             value={catatan}
             onChange={(e) => setCatatan(e.target.value)}
             onBlur={simpan}
             rows={3}
-            placeholder="Nama HR, pertanyaan interview, ekspektasi gaji..."
+            placeholder={t("Nama HR, pertanyaan interview, ekspektasi gaji...", "HR contact, interview questions, salary expectations...")}
             style={{
               width: "100%",
               border: `1px solid ${T.border}`,
@@ -302,7 +303,7 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
                 gap: 4,
               }}
             >
-              <Check size={10} /> Catatan tersimpan
+              <Check size={10} />{" "}{t("Catatan tersimpan", "Notes saved")}
             </div>
           )}
 
@@ -318,13 +319,13 @@ function KartuLamaran({ item, onPerbarui, onHapus }) {
                   variant="outline"
                   style={{ width: "100%", fontSize: 11.5, padding: "7px 10px" }}
                 >
-                  Lihat loker <ExternalLink size={11} />
+                  {t("Lihat loker", "View job")}{" "}<ExternalLink size={11} />
                 </Button>
               </a>
             )}
             <button
               onClick={() => onHapus(item.id)}
-              title="Hapus lamaran"
+              title={t("Hapus lamaran", "Delete application")}
               style={{
                 padding: "7px 10px",
                 borderRadius: 10,
@@ -364,7 +365,7 @@ function FormTambah({ onTutup, onSimpan }) {
 
   const kirim = async () => {
     if (!f.posisi.trim() || !f.perusahaan.trim()) {
-      setGalat("Posisi dan perusahaan wajib diisi.");
+      setGalat(t("Posisi dan perusahaan wajib diisi.", "Role and company are required."));
       return;
     }
     setMenyimpan(true);
@@ -419,7 +420,7 @@ function FormTambah({ onTutup, onSimpan }) {
           }}
         >
           <span style={{ fontSize: 15, fontWeight: 600, color: T.ink }}>
-            Catat lamaran
+            {t("Catat lamaran", "Log application")}
           </span>
           <button
             onClick={onTutup}
@@ -439,26 +440,26 @@ function FormTambah({ onTutup, onSimpan }) {
           <input
             value={f.posisi}
             onChange={isi("posisi")}
-            placeholder="Posisi *"
+            placeholder={t("Posisi *", "Role *")}
             style={input}
             autoFocus
           />
           <input
             value={f.perusahaan}
             onChange={isi("perusahaan")}
-            placeholder="Perusahaan *"
+            placeholder={t("Perusahaan *", "Company *")}
             style={input}
           />
           <input
             value={f.lokasi}
             onChange={isi("lokasi")}
-            placeholder="Lokasi"
+            placeholder={t("Lokasi", "Location")}
             style={input}
           />
           <input
             value={f.link}
             onChange={isi("link")}
-            placeholder="Link lowongan"
+            placeholder={t("Link lowongan", "Job link")}
             style={input}
           />
 
@@ -474,7 +475,7 @@ function FormTambah({ onTutup, onSimpan }) {
                   marginBottom: 4,
                 }}
               >
-                Tanggal melamar
+                {t("Tanggal melamar", "Date applied")}
               </label>
               <input
                 type="date"
@@ -492,16 +493,16 @@ function FormTambah({ onTutup, onSimpan }) {
                   marginBottom: 4,
                 }}
               >
-                Tahap
+                {t("Tahap", "Stage")}
               </label>
               <select
                 value={f.status}
                 onChange={isi("status")}
                 style={{ ...input, cursor: "pointer" }}
               >
-                {TAHAPAN.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.label}
+                {TAHAPAN.map((tt) => (
+                  <option key={tt.id} value={tt.id}>
+                    {tt.label}
                   </option>
                 ))}
               </select>
@@ -529,7 +530,7 @@ function FormTambah({ onTutup, onSimpan }) {
           ) : (
             <Plus size={14} />
           )}
-          Simpan
+          {t("Simpan", "Save")}
         </Button>
       </Glass>
     </div>
@@ -545,9 +546,9 @@ export function ApplicationsPanel() {
 
   const kolom = useMemo(
     () =>
-      TAHAPAN.map((t) => ({
-        ...t,
-        items: lamaran.filter((l) => l.status === t.id),
+      TAHAPAN.map((tt) => ({
+        ...tt,
+        items: lamaran.filter((l) => l.status === tt.id),
       })),
     [lamaran],
   );
@@ -581,10 +582,10 @@ export function ApplicationsPanel() {
         }}
       >
         {[
-          { angka: statistik.total, label: "Total lamaran" },
-          { angka: statistik.aktif, label: "Masih berjalan" },
-          { angka: statistik.sampaiInterview, label: "Sampai interview" },
-          { angka: `${statistik.persen}%`, label: "Rasio interview" },
+          { angka: statistik.total, label: t("Total lamaran", "Total applications") },
+          { angka: statistik.aktif, label: t("Masih berjalan", "In progress") },
+          { angka: statistik.sampaiInterview, label: t("Sampai interview", "Reached interview") },
+          { angka: `${statistik.persen}%`, label: t("Rasio interview", "Interview rate") },
         ].map((s, i) => (
           <React.Fragment key={s.label}>
             {i > 0 && (
@@ -614,7 +615,7 @@ export function ApplicationsPanel() {
           onClick={() => setFormBuka(true)}
           style={{ fontSize: 12.5, padding: "9px 16px" }}
         >
-          <Plus size={14} /> Catat lamaran
+          <Plus size={14} />{" "}{t("Catat lamaran", "Log application")}
         </Button>
       </div>
 
@@ -630,7 +631,7 @@ export function ApplicationsPanel() {
           }}
         >
           <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />{" "}
-          Memuat lamaran...
+          {t("Memuat lamaran...", "Loading applications...")}
         </div>
       ) : lamaran.length === 0 ? (
         <Glass style={{ padding: 40, textAlign: "center" }}>
@@ -642,7 +643,7 @@ export function ApplicationsPanel() {
               marginBottom: 6,
             }}
           >
-            Belum ada lamaran tercatat
+            {t("Belum ada lamaran tercatat", "No applications logged yet")}
           </div>
           <div
             style={{
@@ -653,12 +654,10 @@ export function ApplicationsPanel() {
               margin: "0 auto 16px",
             }}
           >
-            Catat setiap lowongan yang kamu lamar, lalu perbarui tahapnya
-            sendiri saat ada perkembangan. Kamu bisa menambah dari sini atau
-            lewat tombol Lamar di daftar loker.
+            {t("Catat setiap lowongan yang kamu lamar, lalu perbarui tahapnya sendiri saat ada perkembangan. Kamu bisa menambah dari sini atau lewat tombol Lamar di daftar loker.", "Log every job you apply to, then update its stage yourself as things progress. Add them here or with the Apply button in the job list.")}
           </div>
           <Button variant="primary" onClick={() => setFormBuka(true)}>
-            <Plus size={14} /> Catat lamaran pertama
+            <Plus size={14} />{" "}{t("Catat lamaran pertama", "Log your first application")}
           </Button>
         </Glass>
       ) : (

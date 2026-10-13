@@ -4,6 +4,7 @@ import { DaftarFaq } from "../../components/publik/DaftarFaq";
 import { FAQ } from "../../data/faq";
 import { SITUS } from "../../data/situs";
 import { tautan } from "../../utils/navigasi";
+import { t } from "../../i18n.js";
 
 const idGrup = (g) => g.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
@@ -20,16 +21,16 @@ export function FaqPage() {
   return (
     <PublicLayout aktif="/faq">
       <div className="pb-wrap pb-pagehead">
-        <span className="pb-label">Bantuan</span>
-        <h1>Pertanyaan yang sering diajukan</h1>
+        <span className="pb-label">{t("Bantuan", "Help")}</span>
+        <h1>{t("Pertanyaan yang sering diajukan", "Frequently asked questions")}</h1>
         <p>
-          Seputar sumber lowongan, cara melamar, paket berbayar, dan data pribadimu.
+          {t("Seputar sumber lowongan, cara melamar, paket berbayar, dan data pribadimu.", "About job sources, how to apply, paid plans, and your personal data.")}
         </p>
       </div>
 
       <div className="pb-wrap pb-doc" style={{ marginTop: 36 }}>
-        <nav className="pb-toc" aria-label="Topik">
-          <b>Topik</b>
+        <nav className="pb-toc" aria-label={t("Topik", "Topics")}>
+          <b>{t("Topik", "Topics")}</b>
           <ol>
             {FAQ.map((g) => (
               <li key={g.grup}>
@@ -40,18 +41,18 @@ export function FaqPage() {
             ))}
           </ol>
           <div className="pb-note" style={{ marginTop: 24 }}>
-            <b>Belum terjawab?</b>
+            <b>{t("Belum terjawab?", "Still have a question?")}</b>
             <br />
             {SITUS.emailKontak ? (
               <>
-                Kirim pertanyaanmu ke{" "}
+                {t("Kirim pertanyaanmu ke", "Send it to")}{" "}
                 <a href={`mailto:${SITUS.emailKontak}`} style={{ color: "var(--brand)", fontWeight: 600 }}>
                   {SITUS.emailKontak}
                 </a>
                 .
               </>
             ) : (
-              "Baca juga Syarat & Ketentuan dan Kebijakan Privasi."
+              t("Baca juga Syarat & Ketentuan dan Kebijakan Privasi.", "See also the Terms of Service and Privacy Policy.")
             )}
           </div>
         </nav>
@@ -65,10 +66,10 @@ export function FaqPage() {
           ))}
 
           <p style={{ marginTop: 40, fontSize: 14.5, color: "var(--ink2)" }}>
-            Dokumen terkait:{" "}
-            <a className="pb-link" {...tautan("/syarat-ketentuan")}>Syarat & ketentuan</a>
+            {t("Dokumen terkait:", "Related documents:")}{" "}
+            <a className="pb-link" {...tautan("/syarat-ketentuan")}>{t("Syarat & ketentuan", "Terms of service")}</a>
             {" · "}
-            <a className="pb-link" {...tautan("/kebijakan-privasi")}>Kebijakan privasi</a>
+            <a className="pb-link" {...tautan("/kebijakan-privasi")}>{t("Kebijakan privasi", "Privacy policy")}</a>
             {" · "}
             <a className="pb-link" {...tautan("/disclaimer")}>Disclaimer</a>
           </p>

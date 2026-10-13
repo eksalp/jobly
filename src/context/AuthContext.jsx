@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
+import { t } from "../i18n.js";
 
 export const AuthContext = createContext({
   session: null,
@@ -41,7 +42,7 @@ export function AuthProvider({ children }) {
 
   const signUpWithEmail = async (email, password, fullName) => {
     if (!supabaseConfigured)
-      return { error: "Supabase belum dikonfigurasi." };
+      return { error: t("Supabase belum dikonfigurasi.", "Supabase isn't configured yet.") };
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -53,7 +54,7 @@ export function AuthProvider({ children }) {
 
   const signInWithEmail = async (email, password) => {
     if (!supabaseConfigured)
-      return { error: "Supabase belum dikonfigurasi." };
+      return { error: t("Supabase belum dikonfigurasi.", "Supabase isn't configured yet.") };
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -64,7 +65,7 @@ export function AuthProvider({ children }) {
 
   const signInWithGoogle = async () => {
     if (!supabaseConfigured)
-      return { error: "Supabase belum dikonfigurasi." };
+      return { error: t("Supabase belum dikonfigurasi.", "Supabase isn't configured yet.") };
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin + "/dashboard/overview" },
@@ -80,7 +81,7 @@ export function AuthProvider({ children }) {
 
   const resetPassword = async (email) => {
     if (!supabaseConfigured)
-      return { error: "Supabase belum dikonfigurasi." };
+      return { error: t("Supabase belum dikonfigurasi.", "Supabase isn't configured yet.") };
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + "/login",
     });

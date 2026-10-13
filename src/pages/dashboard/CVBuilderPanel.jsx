@@ -35,6 +35,7 @@ import { GerbangFitur } from "../../components/GerbangFitur";
 import { useLangganan } from "../../hooks/useLangganan";
 import { Button } from "../../components/ui/Button";
 import { FONT_CV, TEMA_CV, AKSEN_CV, GAYA_AWAL, bacaGaya, hexKeRgb, pasangFontPdf } from "../../data/cvGaya";
+import { t, bahasa } from "../../i18n.js";
 
 /* ------------------------------------------------------------------ */
 /*  HELPERS                                                             */
@@ -71,7 +72,7 @@ const LABELS = {
     lblLocation: "Lokasi",
     lblLinkedin: "LinkedIn (opsional)",
     lblSummary: "Ringkasan Profil",
-    deleteLabel: "Hapus",
+    deleteLabel: t("Hapus", "Delete"),
     // field labels
     role: "Posisi / Jabatan",
     company: "Perusahaan",
@@ -551,9 +552,9 @@ function Tooltip({ tipKey }) {
                 color: "#fff",
               }}
             >
-              Tips ATS: {tip.title}
+              {t("Tips ATS:", "ATS tips:")}{" "}{tip.title}
             </div>
-            {tip.tips.map((t, i) => (
+            {tip.tips.map((tt, i) => (
               <div
                 key={i}
                 style={{
@@ -565,7 +566,7 @@ function Tooltip({ tipKey }) {
                 <span style={{ color: "#7DD3FC", flexShrink: 0, marginTop: 1 }}>
                   •
                 </span>
-                <span style={{ color: "#E2E8F0" }}>{t}</span>
+                <span style={{ color: "#E2E8F0" }}>{tt}</span>
               </div>
             ))}
             {/* Arrow */}
@@ -812,7 +813,7 @@ function DeleteBtn({ onClick }) {
         marginTop: 2,
       }}
     >
-      <Trash2 size={11} /> Hapus
+      <Trash2 size={11} />{" "}{t("Hapus", "Delete")}
     </button>
   );
 }
@@ -1311,7 +1312,7 @@ function PratinjauBerhalaman({ children }) {
         <button
           onClick={() => setHalaman((h) => Math.max(1, h - 1))}
           disabled={hal <= 1}
-          aria-label="Halaman sebelumnya"
+          aria-label={t("Halaman sebelumnya", "Previous page")}
           style={{
             width: 30,
             height: 30,
@@ -1338,13 +1339,13 @@ function PratinjauBerhalaman({ children }) {
             textAlign: "center",
           }}
         >
-          Halaman {hal} dari {totalHalaman}
+          {t("Halaman", "Page")}{" "}{hal} dari {totalHalaman}
         </span>
 
         <button
           onClick={() => setHalaman((h) => Math.min(totalHalaman, h + 1))}
           disabled={hal >= totalHalaman}
-          aria-label="Halaman berikutnya"
+          aria-label={t("Halaman berikutnya", "Next page")}
           style={{
             width: 30,
             height: 30,
@@ -1811,17 +1812,17 @@ function PilihGayaCv({ gaya, onUbah, lang }) {
           </span>
         </div>
         <div className="cv-tema">
-          {TEMA_CV.map((t) => (
+          {TEMA_CV.map((tt) => (
             <button
-              key={t.id}
+              key={tt.id}
               type="button"
-              className={tema === t.id ? "on" : ""}
-              aria-pressed={tema === t.id}
-              onClick={() => onUbah("tema", t.id)}
-              title={t.ket}
+              className={tema === tt.id ? "on" : ""}
+              aria-pressed={tema === tt.id}
+              onClick={() => onUbah("tema", tt.id)}
+              title={tt.ket}
             >
-              <ThumbTema id={t.id} warna={aksen.hex} />
-              <span>{t.nama}</span>
+              <ThumbTema id={tt.id} warna={aksen.hex} />
+              <span>{tt.nama}</span>
             </button>
           ))}
         </div>
@@ -1875,7 +1876,7 @@ function PilihGayaCv({ gaya, onUbah, lang }) {
 export function CVBuilderPanel({ setActive }) {
   const { fullName, headline, location, summary, skills } = useUserProfile();
   const { user } = useAuth();
-  const [lang, setLang] = useState("ID"); // "ID" | "EN"
+  const [lang, setLang] = useState(bahasa() === "en" ? "EN" : "ID"); // "ID" | "EN", awalnya mengikuti bahasa tampilan
   const layarKecil = useLayarKecil(1000);
   const [tabHp, setTabHp] = useState("editor"); // "editor" | "pratinjau"
   const L = LABELS[lang];
@@ -2167,12 +2168,12 @@ export function CVBuilderPanel({ setActive }) {
       // Font yang disematkan memuat seluruh huruf Latin (é, ü, “ ”, –),
       // jadi cukup buang karakter di luar itu (emoji, aksara lain).
       const safe = font.file
-        ? (t) =>
-            (t || "")
+        ? (tt) =>
+            (tt || "")
               .toString()
               .replace(/[^\x00-\xFF\u2013\u2014\u2018\u2019\u201C\u201D\u2022\u2026\u20AC]/g, "")
-        : (t) =>
-        (t || "")
+        : (tt) =>
+        (tt || "")
           .toString()
           // Font bawaan jsPDF memakai WinAnsiEncoding, yang sudah memuat
           // "•" (0x95) dan "·" (0xB7) — keduanya dipertahankan supaya
@@ -2376,7 +2377,7 @@ export function CVBuilderPanel({ setActive }) {
        * tertinggal sendirian di dasar halaman sementara isinya pindah.
        */
       const tinggiEntri = (judulKiri, tanggal, subTeks, bullets) => {
-        let t = 0;
+        let tt = 0;
 
         // Judul (bisa membungkus kalau panjang)
         setUkuran(8.5);
@@ -2384,7 +2385,7 @@ export function CVBuilderPanel({ setActive }) {
         const lebarKanan = tanggal ? doc.getTextWidth(safe(tanggal)) + 4 : 0;
         setUkuran(10);
         doc.setFont(F, "bold");
-        t +=
+        tt +=
           doc.splitTextToSize(safe(judulKiri), contentW - lebarKanan).length *
             4.8 +
           0.5;
@@ -2393,7 +2394,7 @@ export function CVBuilderPanel({ setActive }) {
         if (subTeks) {
           setUkuran(9);
           doc.setFont(F, "normal");
-          t += doc.splitTextToSize(safe(subTeks), contentW).length * 4.4;
+          tt += doc.splitTextToSize(safe(subTeks), contentW).length * 4.4;
         }
 
         // Bullet
@@ -2401,11 +2402,11 @@ export function CVBuilderPanel({ setActive }) {
           setUkuran(8.8);
           doc.setFont(F, "normal");
           bullets.filter(Boolean).forEach((b) => {
-            t += doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
+            tt += doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
           });
         }
 
-        return t + 2;
+        return tt + 2;
       };
 
       const mulaiEntri = (tinggi) => {
@@ -2655,7 +2656,7 @@ export function CVBuilderPanel({ setActive }) {
       doc.save(fileName);
     } catch (err) {
       console.error("Gagal generate PDF:", err);
-      alert("Gagal buat PDF. Pastikan koneksi internet aktif lalu coba lagi.");
+      alert(t("Gagal buat PDF. Pastikan koneksi internet aktif lalu coba lagi.", "Couldn't create the PDF. Check your internet connection and try again."));
     } finally {
       setDownloading(false);
     }
@@ -2697,10 +2698,10 @@ export function CVBuilderPanel({ setActive }) {
             {[
               { key: "editor", label: "Editor" },
               { key: "pratinjau", label: "Pratinjau" },
-            ].map((t) => (
+            ].map((tt) => (
               <button
-                key={t.key}
-                onClick={() => setTabHp(t.key)}
+                key={tt.key}
+                onClick={() => setTabHp(tt.key)}
                 style={{
                   flex: 1,
                   padding: "8px 12px",
@@ -2710,13 +2711,13 @@ export function CVBuilderPanel({ setActive }) {
                   fontSize: 12.5,
                   fontWeight: 600,
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  background: tabHp === t.key ? "var(--t-surface)" : "transparent",
-                  color: tabHp === t.key ? T.accent : T.inkSoft,
+                  background: tabHp === tt.key ? "var(--t-surface)" : "transparent",
+                  color: tabHp === tt.key ? T.accent : T.inkSoft,
                   boxShadow:
-                    tabHp === t.key ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
+                    tabHp === tt.key ? "0 1px 4px rgba(0,0,0,0.12)" : "none",
                 }}
               >
-                {t.label}
+                {tt.label}
               </button>
             ))}
           </div>

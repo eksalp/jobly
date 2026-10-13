@@ -7,6 +7,7 @@ import { useToast } from "../../components/publik/PublicLayout";
 import { useApplications } from "../../hooks/useApplications";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { tautan } from "../../utils/navigasi";
+import { t } from "../../i18n.js";
 
 export function SavedJobsPanel() {
   const { savedIds, loading } = useSavedJobs();
@@ -28,7 +29,7 @@ export function SavedJobsPanel() {
       lokasi: job.lokasi,
       link: job.link,
     });
-    toast("Dicatat di Lamaran saya");
+    toast(t("Dicatat di Lamaran saya", "Logged in My applications"));
   };
 
   return (
@@ -36,16 +37,16 @@ export function SavedJobsPanel() {
       <div className="pb-toolbar">
         <span className="count">
           {memuat ? (
-            "Memuat loker tersimpan…"
+            t("Memuat loker tersimpan…", "Loading saved jobs…")
           ) : (
             <>
-              <b>{saved.length}</b> loker tersimpan
-              {!memuatLoker && hilang > 0 ? ` · ${hilang} sudah tidak tersedia di sumbernya` : ""}
+              <b>{saved.length}</b>{" "}{t("loker tersimpan", "saved jobs")}
+              {!memuatLoker && hilang > 0 ? t(` · ${hilang} sudah tidak tersedia di sumbernya`, ` · ${hilang} no longer available at the source`) : ""}
             </>
           )}
         </span>
         <a className="pb-link" {...tautan("/loker")}>
-          Cari loker lain
+          {t("Cari loker lain", "Find more jobs")}
         </a>
       </div>
 
@@ -60,12 +61,12 @@ export function SavedJobsPanel() {
         {!memuat && saved.length === 0 && (
           <div className="pb-empty">
             <Bookmark size={26} color="var(--faint)" style={{ marginBottom: 12 }} />
-            <h3>Belum ada loker tersimpan</h3>
+            <h3>{t("Belum ada loker tersimpan", "No saved jobs yet")}</h3>
             <p style={{ margin: "0 0 18px" }}>
-              Tekan ikon simpan di kartu loker untuk menandai lowongan yang ingin kamu lamar nanti.
+              {t("Tekan ikon simpan di kartu loker untuk menandai lowongan yang ingin kamu lamar nanti.", "Tap the save icon on a job card to keep jobs you want to apply to later.")}
             </p>
             <a className="pb-btn pb-btn-primary pb-btn-sm" {...tautan("/loker")}>
-              Jelajahi loker
+              {t("Jelajahi loker", "Browse jobs")}
             </a>
           </div>
         )}

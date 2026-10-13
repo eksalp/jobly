@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+<linearGradient id="latar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E6FFF"/><stop offset="1" stop-color="#1248DC"/></linearGradient>
+<linearGradient id="pita" x1="38" y1="46" x2="12" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#dbe5ff"/><stop offset="1" stop-color="#fff"/></linearGradient>
+</defs>
+<rect width="64" height="64" rx="15" fill="url(#latar)"/>
+<path d="M38.5 40C38.5 51.5 23.5 55.5 16.5 47.5C12 42 16 34.5 23 35.5" fill="none" stroke="url(#pita)" stroke-width="10.5" stroke-linecap="round"/>
+<path d="M38.5 27.5V40" fill="none" stroke="#fff" stroke-width="10.5" stroke-linecap="round"/>
+<circle cx="38.5" cy="14.5" r="6.6" fill="#fff"/>
+</svg>

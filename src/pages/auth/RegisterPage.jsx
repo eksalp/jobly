@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { Field, ErrorNote, GoogleButton } from "../../components/ui/FormControls";
 import { AuthWrap } from "./AuthWrap";
+import { t } from "../../i18n.js";
 
 export function RegisterPage({ go }) {
   const { signUpWithEmail, signInWithGoogle } = useAuth();
@@ -18,11 +19,11 @@ export function RegisterPage({ go }) {
 
   const handleSubmit = async () => {
     if (!fullName.trim() || !email.trim() || !password) {
-      setError("Lengkapi semua kolom dulu ya.");
+      setError(t("Lengkapi semua kolom dulu ya.", "Please fill in every field."));
       return;
     }
     if (password.length < 8) {
-      setError("Kata sandi minimal 8 karakter.");
+      setError(t("Kata sandi minimal 8 karakter.", "Password must be at least 8 characters."));
       return;
     }
     setError("");
@@ -44,7 +45,7 @@ export function RegisterPage({ go }) {
       go("dashboard");
     } else {
       setInfo(
-        "Akun berhasil dibuat! Cek email kamu untuk konfirmasi sebelum login.",
+        t("Akun berhasil dibuat! Cek email kamu untuk konfirmasi sebelum login.", "Account created! Check your email to confirm before signing in."),
       );
     }
   };
@@ -70,10 +71,10 @@ export function RegisterPage({ go }) {
           marginBottom: 4,
         }}
       >
-        Mulai perjalanan kariermu
+        {t("Mulai perjalanan kariermu", "Start your career journey")}
       </h1>
       <p style={{ fontSize: 13.5, color: T.inkSoft, marginBottom: 24 }}>
-        Buat akun gratis, tanpa kartu kredit.
+        {t("Buat akun gratis, tanpa kartu kredit.", "Create a free account, no credit card needed.")}
       </p>
       <ErrorNote message={error} />
       {info && (
@@ -92,9 +93,9 @@ export function RegisterPage({ go }) {
         </div>
       )}
       <Field
-        label="Nama lengkap"
+        label={t("Nama lengkap", "Full name")}
         icon={<User size={16} color={T.inkFaint} />}
-        placeholder="Nama kamu"
+        placeholder={t("Nama kamu", "Your name")}
         value={fullName}
         onChange={(e) => setFullName(e.target.value)}
         autoComplete="name"
@@ -102,17 +103,17 @@ export function RegisterPage({ go }) {
       <Field
         label="Email"
         icon={<Mail size={16} color={T.inkFaint} />}
-        placeholder="nama@email.com"
+        placeholder={t("nama@email.com", "name@email.com")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         autoComplete="email"
       />
       <Field
-        label="Kata sandi"
+        label={t("Kata sandi", "Password")}
         type="password"
         toggle
         icon={<Lock size={16} color={T.inkFaint} />}
-        placeholder="Minimal 8 karakter"
+        placeholder={t("Minimal 8 karakter", "At least 8 characters")}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         autoComplete="new-password"
@@ -126,7 +127,7 @@ export function RegisterPage({ go }) {
         {loading ? (
           <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
         ) : (
-          "Buat Akun"
+          t("Buat Akun", "Create account")
         )}
       </Button>
       <div
@@ -150,12 +151,12 @@ export function RegisterPage({ go }) {
           color: T.inkSoft,
         }}
       >
-        Sudah punya akun?{" "}
+        {t("Sudah punya akun?", "Already have an account?")}{" "}
         <span
           style={{ color: T.accent, fontWeight: 600, cursor: "pointer" }}
           onClick={() => go("login")}
         >
-          Masuk
+          {t("Masuk", "Sign in")}
         </span>
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
