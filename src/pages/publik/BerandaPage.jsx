@@ -23,6 +23,7 @@ import {
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { LogoKotak } from "../../components/publik/LogoKotak";
 import { DaftarFaq } from "../../components/publik/DaftarFaq";
+import { BagianKomunitas } from "../../components/publik/Komunitas";
 import { useJobs } from "../../context/JobsContext";
 import { useAuth } from "../../context/AuthContext";
 import { useHitungNaik, usePintasanCari, bacaDilihat } from "../../utils/interaksi";
@@ -721,6 +722,9 @@ export function BerandaPage() {
           </div>
         </div>
       </section>
+
+      {/* ================================================ komunitas */}
+      <BagianKomunitas />
 
       {/* ======================================================= FAQ */}
       <section className="pb-section tint">

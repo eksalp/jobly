@@ -4473,3 +4473,174 @@ html[data-tema="gelap"] .pb-gaji-legenda .pita {
     display: none;
   }
 }
+
+/* ======================================================= komunitas & sosial */
+.pb-sosial {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pb-sosial a {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink2);
+  display: grid;
+  place-items: center;
+  transition: color 0.15s, border-color 0.15s, transform 0.15s;
+}
+.pb-sosial a:hover {
+  color: var(--brand);
+  border-color: var(--brand-line);
+  transform: translateY(-2px);
+}
+.pb-grup-tautan {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.pb-grup-pil {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 99px;
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+}
+.pb-grup-pil.whatsapp svg {
+  color: #1fa855;
+}
+.pb-grup-pil.telegram svg {
+  color: #229ed9;
+}
+.pb-grup-pil:hover {
+  border-color: var(--brand-line);
+}
+.pb-komunitas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 40px;
+  background: radial-gradient(600px 240px at 100% 0%, var(--brand-soft), transparent 70%), var(--card);
+}
+.pb-komunitas .pb-h2 {
+  margin: 0;
+}
+.pb-komunitas-sosial {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.pb-komunitas-grup {
+  display: grid;
+  gap: 12px;
+}
+.pb-grup-kartu {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  transition: border-color 0.2s, box-shadow 0.25s, transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.pb-grup-kartu:hover {
+  border-color: var(--brand-line);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+.pb-grup-kartu .ic {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--brand-deep);
+}
+.pb-grup-kartu.whatsapp .ic {
+  background: #1fa855;
+}
+.pb-grup-kartu.telegram .ic {
+  background: #229ed9;
+}
+.pb-grup-kartu .isi {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.pb-grup-kartu b {
+  font-size: 15.5px;
+}
+.pb-grup-kartu .isi span {
+  font-size: 13.5px;
+  color: var(--ink2);
+}
+.pb-grup-kartu small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pb-grup-kartu .go {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--brand);
+}
+@media (max-width: 860px) {
+  .pb-komunitas {
+    grid-template-columns: 1fr;
+    padding: 26px 20px;
+    gap: 24px;
+  }
+}
+@media (max-width: 420px) {
+  .pb-grup-kartu {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+  .pb-grup-kartu .ic {
+    width: 42px;
+    height: 42px;
+  }
+  .pb-grup-kartu .go {
+    display: none;
+  }
+}
+.pb-grup-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border: 1px dashed var(--brand-line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 28px 0 56px;
+  font-size: 14px;
+  color: var(--ink2);
+}
+.pb-grup-strip b {
+  color: var(--ink);
+}
+.pb-grup-strip .pb-grup-tautan {
+  margin: 0;
+}

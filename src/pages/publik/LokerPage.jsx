@@ -9,6 +9,8 @@ import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLok
 import { useJobs } from "../../context/JobsContext";
 import { useDaftarLoker, useTunda } from "../../hooks/useLoker";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
+import { TautanGrup } from "../../components/publik/Komunitas";
+import { grupAktif } from "../../data/situs";
 import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
 import { infoSumber, LABEL_LOKASI_KERJA, LABEL_TIPE_KERJA } from "../../utils/sumberLoker";
 
@@ -294,6 +296,14 @@ export function LokerPage() {
         )}
         {!loading && !adaLagi && hasil.length > 0 && (
           <div className="pb-more">Semua lowongan yang terbuka sudah ditampilkan.</div>
+        )}
+        {!loading && grupAktif().length > 0 && (
+          <div className="pb-grup-strip">
+            <span>
+              <b>Mau loker pilihan dikirim tiap hari?</b> Gabung grup Jobly, gratis.
+            </span>
+            <TautanGrup ringkas />
+          </div>
         )}
       </div>
 

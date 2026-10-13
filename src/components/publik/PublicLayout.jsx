@@ -38,7 +38,8 @@ import { useJobs } from "../../context/JobsContext";
 import { getInitials } from "../../utils/format";
 import { tautan, keHalaman } from "../../utils/navigasi";
 import { useTema } from "../../utils/tema";
-import { SITUS } from "../../data/situs";
+import { SITUS, grupAktif } from "../../data/situs";
+import { IkonSosial, TautanGrup } from "./Komunitas";
 
 /* ------------------------------------------------------------------ */
 /*  Struktur menu                                                      */
@@ -544,6 +545,14 @@ export function SiteHeader({ aktif }) {
 /*  Footer                                                             */
 /* ------------------------------------------------------------------ */
 
+function IkonSosialFooter() {
+  return (
+    <div style={{ marginTop: 16 }}>
+      <IkonSosial />
+    </div>
+  );
+}
+
 export function SiteFooter() {
   const tahun = new Date().getFullYear();
 
@@ -596,6 +605,8 @@ export function SiteFooter() {
               dari situs karier resmi dan platform tepercaya setiap hari, lalu
               membantumu menyiapkan lamaran sampai interview.
             </p>
+            <IkonSosialFooter />
+            <TautanGrup />
             <div style={{ marginTop: 18 }}>
               <PilihTema kecil />
             </div>
