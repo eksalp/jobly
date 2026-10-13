@@ -4,7 +4,6 @@ import { useAuth } from "../../context/AuthContext";
 import { useJobs } from "../../context/JobsContext";
 import { useApplications } from "../../hooks/useApplications";
 import { tautan } from "../../utils/navigasi";
-import { lokerBaru } from "../../utils/sumberLoker";
 
 /*
  * Rencana lamar — target mingguan, streak harian, dan misi kecil.
@@ -74,7 +73,7 @@ function Cincin({ nilai, target }) {
 
 export function RencanaPanel() {
   const { user } = useAuth();
-  const { jobs } = useJobs();
+  const { statistik } = useJobs();
   const { lamaran, loading } = useApplications();
   const uid = user?.id || "tamu";
   const hariIni = tglLokal(new Date());
@@ -132,7 +131,7 @@ export function RencanaPanel() {
     return { minggu, mingguIni, streak, kolom, rekor, hariIniN: perHari.get(hariIni) || 0, total: lamaran.length };
   }, [lamaran, hariIni]);
 
-  const lokerSegar = useMemo(() => jobs.filter((j) => lokerBaru(j.tanggal)).length, [jobs]);
+  const lokerSegar = statistik.baru2 || 0;
 
   const sisaHari = 7 - data.minggu.filter((d) => d.lewat && !d.hariIni).length;
   const sisaTarget = Math.max(0, target - data.mingguIni);

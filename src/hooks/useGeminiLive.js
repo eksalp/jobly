@@ -9,7 +9,23 @@ import { useState, useRef, useCallback, useEffect } from "react";
  * Pasang dulu: npm install @google/genai
  */
 
-const MODEL_LIVE = "models/gemini-2.5-flash-native-audio-preview-12-2025";
+// Urutan pilihan model suara. Server mengirim daftar model Live yang
+// tersedia untuk akun ini; yang pertama cocok dipakai. Model 2.5 native
+// audio dijadwalkan dimatikan Google mulai 17 November 2026.
+const PILIHAN_MODEL_LIVE = [
+  "models/gemini-3.8-live",
+  "models/gemini-2.5-flash-native-audio-preview-12-2025",
+];
+
+export function pilihModelLive(tersedia = []) {
+  const ada = new Set(tersedia);
+  if (!ada.size) return PILIHAN_MODEL_LIVE[0];
+  return (
+    PILIHAN_MODEL_LIVE.find((m) => ada.has(m)) ||
+    tersedia.find((m) => /live/i.test(m)) ||
+    PILIHAN_MODEL_LIVE[0]
+  );
+}
 
 const LAJU_MASUK = 16000; // Live API menerima PCM 16 kHz
 const LAJU_KELUAR = 24000; // Live API mengembalikan PCM 24 kHz
@@ -159,9 +175,10 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
   /* ---------- Mulai sesi ---------- */
 
   const mulai = useCallback(
-    async ({ token, instruksi, suara = "Puck" }) => {
+    async ({ token, instruksi, suara = "Puck", model }) => {
       setGalat("");
       const s = r.current;
+      s.pemakaian = { masuk: 0, keluar: 0, total: 0, model: model || PILIHAN_MODEL_LIVE[0] };
       s.ditutupSengaja = false;
       s.siap = false;
       s.giliranAktif = false;
@@ -209,7 +226,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
         });
 
         const sesi = await ai.live.connect({
-          model: MODEL_LIVE,
+          model: model || PILIHAN_MODEL_LIVE[0],
           config: {
             responseModalities: [Modality.AUDIO],
             speechConfig: {
@@ -243,6 +260,14 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
             },
 
             onmessage: (pesan) => {
+              // Catat pemakaian token — dasar menghitung biaya nyata tiap sesi
+              const um = pesan.usageMetadata;
+              if (um && s.pemakaian) {
+                s.pemakaian.masuk = Math.max(s.pemakaian.masuk, um.promptTokenCount || 0);
+                s.pemakaian.keluar += um.responseTokenCount || um.candidatesTokenCount || 0;
+                s.pemakaian.total = Math.max(s.pemakaian.total, um.totalTokenCount || 0);
+              }
+
               const sc = pesan.serverContent;
               if (!sc) return;
 
@@ -452,7 +477,11 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
 
   useEffect(() => () => akhiri(), [akhiri]);
 
+  /** Pemakaian token sesi terakhir: { masuk, keluar, total, model } */
+  const pemakaian = useCallback(() => ({ ...(r.current.pemakaian || {}) }), []);
+
   return {
+    pemakaian,
     terhubung,
     mendengar,
     berbicara,

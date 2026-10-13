@@ -18,7 +18,7 @@ const FITUR_DASAR = [
   "5.000 loker — cari & saring per kota",
   "CV Builder — bikin & unduh PDF, selamanya",
   "LinkedIn Builder — susun profil, selamanya",
-  "100+ pertanyaan interview + strategi menjawab",
+  "140+ pertanyaan interview, termasuk level neraka",
   "Pelacak lamaran untuk memantau progres",
 ];
 
@@ -78,7 +78,7 @@ export const PAKET: Record<string, any> = {
       "Masa aktif 6 bulan",
       "3x analisis AI — cek ulang tiap revisi CV",
       "2x Rencana Pindah Karier",
-      "1x simulasi interview dengan AI bersuara",
+      "1x simulasi interview AI bersuara (10 menit)",
       "Riwayat analisis tersimpan, bisa dibandingkan",
     ],
     tanpa: [],
@@ -98,7 +98,7 @@ export const PAKET: Record<string, any> = {
       "Masa aktif 1 tahun",
       "10x analisis AI",
       "5x Rencana Pindah Karier",
-      "2x simulasi interview dengan AI bersuara",
+      "2x simulasi interview AI bersuara (@10 menit)",
     ],
     tanpa: [],
   },

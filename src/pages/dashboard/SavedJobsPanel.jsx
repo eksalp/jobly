@@ -1,6 +1,6 @@
 import React from "react";
 import { Bookmark } from "lucide-react";
-import { useJobs } from "../../context/JobsContext";
+import { useLokerById } from "../../hooks/useLoker";
 import { useSavedJobs } from "../../context/SavedJobsContext";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { useToast } from "../../components/publik/PublicLayout";
@@ -9,13 +9,13 @@ import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { tautan } from "../../utils/navigasi";
 
 export function SavedJobsPanel() {
-  const { jobs, loading: memuatLoker } = useJobs();
   const { savedIds, loading } = useSavedJobs();
+  // Hanya loker yang disimpan yang diambil dari server, bukan seluruh katalog
+  const { jobs: saved, loading: memuatLoker } = useLokerById(savedIds);
   const { tambah: tambahLamaran, sudahDilamar } = useApplications();
   const hp = useLayarKecil(600);
   const [toast, elemenToast] = useToast();
 
-  const saved = jobs.filter((j) => savedIds.has(j.id));
   // Loker tersimpan yang sudah tidak ada lagi di sumber
   const hilang = Math.max(0, savedIds.size - saved.length);
   const memuat = loading || memuatLoker;

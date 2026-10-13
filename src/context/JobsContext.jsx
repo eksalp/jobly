@@ -1,102 +1,89 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from "react";
-import { supabaseConfigured } from "../lib/supabaseClient";
-import { DEMO_JOBS } from "../data/demoJobs";
-import { fetchLoker } from "../utils/jobMatching";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { panggilApi, keJob } from "../utils/apiLoker";
 import { useAuth } from "./AuthContext";
 import { useLangganan } from "./LanggananContext";
 
 /**
- * Akun gratis dan pengunjung bisa membuka BATAS_GRATIS loker. Sisanya
- * terbuka untuk semua paket berbayar yang masih aktif.
- *
- * Catatan: ini pembatasan di sisi tampilan. Untuk penguncian penuh,
- * tabel jobs juga perlu dibatasi lewat RLS/fungsi di Supabase.
+ * Akun gratis & pengunjung membuka BATAS_GRATIS loker terbaru. Paket
+ * berbayar yang masih aktif membuka semuanya. Batas ini ditegakkan di
+ * server (/api/loker), bukan di browser.
  */
 export const BATAS_GRATIS = 5000;
 
-export const JobsContext = createContext({
-  jobs: DEMO_JOBS,
-  loading: false,
-  error: null,
-  usingDemo: true,
-  refresh: () => {},
-  total: DEMO_JOBS.length,
-  terkunci: 0,
-  terbatas: false,
-  terbuka: () => true,
-});
+const KOSONG = {
+  total: 0,
+  gratis: 0,
+  baru7: 0,
+  baru2: 0,
+  remote: 0,
+  remoteAsing: 0,
+  kota: {},
+  sumber: {},
+  terbaru: [],
+  remoteContoh: [],
+};
+
+export const JobsContext = createContext(null);
 
 export function useJobs() {
-  return useContext(JobsContext);
+  const ctx = useContext(JobsContext);
+  if (!ctx) throw new Error("useJobs harus dipakai di dalam <JobsProvider>");
+  return ctx;
 }
 
+/**
+ * Yang dibagikan ke seluruh aplikasi hanya RINGKASAN (statistik beranda,
+ * beberapa loker terbaru) — satu permintaan kecil yang di-cache CDN.
+ * Daftar loker diambil per halaman lewat hook di src/hooks/useLoker.js.
+ */
 export function JobsProvider({ children }) {
   const { user, authLoading } = useAuth();
   const langganan = useLangganan();
-  const [jobs, setJobs] = useState(supabaseConfigured ? [] : DEMO_JOBS);
-  const [total, setTotal] = useState(supabaseConfigured ? 0 : DEMO_JOBS.length);
-  const [loading, setLoading] = useState(supabaseConfigured);
+  const [statistik, setStatistik] = useState(KOSONG);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [usingDemo, setUsingDemo] = useState(!supabaseConfigured);
-  const [terbatas, setTerbatas] = useState(false);
-  const batasTerakhir = useRef(null);
 
-  // Status langganan baru pasti setelah sesi & cek langganan selesai.
-  // Pengunjung tanpa akun tidak perlu menunggu cek langganan.
+  // Status akses baru pasti setelah sesi & cek langganan selesai.
   const siap = !authLoading && (!user || !langganan.loading);
-  const bebas = Boolean(user && langganan.aktif);
+  const penuh = Boolean(user && langganan.aktif);
 
-  const load = async (paksa = false) => {
-    if (!supabaseConfigured) {
-      setJobs(DEMO_JOBS);
-      setTotal(DEMO_JOBS.length);
-      setUsingDemo(true);
-      setLoading(false);
-      return;
-    }
-    const batas = bebas ? Infinity : BATAS_GRATIS;
-    if (!paksa && batasTerakhir.current === batas) return;
-    batasTerakhir.current = batas;
-
+  const muat = useCallback(async (segar = false) => {
     setLoading(true);
     setError(null);
     try {
-      const hasil = await fetchLoker({ batas });
-      setJobs(hasil.jobs);
-      setTotal(hasil.total);
-      setTerbatas(!bebas && hasil.total > hasil.jobs.length);
-      setUsingDemo(false);
-    } catch (err) {
-      setError(err.message || "Gagal memuat data loker dari Supabase.");
-      setJobs(DEMO_JOBS);
-      setTotal(DEMO_JOBS.length);
-      setTerbatas(false);
-      setUsingDemo(true);
+      const d = await panggilApi("statistik", {}, { segar });
+      setStatistik({
+        ...KOSONG,
+        ...d,
+        terbaru: (d.terbaru || []).map(keJob),
+        remoteContoh: (d.remoteContoh || []).map(keJob),
+      });
+    } catch (e) {
+      setError(e.message || "Data loker sedang tidak bisa dimuat.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (!siap) return;
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siap, bebas]);
+    muat();
+  }, [muat]);
 
-  const idTerbuka = useMemo(() => new Set(jobs.map((j) => j.id)), [jobs]);
+  const total = statistik.total || 0;
+  const gratis = statistik.gratis || Math.min(total, BATAS_GRATIS);
 
   const nilai = {
-    jobs,
-    loading: loading || (supabaseConfigured && !siap && jobs.length === 0),
+    statistik,
+    loading,
     error,
-    usingDemo,
-    refresh: () => load(true),
-    total: Math.max(total, jobs.length),
-    terkunci: terbatas ? Math.max(0, total - jobs.length) : 0,
-    terbatas,
+    usingDemo: false,
+    refresh: () => muat(true),
+    siap,
+    penuh,
+    total,
     batasGratis: BATAS_GRATIS,
-    /** Apakah loker ini bisa dibuka akun saat ini. */
-    terbuka: (id) => !terbatas || idTerbuka.has(id),
+    /** Jumlah loker yang terkunci untuk akun saat ini. */
+    terkunci: penuh ? 0 : Math.max(0, total - gratis),
   };
 
   return <JobsContext.Provider value={nilai}>{children}</JobsContext.Provider>;

@@ -118,36 +118,7 @@ const MENU_AKUN = [
 
 const itemsDari = (m) => (m.kolom ? m.kolom.flatMap((k) => k.items) : []);
 
-export const KOTA_POPULER = [
-  "Jakarta",
-  "Bandung",
-  "Surabaya",
-  "Medan",
-  "Semarang",
-  "Yogyakarta",
-  "Makassar",
-  "Denpasar",
-  "Bekasi",
-  "Tangerang",
-  "Depok",
-  "Bogor",
-  "Malang",
-  "Palembang",
-  "Batam",
-  "Pekanbaru",
-  "Balikpapan",
-  "Samarinda",
-  "Banjarmasin",
-  "Pontianak",
-  "Manado",
-  "Padang",
-  "Bandar Lampung",
-  "Cikarang",
-  "Karawang",
-  "Solo",
-  "Cirebon",
-  "Serang",
-];
+export { KOTA_POPULER } from "../../data/kota";
 
 /* ------------------------------------------------------------------ */
 /*  Bagian kecil                                                       */

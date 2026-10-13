@@ -7,16 +7,11 @@ import {
 } from "../../components/publik/PublicLayout";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { useJobs } from "../../context/JobsContext";
+import { useDaftarLoker, useTunda } from "../../hooks/useLoker";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
 import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
-import {
-  formatGaji,
-  infoSumber,
-  LABEL_LOKASI_KERJA,
-  LABEL_TIPE_KERJA,
-} from "../../utils/sumberLoker";
+import { infoSumber, LABEL_LOKASI_KERJA, LABEL_TIPE_KERJA } from "../../utils/sumberLoker";
 
-const PER_MUAT = 24;
 
 const OPSI_LOKASI = [["", "Semua"], ...Object.entries(LABEL_LOKASI_KERJA)];
 const OPSI_TIPE = [
@@ -55,15 +50,10 @@ function tulisUrl(f) {
   window.history.replaceState({}, "", `/loker${s ? `?${s}` : ""}`);
 }
 
-const waktu = (j) => {
-  const t = j.tanggal ? new Date(j.tanggal).getTime() : 0;
-  return Number.isFinite(t) ? t : 0;
-};
 
 export function LokerPage() {
-  const { jobs, loading, error } = useJobs();
+  const { statistik } = useJobs();
   const [f, setF] = useState(bacaUrl);
-  const [tampil, setTampil] = useState(PER_MUAT);
   const [toast, elemenToast] = useToast();
 
   const ubah = (sebagian) => setF((lama) => ({ ...lama, ...sebagian }));
@@ -72,61 +62,39 @@ export function LokerPage() {
 
   useEffect(() => {
     tulisUrl(f);
-    setTampil(PER_MUAT);
   }, [f]);
 
-  // Daftar sumber yang benar-benar ada di data, untuk pilihan filter
-  const daftarSumber = useMemo(() => {
-    const hitung = new Map();
-    for (const j of jobs) {
-      if (!j.site) continue;
-      hitung.set(j.site, (hitung.get(j.site) || 0) + 1);
-    }
-    return [...hitung.entries()]
-      .map(([site, n]) => {
-        const info = infoSumber({ site });
-        return {
-          site,
-          n,
-          label: info.langsung ? site.replace(/_/g, " ") : info.nama,
-          langsung: info.langsung,
-        };
-      })
-      .sort((a, b) => b.n - a.n);
-  }, [jobs]);
+  // Kata kunci dikirim ke server setelah berhenti mengetik sebentar
+  const q = useTunda(f.q, 350);
+  const { jobs: hasil, total, terkunci, loading, error, adaLagi, memuatLagi, muatLagi } = useDaftarLoker({
+    q: q.trim(),
+    kota: f.kota,
+    lokasi: f.lokasi,
+    tipe: f.tipe,
+    sumber: f.sumber,
+    gaji: f.gaji,
+    urut: f.urut,
+  });
 
-  const hasil = useMemo(() => {
-    const kata = f.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const kota = f.kota.toLowerCase();
-
-    const cocok = jobs.filter((j) => {
-      if (f.lokasi && j.lokasiKerja !== f.lokasi) return false;
-      if (f.tipe && j.tipeKerja !== f.tipe) return false;
-      if (f.sumber === "_langsung" && infoSumber(j).langsung === false) return false;
-      if (f.sumber && f.sumber !== "_langsung" && j.site !== f.sumber) return false;
-      if (kota && !(j.lokasi || "").toLowerCase().includes(kota)) return false;
-      if (f.gaji && !formatGaji(j)) return false;
-      if (kata.length) {
-        const teks = `${j.posisi} ${j.perusahaan} ${j.lokasi} ${j.kategori} ${
-          j.jenjang || ""
-        } ${j.fungsi || ""}`.toLowerCase();
-        if (!kata.every((k) => teks.includes(k))) return false;
-      }
-      return true;
-    });
-
-    if (f.urut === "gaji") {
-      return cocok.sort(
-        (a, b) => Number(b.gajiMax || b.gajiMin || 0) - Number(a.gajiMax || a.gajiMin || 0),
-      );
-    }
-    return cocok.sort((a, b) => waktu(b) - waktu(a));
-  }, [jobs, f]);
+  // Daftar sumber dari statistik server, untuk pilihan filter
+  const daftarSumber = useMemo(
+    () =>
+      Object.entries(statistik.sumber || {})
+        .map(([site, n]) => {
+          const info = infoSumber({ site });
+          return {
+            site,
+            n,
+            label: info.langsung ? site.replace(/_/g, " ") : info.nama,
+            langsung: info.langsung,
+          };
+        })
+        .sort((a, b) => b.n - a.n),
+    [statistik.sumber],
+  );
 
   // Gulir sampai bawah = muat 24 berikutnya, tanpa perlu menekan tombol
-  useMuatOtomatis(sentinel, !loading && hasil.length > tampil, () =>
-    setTampil((n) => n + PER_MUAT),
-  );
+  useMuatOtomatis(sentinel, !loading && adaLagi && !memuatLagi, muatLagi);
 
   const adaFilter = f.q || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
   const reset = () =>
@@ -152,8 +120,8 @@ export function LokerPage() {
         <h1>{judul}</h1>
         <p>
           Lowongan dari situs karier resmi perusahaan dan platform kerja,
-          dikumpulkan setiap hari. Gratis untuk semua — buka detailnya, lalu
-          lamar langsung di sumber aslinya.
+          dikumpulkan setiap hari. Buka detailnya, lalu lamar langsung di
+          sumber aslinya — tanpa biaya dari Jobly.
         </p>
       </div>
 
@@ -269,7 +237,7 @@ export function LokerPage() {
               "Memuat lowongan…"
             ) : (
               <>
-                <b>{hasil.length.toLocaleString("id-ID")}</b> lowongan
+                <b>{(total ?? 0).toLocaleString("id-ID")}</b> lowongan
                 ditemukan
               </>
             )}
@@ -291,9 +259,8 @@ export function LokerPage() {
             Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)}
 
           {!loading &&
-            hasil.slice(0, tampil).map((j) => (
-              <KartuLoker key={j.id} job={j} onToast={toast} />
-            ))}
+            hasil.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+          {memuatLagi && Array.from({ length: 4 }, (_, i) => <KartuLokerSkeleton key={`m${i}`} />)}
 
           {!loading && hasil.length === 0 && (
             <div className="pb-empty">
@@ -312,25 +279,20 @@ export function LokerPage() {
           )}
         </div>
 
-        {!loading && hasil.length > tampil && (
+        {!loading && adaLagi && (
           <div className="pb-more" ref={sentinel}>
-            <button
-              type="button"
-              className="pb-btn pb-btn-outline"
-              onClick={() => setTampil((n) => n + PER_MUAT)}
-            >
-              Muat lebih banyak
+            <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={memuatLagi}>
+              {memuatLagi ? "Memuat…" : "Muat lebih banyak"}
             </button>
-            Menampilkan {tampil.toLocaleString("id-ID")} dari{" "}
-            {hasil.length.toLocaleString("id-ID")} lowongan
+            Menampilkan {hasil.length.toLocaleString("id-ID")} dari {(total ?? 0).toLocaleString("id-ID")} lowongan
           </div>
         )}
-        {!loading && hasil.length <= tampil && (
+        {!loading && !adaLagi && terkunci > 0 && (
           <div className="pb-grid" style={{ marginTop: 18 }}>
-            <KartuKunci />
+            <KartuKunci jumlah={terkunci} />
           </div>
         )}
-        {!loading && hasil.length > 0 && hasil.length <= tampil && (
+        {!loading && !adaLagi && hasil.length > 0 && (
           <div className="pb-more">Semua lowongan yang terbuka sudah ditampilkan.</div>
         )}
       </div>

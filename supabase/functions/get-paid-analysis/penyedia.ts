@@ -11,9 +11,9 @@ const GEMINI_URL = (model) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 
-const MODEL_GEMINI = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.7-flash";
-// Model kembar: harga dan kemampuannya identik dengan 3.7-flash, tapi
-// beban trafiknya berbeda. Dipakai saat model utama sedang penuh.
+const MODEL_GEMINI = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.8-flash";
+// Model cadangan dengan harga sama, beban trafiknya berbeda.
+// Dipakai saat model utama sedang penuh.
 const MODEL_GEMINI_CADANGAN =
   Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-3.6-flash";
 const MODEL_ANTHROPIC = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-sonnet-5";
@@ -39,23 +39,35 @@ async function panggilGemini(
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("GEMINI_API_KEY belum di-set.");
 
-  const res = await fetch(GEMINI_URL(model), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
-    },
-    body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        // Dua baris inilah yang menjamin JSON valid sesuai struktur.
-        responseMimeType: "application/json",
-        responseSchema: hanyaDraft ? buatSkemaDraft(bahasa) : buatSkema(bahasa),
-        maxOutputTokens: maksToken,
-        temperature: 0.4,
+  const kirim = (denganThinking) =>
+    fetch(GEMINI_URL(model), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
       },
-    }),
-  });
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          // Dua baris inilah yang menjamin JSON valid sesuai struktur.
+          responseMimeType: "application/json",
+          responseSchema: hanyaDraft ? buatSkemaDraft(bahasa) : buatSkema(bahasa),
+          maxOutputTokens: maksToken,
+          temperature: 0.4,
+          // Token "berpikir" ditagih sebagai output. Tugas ini terstruktur,
+          // jadi level rendah sudah cukup dan memangkas biaya per analisis.
+          ...(denganThinking ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
+        },
+      }),
+    });
+
+  let res = await kirim(true);
+  // Model yang tidak mengenal thinkingLevel menolak dengan 400 —
+  // ulangi sekali tanpa pengaturan itu.
+  if (res.status === 400) {
+    const t = await res.clone().text();
+    if (/thinking/i.test(t)) res = await kirim(false);
+  }
 
   if (!res.ok) {
     const teks = await res.text();
@@ -100,7 +112,7 @@ async function panggilGemini(
  * tinggi, dan itu hampir selalu sembuh dalam hitungan detik. Tanpa retry,
  * user yang sudah membayar melihat kegagalan padahal masalahnya sesaat.
  *
- * Urutan percobaan: 3.7 → 3.7 → 3.6 (model kembar, beban trafik berbeda).
+ * Urutan percobaan: utama → utama → cadangan.
  */
 async function panggilGeminiTangguh(prompt, maksToken, bahasa, hanyaDraft) {
   const percobaan = [

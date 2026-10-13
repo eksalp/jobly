@@ -118,6 +118,13 @@ serve(async (req) => {
       body: JSON.stringify({
         transaction_details: { order_id: orderId, gross_amount: paket.harga },
         customer_details: { email: user.email },
+        // Hanya QRIS (biaya 0,7%). Bisa diubah lewat secret MIDTRANS_METODE,
+        // mis. "other_qris,gopay,shopeepay". QRIS tetap bisa dibayar dari
+        // aplikasi bank & e-wallet mana pun.
+        enabled_payments: (Deno.env.get("MIDTRANS_METODE") ?? "other_qris")
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean),
         item_details: [
           {
             id: paket.id,

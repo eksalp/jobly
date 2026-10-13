@@ -25,11 +25,13 @@ import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { GerbangFitur } from "../../components/GerbangFitur";
 import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
-import { useGeminiLive } from "../../hooks/useGeminiLive";
+import { useGeminiLive, pilihModelLive } from "../../hooks/useGeminiLive";
 
 const TAHAP = { siap: "siap", berlangsung: "berlangsung", selesai: "selesai" };
 
-const DURASI_MENIT = 15;
+// 10 menit: cukup untuk 5–7 pertanyaan yang digali, dan menjaga biaya
+// audio per sesi tetap di bawah harga paket.
+const DURASI_MENIT = 10;
 const DURASI_DETIK = DURASI_MENIT * 60;
 
 const NILAI = {
@@ -223,7 +225,7 @@ CARA BICARA:
 Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
 
       try {
-        await live.mulai({ token: data.token, instruksi });
+        await live.mulai({ token: data.token, instruksi, model: pilihModelLive(data.model_live) });
       } catch (e) {
         // Token sudah diterbitkan (kuota terpotong) tapi koneksi gagal —
         // kuotanya dikembalikan karena tidak ada biaya AI yang keluar.
@@ -281,6 +283,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.`;
             kategori: kategori.nama,
             dialog: transkrip.map(({ dari, teks }) => ({ dari, teks })),
             durasiDetik: detik,
+            pemakaian: live.pemakaian(),
           },
         },
       );

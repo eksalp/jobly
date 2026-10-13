@@ -19,8 +19,10 @@ export function useTujuanBuka() {
  * ajakan membuka sisa loker di depan. Dipasang sebagai anak .pb-grid,
  * mengambil satu baris penuh.
  */
-export function KartuKunci() {
-  const { terkunci, batasGratis } = useJobs();
+export function KartuKunci({ jumlah }) {
+  const ctx = useJobs();
+  const { batasGratis } = ctx;
+  const terkunci = jumlah ?? ctx.terkunci;
   const tujuan = useTujuanBuka();
   if (!terkunci) return null;
   return (
@@ -39,7 +41,7 @@ export function KartuKunci() {
         <span className="pb-kunci-ic">
           <Lock size={20} />
         </span>
-        <h3>{angka(terkunci)} loker lagi menunggumu</h3>
+        <h3>{angka(terkunci)} loker lagi {jumlah != null ? "cocok dengan pencarianmu" : "menunggumu"}</h3>
         <p>
           Akun gratis membuka {angka(batasGratis)} loker. Semua paket berbayar
           membuka seluruh loker — termasuk yang baru masuk setiap hari — mulai{" "}
@@ -60,9 +62,9 @@ export function KartuKunci() {
 
 /** Strip kecil di atas daftar: "5.000 dari 18.240 loker terbuka". */
 export function InfoKuotaLoker() {
-  const { terkunci, batasGratis, total } = useJobs();
+  const { terkunci, batasGratis, total, loading } = useJobs();
   const tujuan = useTujuanBuka();
-  if (!terkunci) return null;
+  if (!terkunci || loading) return null;
   return (
     <div className="pb-kuota-loker">
       <Lock size={15} />

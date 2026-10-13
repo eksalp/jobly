@@ -31,7 +31,8 @@ import { useTujuanBuka } from "../../components/publik/LokerTerkunci";
 import { DAFTAR_PAKET, rupiah as rupiahPaket } from "../../data/paket";
 import { useAuth } from "../../context/AuthContext";
 import { useSavedJobs } from "../../context/SavedJobsContext";
-import { fetchDetailLoker } from "../../utils/jobMatching";
+import { panggilApi, keJob } from "../../utils/apiLoker";
+import { useDaftarLoker } from "../../hooks/useLoker";
 import { formatDeskripsi, potongTebal } from "../../utils/formatDeskripsi";
 import {
   infoSumber,
@@ -105,7 +106,7 @@ function Kerangka() {
 
 export function DetailLokerPage({ slug }) {
   const id = idDariSlug(slug);
-  const { jobs, loading: memuatDaftar, terbuka, batasGratis } = useJobs();
+  const { penuh, siap, batasGratis } = useJobs();
   const tujuanBuka = useTujuanBuka();
   const { session } = useAuth();
   const masuk = Boolean(session);
@@ -113,39 +114,50 @@ export function DetailLokerPage({ slug }) {
   const { rates } = useKurs();
   const [toast, elemenToast] = useToast();
 
-  // Data ringkas dari daftar (langsung tampil) sambil menunggu detail lengkap
-  const ringkas = useMemo(() => jobs.find((j) => j.id === id) || null, [jobs, id]);
   const [detail, setDetail] = useState(null);
+  const [terkunciIni, setTerkunciIni] = useState(false);
   const [status, setStatus] = useState("memuat"); // memuat | siap | kosong | galat
 
+  // Satu loker lengkap dari server. Server juga yang memutuskan apakah
+  // loker ini terkunci untuk akun gratis.
   useEffect(() => {
+    if (!siap) return;
     let batal = false;
     setStatus("memuat");
     setDetail(null);
-    fetchDetailLoker(id)
+    panggilApi("detail", { id }, { penuh })
       .then((d) => {
         if (batal) return;
-        setDetail(d);
-        setStatus(d ? "siap" : "kosong");
+        const row = d?.row;
+        if (!row) {
+          setStatus("kosong");
+          return;
+        }
+        setDetail({
+          ...keJob(row),
+          deskripsiPerusahaan: row.company_description || null,
+          jumlahKaryawan: row.company_num_employees || null,
+          alamatPerusahaan: row.company_addresses || null,
+          rating: row.company_rating ?? null,
+          jumlahUlasan: row.company_reviews_count ?? null,
+          jumlahLowongan: row.vacancy_count ?? null,
+        });
+        setTerkunciIni(Boolean(d.terkunci));
+        setStatus("siap");
       })
-      .catch(() => {
-        if (!batal) setStatus("galat");
-      });
+      .catch(() => !batal && setStatus("galat"));
     window.scrollTo(0, 0);
     return () => {
       batal = true;
     };
-  }, [id]);
+  }, [id, penuh, siap]);
 
-  const job = detail || ringkas;
+  const job = detail;
+  const memuatDaftar = !siap;
 
   useEffect(() => {
     if (job) document.title = `${job.posisi} — ${job.perusahaan} · Jobly`;
   }, [job]);
-
-  // Terkunci untuk akun gratis kalau loker ini di luar 5.000 yang terbuka.
-  // Ditunggu sampai daftar selesai dimuat supaya tidak salah kunci.
-  const terkunciIni = Boolean(job) && !memuatDaftar && !terbuka(job.id);
 
   useEffect(() => {
     if (job && !terkunciIni) catatDilihat(job);
@@ -153,29 +165,20 @@ export function DetailLokerPage({ slug }) {
 
   const keamanan = useMemo(
     () =>
-      detail && detail.deskripsi
+      detail && detail.deskripsi && !terkunciIni
         ? cekLoker({ teks: detail.deskripsi, judul: detail.posisi, perusahaan: detail.perusahaan, link: detail.link })
         : null,
-    [detail],
+    [detail, terkunciIni],
   );
 
-  const serupa = useMemo(() => {
-    if (!job) return [];
-    const kataJudul = (job.posisi || "").toLowerCase().split(/\W+/).filter((k) => k.length > 3);
-    return jobs
-      .filter((j) => j.id !== job.id)
-      .map((j) => {
-        const judul = (j.posisi || "").toLowerCase();
-        let skor = kataJudul.filter((k) => judul.includes(k)).length * 2;
-        if (job.kategori && j.kategori === job.kategori) skor += 2;
-        if (j.perusahaan === job.perusahaan) skor += 1;
-        return { j, skor };
-      })
-      .filter((x) => x.skor > 0)
-      .sort((a, b) => b.skor - a.skor)
-      .slice(0, 4)
-      .map((x) => x.j);
-  }, [jobs, job]);
+  // Loker serupa: cari dua kata pertama judul di server
+  const kataSerupa = (job?.posisi || "")
+    .split(/[\s(),/–-]+/)
+    .filter((k) => k.length > 2)
+    .slice(0, 2)
+    .join(" ");
+  const { jobs: calonSerupa } = useDaftarLoker({ q: kataSerupa }, { n: 8, aktif: Boolean(job && kataSerupa && !terkunciIni) });
+  const serupa = useMemo(() => calonSerupa.filter((j) => j.id !== job?.id).slice(0, 4), [calonSerupa, job?.id]);
 
   // ------------------------------------------------ keadaan khusus
   if (!job && (status === "memuat" || memuatDaftar)) {

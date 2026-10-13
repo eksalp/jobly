@@ -1,401 +1,14 @@
-import {
-  supabase,
-  SUPABASE_TABLE,
-  supabase2,
-  supabase2Configured,
-  SUPABASE_TABLE_2,
-} from "../lib/supabaseClient";
 import { TAXONOMY } from "../data/taxonomy";
-import { normalizeWord } from "../data/synonyms";
+import { normalizeWord, SYNONYM_GROUPS } from "../data/synonyms";
 
-// lokasiKerja: baca langsung dari kolom `work_arrangement`.
-// Nilai di DB sudah standar: "onsite" | "remote" | "hybrid" | null.
-// Fallback ke kolom `tipe` (tabel papan-loker) kalau work_arrangement
-// kosong dan tipe berisi salah satu nilai lokasi.
-function readLokasiKerja(row) {
-  const wa = (row.work_arrangement || "").toString().toLowerCase().trim();
-  if (wa === "onsite" || wa === "remote" || wa === "hybrid") return wa;
-  // Fallback: tabel papan-loker simpan lokasi di kolom `tipe`
-  const tipe = (row.tipe || "").toString().toLowerCase().trim();
-  if (tipe === "onsite" || tipe === "remote") return tipe;
-  return null; // null = tidak diketahui, tidak akan match filter apapun
-}
+// Pemetaan baris database → objek loker dan klasifikasi bidang ada di
+// petaLoker.js (tanpa ketergantungan browser, dipakai juga oleh server API).
+import { mapSupabaseJob, klasifikasiLoker, rapikanJudul } from "./petaLoker.js";
+export { mapSupabaseJob, klasifikasiLoker, rapikanJudul };
 
-// tipeKerja: baca langsung dari kolom `employment_type`.
-// Nilai di DB sudah standar: "full-time" | "kontrak" | "freelance" | "magang" | null.
-// Fallback ke kolom `tipe` (tabel papan-loker) untuk nilai non-lokasi.
-function readTipeKerja(row) {
-  const et = (row.employment_type || "").toString().toLowerCase().trim();
-  if (et) return et; // pakai apa adanya dari DB
-  // Fallback: tabel papan-loker simpan tipe kerja di kolom `tipe`
-  const tipe = (row.tipe || "").toString().toLowerCase().trim();
-  const lokasiVals = ["onsite", "remote", "hybrid"];
-  if (tipe && !lokasiVals.includes(tipe)) return tipe;
-  return null;
-}
-
-// formatGaji: beberapa tabel loker pakai nama kolom beda buat rentang gaji
-// (min_amount/max_amount vs salary_min/salary_max), jadi dicek dua-duanya.
-// Kalau nggak ada rentang angka sama sekali, fallback ke kolom `gaji` yang
-// udah berupa teks jadi (banyak tabel nyimpen ini langsung sebagai string).
-function formatGaji(row) {
-  const min = row.min_amount ?? row.salary_min;
-  const max = row.max_amount ?? row.salary_max;
-  const currency = row.currency || row.salary_currency;
-  if (min && max) {
-    return `${currency ? currency + " " : ""}${min}\u2013${max}${
-      row.interval ? "/" + row.interval : ""
-    }`;
-  }
-  return row.gaji || "Tidak disebutkan";
-}
-
-// Judul dari sebagian scraper ditulis HURUF BESAR SEMUA. Ubah jadi
-// kapital biasa, singkatan dalam kurung (mis. "(MDP)") tetap utuh.
-function rapikanJudul(judul) {
-  const t = String(judul || "").trim();
-  if (!t || t !== t.toUpperCase() || !/[A-Z]{4,}/.test(t)) return t;
-  return t
-    .toLowerCase()
-    .replace(/(^|[\s\-/(])([a-z])/g, (m, a, b) => a + b.toUpperCase())
-    .replace(/\(([^)]{1,6})\)/g, (m, isi) => `(${isi.toUpperCase()})`)
-    .replace(/\b(Dan|Di|Ke|Dari|Untuk|Atau|Of|And|For|The|In|At|To)\b/g, (m, w, i) =>
-      i === 0 ? w : w.toLowerCase(),
-    )
-    .replace(SINGKATAN, (m) => m.toUpperCase());
-}
-
-// Singkatan yang harus tetap kapital setelah judul dirapikan
-const SINGKATAN =
-  /\b(It|Hr|Hrd|Hrbp|Qa|Qc|Ui|Ux|Ai|Seo|Sem|Cs|Ga|Pr|Ios|Sap|Sql|Pt|Bumn|Mt|Odp|Mdp|Erp|Crm|Kol|Ppic|Hse|K3|Smk|D3|S1|S2|Spg|Spb|Bd|Ceo|Cfo|Cto|Coo|Vp|Api|Mep|Gis)\b/g;
-
-// Ubah baris hasil query Supabase jadi bentuk yang dipakai UI di sini.
-// `source` dipakai buat bikin id gabungan yang aman kalau datanya digabung
-// dari beberapa project Supabase sekaligus (dua tabel beda project bisa
-// aja punya id mentah yang sama persis padahal itu loker yang berbeda).
-export function mapSupabaseJob(row, source = "db1") {
-  const lokasiKerja = readLokasiKerja(row); // null | "onsite" | "remote" | "hybrid"
-  const tipeKerja = readTipeKerja(row); // null | "full-time" | "kontrak" | "freelance" | "magang"
-  // Kolom `category` di database kamu udah berupa slug terklasifikasi
-  // (mis. "finance-accounting") \u2014 pecah jadi kata biasa buat dipakai
-  // di matching & ditampilkan ke user.
-  const kategori = (row.category || row.kategori || "")
-    .toString()
-    .replace(/[-_]+/g, " ")
-    .trim();
-  return {
-    id: `${source}:${row.id}`, // id gabungan, aman dipakai sebagai React key & buat saved_jobs
-    rawId: row.id, // id asli dari tabel, kalau-kalau dibutuhkan
-    source,
-    posisi: rapikanJudul(row.title || row.posisi) || "Tanpa judul",
-    perusahaan: row.company || row.perusahaan || "Tidak disebutkan",
-    lokasiKerja, // "onsite" | "remote" | "hybrid"
-    tipeKerja, // "fulltime" | "contract" | "freelance" | "internship" | "parttime"
-    tipe: lokasiKerja, // dipertahankan buat kode lama yang masih baca job.tipe
-    kategori, // mis. "finance accounting", bisa kosong kalau kolom category/kategori null
-    lokasi: row.location || row.lokasi || "Tidak disebutkan",
-    gaji: formatGaji(row),
-    link: row.job_url || row.job_url_direct || row.link || "#",
-    deskripsi: row.description || row.deskripsi || "",
-    // --- Data tambahan untuk kartu & halaman detail ---
-    // `site` = sumber scraping dari bot Telegram (linkedin, indeed, bca,
-    // pertamina_ptc, ...). Dipakai untuk menampilkan logo sumber.
-    site: (row.site || "").toString().toLowerCase().trim() || null,
-    logoPerusahaan: row.company_logo || null,
-    situsPerusahaan: row.company_url_direct || row.company_url || null,
-    industri: row.company_industry || null,
-    jenjang: row.job_level || row.experience_range || null,
-    fungsi: row.job_function || null,
-    tanggal: row.date_posted || row.posted_at || row.created_at || null,
-    gajiMin: row.min_amount ?? row.salary_min ?? null,
-    gajiMax: row.max_amount ?? row.salary_max ?? null,
-    mataUang: row.currency || row.salary_currency || null,
-    intervalGaji: row.interval || null,
-    gajiTeks: row.gaji || row.salary || null,
-    // Kolom skill di database (array Postgres atau string dipisah koma).
-    // Dipakai buat matching yang lebih presisi daripada cuma judul/deskripsi.
-    skills: Array.isArray(row.skills)
-      ? row.skills
-      : typeof row.skills === "string"
-        ? row.skills
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : [],
-  };
-}
-
-// Supabase (PostgREST) membatasi 1000 baris per request lewat setelan
-// db-max-rows. Nilai .limit() sebesar apa pun tetap dipotong di angka itu.
-// Jadi datanya diambil bertahap pakai .range() sampai habis.
-const UKURAN_HALAMAN = 1000;
-const MAKS_HALAMAN = 30; // pengaman: berhenti di 30.000 baris
-
-// Kedua project punya skema berbeda, dan menebak nama kolom terbukti
-// keliru — daftar tetap ditolak keduanya. Jadi kolomnya ditanyakan
-// langsung: ambil satu baris dengan "*", lihat kunci apa saja yang ada,
-// lalu pakai irisannya dengan kolom yang benar-benar kita butuhkan.
-//
-// Kunci cache memakai `sumber`, bukan nama tabel — kedua project
-// sama-sama memakai tabel bernama "jobs".
-const strategiCache = new Map(); // sumber -> { kolom, urut }
-
-// Kolom yang berguna kalau tersedia. Yang tidak ada di tabel dilewati.
-const KOLOM_DIINGINKAN = [
-  "id",
-  "title",
-  "posisi",
-  "company",
-  "perusahaan",
-  "location",
-  "lokasi",
-  "category",
-  "kategori",
-  "job_url",
-  "job_url_direct",
-  "link",
-  "url",
-  "employment_type",
-  "work_arrangement",
-  "tipe",
-  "is_remote",
-  "min_amount",
-  "max_amount",
-  "salary_min",
-  "salary_max",
-  "currency",
-  "salary_currency",
-  "interval",
-  "gaji",
-  "salary",
-  "skills",
-  "created_at",
-  "date_posted",
-  "posted_at",
-  // Untuk kartu & detail ala remotefreelance/JobStreet. Semuanya kolom
-  // pendek, jadi tidak membebani payload seperti `description`.
-  "site",
-  "company_logo",
-  "company_url",
-  "company_url_direct",
-  "company_industry",
-  "job_level",
-  "job_function",
-  "experience_range",
-];
-
-// Kolom besar yang sengaja TIDAK diambil meski ada — isinya panjang,
-// tidak ditampilkan di UI, dan jadi bagian terbesar payload.
-const KOLOM_DILEWATI = [
-  "description",
-  "deskripsi",
-  "job_description",
-  "raw",
-  "html",
-];
-
-async function tentukanStrategi(client, tabel, sumber) {
-  if (strategiCache.has(sumber)) return strategiCache.get(sumber);
-
-  // Satu baris contoh untuk mengetahui kolom yang benar-benar ada
-  const { data: contoh, error } = await client.from(tabel).select("*").limit(1);
-
-  if (error || !contoh?.length) {
-    console.warn(
-      `[loker] ${sumber}: gagal membaca skema, memakai select("*").`,
-      error?.message,
-    );
-    const strategi = { kolom: "*", urut: null };
-    strategiCache.set(sumber, strategi);
-    return strategi;
-  }
-
-  const kolomAda = new Set(Object.keys(contoh[0]));
-
-  const dipakai = KOLOM_DIINGINKAN.filter((k) => kolomAda.has(k));
-  const dilewati = KOLOM_DILEWATI.filter((k) => kolomAda.has(k));
-
-  // Kalau ternyata tidak ada kolom besar yang perlu dihindari,
-  // select("*") sama saja dan lebih tahan perubahan skema.
-  const kolom =
-    dilewati.length > 0 && dipakai.length > 0 ? dipakai.join(",") : "*";
-
-  // Kolom pengurutan dipilih dari yang tersedia. Tanpa urutan, PostgREST
-  // tidak menjamin konsistensi antar-halaman.
-  const urut =
-    ["created_at", "date_posted", "posted_at", "id"].find((k) =>
-      kolomAda.has(k),
-    ) ?? null;
-
-  console.log(
-    `[loker] ${sumber}: ${kolomAda.size} kolom terdeteksi, ` +
-      `mengambil ${kolom === "*" ? "semua" : dipakai.length}, urut: ${urut ?? "tidak ada"}`,
-  );
-
-  const strategi = { kolom, urut };
-  strategiCache.set(sumber, strategi);
-  return strategi;
-}
-
-async function ambilHalaman(client, tabel, halaman, strategi) {
-  const dari = halaman * UKURAN_HALAMAN;
-  let q = client
-    .from(tabel)
-    .select(strategi.kolom)
-    .range(dari, dari + UKURAN_HALAMAN - 1);
-
-  if (strategi.urut) q = q.order(strategi.urut, { ascending: false });
-
-  return q;
-}
-
-async function ambilSemuaBaris(client, tabel, sumber, batas = Infinity, info = {}) {
-  // Hitung dulu jumlah barisnya, supaya semua halaman bisa diambil
-  // BERSAMAAN. Cara berurutan menunggu 10+ perjalanan bolak-balik,
-  // dan itu penyebab utama layar "Memuat data loker" terasa lama.
-  const { count, error: galatHitung } = await client
-    .from(tabel)
-    .select("*", { count: "exact", head: true });
-
-  if (galatHitung) {
-    throw new Error(galatHitung.message || "Supabase fetch gagal");
-  }
-
-  info.total = count || 0;
-  const jumlahHalaman = Math.min(
-    MAKS_HALAMAN,
-    Math.max(1, Math.ceil(Math.min(count || 0, batas) / UKURAN_HALAMAN)),
-  );
-
-  const strategi = await tentukanStrategi(client, tabel, sumber);
-
-  // Halaman diambil berkelompok, bukan seluruhnya sekaligus. Menembak
-  // belasan permintaan bersamaan kadang ditolak Supabase, dan kegagalan
-  // seperti itu sulit dibedakan dari masalah skema.
-  const SEKALIGUS = 4;
-  const semua = [];
-
-  for (let mulai = 0; mulai < jumlahHalaman; mulai += SEKALIGUS) {
-    const kelompok = Array.from(
-      { length: Math.min(SEKALIGUS, jumlahHalaman - mulai) },
-      (_, i) => ambilHalaman(client, tabel, mulai + i, strategi),
-    );
-
-    const hasil = await Promise.all(kelompok);
-
-    let adaIsi = false;
-    hasil.forEach(({ data, error }, i) => {
-      if (error) {
-        // Satu halaman gagal tidak menggagalkan semuanya — lebih baik
-        // menampilkan sebagian daripada layar kosong.
-        console.warn(
-          `[loker] ${sumber} halaman ${mulai + i + 1} gagal:`,
-          error.message,
-        );
-        return;
-      }
-      if (data?.length) {
-        semua.push(...data);
-        adaIsi = true;
-      }
-    });
-
-    // Kelompok yang sepenuhnya kosong menandakan data sudah habis,
-    // biasanya karena `count` melaporkan lebih banyak dari yang ada.
-    if (!adaIsi) break;
-  }
-
-  console.log(`[loker] ${sumber}: ${semua.length} dari ${count ?? "?"} baris`);
-  return semua.slice(0, batas).map((row) => mapSupabaseJob(row, sumber));
-}
-
-export async function fetchJobsFromSupabase() {
-  return ambilSemuaBaris(supabase, SUPABASE_TABLE, "db1");
-}
-
-// fetchJobsFromSupabase2: sama kayak di atas, tapi narik dari project
-// Supabase kedua (client & tabel beda). Dipanggil cuma kalau env var
-// VITE_SUPABASE_URL_2 / VITE_SUPABASE_ANON_KEY_2 udah diisi.
-export async function fetchJobsFromSupabase2() {
-  return ambilSemuaBaris(supabase2, SUPABASE_TABLE_2, "db2");
-}
-
-/**
- * Ambil SATU loker lengkap (termasuk `description` dan info perusahaan)
- * untuk halaman detail. Daftar loker sengaja tidak memuat kolom besar,
- * jadi detailnya diambil terpisah saat lowongan dibuka — seperti
- * JobStreet membuka satu lowongan.
- *
- * `id` berbentuk "db1:123" (lihat mapSupabaseJob).
- */
-export async function fetchDetailLoker(id) {
-  const [sumber, ...sisa] = String(id).split(":");
-  const rawId = sisa.join(":");
-  if (!rawId) throw new Error("ID loker tidak valid.");
-
-  const client = sumber === "db2" ? supabase2 : supabase;
-  const tabel = sumber === "db2" ? SUPABASE_TABLE_2 : SUPABASE_TABLE;
-
-  const { data, error } = await client
-    .from(tabel)
-    .select("*")
-    .eq("id", rawId)
-    .maybeSingle();
-
-  if (error) throw new Error(error.message || "Gagal memuat loker.");
-  if (!data) return null;
-
-  return {
-    ...mapSupabaseJob(data, sumber === "db2" ? "db2" : "db1"),
-    deskripsiPerusahaan: data.company_description || null,
-    jumlahKaryawan: data.company_num_employees || null,
-    alamatPerusahaan: data.company_addresses || null,
-    rating: data.company_rating ?? null,
-    jumlahUlasan: data.company_reviews_count ?? null,
-    jumlahLowongan: data.vacancy_count ?? null,
-  };
-}
-
-// fetchAllJobs: gabungin loker dari kedua project Supabase (kalau
-// project kedua udah dikonfigurasi). Kalau salah satu gagal, yang lain
-// tetap ditampilkan \u2014 jangan sampai satu sumber error bikin semuanya
-// kosong.
-export async function fetchAllJobs() {
-  return (await fetchLoker()).jobs;
-}
-
-/**
- * Ambil loker dengan batas jumlah baris (untuk akun gratis).
- *
- * Mengembalikan { jobs, total } — `total` adalah jumlah seluruh baris di
- * database, dipakai untuk menampilkan "x loker lagi terkunci". Dengan
- * batas, hanya halaman yang diperlukan yang diunduh, jadi pemuatan untuk
- * pengunjung justru lebih cepat.
- */
-export async function fetchLoker({ batas = Infinity } = {}) {
-  const info1 = {};
-  const info2 = {};
-  const tasks = [ambilSemuaBaris(supabase, SUPABASE_TABLE, "db1", batas, info1)];
-  if (supabase2Configured)
-    tasks.push(ambilSemuaBaris(supabase2, SUPABASE_TABLE_2, "db2", batas, info2));
-
-  const results = await Promise.allSettled(tasks);
-  const jobs = [];
-  const errors = [];
-  results.forEach((r) => {
-    if (r.status === "fulfilled") jobs.push(...r.value);
-    else errors.push(r.reason?.message || "Gagal memuat sebagian loker");
-  });
-
-  if (jobs.length === 0 && errors.length > 0) {
-    throw new Error(errors.join("; "));
-  }
-  const total = (info1.total || 0) + (info2.total || 0);
-  return {
-    jobs: jobs.slice(0, batas),
-    total: Math.max(total, Math.min(jobs.length, batas)),
-  };
-}
+// Data loker tidak lagi diambil langsung dari Supabase oleh browser.
+// Semuanya lewat /api/loker (lihat api/loker.js & src/utils/apiLoker.js),
+// yang hanya mengirim baris yang ditampilkan dan di-cache di CDN.
 
 // tokenize: pecah teks jadi kata-kata, lalu normalize tiap kata lewat kamus
 // sinonim ID<->EN (data/synonyms.js). Jadi "insinyur" dan "engineer" bakal
@@ -405,6 +18,44 @@ export async function fetchLoker({ batas = Infinity } = {}) {
 export function tokenize(text) {
   const raw = text.toLowerCase().match(/[a-z\u00e0-\u00ff]{3,}/g) || [];
   return raw.map(normalizeWord);
+}
+
+/**
+ * Kata kunci untuk mencari kandidat loker di server.
+ *
+ * Diambil dari kata yang paling sering muncul di profil (setelah kata umum
+ * dibuang), lalu diperluas dengan sinonimnya — "akuntansi" ikut mencari
+ * "akuntan" dan "accounting", "pajak" ikut mencari "tax". Server mencocokkan
+ * kata-kata ini ke judul & bidang loker, hasilnya diurutkan di browser.
+ */
+const KATA_ABAIKAN = new Set([
+  "dan", "yang", "untuk", "dengan", "dari", "pada", "dalam", "saya", "tahun",
+  "pengalaman", "the", "and", "for", "with", "years", "experience", "bulan",
+  "kerja", "bekerja", "sebagai", "serta", "juga", "lebih", "telah", "sudah",
+  "satu", "dua", "tiga", "empat", "lima", "staf", "staff",
+]);
+
+export function kataKunciPencarian(teks, skills = []) {
+  const frek = new Map();
+  for (const t of tokenize(`${skills.join(" ")} ${skills.join(" ")} ${teks || ""}`)) {
+    if (t.length < 3 || KATA_ABAIKAN.has(t) || GENERIC_TERMS.has(t)) continue;
+    frek.set(t, (frek.get(t) || 0) + 1);
+  }
+  const inti = [...frek.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([t]) => t);
+
+  const hasil = [];
+  const tambah = (k) => {
+    const t = String(k || "").toLowerCase().trim();
+    if (t.length >= 3 && t.length <= 30 && !hasil.includes(t)) hasil.push(t);
+  };
+  for (const t of inti) {
+    tambah(t);
+    const grup = SYNONYM_GROUPS.find((g) => g.concept === t);
+    (grup?.terms || []).forEach(tambah);
+  }
+  const cat = detectCategory(teks || "");
+  (cat.hits || []).forEach(tambah);
+  return hasil.slice(0, 24);
 }
 
 export function detectCategory(text) {
@@ -636,33 +287,6 @@ const GENERIC_TERMS = new Set([
 /*  tidak relevan untuk user bidang keuangan.                           */
 /* ------------------------------------------------------------------ */
 
-// Deskripsi sengaja TIDAK ikut diklasifikasikan. Deskripsi lowongan penuh
-// basa-basi lintas bidang, dan itulah sumber semua salah cocok sebelumnya.
-// Judul dan kolom skill jauh lebih mencerminkan inti pekerjaan.
-const _cacheKlasifikasi = new Map();
-
-export function klasifikasiLoker(job) {
-  if (_cacheKlasifikasi.has(job.id)) return _cacheKlasifikasi.get(job.id);
-
-  // Deskripsi memang tidak ikut: kolomnya tidak diambil dari database,
-  // dan sebelum itu pun deskripsi terlalu berisik untuk klasifikasi.
-  const teks = [
-    job.posisi || "",
-    (job.skills || []).join(" "),
-    job.kategori || "",
-  ]
-    .join(" ")
-    .toLowerCase();
-
-  const dinilai = TAXONOMY.map((cat) => {
-    const hits = cat.keywords.filter((k) => teks.includes(k));
-    return { label: cat.label, score: hits.length, hits };
-  }).sort((a, b) => b.score - a.score);
-
-  const hasil = dinilai[0].score > 0 ? dinilai[0] : null;
-  _cacheKlasifikasi.set(job.id, hasil);
-  return hasil;
-}
 
 // scoreJob: hitung kecocokan CV/skill user (cvTokens, sudah dinormalize)
 // terhadap satu loker. Match di kolom 'skills' dikasih bobot paling tinggi

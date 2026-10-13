@@ -26,9 +26,9 @@ import { DaftarFaq } from "../../components/publik/DaftarFaq";
 import { useJobs } from "../../context/JobsContext";
 import { useAuth } from "../../context/AuthContext";
 import { useHitungNaik, usePintasanCari, bacaDilihat } from "../../utils/interaksi";
-import { hitungPetaGaji, jt } from "../../utils/petaGaji";
-import { idrPer } from "../../utils/kurs";
+import { jt } from "../../utils/petaGaji";
 import { infoSumber, urlDetail } from "../../utils/sumberLoker";
+import { usePetaGaji } from "../../hooks/useLoker";
 import { SEMUA_TIER, rupiah, labelDurasi } from "../../data/paket";
 import { BATAS_GRATIS } from "../../context/JobsContext";
 import { FAQ_BERANDA } from "../../data/faq";
@@ -242,60 +242,45 @@ function MiniSuara() {
 /* ---------------------------------------------------------------- */
 
 export function BerandaPage() {
-  const { jobs, loading, total, terkunci } = useJobs();
+  const { statistik: st, loading, total, terkunci } = useJobs();
   const { session } = useAuth();
   const masuk = Boolean(session);
   const [q, setQ] = useState("");
   const [kota, setKota] = useState("");
   const [toast, elemenToast] = useToast();
-  const { rates } = useKurs();
   const dilihat = useMemo(() => bacaDilihat().slice(0, 4), []);
   useGulirKeHash(!loading);
   usePintasanCari("cari-beranda");
 
   const fitur = (panel) => `/dashboard/${panel}`;
 
+  // Semua angka beranda dihitung server dan di-cache CDN — browser tidak
+  // perlu mengunduh daftar loker sama sekali untuk halaman ini.
   const data = useMemo(() => {
-    const urut = [...jobs].sort((a, b) => waktuDari(b) - waktuDari(a));
-    const seminggu = Date.now() - 7 * 86400000;
-    const perusahaan = new Set();
-    const perKota = new Map();
-    const sumber = new Map();
-    let baru = 0;
-    const remote = [];
-    for (const j of urut) {
-      perusahaan.add(j.perusahaan);
-      if (waktuDari(j) >= seminggu) baru++;
-      if (j.lokasiKerja === "remote") remote.push(j);
-      if (j.site) sumber.set(j.site, (sumber.get(j.site) || 0) + 1);
-      const lok = (j.lokasi || "").toLowerCase();
-      for (const k of KOTA_POPULER) {
-        if (lok.includes(k.toLowerCase())) perKota.set(k, (perKota.get(k) || 0) + 1);
-      }
-    }
-    const kotaTeratas = [...perKota.entries()].sort((a, b) => b[1] - a[1]).slice(0, 11);
-    const daftarSumber = [...sumber.entries()]
+    const kotaTeratas = Object.entries(st.kota || {})
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 11);
+    const daftarSumber = Object.entries(st.sumber || {})
       .sort((a, b) => b[1] - a[1])
       .map(([site]) => {
         const info = infoSumber({ site });
         return info.langsung ? site.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : info.nama;
       });
     return {
-      terbaru: urut.slice(0, 8),
-      ringkas: urut.slice(0, 5),
-      baru,
-      remote: remote.slice(0, 4),
-      jumlahRemote: remote.length,
-      perusahaan: perusahaan.size,
+      terbaru: st.terbaru || [],
+      ringkas: (st.terbaru || []).slice(0, 5),
+      baru: st.baru7 || 0,
+      remote: st.remoteContoh || [],
+      jumlahRemote: st.remote || 0,
+      jumlahSumber: Object.keys(st.sumber || {}).length,
       kotaTeratas,
       daftarSumber,
     };
-  }, [jobs]);
+  }, [st]);
 
-  const gajiMini = useMemo(() => {
-    const peta = hitungPetaGaji(jobs, { idrPerFn: idrPer, rates, daftarKota: KOTA_POPULER });
-    return peta.perBidang.tampil.slice(0, 4);
-  }, [jobs, rates]);
+  const { data: peta } = usePetaGaji();
+  const gajiMini = (peta?.perBidang?.tampil || []).slice(0, 4);
 
   const cari = (e) => {
     e.preventDefault();
@@ -393,8 +378,8 @@ export function BerandaPage() {
               <span>baru 7 hari</span>
             </div>
             <div>
-              <Angka nilai={data.perusahaan} loading={loading} />
-              <span>perusahaan</span>
+              <Angka nilai={data.jumlahSumber} loading={loading} />
+              <span>sumber</span>
             </div>
           </div>
           <ul className="pb-today-list">

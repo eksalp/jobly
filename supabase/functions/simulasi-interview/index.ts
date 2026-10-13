@@ -14,7 +14,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const GEMINI_URL = (m) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
-const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.0-flash";
+// gemini-2.0-flash sudah dimatikan Google (1 Juni 2026). Variabel
+// terpisah supaya model fungsi lain tidak ikut berubah.
+const MODEL =
+  Deno.env.get("GEMINI_MODEL_SIMULASI") ??
+  Deno.env.get("GEMINI_MODEL") ??
+  "gemini-3.8-flash";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,6 +61,7 @@ async function panggilGemini(prompt, maksToken = 1200) {
           responseMimeType: "application/json",
           maxOutputTokens: maksToken,
           temperature: 0.7,
+          thinkingConfig: { thinkingLevel: "low" },
         },
       }),
     });
@@ -292,6 +298,24 @@ serve(async (req) => {
         .from("sesi_token")
         .update({ terpakai: true })
         .eq("id", tokenId);
+
+      // Catat pemakaian token audio sesi ini (dikirim browser dari
+      // usageMetadata Live API). Dipakai untuk menghitung biaya nyata per
+      // sesi. Gagal mencatat tidak boleh menggagalkan penilaian.
+      const pakai = body.pemakaian || {};
+      console.log("Pemakaian simulasi:", JSON.stringify({ user: user.id, durasi: num(body.durasiDetik), ...pakai }));
+      supabaseAdmin
+        .from("pemakaian_ai")
+        .insert({
+          user_id: user.id,
+          fitur: "simulasi",
+          model: str(pakai.model).slice(0, 80) || null,
+          token_masuk: Math.round(num(pakai.masuk)),
+          token_keluar: Math.round(num(pakai.keluar)),
+          token_total: Math.round(num(pakai.total)),
+          detik: Math.round(num(body.durasiDetik)),
+        })
+        .then(({ error }) => error && console.warn("pemakaian_ai:", error.message));
 
       // Transkrip kosong tidak layak dinilai — hasilnya asal-asalan dan
       // justru menyesatkan kandidat.

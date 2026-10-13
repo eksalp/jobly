@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { T } from "../../theme";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
-import { useJobs } from "../../context/JobsContext";
+import { useKandidatLoker } from "../../hooks/useLoker";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useAuth } from "../../context/AuthContext";
 import { useSavedJobs } from "../../context/SavedJobsContext";
@@ -29,6 +29,7 @@ import {
   rankJobs,
   detectCategory,
   lengkapiKecocokan,
+  kataKunciPencarian,
 } from "../../utils/jobMatching";
 import { bacaDokumen, FORMAT_DITERIMA } from "../../utils/bacaDokumen";
 import { Glass } from "../../components/ui/Glass";
@@ -173,7 +174,6 @@ export function AnalyzerPanel({ setActive }) {
     window.dispatchEvent(new CustomEvent("jf:navigate", { detail: panel }));
   };
 
-  const { jobs, loading: jobsLoading } = useJobs();
   const { cvText: text, setCvText: setText } = useUserProfile();
   const { user } = useAuth();
   const langganan = useLangganan();
@@ -244,11 +244,13 @@ export function AnalyzerPanel({ setActive }) {
     }
   };
 
-  // Loker menyusul: begitu katalog selesai dimuat, hasil pencocokan
-  // diisikan ke tampilan tanpa mengganggu analisis yang sudah berjalan.
+  // Loker kandidat diambil dari server berdasarkan kata kunci CV (bukan
+  // seluruh katalog), lalu diurutkan di browser. Hasil pencocokan
+  // menyusul tanpa mengganggu analisis yang sudah berjalan.
+  const [kataCv, setKataCv] = useState([]);
+  const { jobs, loading: jobsLoading } = useKandidatLoker(kataCv, { aktif: kataCv.length > 0, n: 250 });
   useEffect(() => {
-    if (!freeResult || freeResult.ranked.length > 0 || jobs.length === 0)
-      return;
+    if (!freeResult || jobs.length === 0) return;
     const allRanked = lengkapiKecocokan(
       rankJobs(jobs, text, jobs.length, freeResult.cat),
     );
@@ -257,11 +259,13 @@ export function AnalyzerPanel({ setActive }) {
       ranked: allRanked,
       matchCount: allRanked.length,
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobs, freeResult?.cat]);
 
   const runFree = () => {
     if (text.trim().length < 30) return;
     const cat = detectCategory(text);
+    setKataCv(kataKunciPencarian(text));
     // Pencocokan loker dilewati kalau datanya belum siap. Analisis CV tidak
     // bergantung padanya, jadi user tidak perlu menunggu katalog selesai dimuat —
     // daftar lokernya menyusul sendiri lewat efek di bawah.

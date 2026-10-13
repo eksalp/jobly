@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Search, ArrowRight, Info } from "lucide-react";
-import { PublicLayout, KOTA_POPULER } from "../../components/publik/PublicLayout";
-import { useJobs } from "../../context/JobsContext";
-import { useKurs, idrPer } from "../../utils/kurs";
-import { hitungPetaGaji, gajiPosisi, jt, MIN_DATA } from "../../utils/petaGaji";
+import { PublicLayout } from "../../components/publik/PublicLayout";
+import { jt, MIN_DATA } from "../../utils/petaGaji";
+import { usePetaGaji, useTunda } from "../../hooks/useLoker";
 import { tautan } from "../../utils/navigasi";
 import { urlDetail } from "../../utils/sumberLoker";
 import { usePintasanCari } from "../../utils/interaksi";
@@ -78,8 +77,6 @@ function GrafikRentang({ data, periode }) {
 }
 
 export function PetaGajiPage() {
-  const { jobs, loading, terkunci } = useJobs();
-  const { rates } = useKurs();
   const [tab, setTab] = useState("perBidang");
   const [periode, setPeriode] = useState("bulan");
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get("posisi") || "");
@@ -95,12 +92,12 @@ export function PetaGajiPage() {
     window.history.replaceState({}, "", `/peta-gaji${p.toString() ? `?${p}` : ""}`);
   }, [q]);
 
-  const peta = useMemo(
-    () => hitungPetaGaji(jobs, { idrPerFn: idrPer, rates, daftarKota: KOTA_POPULER }),
-    [jobs, rates],
-  );
-  const posisi = useMemo(() => (q.trim().length >= 2 ? gajiPosisi(peta.baris, q.trim()) : null), [peta, q]);
-  const kelompok = peta[tab];
+  // Dihitung server dari loker bergaji & di-cache CDN 1 jam
+  const posisiTunda = useTunda(q, 400);
+  const { data, loading } = usePetaGaji(posisiTunda);
+  const peta = data || { total: 0, perBidang: { tampil: [] }, perKota: { tampil: [] }, perCara: { tampil: [] } };
+  const posisi = q.trim().length >= 2 ? data?.posisi || (loading ? null : { n: 0, contoh: [] }) : null;
+  const kelompok = peta[tab] || { tampil: [] };
   const kali = periode === "tahun" ? 12 : 1;
 
   return (
@@ -229,8 +226,8 @@ export function PetaGajiPage() {
 
         {!loading && (
           <p className="pb-gaji-catatan">
-            Dihitung dari {peta.total.toLocaleString("id-ID")} loker yang mencantumkan gaji
-            {terkunci ? ` (di antara loker yang terbuka untukmu)` : ""}. Nilai tengah dari
+            Dihitung dari {peta.total.toLocaleString("id-ID")} loker terbaru yang mencantumkan gaji.
+            Nilai tengah dari
             kisaran yang tercantum dipakai sebagai gaji satu loker. Gaji dari perusahaan
             luar negeri ikut dihitung, jadi angka remote cenderung lebih tinggi.
           </p>

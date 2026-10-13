@@ -5,8 +5,8 @@
  * disetarakan ke rupiah per bulan (kurs harian untuk mata uang asing),
  * lalu dikelompokkan per bidang, per kota, dan per cara kerja.
  */
-import { klasifikasiLoker } from "./jobMatching";
-import { kotaDari } from "./sumberLoker";
+import { klasifikasiLoker } from "./petaLoker.js";
+import { kotaDari } from "./sumberLoker.js";
 
 const PER_BULAN = {
   yearly: 1 / 12,

@@ -4,10 +4,10 @@ import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
 import { useJobs } from "../../context/JobsContext";
+import { useDaftarLoker, useTunda } from "../../hooks/useLoker";
 import { tautan } from "../../utils/navigasi";
 import { useHitungNaik, useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
 
-const PER_MUAT = 24;
 
 const SARING = [
   ["semua", "Semua remote"],
@@ -32,10 +32,6 @@ const jamDi = (zona) => {
   }
 };
 
-const waktu = (j) => {
-  const t = j.tanggal ? new Date(j.tanggal).getTime() : 0;
-  return Number.isFinite(t) ? t : 0;
-};
 
 function Angka({ nilai, loading }) {
   const ref = useHitungNaik(loading ? NaN : nilai);
@@ -43,53 +39,28 @@ function Angka({ nilai, loading }) {
 }
 
 export function RemotePage() {
-  const { jobs, loading } = useJobs();
+  const { statistik: st, loading: memuatStat } = useJobs();
   const [toast, elemenToast] = useToast();
   const [saring, setSaring] = useState("semua");
   const [q, setQ] = useState("");
-  const [tampil, setTampil] = useState(PER_MUAT);
   const sentinel = useRef(null);
   usePintasanCari("cari-remote");
 
   useEffect(() => {
     document.title = "Loker remote · Jobly";
   }, []);
-  useEffect(() => setTampil(PER_MUAT), [saring, q]);
 
-  const remote = useMemo(
-    () =>
-      jobs
-        .filter((j) => j.lokasiKerja === "remote" || j.lokasiKerja === "hybrid")
-        .sort((a, b) => waktu(b) - waktu(a)),
-    [jobs],
-  );
+  const kata = useTunda(q, 350);
+  const filter = {
+    q: kata.trim(),
+    lokasi: saring === "hybrid" ? "hybrid" : "remote",
+    asing: saring === "asing",
+    tipe: ["full-time", "freelance", "kontrak"].includes(saring) ? saring : "",
+  };
+  const { jobs: hasil, total, terkunci, loading, adaLagi, memuatLagi, muatLagi } = useDaftarLoker(filter);
+  useMuatOtomatis(sentinel, !loading && adaLagi && !memuatLagi, muatLagi);
 
-  const statistik = useMemo(() => {
-    const penuh = remote.filter((j) => j.lokasiKerja === "remote");
-    return {
-      total: penuh.length,
-      asing: penuh.filter((j) => j.mataUang && j.mataUang.toUpperCase() !== "IDR").length,
-      perusahaan: new Set(penuh.map((j) => j.perusahaan)).size,
-    };
-  }, [remote]);
-
-  const hasil = useMemo(() => {
-    const kata = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    return remote.filter((j) => {
-      if (saring === "hybrid") {
-        if (j.lokasiKerja !== "hybrid") return false;
-      } else if (j.lokasiKerja !== "remote") return false;
-      if (saring === "asing" && !(j.mataUang && j.mataUang.toUpperCase() !== "IDR")) return false;
-      if (["full-time", "freelance", "kontrak"].includes(saring) && j.tipeKerja !== saring) return false;
-      if (kata.length) {
-        const t = `${j.posisi} ${j.perusahaan} ${j.kategori}`.toLowerCase();
-        if (!kata.every((k) => t.includes(k))) return false;
-      }
-      return true;
-    });
-  }, [remote, saring, q]);
-
-  useMuatOtomatis(sentinel, !loading && hasil.length > tampil, () => setTampil((n) => n + PER_MUAT));
+  const statistik = { total: st.remote || 0, asing: st.remoteAsing || 0, baru: st.baru7 || 0 };
 
   return (
     <PublicLayout aktif="/remote">
@@ -137,16 +108,16 @@ export function RemotePage() {
           </div>
           <div className="pb-remote-stat">
             <div>
-              <Angka nilai={statistik.total} loading={loading} />
+              <Angka nilai={statistik.total} loading={memuatStat} />
               <span>loker full remote</span>
             </div>
             <div>
-              <Angka nilai={statistik.asing} loading={loading} />
+              <Angka nilai={statistik.asing} loading={memuatStat} />
               <span>bergaji mata uang asing</span>
             </div>
             <div>
-              <Angka nilai={statistik.perusahaan} loading={loading} />
-              <span>perusahaan</span>
+              <Angka nilai={Object.keys(st.sumber || {}).length} loading={memuatStat} />
+              <span>sumber loker</span>
             </div>
           </div>
         </div>
@@ -162,11 +133,12 @@ export function RemotePage() {
           ))}
         </div>
         <div className="pb-result">
-          <span>{loading ? "Memuat lowongan…" : <><b>{hasil.length.toLocaleString("id-ID")}</b> lowongan</>}</span>
+          <span>{loading ? "Memuat lowongan…" : <><b>{(total ?? 0).toLocaleString("id-ID")}</b> lowongan</>}</span>
         </div>
         <div className="pb-grid">
           {loading && Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)}
-          {!loading && hasil.slice(0, tampil).map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+          {!loading && hasil.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+          {memuatLagi && Array.from({ length: 4 }, (_, i) => <KartuLokerSkeleton key={`m${i}`} />)}
           {!loading && hasil.length === 0 && (
             <div className="pb-empty">
               <h3>Belum ada loker remote yang cocok</h3>
@@ -174,16 +146,16 @@ export function RemotePage() {
             </div>
           )}
         </div>
-        {!loading && hasil.length > tampil && (
+        {!loading && adaLagi && (
           <div className="pb-more" ref={sentinel}>
-            <button type="button" className="pb-btn pb-btn-outline" onClick={() => setTampil((n) => n + PER_MUAT)}>
-              Muat lebih banyak
+            <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={memuatLagi}>
+              {memuatLagi ? "Memuat…" : "Muat lebih banyak"}
             </button>
           </div>
         )}
-        {!loading && hasil.length <= tampil && (
+        {!loading && !adaLagi && terkunci > 0 && (
           <div className="pb-grid" style={{ marginTop: 18 }}>
-            <KartuKunci />
+            <KartuKunci jumlah={terkunci} />
           </div>
         )}
       </div>

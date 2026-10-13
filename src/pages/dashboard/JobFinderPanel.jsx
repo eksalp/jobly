@@ -9,7 +9,10 @@ import {
   persenKecocokan,
   detectCategory,
   alasanKecocokan,
+  kataKunciPencarian,
 } from "../../utils/jobMatching";
+import { useDaftarLoker, useKandidatLoker, useTunda } from "../../hooks/useLoker";
+import { KOTA_POPULER } from "../../data/kota";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { useToast } from "../../components/publik/PublicLayout";
 import { useApplications } from "../../hooks/useApplications";
@@ -103,7 +106,7 @@ const tanpaSkor = (j) => ({
 });
 
 export function JobFinderPanel({ setActive }) {
-  const { jobs, loading } = useJobs();
+  useJobs();
   const { skills, summary, cvText } = useUserProfile();
   const { user } = useAuth();
   const { tambah: tambahLamaran, sudahDilamar } = useApplications();
@@ -131,19 +134,7 @@ export function JobFinderPanel({ setActive }) {
     toast("Dicatat di Lamaran saya");
   };
 
-  // Daftar kota dari loker yang benar-benar ada; kota besar di depan
-  const kotaOptions = useMemo(() => {
-    const ada = new Set();
-    jobs.forEach((j) => {
-      const kota = normalkanKota(j.lokasi);
-      if (kota) ada.add(kota);
-    });
-    const prioritas = KOTA_PRIORITAS.filter((k) => ada.has(k));
-    const lain = [...ada]
-      .filter((k) => !KOTA_PRIORITAS.includes(k))
-      .sort((a, b) => a.localeCompare(b, "id"));
-    return [...prioritas, ...lain];
-  }, [jobs]);
+  const kotaOptions = KOTA_POPULER;
 
   // Teks referensi tambahan dari CV Builder
   const [cvProfileText, setCvProfileText] = useState("");
@@ -166,41 +157,60 @@ export function JobFinderPanel({ setActive }) {
   }, [hasProfile]);
 
   const kategori = hasProfile ? detectCategory(profileText) : null;
+  const modeCocok = matchOnly && hasProfile;
+
+  // Mode "Sesuai keahlianku": server mengirim kandidat yang judul/bidangnya
+  // mengandung kata kunci profil (maks. ±200), lalu diurutkan di browser.
+  const kataProfil = useMemo(
+    () => (hasProfile ? kataKunciPencarian(profileText, skills) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [profileText, hasProfile],
+  );
+  const kandidat = useKandidatLoker(kataProfil, { aktif: modeCocok });
 
   const ranked = useMemo(
-    () => (hasProfile ? rankJobs(jobs, profileText, jobs.length, kategori) : jobs.map(tanpaSkor)),
+    () => (modeCocok ? rankJobs(kandidat.jobs, profileText, kandidat.jobs.length, kategori) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [jobs, profileText, hasProfile],
+    [kandidat.jobs, profileText, modeCocok],
   );
 
-  const filtered = useMemo(() => {
-    let base;
-    if (matchOnly && hasProfile) {
-      base = ranked.filter((j) => j.skorInti >= MIN_MATCH_SCORE);
-    } else if (hasProfile) {
-      // rankJobs membuang skor 0, jadi ambil katalog lengkap dari `jobs`
-      const peta = new Map(ranked.map((r) => [r.id, r]));
-      base = jobs.map((j) => peta.get(j.id) || tanpaSkor(j));
-    } else {
-      base = ranked;
-    }
-    const q = query.trim().toLowerCase();
-    return base.filter(
+  const q = useTunda(query, 350);
+  const filteredCocok = useMemo(() => {
+    if (!modeCocok) return [];
+    const kata = q.trim().toLowerCase();
+    return ranked.filter(
       (j) =>
+        j.skorInti >= MIN_MATCH_SCORE &&
         (filterLokasi === "Semua" || j.lokasiKerja === filterLokasi) &&
         (filterTipe === "Semua" || j.tipeKerja === filterTipe) &&
         (filterKota === "Semua" || normalkanKota(j.lokasi) === filterKota) &&
-        (!q || `${j.posisi} ${j.perusahaan}`.toLowerCase().includes(q)),
+        (!kata || `${j.posisi} ${j.perusahaan}`.toLowerCase().includes(kata)),
     );
-  }, [ranked, jobs, matchOnly, hasProfile, query, filterLokasi, filterTipe, filterKota]);
+  }, [ranked, modeCocok, q, filterLokasi, filterTipe, filterKota]);
 
-  useMuatOtomatis(sentinel, !loading && filtered.length > tampil, () =>
-    setTampil((n) => n + PER_MUAT),
+  // Mode "Semua loker": halaman demi halaman dari server
+  const daftar = useDaftarLoker(
+    {
+      q: q.trim(),
+      kota: filterKota === "Semua" ? "" : filterKota,
+      lokasi: filterLokasi === "Semua" ? "" : filterLokasi,
+      tipe: filterTipe === "Semua" ? "" : filterTipe,
+    },
+    { aktif: !modeCocok },
   );
+
+  const loading = modeCocok ? kandidat.loading : daftar.loading;
+  const filtered = modeCocok ? filteredCocok : daftar.jobs;
+  const jumlah = modeCocok ? filteredCocok.length : daftar.total ?? 0;
+  const adaLagi = modeCocok ? filteredCocok.length > tampil : daftar.adaLagi;
+  const muatLagi = () => (modeCocok ? setTampil((n) => n + PER_MUAT) : daftar.muatLagi());
+  const tampilkan = modeCocok ? filteredCocok.slice(0, tampil) : daftar.jobs;
+
+  useMuatOtomatis(sentinel, !loading && adaLagi && !daftar.memuatLagi, muatLagi);
 
   useEffect(() => {
     setTampil(PER_MUAT);
-  }, [query, filterLokasi, filterKota, filterTipe, matchOnly, jobs.length]);
+  }, [query, filterLokasi, filterKota, filterTipe, matchOnly]);
 
   const infoCocok = (j) => {
     if (!hasProfile || !(j.skorInti >= MIN_MATCH_SCORE)) return null;
@@ -301,7 +311,7 @@ export function JobFinderPanel({ setActive }) {
             "Memuat lowongan…"
           ) : (
             <>
-              <b>{filtered.length.toLocaleString("id-ID")}</b>{" "}
+              <b>{jumlah.toLocaleString("id-ID")}</b>{" "}
               {matchOnly && hasProfile ? "loker cocok dengan profilmu" : "lowongan"}
               {adaFilter && (
                 <>
@@ -345,11 +355,11 @@ export function JobFinderPanel({ setActive }) {
         {loading && Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)}
 
         {!loading &&
-          filtered.slice(0, tampil).map((j) => (
+          tampilkan.map((j) => (
             <KartuLoker
               key={j.id}
               job={j}
-              cocok={matchOnly ? infoCocok(j) : null}
+              cocok={modeCocok ? infoCocok(j) : null}
               onLacak={lacak}
               dilamar={sudahDilamar(j.id)}
               onToast={toast}
@@ -379,21 +389,25 @@ export function JobFinderPanel({ setActive }) {
         )}
       </div>
 
-      {!loading && filtered.length > tampil && (
+      {!loading && adaLagi && (
         <div className="pb-more" ref={sentinel}>
-          <button type="button" className="pb-btn pb-btn-outline" onClick={() => setTampil((n) => n + PER_MUAT)}>
-            Muat lebih banyak
+          <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={daftar.memuatLagi}>
+            {daftar.memuatLagi ? "Memuat…" : "Muat lebih banyak"}
           </button>
-          Menampilkan {tampil.toLocaleString("id-ID")} dari {filtered.length.toLocaleString("id-ID")}
+          Menampilkan {tampilkan.length.toLocaleString("id-ID")} dari {jumlah.toLocaleString("id-ID")}
         </div>
       )}
-      {!loading && filtered.length <= tampil && (
+      {!loading && !adaLagi && !modeCocok && daftar.terkunci > 0 && (
         <div className="pb-grid" style={{ marginTop: 18 }}>
-          <KartuKunci />
+          <KartuKunci jumlah={daftar.terkunci} />
         </div>
       )}
-      {!loading && filtered.length > 0 && filtered.length <= tampil && (
-        <div className="pb-more">Semua loker yang terbuka sudah ditampilkan.</div>
+      {!loading && !adaLagi && filtered.length > 0 && (
+        <div className="pb-more">
+          {modeCocok
+            ? "Itu semua loker yang cocok dengan profilmu. Lihat “Semua loker” untuk pilihan lain."
+            : "Semua loker yang terbuka sudah ditampilkan."}
+        </div>
       )}
 
       {elemenToast}

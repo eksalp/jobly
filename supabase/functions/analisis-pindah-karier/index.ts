@@ -10,7 +10,7 @@ import { SKEMA_PINDAH } from "./skema-pindah.ts";
 
 const GEMINI_URL = (m) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
-const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.7-flash";
+const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.8-flash";
 const MODEL_CADANGAN =
   Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-3.6-flash";
 
@@ -54,6 +54,7 @@ async function panggilGemini(
   model,
   batasMs = BATAS_PANGGILAN_MS,
   pakaiSkema = true,
+  pakaiThinking = true,
 ) {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("GEMINI_API_KEY belum di-set.");
@@ -78,6 +79,8 @@ async function panggilGemini(
           // sebagai cadangan, dengan parsing manual sebagai gantinya.
           ...(pakaiSkema ? { responseSchema: SKEMA_PINDAH } : {}),
           maxOutputTokens: 5000,
+          // Level berpikir rendah: cukup untuk tugas terstruktur, lebih hemat
+          ...(pakaiThinking ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
           temperature: 0.4,
         },
       }),
@@ -97,6 +100,10 @@ async function panggilGemini(
 
   if (!res.ok) {
     const t = await res.text();
+    // Model yang tidak mengenal thinkingLevel: ulangi sekali tanpa itu
+    if (res.status === 400 && pakaiThinking && /thinking/i.test(t)) {
+      return panggilGemini(prompt, model, batasMs, pakaiSkema, false);
+    }
     const e = new Error(`Gemini error ${res.status}: ${t.slice(0, 200)}`);
     e.status = res.status;
     throw e;
