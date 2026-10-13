@@ -1,35 +1,10 @@
 import React from "react";
 import { T } from "../../theme";
+import { TandaJobly } from "./TandaJobly";
 
-/** Tanda Jobly: kotak emerald membulat dengan ikon tas kerja. */
+/** Tanda Jobly: tas kerja dengan petir (komponen bersama, lihat TandaJobly). */
 export function LogoMark({ size = 32 }) {
-  return (
-    <div
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size * 0.3,
-        background: T.accent,
-        display: "grid",
-        placeItems: "center",
-        flexShrink: 0,
-      }}
-    >
-      <svg
-        width={size * 0.54}
-        height={size * 0.54}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect x="2" y="7" width="20" height="14" rx="2" />
-        <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-      </svg>
-    </div>
-  );
+  return <TandaJobly ukuran={size} />;
 }
 
 /**
@@ -62,7 +37,7 @@ export function Logo({ size = 30, tagline = false }) {
               marginTop: 3,
             }}
           >
-            Loker gratis untuk semua
+            Cari kerja, lebih cepat
           </div>
         )}
       </div>

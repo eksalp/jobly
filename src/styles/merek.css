@@ -1,0 +1,96 @@
+/* Tanda Jobly — lihat src/components/ui/TandaJobly.jsx */
+.tj {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #14549a 0%, #0b3c6e 55%, #082c52 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 2px rgba(11, 60, 110, 0.25);
+}
+html[data-tema="gelap"] .tj {
+  background: linear-gradient(145deg, #3a78c8 0%, #245a9c 60%, #1a467c 100%);
+}
+.tj svg {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+.tj-petir {
+  fill: #ffc940;
+  transform-origin: 12px 14.2px;
+  filter: drop-shadow(0 0 0 rgba(255, 201, 64, 0));
+}
+.tj-kilau {
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.28) 50%, transparent 58%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Sambaran pertama saat halaman dibuka */
+  .tj:not(.tj-diam) .tj-petir {
+    animation: tj-sambar 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
+  }
+  /* Kilau tipis yang melintas sesekali */
+  .tj:not(.tj-diam) .tj-kilau {
+    animation: tj-kilau 7s ease-in-out 1.4s infinite;
+  }
+  /* Arahkan kursor ke logo → petir berkedip sekali */
+  a:hover > .tj .tj-petir,
+  .tj:hover .tj-petir {
+    animation: tj-kedip 0.55s ease-out both;
+  }
+}
+
+@keyframes tj-sambar {
+  0% {
+    opacity: 0;
+    transform: translateY(-3px) scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(0) scale(1.12);
+    filter: drop-shadow(0 0 3px rgba(255, 201, 64, 0.9));
+  }
+  55% {
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(255, 201, 64, 0));
+  }
+}
+@keyframes tj-kedip {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(255, 201, 64, 0));
+  }
+  30% {
+    opacity: 0.45;
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.14) rotate(-4deg);
+    filter: drop-shadow(0 0 3px rgba(255, 201, 64, 0.95));
+  }
+}
+@keyframes tj-kilau {
+  0%,
+  78% {
+    transform: translateX(-120%);
+  }
+  92%,
+  100% {
+    transform: translateX(120%);
+  }
+}
