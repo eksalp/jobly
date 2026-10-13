@@ -9,43 +9,66 @@
   overflow: visible;
 }
 .tj-titik {
-  transform-origin: 45.5px 8.5px;
-  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
 }
 
+/*
+ * Gerak berulang (siklus 8 detik):
+ *   0–15%   pita ditulis seperti goresan pena
+ *   15–84%  diam sebentar
+ *   84–95%  pita "dihapus" searah tulisan, lalu ditulis lagi
+ * Titik di atas memantul terus (siklus 2,4 detik), seperti bola
+ * yang memantul di ujung batang: melar saat naik, gepeng saat mendarat.
+ */
 @media (prefers-reduced-motion: no-preference) {
-  /* Sekali saat halaman dibuka: pita ditulis seperti goresan pena, lalu titik jatuh */
   .tj:not(.tj-diam) .tj-pena {
     stroke-dasharray: 100 101;
-    animation: tj-tulis 1.2s cubic-bezier(0.45, 0.05, 0.55, 1) 0.15s both;
+    animation: tj-tulis 8s linear 0.15s infinite both;
   }
-  /* Lengkung atas simpul baru muncul saat pena sampai di sana (±55% goresan),
-     supaya batang terlihat lewat di bawahnya, bukan tertimpa lebih dulu */
+  /* Lengkung atas simpul baru tampak saat pena sampai di sana, supaya
+     batang terlihat lewat di bawahnya (lihat komentar di komponen) */
   .tj:not(.tj-diam) .tj-atas {
-    animation: tj-tampak 0s linear 0.775s both;
+    animation: tj-atas 8s linear 0.15s infinite both;
   }
   .tj:not(.tj-diam) .tj-titik {
-    animation: tj-jatuh 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) 1.3s both;
-  }
-  a:hover > .tj .tj-titik {
-    transform: translateY(-2px) scale(1.08);
+    animation:
+      tj-jatuh 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) 1.3s both,
+      tj-mantul 2.4s linear 2.2s infinite;
   }
 }
 
 @keyframes tj-tulis {
-  from {
+  0% {
     stroke-dashoffset: 100;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 1);
   }
-  to {
+  15% {
     stroke-dashoffset: 0;
   }
+  84% {
+    stroke-dashoffset: 0;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1);
+  }
+  95% {
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
 }
-@keyframes tj-tampak {
-  from {
+@keyframes tj-atas {
+  0%,
+  7.7% {
     opacity: 0;
   }
-  to {
+  7.8%,
+  95% {
     opacity: 1;
+  }
+  95.1%,
+  100% {
+    opacity: 0;
   }
 }
 @keyframes tj-jatuh {
@@ -55,6 +78,34 @@
   }
   to {
     opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tj-mantul {
+  0% {
+    transform: none;
+  }
+  8% {
+    transform: translateY(0.6px) scale(1.14, 0.84);
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  26% {
+    transform: translateY(-9px) scale(0.92, 1.1);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5);
+  }
+  44% {
+    transform: translateY(0.6px) scale(1.16, 0.82);
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  54% {
+    transform: translateY(-3px) scale(0.97, 1.04);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5);
+  }
+  62% {
+    transform: translateY(0.3px) scale(1.06, 0.94);
+  }
+  70%,
+  100% {
     transform: none;
   }
 }

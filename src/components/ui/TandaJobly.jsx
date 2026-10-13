@@ -11,9 +11,9 @@ import React, { useId } from "react";
  *   2. gradasi di bagian batang yang lewat di bawah simpul
  *   3. lengkung atas simpul digambar ulang di paling atas
  *
- * Animasi (src/styles/merek.css): pita "ditulis" seperti goresan pena,
+ * Animasi (src/styles/merek.css): pita "ditulis" berulang seperti goresan pena,
  * mengikuti urutan menulis huruf j (batang turun, lalu memutar jadi simpul),
- * lewat mask yang garisnya memanjang. Setelah itu titiknya jatuh.
+ * lewat mask yang garisnya memanjang. Titiknya memantul terus.
  * Prop `diam` mematikan animasi.
  */
 const BIRU = "#1660F5";
