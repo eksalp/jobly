@@ -12,6 +12,35 @@ import { bahasa } from "../i18n.js";
 
 export const KURSUS = [
   {
+    // Kursus Excel unggulan: didahulukan untuk semua kebutuhan terkait Excel
+    // (lihat `prioritas` di cocokkanKursus)
+    id: "jagoan-excel",
+    judul: "Jagoan Excel: Belajar Excel sambil Praktik",
+    penyedia: "Jagoan Excel",
+    durasi: "Akses selamanya",
+    level: "Pemula sampai siap kerja",
+    harga: "Rp 19.000",
+    prioritas: true,
+    skills: [
+      "microsoft excel",
+      "excel",
+      "spreadsheet",
+      "spreadsheet dasar",
+      "formula excel",
+      "pivot table",
+      "google sheets",
+      "data cleaning",
+      "vlookup",
+      "tes kerja",
+    ],
+    kategori: [
+      "Administrasi & Sekretariat",
+      "Transaksi, Keuangan & Treasury",
+      "Data & Keamanan Siber",
+    ],
+    url: "https://jagoanexcel.com",
+  },
+  {
     id: "digital-marketing-fullstack-bootcamp",
     judul: "Digital Marketing: Fullstack Intensive Bootcamp - Batch 38",
     penyedia: "MySkill.id",
@@ -941,6 +970,9 @@ export function cocokkanKursus(
     // Kategori bidang yang sama
     if (kategori && k.kategori.includes(kategori)) skor += 2;
 
+    // Kursus unggulan selalu di urutan teratas kalau memang relevan
+    if (k.prioritas && skor > 0) skor += 10;
+
     // Kursus gratis sedikit didahulukan pada skor setara,
     // supaya rekomendasi tidak selalu mengarah ke yang berbayar.
     if (k.gratis) skor += 0.5;
@@ -955,7 +987,12 @@ export function cocokkanKursus(
     .map(tampilan);
 }
 
-const LEVEL_EN = { Pemula: "Beginner", Menengah: "Intermediate", "Semua Level": "All levels" };
+const LEVEL_EN = {
+  Pemula: "Beginner",
+  Menengah: "Intermediate",
+  "Semua Level": "All levels",
+  "Pemula sampai siap kerja": "Beginner to job-ready",
+};
 const BULAN_EN = {
   Januari: "January", Februari: "February", Maret: "March", Mei: "May", Juni: "June", Juli: "July",
   Agustus: "August", Oktober: "October", Desember: "December",
@@ -966,6 +1003,7 @@ function tampilan(k) {
   if (bahasa() !== "en") return k;
   const durasi = String(k.durasi || "")
     .replace("Video Course (akses fleksibel)", "Video course (flexible access)")
+    .replace("Akses selamanya", "Lifetime access")
     .replace(/(\d+) minggu/g, (_, n) => `${n} weeks`)
     .replace(/(\d+) bulan/g, (_, n) => `${n} months`)
     .replace(/\b(Januari|Februari|Maret|Mei|Juni|Juli|Agustus|Oktober|Desember)\b/g, (b) => BULAN_EN[b]);
