@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Menu,
+  BookOpen,
   X,
   ChevronDown,
   Search,
@@ -59,6 +60,7 @@ const I = {
   rencana: { t: t("Rencana lamar", "Application plan"), d: t("Target mingguan dan streak harian", "Weekly targets and daily streaks"), path: ke("rencana"), Ikon: CalendarCheck, baru: true },
   peta: { t: t("Peta gaji", "Salary map"), d: t("Kisaran gaji per bidang dan kota", "Salary ranges by field and city"), path: "/peta-gaji", Ikon: BarChart3, baru: true },
   cek: { t: t("Cek loker palsu", "Fake job checker"), d: t("Cek dulu sebelum kamu kirim data diri", "Check before you send personal details"), path: "/cek-loker", Ikon: ShieldCheck, baru: true },
+  panduan: { t: t("Panduan kerja remote", "Remote work guides"), d: t("Mulai jadi VA, CS, admin sosmed, dan lainnya", "Start as a VA, support agent, social media admin, and more"), path: "/panduan", Ikon: BookOpen, baru: true },
   kalkulator: { t: t("Kalkulator gaji", "Salary calculator"), d: t("Ubah gaji dolar ke rupiah", "Convert dollar pay to rupiah"), path: "/kalkulator-gaji", Ikon: Calculator },
   profil: { t: t("Profil karier", "Career profile"), d: t("Data diri, skill, dan pengalaman", "Personal details, skills, and experience"), path: ke("profile"), Ikon: User },
   cv: { t: "CV Builder", d: t("Bikin CV rapi, unduh dalam PDF", "Build a clean CV, download as PDF"), path: ke("cvbuilder"), Ikon: FilePlus2 },
@@ -84,7 +86,7 @@ export const MENU_APLIKASI = [
   {
     label: t("Persiapan", "Prepare"),
     kolom: [
-      { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi] },
+      { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi, I.panduan] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
     ],
   },
@@ -109,6 +111,7 @@ export const MENU_PUBLIK = [
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
     ],
   },
+  { label: t("Panduan", "Guides"), path: "/panduan" },
   { label: t("Peta gaji", "Salary map"), path: "/peta-gaji" },
   { label: t("Harga", "Pricing"), path: "/#harga" },
   { label: "FAQ", path: "/faq" },
@@ -620,6 +623,7 @@ export function SiteFooter() {
       tautan: [
         [t("Semua loker", "All jobs"), "/loker"],
         [t("Loker remote", "Remote jobs"), "/remote"],
+        [t("Panduan kerja remote", "Remote work guides"), "/panduan"],
         [t("Magang", "Internships"), "/loker?tipe=magang"],
         ["Fresh graduate", "/loker?q=fresh%20graduate"],
         [t("Peta gaji", "Salary map"), "/peta-gaji"],

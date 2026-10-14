@@ -43,7 +43,8 @@ export function RemotePage() {
   const { statistik: st, loading: memuatStat } = useJobs();
   const [toast, elemenToast] = useToast();
   const [saring, setSaring] = useState("semua");
-  const [q, setQ] = useState("");
+  // ?q=... dari tautan lain (mis. tombol di halaman Panduan)
+  const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get("q") || "");
   const sentinel = useRef(null);
   usePintasanCari("cari-remote");
 

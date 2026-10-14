@@ -21,6 +21,8 @@ import { DokumenPage } from "./publik/DokumenPage";
 import { RemotePage } from "./publik/RemotePage";
 import { CekLokerPage } from "./publik/CekLokerPage";
 import { PetaGajiPage } from "./publik/PetaGajiPage";
+import { PanduanPage } from "./publik/PanduanPage";
+import { DetailPanduanPage } from "./publik/DetailPanduanPage";
 import {
   adaProsesBerjalan,
   keteranganProses,
@@ -35,11 +37,13 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /loker            Daftar loker (publik, gratis untuk semua)
  *   /loker/<id>       Detail loker ala JobStreet (publik)
  *   /kalkulator-gaji  Kalkulator gaji mata uang asing → rupiah
+ *   /panduan          Panduan kerja remote untuk pemula
+ *   /panduan/<slug>   Satu panduan (profesi atau topik umum)
  *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "cek", "petagaji"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "cek", "petagaji", "panduan", "panduanDetail"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 
@@ -64,6 +68,8 @@ function parsePath(pathname) {
   }
   if (path === "/loker") return { page: "loker" };
   if (path === "/kalkulator-gaji") return { page: "kalkulator" };
+  if (path === "/panduan") return { page: "panduan" };
+  if (path.startsWith("/panduan/")) return { page: "panduanDetail", slug: path.slice("/panduan/".length) };
   if (path === "/remote") return { page: "remote" };
   if (path === "/cek-loker") return { page: "cek" };
   if (path === "/peta-gaji") return { page: "petagaji" };
@@ -235,6 +241,12 @@ function JobFinderApp() {
       break;
     case "petagaji":
       isi = <PetaGajiPage />;
+      break;
+    case "panduan":
+      isi = <PanduanPage />;
+      break;
+    case "panduanDetail":
+      isi = <DetailPanduanPage key={rute.slug} slug={rute.slug} />;
       break;
     case "dokumen":
       isi = <DokumenPage jenis={rute.jenis} />;
