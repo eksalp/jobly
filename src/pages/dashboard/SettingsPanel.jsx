@@ -352,8 +352,8 @@ export function SettingsPanel({ setActive }) {
             </div>
             <div style={{ fontSize: 12, color: T.inkSoft, marginTop: 2 }}>
               {langganan.aktif
-                ? t(`${langganan.sisaAnalisis} dari ${langganan.kuotaAnalisis} analisis tersisa · aktif ${langganan.sisaHari} hari lagi`, `${langganan.sisaAnalisis} of ${langganan.kuotaAnalisis} analyses left · active for ${langganan.sisaHari} more days`)
-                : t("5.000 loker & alat dasar gratis. Buka semua loker & fitur AI mulai Rp 9.000.", "5,000 jobs & the basic tools are free. Unlock every job & the AI features from Rp 9,000.")}
+                ? t(`Sisa kuota: ${langganan.sisaAnalisis}/${langganan.kuotaAnalisis} Review CV · ${langganan.sisaPindah}/${langganan.kuotaPindah} Pindah Karier · ${langganan.sisaInterview}/${langganan.kuotaInterview} Simulasi · aktif ${langganan.sisaHari} hari lagi`, `Credits left: ${langganan.sisaAnalisis}/${langganan.kuotaAnalisis} CV review · ${langganan.sisaPindah}/${langganan.kuotaPindah} Career switch · ${langganan.sisaInterview}/${langganan.kuotaInterview} Mock interview · active for ${langganan.sisaHari} more days`)
+                : t("Semua loker & alat dasar gratis. Latihan kerja & fitur AI mulai Rp 9.000.", "Every job & the basic tools are free. Practice & the AI features from Rp 9,000.")}
             </div>
           </div>
           <Button variant="outline" onClick={() => pergiKe("paket")}>

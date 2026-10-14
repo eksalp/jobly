@@ -5,9 +5,9 @@ import { useLangganan } from "./LanggananContext";
 import { t } from "../i18n.js";
 
 /**
- * Akun gratis & pengunjung membuka BATAS_GRATIS loker terbaru. Paket
- * berbayar yang masih aktif membuka semuanya. Batas ini ditegakkan di
- * server (/api/loker), bukan di browser.
+ * Semua loker kini terbuka untuk semua pengguna (lihat SEMUA_LOKER_GRATIS
+ * di api/_lib/db.js). BATAS_GRATIS disimpan agar batas lama mudah
+ * diaktifkan kembali bila diperlukan.
  */
 export const BATAS_GRATIS = 5000;
 
@@ -71,7 +71,6 @@ export function JobsProvider({ children }) {
   }, [muat]);
 
   const total = statistik.total || 0;
-  const gratis = statistik.gratis || Math.min(total, BATAS_GRATIS);
 
   const nilai = {
     statistik,
@@ -84,7 +83,8 @@ export function JobsProvider({ children }) {
     total,
     batasGratis: BATAS_GRATIS,
     /** Jumlah loker yang terkunci untuk akun saat ini. */
-    terkunci: penuh ? 0 : Math.max(0, total - gratis),
+    // Semua loker terbuka untuk semua akun sejak Oktober 2026
+    terkunci: 0,
   };
 
   return <JobsContext.Provider value={nilai}>{children}</JobsContext.Provider>;

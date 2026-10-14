@@ -7,15 +7,15 @@
  * Struktur bertingkat: tiap paket berbayar mencakup SEMUA fitur tier di
  * bawahnya, ditambah miliknya sendiri. Fitur dasar (CV Builder, LinkedIn
  * Builder, bank pertanyaan interview, pelacak lamaran) gratis selamanya
- * di tier Free, begitu juga 5.000 loker pertama. Paket berbayar membuka
- * SEMUA loker, analisis AI, dan fitur lanjutan.
+ * di tier Free, begitu juga SEMUA loker. Paket berbayar membuka latihan
+ * praktik, analisis AI, dan fitur lanjutan.
  */
 
 // Fitur yang sama di semua tier, gratis selamanya. Didefinisikan sekali
 // lalu disebar ke tiap paket, supaya tidak ada yang tertinggal saat
 // daftarnya berubah.
 const FITUR_DASAR = [
-  "5.000 loker — cari & saring per kota",
+  "Semua loker, bisa dicari dan disaring per kota",
   "CV Builder — bikin & unduh PDF, selamanya",
   "LinkedIn Builder — susun profil, selamanya",
   "140+ pertanyaan interview, termasuk level neraka",
@@ -35,7 +35,7 @@ export const PAKET: Record<string, any> = {
     ringkas: "Mulai tanpa biaya",
     fitur: [...FITUR_DASAR],
     tanpa: [
-      "Loker di atas 5.000",
+      "Latihan praktik 40 pekerjaan remote",
       "Analisis AI (CV & LinkedIn)",
       "Rencana Pindah Karier",
       "Simulasi interview dengan AI",
@@ -46,7 +46,7 @@ export const PAKET: Record<string, any> = {
     id: "coba",
     nama: "Starter",
     harga: 9000,
-    kuotaAnalisis: 1,
+    kuotaAnalisis: 2,
     kuotaPindah: 0,
     kuotaInterview: 0,
     durasiHari: 90, // 3 bulan
@@ -54,11 +54,10 @@ export const PAKET: Record<string, any> = {
     // Semua yang di Free, PLUS milik Starter
     fitur: [
       "Semua fitur Free, plus:",
-      "Buka SEMUA loker, tanpa batas 5.000",
+      "Latihan praktik lengkap untuk 40 pekerjaan remote",
       "Masa aktif 3 bulan",
-      "1x analisis AI (CV atau LinkedIn)",
+      "2x analisis AI (CV atau LinkedIn)",
       "Draft CV & LinkedIn dalam dua bahasa",
-      "Kuota analisis tidak hangus meski masa akses habis",
     ],
     tanpa: ["Rencana Pindah Karier", "Simulasi interview dengan AI"],
   },
@@ -67,7 +66,7 @@ export const PAKET: Record<string, any> = {
     id: "aktif",
     nama: "Pro",
     harga: 19000,
-    kuotaAnalisis: 3,
+    kuotaAnalisis: 5,
     kuotaPindah: 2,
     kuotaInterview: 1,
     durasiHari: 180, // 6 bulan
@@ -76,7 +75,7 @@ export const PAKET: Record<string, any> = {
     fitur: [
       "Semua fitur Starter, plus:",
       "Masa aktif 6 bulan",
-      "3x analisis AI — cek ulang tiap revisi CV",
+      "5x analisis AI — cek ulang tiap revisi CV",
       "2x Rencana Pindah Karier",
       "1x simulasi interview AI bersuara (10 menit)",
       "Riwayat analisis tersimpan, bisa dibandingkan",
@@ -88,17 +87,17 @@ export const PAKET: Record<string, any> = {
     id: "serius",
     nama: "Max",
     harga: 29000,
-    kuotaAnalisis: 10,
+    kuotaAnalisis: 12,
     kuotaPindah: 5,
-    kuotaInterview: 2,
+    kuotaInterview: 3,
     durasiHari: 365, // 1 tahun
     ringkas: "Untuk pencarian yang butuh waktu",
     fitur: [
       "Semua fitur Pro, plus:",
       "Masa aktif 1 tahun",
-      "10x analisis AI",
+      "12x analisis AI",
       "5x Rencana Pindah Karier",
-      "2x simulasi interview AI bersuara (@10 menit)",
+      "3x simulasi interview AI bersuara (@10 menit)",
     ],
     tanpa: [],
   },

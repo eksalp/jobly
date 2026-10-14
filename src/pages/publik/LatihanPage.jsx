@@ -14,8 +14,8 @@ import {
 import { t } from "../../i18n.js";
 import { IkonPanduan } from "./PanduanPage";
 
-/** Paket yang membuka latihan praktik: Pro dan Max. */
-const PAKET_LATIHAN = ["aktif", "serius"];
+/** Paket yang membuka latihan praktik: semua paket berbayar (Starter, Pro, Max). */
+const PAKET_LATIHAN = ["coba", "aktif", "serius"];
 
 /* ------------------------------------------------------------------ */
 /*  Pesan bergaya aplikasi chat/email                                  */
@@ -332,11 +332,11 @@ function KunciPro({ set, masuk }) {
       <span className="pb-lt-kunci-ikon">
         <Lock size={20} />
       </span>
-      <h3>{t("Lanjutkan latihan dengan Pro", "Continue practising with Pro")}</h3>
+      <h3>{t("Lanjutkan latihan dengan paket berbayar", "Continue with a paid plan")}</h3>
       <p>
         {t(
-          `Soal pertama tadi gratis. Paket Pro dan Max membuka ${set.kuis.length - 1} soal lainnya, simulasi hari kerja, dan ${set.tugas.length} tugas dari klien lengkap dengan permintaan revisi, checklist penilaian, dan contoh jawaban, untuk semua pekerjaan di Panduan Remote Working.`,
-          `The first question was free. Pro and Max unlock the other ${set.kuis.length - 1} questions, a workday simulation, and ${set.tugas.length} client tasks with revision requests, scoring checklists, and sample answers, for every role in the Remote Working Guide.`,
+          `Soal pertama tadi gratis. Semua paket berbayar, mulai Starter Rp9.000, membuka ${set.kuis.length - 1} soal lainnya, simulasi hari kerja, dan ${set.tugas.length} tugas dari klien lengkap dengan permintaan revisi, checklist penilaian, dan contoh jawaban, untuk semua pekerjaan di Panduan Remote Working.`,
+          `The first question was free. Every paid plan, from Starter at Rp9,000, unlocks the other ${set.kuis.length - 1} questions, a workday simulation, and ${set.tugas.length} client tasks with revision requests, scoring checklists, and sample answers, for every role in the Remote Working Guide.`,
         )}
       </p>
       <ul className="pb-lt-kunci-daftar">
@@ -362,7 +362,7 @@ function KunciPro({ set, masuk }) {
         )}
         <button type="button" className="pb-btn pb-btn-primary" onClick={kePaket}>
           <Sparkles size={15} />
-          {t("Lihat paket Pro", "See Pro plans")}
+          {t("Lihat paket", "See plans")}
         </button>
       </div>
     </div>
@@ -447,7 +447,7 @@ export function LatihanPage({ slug }) {
           </span>
           <div>
             <span className="pb-label">
-              {t("Latihan praktik", "Practice")} <span className="pb-tag pro">Pro</span>
+              {t("Latihan praktik", "Practice")} <span className="pb-tag pro">{t("Berbayar", "Paid")}</span>
             </span>
             <h1>{p.judul}</h1>
             <p>

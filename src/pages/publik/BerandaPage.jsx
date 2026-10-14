@@ -32,7 +32,6 @@ import { labelTampil } from "../../data/taxonomy";
 import { infoSumber, urlDetail } from "../../utils/sumberLoker";
 import { usePetaGaji } from "../../hooks/useLoker";
 import { SEMUA_TIER, rupiah, labelDurasi } from "../../data/paket";
-import { BATAS_GRATIS } from "../../context/JobsContext";
 import { FAQ_BERANDA } from "../../data/faq";
 import { keHalaman, tautan } from "../../utils/navigasi";
 import { logoPerusahaan, waktuRelatif, kotaDari } from "../../utils/sumberLoker";
@@ -245,7 +244,7 @@ function MiniSuara() {
 /* ---------------------------------------------------------------- */
 
 export function BerandaPage() {
-  const { statistik: st, loading, total, terkunci } = useJobs();
+  const { statistik: st, loading, total } = useJobs();
   const { session } = useAuth();
   const masuk = Boolean(session);
   const [q, setQ] = useState("");
@@ -561,7 +560,7 @@ export function BerandaPage() {
 
             <a className="pb-bento-item" data-muncul="" {...tautan(fitur("overview"))}>
               <div className="teks">
-                <span className="pb-tag pro">Pro</span>
+                <span className="pb-tag pro">{t("Berbayar", "Paid")}</span>
                 <h3>
                   <FileSearch size={17} /> {t("Review CV dengan AI", "AI CV review")}
                 </h3>
@@ -682,11 +681,11 @@ export function BerandaPage() {
           <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">{t("Harga", "Pricing")}</span>
-              <h2>{t(`Mulai gratis. Buka semuanya mulai ${rupiah(SEMUA_TIER[1].harga)}.`, `Start free. Unlock everything from ${rupiah(SEMUA_TIER[1].harga)}.`)}</h2>
+              <h2>{t(`Semua loker gratis. Latihan dan fitur AI mulai ${rupiah(SEMUA_TIER[1].harga)}.`, `Every job is free. Practice and AI features from ${rupiah(SEMUA_TIER[1].harga)}.`)}</h2>
               <p>
                 {t(
-                  `Akun gratis membuka ${angka(BATAS_GRATIS)} loker${terkunci ? ` dari ${angka(total)}` : ""}. Paket berbayar cukup sekali bayar, tanpa langganan otomatis, dan membuka semua loker.`,
-                  `A free account opens ${angka(BATAS_GRATIS)} jobs${terkunci ? ` out of ${angka(total)}` : ""}. Paid plans are a one-time payment, never auto-renew, and unlock every job.`,
+                  `Semua ${total ? angka(total) + " " : ""}loker terbuka gratis untuk semua orang. Paket berbayar cukup sekali bayar, tanpa langganan otomatis, dan membuka latihan praktik serta fitur AI.`,
+                  `All ${total ? angka(total) + " " : ""}jobs are open to everyone for free. Paid plans are a one-time payment, never auto-renew, and unlock hands-on practice and the AI features.`,
                 )}
               </p>
             </div>

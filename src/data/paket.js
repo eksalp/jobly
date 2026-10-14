@@ -8,19 +8,20 @@ import { lokal, t } from "../i18n.js";
  * Struktur bertingkat: tiap paket berbayar mencakup SEMUA fitur tier di
  * bawahnya, ditambah miliknya sendiri. Fitur dasar (CV Builder, LinkedIn
  * Builder, bank pertanyaan interview, pelacak lamaran) gratis selamanya
- * di tier Free, begitu juga 5.000 loker pertama. Paket berbayar membuka
- * SEMUA loker, analisis AI, dan fitur lanjutan.
+ * di tier Free, begitu juga SEMUA loker. Paket berbayar membuka latihan
+ * praktik, analisis AI, dan fitur lanjutan.
  */
 
 // Fitur yang sama di semua tier, gratis selamanya. Didefinisikan sekali
 // lalu disebar ke tiap paket, supaya tidak ada yang tertinggal saat
 // daftarnya berubah.
 const FITUR_DASAR = [
-  t("5.000 loker, bisa dicari dan disaring per kota", "5,000 jobs to search and filter by city"),
+  t("Semua loker, bisa dicari dan disaring per kota", "Every job, searchable and filterable by city"),
   t("CV Builder: buat dan unduh PDF, gratis selamanya", "CV Builder: create and download a PDF, free forever"),
   t("LinkedIn Builder: susun profil, gratis selamanya", "LinkedIn Builder: write your profile, free forever"),
   t("140+ pertanyaan interview, termasuk level neraka", "140+ interview questions, including the hardest ones"),
   t("Pelacak lamaran untuk memantau progres", "Application tracker to follow your progress"),
+  t("Panduan Remote Working untuk 40 pekerjaan", "Remote Working Guide for 40 roles"),
 ];
 
 export const PAKET = {
@@ -36,11 +37,10 @@ export const PAKET = {
     ringkas: t("Mulai tanpa biaya", "Start at no cost"),
     fitur: [...FITUR_DASAR],
     tanpa: [
-      t("Loker di atas 5.000", "Jobs beyond 5,000"),
+      t("Latihan praktik untuk 40 pekerjaan remote", "Hands-on practice for 40 remote roles"),
       t("Analisis AI (CV & LinkedIn)", "AI analysis (CV & LinkedIn)"),
       t("Rencana Pindah Karier", "Career Switch plan"),
       t("Simulasi interview dengan AI", "AI mock interview"),
-      t("Latihan praktik untuk 40 pekerjaan remote", "Hands-on practice for 40 remote roles"),
     ],
   },
 
@@ -48,24 +48,22 @@ export const PAKET = {
     id: "coba",
     nama: "Starter",
     harga: 9000,
-    kuotaAnalisis: 1,
+    kuotaAnalisis: 2,
     kuotaPindah: 0,
     kuotaInterview: 0,
     durasiHari: 90, // 3 bulan
-    ringkas: t("Coba fitur AI", "Try the AI features"),
+    ringkas: t("Latihan kerja dan coba fitur AI", "Practice and try the AI features"),
     // Semua yang di Free, PLUS milik Starter
     fitur: [
       t("Semua fitur Free, plus:", "Everything in Free, plus:"),
-      t("Buka SEMUA loker, tanpa batas 5.000", "Unlock ALL jobs, no 5,000 limit"),
+      t("Latihan praktik lengkap untuk 40 pekerjaan remote", "Full hands-on practice for 40 remote roles"),
       t("Masa aktif 3 bulan", "Active for 3 months"),
-      t("1x analisis AI (CV atau LinkedIn)", "1 AI analysis (CV or LinkedIn)"),
+      t("2x analisis AI (CV atau LinkedIn)", "2 AI analyses (CV or LinkedIn)"),
       t("Draft CV & LinkedIn dalam dua bahasa", "CV & LinkedIn drafts in two languages"),
-      t("Kuota analisis tidak hangus meski masa akses habis", "Analysis credits don't expire when access ends"),
     ],
     tanpa: [
       t("Rencana Pindah Karier", "Career Switch plan"),
       t("Simulasi interview dengan AI", "AI mock interview"),
-      t("Latihan praktik untuk 40 pekerjaan remote", "Hands-on practice for 40 remote roles"),
     ],
   },
 
@@ -73,7 +71,7 @@ export const PAKET = {
     id: "aktif",
     nama: "Pro",
     harga: 19000,
-    kuotaAnalisis: 3,
+    kuotaAnalisis: 5,
     kuotaPindah: 2,
     kuotaInterview: 1,
     durasiHari: 180, // 6 bulan
@@ -82,10 +80,9 @@ export const PAKET = {
     fitur: [
       t("Semua fitur Starter, plus:", "Everything in Starter, plus:"),
       t("Masa aktif 6 bulan", "Active for 6 months"),
-      t("3x analisis AI, cukup untuk cek ulang setelah revisi CV", "3 AI analyses, enough to recheck after revising your CV"),
+      t("5x analisis AI, cukup untuk cek ulang setelah revisi CV", "5 AI analyses, enough to recheck after revising your CV"),
       t("2x Rencana Pindah Karier", "2 Career Switch plans"),
       t("1x simulasi interview AI bersuara (10 menit)", "1 AI voice mock interview (10 minutes)"),
-      t("Latihan praktik untuk 40 pekerjaan remote", "Hands-on practice for 40 remote roles"),
       t("Riwayat analisis tersimpan, bisa dibandingkan", "Saved analysis history you can compare"),
     ],
     tanpa: [],
@@ -95,17 +92,17 @@ export const PAKET = {
     id: "serius",
     nama: "Max",
     harga: 29000,
-    kuotaAnalisis: 10,
+    kuotaAnalisis: 12,
     kuotaPindah: 5,
-    kuotaInterview: 2,
+    kuotaInterview: 3,
     durasiHari: 365, // 1 tahun
     ringkas: t("Untuk pencarian yang butuh waktu", "For a longer job search"),
     fitur: [
       t("Semua fitur Pro, plus:", "Everything in Pro, plus:"),
       t("Masa aktif 1 tahun", "Active for 1 year"),
-      t("10x analisis AI", "10 AI analyses"),
+      t("12x analisis AI", "12 AI analyses"),
       t("5x Rencana Pindah Karier", "5 Career Switch plans"),
-      t("2x simulasi interview AI bersuara (@10 menit)", "2 AI voice mock interviews (10 minutes each)"),
+      t("3x simulasi interview AI bersuara (@10 menit)", "3 AI voice mock interviews (10 minutes each)"),
     ],
     tanpa: [],
   },

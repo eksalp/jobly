@@ -8,7 +8,7 @@ export const PAKET = {
     id: "coba",
     nama: "Starter",
     harga: 9000,
-    kuotaAnalisis: 1,
+    kuotaAnalisis: 2,
     kuotaPindah: 0,
     kuotaInterview: 0,
     durasiHari: 90, // 3 bulan
@@ -17,7 +17,7 @@ export const PAKET = {
     id: "aktif",
     nama: "Pro",
     harga: 19000,
-    kuotaAnalisis: 3,
+    kuotaAnalisis: 5,
     kuotaPindah: 2,
     kuotaInterview: 1,
     durasiHari: 180, // 6 bulan
@@ -26,9 +26,9 @@ export const PAKET = {
     id: "serius",
     nama: "Max",
     harga: 29000,
-    kuotaAnalisis: 10,
+    kuotaAnalisis: 12,
     kuotaPindah: 5,
-    kuotaInterview: 2,
+    kuotaInterview: 3,
     durasiHari: 365, // 1 tahun
   },
 };

@@ -17,6 +17,9 @@ import { DAFTAR_PAKET, SEMUA_TIER, PAKET, rupiah, labelDurasi } from "../../data
 import { RiwayatPembelian } from "../../components/RiwayatPembelian";
 import { lokal, t } from "../../i18n.js";
 
+/** Paket berbayar yang membuka latihan praktik. */
+const PAKET_LATIHAN_AKTIF = ["coba", "aktif", "serius"];
+
 /**
  * Memuat script Midtrans Snap sekali saja.
  *
@@ -207,7 +210,7 @@ export function PaketPanel() {
             lineHeight: 1.65,
           }}
         >
-          {t("5.000 loker, CV Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka seluruh loker. Paket berbayar menambah kuota analisis AI, Pindah Karier, dan simulasi interview.", "5,000 jobs, the CV Builder, and the LinkedIn Builder are free forever. Paid plans unlock every job and add credits for AI analysis, Career Switch, and mock interviews.")}
+          {t("Semua loker, CV Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka latihan praktik untuk 40 pekerjaan remote dan menambah kuota analisis AI, Pindah Karier, dan simulasi interview.", "Every job, the CV Builder, and the LinkedIn Builder are free forever. Paid plans unlock hands-on practice for 40 remote roles and add credits for AI analysis, Career Switch, and mock interviews.")}
         </div>
       </div>
 
@@ -233,12 +236,34 @@ export function PaketPanel() {
             <div style={{ fontSize: 11.5, color: T.inkSoft, marginTop: 2 }}>
               {langganan.jumlahPaket > 1 &&
                 t(`${langganan.jumlahPaket} paket digabung · `, `${langganan.jumlahPaket} plans combined · `)}
-              {langganan.sisaAnalisis} dari {langganan.kuotaAnalisis}{" "}{t("analisis tersisa · berakhir", "analyses left · ends")}{" "}
+              {t("Berakhir", "Ends")}{" "}
               {new Date(langganan.berakhirAt).toLocaleDateString(lokal(), {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
               })}
+              {PAKET_LATIHAN_AKTIF.includes(langganan.paket) && t(" · latihan praktik terbuka", " · practice unlocked")}
+            </div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+              {[
+                [t("Review CV", "CV review"), langganan.sisaAnalisis, langganan.kuotaAnalisis],
+                [t("Pindah Karier", "Career switch"), langganan.sisaPindah, langganan.kuotaPindah],
+                [t("Simulasi interview", "Mock interview"), langganan.sisaInterview, langganan.kuotaInterview],
+              ].map(([label, sisa, total]) => (
+                <div key={label} style={{ flex: "1 1 120px", minWidth: 120, padding: "8px 10px", borderRadius: 10, background: "var(--t-surface-2, rgba(127,127,127,0.08))" }}>
+                  <div style={{ fontSize: 11, color: T.inkSoft }}>{label}</div>
+                  <div style={{ fontSize: 15, fontWeight: 650, color: total ? T.ink : T.inkSoft }}>
+                    {total ? (
+                      <>
+                        {sisa}
+                        <span style={{ fontSize: 11.5, fontWeight: 500, color: T.inkSoft }}> / {total} {t("tersisa", "left")}</span>
+                      </>
+                    ) : (
+                      <span style={{ fontSize: 12, fontWeight: 500 }}>{t("Tidak termasuk", "Not included")}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
           {langganan.segeraBerakhir && (
@@ -278,7 +303,7 @@ export function PaketPanel() {
           <div style={{ fontSize: 12, color: "var(--t-warn-ink)", lineHeight: 1.6 }}>
             {t("Kuota kamu masih banyak:", "You still have plenty of credits:")}{" "}
             <strong>{langganan.sisaAnalisis}{" "}{t("analisis tersisa", "analyses left")}</strong>{" "}{t("dan aktif", "and active for")}{" "}
-            {langganan.sisaHari}{" "}{t("hari lagi. Kalau tetap membeli, kuotanya ditambahkan dan masa berlakunya disambung dari tanggal berakhir sekarang. Tidak ada yang hangus, tapi mungkin belum perlu buru-buru.", "more days. If you buy now, the credits are added and validity extends from your current end date. Nothing is lost, but there may be no need to rush.")}
+            {langganan.sisaHari}{" "}{t("hari lagi. Kalau tetap membeli, kuotanya ditambahkan dan masa berlakunya disambung dari tanggal berakhir sekarang. Kuota lama tetap ada, jadi belum perlu buru-buru.", "more days. If you buy now, the credits are added and validity extends from your current end date. Your current credits stay, so there's no need to rush.")}
           </div>
         </Glass>
       )}
@@ -568,7 +593,7 @@ export function PaketPanel() {
         <br />
         {t("Paket berlaku sejak pembayaran terkonfirmasi dan tidak diperpanjang otomatis.", "Plans start once payment is confirmed and never renew automatically.")}
         <br />
-        {t("Membeli saat paket masih aktif akan menambah kuota dan menyambung masa berlakunya. Sisa yang belum terpakai tidak hangus.", "Buying while a plan is active adds credits and extends validity. Unused credits never expire.")}
+        {t("Membeli saat paket masih aktif akan menambah kuota dan menyambung masa berlakunya. Sisa kuota yang belum terpakai ikut dijumlahkan.", "Buying while a plan is active adds credits and extends validity. Unused credits are added together.")}
       </div>
 
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

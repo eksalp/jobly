@@ -464,9 +464,9 @@ export function AnalyzerPanel({ setActive }) {
   // Analisis ulang tanpa bayar lagi — pembayaran tetap tercatat 'paid' di server
   const cobaLagi = () => runAiAnalysis(orderTerakhir);
 
-  const sisaTerkunci = freeResult
-    ? Math.max(0, freeResult.matchCount - LOKER_GRATIS)
-    : 0;
+  // Semua loker kini terbuka untuk semua akun, jadi tidak ada lagi
+  // loker cocok yang dikunci di balik paket.
+  const sisaTerkunci = 0;
 
   const isPaymentBusy = aiLoading || memulihkan;
 
@@ -1042,11 +1042,9 @@ export function AnalyzerPanel({ setActive }) {
             )}
           </Glass>
 
-          {/* Daftar loker — HANYA untuk yang belum berlangganan.
-              Pelanggan sudah punya akses penuh di Job Finder, jadi
-              menampilkannya lagi di sini cuma mengalihkan perhatian
-              dari hasil analisis. */}
-          {!langganan.aktif && (
+          {/* Daftar loker versi pratinjau terkunci sudah tidak dipakai:
+              semua loker terbuka, jadi semua akun mendapat tautan ke Job Finder. */}
+          {false && (
             <>
               <div
                 style={{
@@ -1128,8 +1126,8 @@ export function AnalyzerPanel({ setActive }) {
             </>
           )}
 
-          {/* Sudah berlangganan: cukup tautan singkat ke Job Finder */}
-          {langganan.aktif && freeResult.matchCount > 0 && (
+          {/* Tautan singkat ke Job Finder, untuk semua akun */}
+          {freeResult.matchCount > 0 && (
             <div
               style={{
                 display: "flex",
@@ -1209,9 +1207,6 @@ export function AnalyzerPanel({ setActive }) {
                     }}
                   >
                     {[
-                      sisaTerkunci > 0
-                        ? t(`${sisaTerkunci} loker cocok lainnya yang masih terkunci`, `${sisaTerkunci} more matching jobs still locked`)
-                        : t("Semua loker yang cocok dengan profilmu", "Every job matching your profile"),
                       t("Arah karier lengkap: posisi target dan bidang alternatif", "Full career direction: target roles and alternative fields"),
                       sourceType === "cv"
                         ? t("Skor ATS dan temuan spesifik per bagian CV", "ATS score and specific findings per CV section")

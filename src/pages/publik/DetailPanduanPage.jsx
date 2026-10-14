@@ -270,7 +270,7 @@ function AjakanLatihan({ p }) {
       <span className="pb-lt-ajak-isi">
         <b>
           {selesai ? t("Latihan sudah selesai", "Practice completed") : t("Latihan praktik", "Practice")}{" "}
-          <span className="pb-tag pro">Pro</span>
+          <span className="pb-tag pro">{t("Berbayar", "Paid")}</span>
         </b>
         <span>
           {selesai

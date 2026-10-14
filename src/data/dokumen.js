@@ -184,7 +184,7 @@ const DOKUMEN_ID = {
             daftar: [
               "Harga dalam Rupiah dan dibayar sekali untuk setiap pembelian. Tidak ada tagihan berulang dan tidak ada perpanjangan otomatis.",
               "Masa berlaku dihitung sejak pembayaran dikonfirmasi.",
-              "Akun gratis dapat membuka 5.000 lowongan terbaru yang dibagi rata dari setiap sumber. Selama paket berbayar masih berlaku, seluruh lowongan terbuka; setelah masa berlaku habis, akses kembali ke 5.000 lowongan.",
+              "Seluruh lowongan dapat dibuka gratis oleh semua pengguna, dengan atau tanpa paket berbayar. Paket berbayar membuka latihan praktik dan kuota fitur AI selama masa berlakunya.",
               "Sisa kuota Review CV tetap bisa dipakai setelah masa berlaku habis. Pindah Karier dan Simulasi Interview hanya bisa dipakai selama paket masih berlaku.",
               "Jika membeli lebih dari satu paket, kuotanya dijumlahkan dan setiap paket memiliki masa berlakunya sendiri.",
               "Perubahan harga tidak berlaku untuk paket yang sudah dibayar.",
@@ -506,7 +506,7 @@ const DOKUMEN_EN = {
             daftar: [
               "Prices are in rupiah and paid once per purchase. There are no recurring charges and no automatic renewal.",
               "The validity period starts when payment is confirmed.",
-              "A free account opens the 5,000 newest jobs, split evenly across sources. While a paid plan is active, every job is unlocked; after it expires, access returns to 5,000 jobs.",
+              "Every job can be opened for free by all users, with or without a paid plan. Paid plans unlock hands-on practice and AI feature credits while they're active.",
               "Remaining CV Review credits can still be used after a plan expires. Career Switch and Mock Interview can only be used while a plan is active.",
               "If you buy more than one plan, credits add up and each plan keeps its own validity period.",
               "Price changes don't apply to plans already paid for.",

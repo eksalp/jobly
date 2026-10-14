@@ -450,7 +450,7 @@ function MenuAkun({ aktif }) {
               <>
                 <div style={{ fontWeight: 600, color: "var(--ink)" }}>{t("Paket Free", "Free plan")}</div>
                 <div className="exp" style={{ marginTop: 2 }}>
-                  {t("5.000 loker dan alat dasar sudah gratis. Mau buka semua loker dan fitur AI? Mulai Rp 9.000.", "5,000 jobs and the basic tools are free. Want every job and the AI features? From Rp 9,000.")}
+                  {t("Semua loker dan alat dasar sudah gratis. Mau latihan kerja dan fitur AI? Mulai Rp 9.000.", "Every job and the basic tools are free. Want hands-on practice and the AI features? From Rp 9,000.")}
                 </div>
               </>
             )}

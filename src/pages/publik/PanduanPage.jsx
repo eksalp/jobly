@@ -80,8 +80,8 @@ export function PanduanPage() {
           <span>
             <b>{t("Baru: latihan praktik untuk setiap pekerjaan.", "New: hands-on practice for every role.")}</b>{" "}
             {t(
-              "Buka panduan mana saja, lalu coba kuis situasi kerja dan brief klien sungguhan. Tersedia di paket Pro.",
-              "Open any guide, then try the work-situation quiz and real client briefs. Available on the Pro plan.",
+              "Buka panduan mana saja, lalu coba kuis situasi kerja dan brief klien sungguhan. Tersedia mulai paket Starter.",
+              "Open any guide, then try the work-situation quiz and real client briefs. Available from the Starter plan.",
             )}
           </span>
         </div>

@@ -202,6 +202,14 @@ export const BATAS_GRATIS = 5000;
 let potongCache = null;
 
 /**
+ * Sejak Oktober 2026 SEMUA loker terbuka untuk semua pengguna, termasuk
+ * yang belum masuk. Paket berbayar kini menjual fitur (latihan praktik
+ * dan kuota AI), bukan akses loker. Set ke false untuk menghidupkan lagi
+ * batas 5.000 loker gratis.
+ */
+export const SEMUA_LOKER_GRATIS = true;
+
+/**
  * Jatah 5.000 loker gratis dibagi rata ke SETIAP SUMBER (LinkedIn, Indeed,
  * BCA, Pertamina, …), supaya pengguna gratis tetap melihat perwakilan dari
  * semua situs — bukan hanya sumber yang paling banyak lokernya.
@@ -219,6 +227,7 @@ let potongCache = null;
  * tanggal per sumber, disimpan di memori fungsi selama 10 menit.
  */
 export async function titikPotong() {
+  if (SEMUA_LOKER_GRATIS) return { aktif: false, totalSemua: 0, gratis: 0, perDb: {}, waktu: Date.now() };
   if (potongCache && Date.now() - potongCache.waktu < 10 * 60 * 1000) return potongCache;
   const { SUMBER_DIKENAL } = await import("../../src/data/kota.js");
 

@@ -37,12 +37,12 @@ export const FAQ = [
         beranda: true,
         a: [
           t(
-            "Ya. 5.000 lowongan terbaru, diambil merata dari setiap sumber, bisa dicari dan dibuka gratis tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
-            "Yes. The 5,000 newest jobs, taken evenly from every source, can be searched and opened for free without signing up. A free account also includes the CV Builder, LinkedIn Builder, a bank of 140+ interview questions, the Fake Job Checker, Salary Map, Application Plan, saved jobs, and an application tracker.",
+            "Ya. Semua lowongan di Jobly bisa dicari dan dibuka gratis, bahkan tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
+            "Yes. Every job on Jobly can be searched and opened for free, even without signing up. A free account also includes the CV Builder, LinkedIn Builder, a bank of 140+ interview questions, the Fake Job Checker, Salary Map, Application Plan, saved jobs, and an application tracker.",
           ),
           t(
-            "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka seluruh loker di atas 5.000 serta fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
-            "Paid plans (from Rp 9,000, one-time) unlock every job beyond the first 5,000 plus the AI features: CV Review, Career Switch, and Mock Interview.",
+            "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka latihan praktik untuk 40 pekerjaan remote serta fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
+            "Paid plans (from Rp 9,000, one-time) unlock hands-on practice for 40 remote roles plus the AI features: CV Review, Career Switch, and Mock Interview.",
           ),
         ],
       },
@@ -137,8 +137,8 @@ export const FAQ = [
         beranda: true,
         a: [
           t(
-            `Tersedia tiga paket: ${hargaRingkas}. Setiap paket berisi kuota Review CV, dan paket Pro serta Max juga berisi kuota Pindah Karier dan Simulasi Interview.`,
-            `There are three plans: ${hargaRingkas}. Every plan includes CV Review credits, and Pro and Max also include Career Switch and Mock Interview credits.`,
+            `Tersedia tiga paket: ${hargaRingkas}. Setiap paket membuka latihan praktik dan berisi kuota Review CV, dan paket Pro serta Max juga berisi kuota Pindah Karier dan Simulasi Interview.`,
+            `There are three plans: ${hargaRingkas}. Every plan unlocks hands-on practice and includes CV Review credits, and Pro and Max also include Career Switch and Mock Interview credits.`,
           ),
           t(
             "Pembayaran dilakukan sekali untuk setiap pembelian. Tidak ada tagihan berulang dan tidak ada perpanjangan otomatis.",
@@ -163,8 +163,8 @@ export const FAQ = [
             "You can still use any remaining CV Review credits. Career Switch and Mock Interview need an active plan, so their remaining credits work again once you buy a new plan.",
           ),
           t(
-            "Semua fitur gratis tetap bisa kamu pakai, termasuk 5.000 loker, CV Builder, dan riwayat analisis. Loker di atas 5.000 kembali terkunci sampai kamu membeli paket baru.",
-            "All free features keep working, including 5,000 jobs, the CV Builder, and your analysis history. Jobs beyond 5,000 lock again until you buy a new plan.",
+            "Semua fitur gratis tetap bisa kamu pakai, termasuk semua loker, CV Builder, dan riwayat analisis. Latihan praktik kembali terkunci sampai kamu membeli paket baru.",
+            "All free features keep working, including every job, the CV Builder, and your analysis history. Hands-on practice locks again until you buy a new plan.",
           ),
         ],
       },
