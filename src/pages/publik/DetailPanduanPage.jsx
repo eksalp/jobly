@@ -198,7 +198,7 @@ export function DetailPanduanPage({ slug }) {
   const p = cariPanduan(slug);
 
   useEffect(() => {
-    document.title = p ? `${p.judul}: panduan untuk pemula · Jobly` : t("Panduan tidak ditemukan · Jobly", "Guide not found · Jobly");
+    document.title = p ? `${p.judul} · Panduan Remote Working · Jobly` : t("Panduan tidak ditemukan · Jobly", "Guide not found · Jobly");
     window.scrollTo(0, 0);
   }, [p]);
 
@@ -233,7 +233,7 @@ export function DetailPanduanPage({ slug }) {
         <nav className="pb-crumb" aria-label={t("Lokasi halaman", "Breadcrumb")}>
           <a {...tautan("/")}>{t("Beranda", "Home")}</a>
           <ChevronRight size={14} />
-          <a {...tautan("/panduan")}>{t("Panduan", "Guides")}</a>
+          <a {...tautan("/panduan")}>{t("Panduan Remote Working", "Remote Working Guide")}</a>
         </nav>
         <div className="pb-pd-kepala">
           <span className="pb-pd-ikon besar">

@@ -45,18 +45,18 @@ function KartuProfesi({ p }) {
 
 export function PanduanPage() {
   useEffect(() => {
-    document.title = t("Panduan kerja remote untuk pemula · Jobly", "Remote work guides for beginners · Jobly");
+    document.title = t("Panduan Remote Working · Jobly", "Remote Working Guide · Jobly");
   }, []);
 
   return (
     <PublicLayout aktif="/panduan">
       <div className="pb-wrap pb-pagehead">
-        <span className="pb-label">{t("Panduan", "Guides")}</span>
+        <span className="pb-label">{t("Panduan Remote Working", "Remote Working Guide")}</span>
         <h1>{t("Mulai kerja remote, dari nol", "Start working remotely, from zero")}</h1>
         <p>
           {t(
-            "Pilih profesi yang paling dekat dengan kemampuanmu. Tiap panduan berisi tugas sehari-hari, skill yang dibutuhkan, kisaran penghasilan beserta sumbernya, langkah memulai, dan tanda penipuan yang perlu diwaspadai.",
-            "Pick the role closest to your skills. Each guide covers daily tasks, required skills, pay ranges with sources, first steps, and scam warning signs.",
+            "Pengen kerja dari rumah tapi bingung mulai dari mana? Pilih pekerjaan yang paling cocok sama kemampuanmu. Di tiap panduan, kamu bisa lihat kerjanya ngapain aja, skill yang perlu disiapkan, kira-kira dapat berapa, cara mulainya, sampai ciri-ciri lowongan bodong biar nggak ketipu.",
+            "Want to work from home but not sure where to start? Pick the job that fits your skills best. Each guide shows what the work involves, the skills to prepare, how much you could earn, how to get started, and how to spot fake listings.",
           )}
         </p>
         <CatatanBahasa />
@@ -65,7 +65,7 @@ export function PanduanPage() {
       <div className="pb-wrap pb-pd-wrap">
         <section aria-labelledby="pd-profesi">
           <div className="pb-pd-headrow">
-            <h2 id="pd-profesi" className="pb-h2">{t("Panduan per profesi", "Guides by role")}</h2>
+            <h2 id="pd-profesi" className="pb-h2">{t("Pilih pekerjaannya", "Pick a role")}</h2>
             <span className="pb-pd-jumlah">{PROFESI.length} {t("profesi", "roles")}</span>
           </div>
           <div className="pb-pd-grid">

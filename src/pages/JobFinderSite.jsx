@@ -37,7 +37,7 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /loker            Daftar loker (publik, gratis untuk semua)
  *   /loker/<id>       Detail loker ala JobStreet (publik)
  *   /kalkulator-gaji  Kalkulator gaji mata uang asing → rupiah
- *   /panduan          Panduan kerja remote untuk pemula
+ *   /panduan          Panduan Remote Working untuk pemula
  *   /panduan/<slug>   Satu panduan (profesi atau topik umum)
  *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
  *   /login /register /forgot
