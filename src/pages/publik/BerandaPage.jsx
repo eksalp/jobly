@@ -313,7 +313,7 @@ export function BerandaPage() {
         <div>
           <h1>
             {t("In this economy, cari kerja itu susah.", "In this economy, job hunting is hard.")}{" "}
-            <span>{t("Biar Jobly yang cariin ribuan loker buat kamu.", "Let Jobly find thousands of jobs for you.")}</span>
+            <span>{t("Biarkan Jobly mencarikan ribuan loker untukmu.", "Let Jobly find thousands of jobs for you.")}</span>
           </h1>
           <p className="pb-lede">
             {t(
@@ -507,7 +507,7 @@ export function BerandaPage() {
           <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">{t("Kenapa Jobly", "Why Jobly")}</span>
-              <h2>{t("Bukan cuma daftar loker.", "More than a job list.")}</h2>
+              <h2>{t("Bukan sekadar daftar loker.", "More than a job list.")}</h2>
               <p>{t("Semua yang kamu butuhkan buat melamar ada di sini, dan sebagian besar gratis.", "Everything you need to apply is here, and most of it is free.")}</p>
             </div>
           </div>
@@ -544,7 +544,7 @@ export function BerandaPage() {
             <a className="pb-bento-item" data-muncul="" style={{ "--tunda": "80ms" }} {...tautan(fitur("cvbuilder"))}>
               <div className="teks">
                 <span className="pb-tag">{t("Gratis", "Free")}</span>
-                <h3>{t("Bikin CV yang lolos ATS", "Build a CV that passes ATS")}</h3>
+                <h3>{t("Buat CV yang lolos ATS", "Build a CV that passes ATS")}</h3>
                 <p>{t("Pilih font dan tema sesukamu. PDF-nya tetap rapi dan terbaca oleh sistem penyaring HRD.", "Pick any font and theme. The PDF stays clean and readable by applicant tracking systems.")}</p>
               </div>
               <MiniCv />
@@ -576,7 +576,7 @@ export function BerandaPage() {
                 <h3>
                   <Mic size={17} /> {t("Simulasi interview bersuara", "Voice mock interview")}
                 </h3>
-                <p>{t("Latihan ngobrol langsung dengan pewawancara AI. Di akhir sesi, kamu dapat nilai dan masukan untuk tiap jawaban.", "Talk live with an AI interviewer. At the end you get a score and feedback on every answer.")}</p>
+                <p>{t("Latihan berbicara langsung dengan pewawancara AI. Di akhir sesi, kamu dapat nilai dan masukan untuk tiap jawaban.", "Talk live with an AI interviewer. At the end you get a score and feedback on every answer.")}</p>
                 <span className="go">{t("Mulai dari", "From")} {rupiah(SEMUA_TIER[2].harga)} <ArrowRight size={15} /></span>
               </div>
               <MiniSuara />

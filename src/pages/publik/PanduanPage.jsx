@@ -7,7 +7,7 @@ import {
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { PROFESI, INSIGHT } from "../../data/panduan";
 import { tautan } from "../../utils/navigasi";
-import { bahasa, t } from "../../i18n.js";
+import { t } from "../../i18n.js";
 
 // Ikon diimpor satu per satu supaya tidak seluruh pustaka ikon ikut terbundel
 const IKON = {
@@ -20,11 +20,6 @@ export function IkonPanduan({ nama, size = 20 }) {
   return <K size={size} strokeWidth={1.9} aria-hidden="true" />;
 }
 
-export function CatatanBahasa() {
-  if (bahasa() !== "en") return null;
-  return <p className="pb-pd-bahasa">These guides are written in Indonesian for job seekers in Indonesia.</p>;
-}
-
 function KartuProfesi({ p }) {
   return (
     <a className="pb-pd-kartu" {...tautan(`/panduan/${p.slug}`)}>
@@ -35,7 +30,7 @@ function KartuProfesi({ p }) {
         <span className="pb-pd-judul">{p.judul}</span>
         <span className="pb-pd-ringkas">{p.ringkas}</span>
         <span className="pb-pd-meta">
-          <span className={`pb-pd-level ${p.level === "Ramah pemula" ? "mudah" : ""}`}>{p.level}</span>
+          <span className={`pb-pd-level ${p.levelKode === "mudah" ? "mudah" : ""}`}>{p.level}</span>
         </span>
       </span>
       <ArrowRight size={16} className="pb-pd-panah" aria-hidden="true" />
@@ -55,17 +50,16 @@ export function PanduanPage() {
         <h1>{t("Mulai kerja remote, dari nol", "Start working remotely, from zero")}</h1>
         <p>
           {t(
-            "Pengen kerja dari rumah tapi bingung mulai dari mana? Pilih pekerjaan yang paling cocok sama kemampuanmu. Di tiap panduan, kamu bisa lihat kerjanya ngapain aja, skill yang perlu disiapkan, kira-kira dapat berapa, cara mulainya, sampai ciri-ciri lowongan bodong biar nggak ketipu.",
-            "Want to work from home but not sure where to start? Pick the job that fits your skills best. Each guide shows what the work involves, the skills to prepare, how much you could earn, how to get started, and how to spot fake listings.",
+            "Ingin bekerja dari rumah, tetapi belum tahu harus mulai dari mana? Pilih pekerjaan yang paling sesuai dengan kemampuanmu. Setiap panduan menjelaskan tugas sehari-hari, keterampilan yang perlu disiapkan, perkiraan penghasilan, langkah memulai, serta ciri lowongan palsu agar kamu tidak tertipu.",
+            "Want to work from home but not sure where to start? Pick the job that best matches your skills. Each guide explains the daily tasks, the skills to prepare, expected earnings, how to get started, and how to spot fake listings so you don't get scammed.",
           )}
         </p>
-        <CatatanBahasa />
       </div>
 
       <div className="pb-wrap pb-pd-wrap">
         <section aria-labelledby="pd-profesi">
           <div className="pb-pd-headrow">
-            <h2 id="pd-profesi" className="pb-h2">{t("Pilih pekerjaannya", "Pick a role")}</h2>
+            <h2 id="pd-profesi" className="pb-h2">{t("Pilih jenis pekerjaan", "Pick a role")}</h2>
             <span className="pb-pd-jumlah">{PROFESI.length} {t("profesi", "roles")}</span>
           </div>
           <div className="pb-pd-grid">

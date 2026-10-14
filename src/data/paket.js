@@ -17,7 +17,7 @@ import { lokal, t } from "../i18n.js";
 // daftarnya berubah.
 const FITUR_DASAR = [
   t("5.000 loker, bisa dicari dan disaring per kota", "5,000 jobs to search and filter by city"),
-  t("CV Builder: bikin dan unduh PDF, gratis selamanya", "CV Builder: create and download a PDF, free forever"),
+  t("CV Builder: buat dan unduh PDF, gratis selamanya", "CV Builder: create and download a PDF, free forever"),
   t("LinkedIn Builder: susun profil, gratis selamanya", "LinkedIn Builder: write your profile, free forever"),
   t("140+ pertanyaan interview, termasuk level neraka", "140+ interview questions, including the hardest ones"),
   t("Pelacak lamaran untuk memantau progres", "Application tracker to follow your progress"),

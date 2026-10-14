@@ -6,7 +6,8 @@
  *   - "insight": topik umum yang dibutuhkan semua pekerja remote
  *
  * Angka penghasilan selalu disertai sumbernya. Kalau sumbernya diperbarui,
- * cukup ubah di sini. Isi panduan ditulis dalam bahasa Indonesia.
+ * cukup ubah di sini. Versi bahasa Inggris ada di panduan.en.js (dipakai
+ * otomatis saat bahasa tampilan English).
  *
  * `remoteQ`   kata kunci untuk tombol "Lihat lowongannya" (→ /remote?q=...)
  * `kursus`    kata kunci untuk mencocokkan katalog kursus (data/kursus.js)
@@ -53,7 +54,10 @@ const SUMBER = {
 /*  Panduan per profesi                                                */
 /* ------------------------------------------------------------------ */
 
-export const PROFESI = [
+import { bahasa } from "../i18n.js";
+import { PROFESI_EN, INSIGHT_EN, LEVEL_EN } from "./panduan.en.js";
+
+const PROFESI_ID = [
   {
     slug: "virtual-assistant",
     judul: "Virtual Assistant",
@@ -423,7 +427,7 @@ export const PROFESI = [
 /*  Insight: topik umum untuk semua pekerja remote                     */
 /* ------------------------------------------------------------------ */
 
-export const INSIGHT = [
+const INSIGHT_ID = [
   {
     slug: "mulai-kerja-remote",
     judul: "Mulai Kerja Remote dari Nol",
@@ -461,7 +465,7 @@ export const INSIGHT = [
   },
   {
     slug: "portofolio-tanpa-pengalaman",
-    judul: "Bikin Portofolio Tanpa Pengalaman",
+    judul: "Membuat Portofolio Tanpa Pengalaman",
     ikon: "FolderOpen",
     ringkas: "Belum pernah punya klien? Ini cara menunjukkan kemampuan dengan proyek buatan sendiri.",
     bagian: [
@@ -648,6 +652,46 @@ export const INSIGHT = [
     remoteQ: "",
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/*  Terjemahan                                                         */
+/* ------------------------------------------------------------------ */
+
+const KODE_LEVEL = { "Ramah pemula": "mudah", "Butuh latihan": "latihan", "Butuh keahlian": "keahlian" };
+
+/** Gabungkan teks Inggris per indeks; bagian yang tidak diterjemahkan tetap memakai aslinya. */
+const gabungDaftar = (asli = [], en) => (Array.isArray(en) ? asli.map((x, i) => (en[i] && typeof x === "object" ? { ...x, ...en[i] } : en[i] ?? x)) : asli);
+
+function profesiEn(p) {
+  const e = PROFESI_EN[p.slug] || {};
+  return {
+    ...p,
+    ...e,
+    level: LEVEL_EN[p.level] || p.level,
+    penghasilan: gabungDaftar(p.penghasilan, e.penghasilan),
+    langkah: gabungDaftar(p.langkah, e.langkah),
+  };
+}
+
+function insightEn(p) {
+  const e = INSIGHT_EN[p.slug] || {};
+  return {
+    ...p,
+    ...e,
+    bagian: p.bagian.map((b, i) => {
+      const be = (e.bagian || [])[i] || {};
+      return {
+        ...b,
+        ...be,
+        tautan: b.tautan && be.tautanLabel ? { ...b.tautan, label: be.tautanLabel } : b.tautan,
+      };
+    }),
+  };
+}
+
+const EN = bahasa() === "en";
+export const PROFESI = PROFESI_ID.map((p) => ({ ...(EN ? profesiEn(p) : p), levelKode: KODE_LEVEL[p.level] }));
+export const INSIGHT = EN ? INSIGHT_ID.map(insightEn) : INSIGHT_ID;
 
 export const SEMUA_PANDUAN = [
   ...PROFESI.map((p) => ({ ...p, jenis: "profesi" })),

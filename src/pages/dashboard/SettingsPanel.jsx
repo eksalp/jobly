@@ -374,7 +374,7 @@ export function SettingsPanel({ setActive }) {
           {t("Hapus Akun", "Delete account")}
         </div>
         <div style={{ fontSize: 12.5, color: T.inkSoft, marginBottom: 14 }}>
-          {t("Tindakan ini permanen dan nggak bisa dibatalkan.", "This is permanent and can't be undone.")}
+          {t("Tindakan ini permanen dan tidak bisa dibatalkan.", "This is permanent and can't be undone.")}
         </div>
         <Button
           variant="outline"

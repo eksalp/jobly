@@ -5,7 +5,7 @@ import { SEMUA_PANDUAN, PROFESI, cariPanduan } from "../../data/panduan";
 import { cocokkanKursus } from "../../data/kursus";
 import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
-import { IkonPanduan, CatatanBahasa } from "./PanduanPage";
+import { IkonPanduan } from "./PanduanPage";
 
 const idBagian = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -52,32 +52,32 @@ function bagianProfesi(p) {
   const kursus = cocokkanKursus(p.kursus || [], null, 3);
   const daftar = [
     {
-      judul: "Pekerjaannya seperti apa",
+      judul: t("Gambaran pekerjaan", "What the job involves"),
       isi: (
         <>
           <p>{p.intro}</p>
-          <h3>Contoh tugas sehari-hari</h3>
+          <h3>{t("Contoh tugas sehari-hari", "Typical daily tasks")}</h3>
           <Daftar items={p.tugas} />
         </>
       ),
     },
     {
-      judul: "Skill dan tools",
+      judul: t("Skill dan tools", "Skills and tools"),
       isi: (
         <div className="pb-pd-dua">
           <div>
-            <h3>Skill yang dibutuhkan</h3>
+            <h3>{t("Skill yang dibutuhkan", "Skills you need")}</h3>
             <Daftar items={p.skill} />
           </div>
           <div>
-            <h3>Tools yang sering dipakai</h3>
+            <h3>{t("Tools yang sering dipakai", "Common tools")}</h3>
             <Daftar items={p.tools} />
           </div>
         </div>
       ),
     },
     {
-      judul: "Kisaran penghasilan",
+      judul: t("Kisaran penghasilan", "Expected earnings"),
       isi: (
         <>
           {p.penghasilan.length > 0 && (
@@ -93,15 +93,15 @@ function bagianProfesi(p) {
           )}
           {p.catatanGaji && <p className="pb-pd-catatan">{p.catatanGaji}</p>}
           <p>
-            Dibayar dalam dolar? Hitung nilai bersihnya dalam rupiah di{" "}
-            <a {...tautan("/kalkulator-gaji")}>Kalkulator Gaji</a>, dan bandingkan dengan gaji lokal di{" "}
-            <a {...tautan("/peta-gaji")}>Peta Gaji</a>.
+            {t("Dibayar dalam dolar? Hitung nilai bersihnya dalam rupiah di", "Paid in dollars? Work out the net amount in rupiah with the")}{" "}
+            <a {...tautan("/kalkulator-gaji")}>{t("Kalkulator Gaji", "Salary Calculator")}</a>{t(", dan bandingkan dengan gaji lokal di", ", and compare it with local pay on the")}{" "}
+            <a {...tautan("/peta-gaji")}>{t("Peta Gaji", "Salary Map")}</a>.
           </p>
         </>
       ),
     },
     {
-      judul: "Langkah memulai",
+      judul: t("Langkah memulai", "How to get started"),
       isi: (
         <ol className="pb-pd-langkah">
           {p.langkah.map((l) => (
@@ -114,7 +114,7 @@ function bagianProfesi(p) {
       ),
     },
     {
-      judul: "Tempat mencari kerja",
+      judul: t("Tempat mencari kerja", "Where to find work"),
       isi: (
         <>
           <div className="pb-pd-platform">
@@ -127,7 +127,7 @@ function bagianProfesi(p) {
           {p.remoteQ && (
             <a className="pb-btn pb-btn-primary pb-pd-cta" {...tautan(`/remote?q=${encodeURIComponent(p.remoteQ)}`)}>
               <Globe size={16} />
-              Lihat loker remote {p.judul}
+              {t("Lihat loker remote", "See remote jobs for")}{" "}{p.judul}
               <ArrowRight size={16} />
             </a>
           )}
@@ -135,7 +135,7 @@ function bagianProfesi(p) {
       ),
     },
     kursus.length > 0 && {
-      judul: "Kursus yang disarankan",
+      judul: t("Kursus yang disarankan", "Recommended courses"),
       isi: (
         <>
           <div className="pb-pd-kursus-grid">
@@ -144,13 +144,13 @@ function bagianProfesi(p) {
             ))}
           </div>
           <p className="pb-pd-catatan">
-            Sebagian tautan kursus adalah tautan afiliasi. Kursus dipilih berdasarkan kecocokan dengan skill di panduan ini.
+            {t("Sebagian tautan kursus adalah tautan afiliasi. Kursus dipilih berdasarkan kecocokan dengan skill di panduan ini.", "Some course links are affiliate links. Courses are chosen based on the skills in this guide.")}
           </p>
         </>
       ),
     },
     {
-      judul: "Waspadai penipuan",
+      judul: t("Waspadai penipuan", "Watch out for scams"),
       isi: (
         <div className="pb-pd-waspada">
           <AlertTriangle size={18} />
@@ -158,7 +158,7 @@ function bagianProfesi(p) {
             <Daftar items={p.waspada} />
             {p.sumberWaspada && <Sumber sumber={p.sumberWaspada} />}
             <a className="pb-link" {...tautan("/cek-loker")}>
-              Periksa lowongan di Cek Loker <ArrowRight size={13} />
+              {t("Periksa lowongan di Cek Loker", "Check a listing with the Fake Job Checker")}{" "}<ArrowRight size={13} />
             </a>
           </div>
         </div>
@@ -198,7 +198,7 @@ export function DetailPanduanPage({ slug }) {
   const p = cariPanduan(slug);
 
   useEffect(() => {
-    document.title = p ? `${p.judul} · Panduan Remote Working · Jobly` : t("Panduan tidak ditemukan · Jobly", "Guide not found · Jobly");
+    document.title = p ? t(`${p.judul} · Panduan Remote Working · Jobly`, `${p.judul} · Remote Working Guide · Jobly`) : t("Panduan tidak ditemukan · Jobly", "Guide not found · Jobly");
     window.scrollTo(0, 0);
   }, [p]);
 
@@ -247,16 +247,15 @@ export function DetailPanduanPage({ slug }) {
         {p.jenis === "profesi" && (
           <div className="pb-pd-fakta">
             <span>
-              <b>Tingkat</b>
+              <b>{t("Tingkat", "Level")}</b>
               {p.level}
             </span>
             <span>
-              <b>Modal awal</b>
+              <b>{t("Modal awal", "What you need")}</b>
               {p.modal}
             </span>
           </div>
         )}
-        <CatatanBahasa />
       </div>
 
       <div className="pb-wrap pb-doc" style={{ marginTop: 32 }}>
@@ -284,7 +283,7 @@ export function DetailPanduanPage({ slug }) {
           {p.catatan && <p className="pb-callout" style={{ marginTop: 28 }}>{p.catatan}</p>}
 
           <div className="pb-pd-lain">
-            <h2>Baca juga</h2>
+            <h2>{t("Baca juga", "Read next")}</h2>
             <div className="pb-pd-lain-grid">
               {lain.map((x) => (
                 <a key={x.slug} className="pb-pd-lain-item" {...tautan(`/panduan/${x.slug}`)}>
@@ -298,19 +297,19 @@ export function DetailPanduanPage({ slug }) {
               <a {...tautan("/remote")}>
                 <Globe size={16} />
                 <span>
-                  <b>Loker remote</b>
+                  <b>{t("Loker remote", "Remote jobs")}</b>
                 </span>
               </a>
               <a {...tautan("/kalkulator-gaji")}>
                 <Calculator size={16} />
                 <span>
-                  <b>Kalkulator gaji</b>
+                  <b>{t("Kalkulator gaji", "Salary calculator")}</b>
                 </span>
               </a>
               <a {...tautan("/cek-loker")}>
                 <ShieldCheck size={16} />
                 <span>
-                  <b>Cek loker palsu</b>
+                  <b>{t("Cek loker palsu", "Fake job checker")}</b>
                 </span>
               </a>
             </div>

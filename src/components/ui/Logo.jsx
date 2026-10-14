@@ -1,3 +1,4 @@
+import { t } from "../../i18n.js";
 import React from "react";
 import { T } from "../../theme";
 import { TandaJobly } from "./TandaJobly";
@@ -37,7 +38,7 @@ export function Logo({ size = 30, tagline = false }) {
               marginTop: 3,
             }}
           >
-            Cari kerja, lebih cepat
+            {t("Cari kerja, lebih cepat", "Find work, faster")}
           </div>
         )}
       </div>

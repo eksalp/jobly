@@ -27,7 +27,7 @@ export const FAQ = [
             "Jobly collects openings from official company career sites and job platforms like LinkedIn and Indeed, so you can search in one place. Listings update automatically every day.",
           ),
           t(
-            "Selain cari loker, kamu juga bisa bikin CV, merapikan profil LinkedIn, latihan pertanyaan interview, sampai simulasi interview dengan AI.",
+            "Selain cari loker, kamu juga bisa membuat CV, merapikan profil LinkedIn, latihan pertanyaan interview, sampai simulasi interview dengan AI.",
             "Besides searching for jobs, you can build a CV, polish your LinkedIn profile, practise interview questions, and even do a mock interview with AI.",
           ),
         ],

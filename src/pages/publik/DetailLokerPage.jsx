@@ -47,6 +47,7 @@ import {
   konversiGaji,
 } from "../../utils/sumberLoker";
 import { useKurs, idrPer, rupiahRingkas } from "../../utils/kurs";
+import { labelTampil } from "../../data/taxonomy.js";
 import { tautan, keHalaman, bagikan, pathFitur } from "../../utils/navigasi";
 import { lokal, t } from "../../i18n.js";
 
@@ -339,7 +340,7 @@ export function DetailLokerPage({ slug }) {
 
             <div className="pb-d-facts">
               <span>
-                <MapPin size={15} /> {job.lokasi}
+                <MapPin size={15} /> {labelTampil(job.lokasi)}
               </span>
               {lokasiKerja && (
                 <span>
@@ -516,7 +517,7 @@ export function DetailLokerPage({ slug }) {
             <div className="pb-box tint">
               <h3>{t("Siapkan lamaranmu", "Prepare your application")}</h3>
               <p style={{ fontSize: 13.5, color: "var(--ink2)", margin: "6px 0 10px", lineHeight: 1.55 }}>
-                {t("Biar peluang dipanggil interview makin besar.", "Improve your chances of getting an interview.")}
+                {t("Supaya peluang dipanggil interview makin besar.", "Improve your chances of getting an interview.")}
               </p>
               {[
                 { label: t("Review CV dengan AI", "AI CV review"), pro: true, panel: "overview", Ikon: FileText },

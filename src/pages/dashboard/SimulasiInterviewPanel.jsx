@@ -352,13 +352,13 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
     } else if (langganan.aktif) {
       keterangan =
         t(
-          "Fitur ini tersedia di paket Pro dan Max. Ngobrol langsung dengan AI lewat suara, lalu terima penilaian di akhir sesi.",
+          "Fitur ini tersedia di paket Pro dan Max. Berbicara langsung dengan AI lewat suara, lalu terima penilaian di akhir sesi.",
           "Available on Pro and Max. Talk with AI by voice, then get a score at the end of the session.",
         );
     } else {
       keterangan =
         t(
-          "Ngobrol langsung dengan AI lewat suara seperti wawancara sungguhan, lalu terima penilaian dan masukan spesifik di akhir sesi.",
+          "Berbicara langsung dengan AI lewat suara seperti wawancara sungguhan, lalu terima penilaian dan masukan spesifik di akhir sesi.",
           "Talk with AI by voice like a real interview, then get a score and specific feedback at the end.",
         );
     }
@@ -461,7 +461,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
                 marginBottom: 16,
               }}
             >
-              {t("Ngobrol langsung dengan AI selama", "Talk live with AI for")}{" "}{DURASI_MENIT}{" "}{t("menit, seperti wawancara sungguhan. Penilaian muncul otomatis di akhir sesi.", "minutes, like a real interview. Your score appears automatically at the end.")}
+              {t("Berbicara langsung dengan AI selama", "Talk live with AI for")}{" "}{DURASI_MENIT}{" "}{t("menit, seperti wawancara sungguhan. Penilaian muncul otomatis di akhir sesi.", "minutes, like a real interview. Your score appears automatically at the end.")}
             </div>
 
             {/* Panduan singkat sebelum masuk. Ditulis sebagai langkah
@@ -652,7 +652,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
                 </>
               ) : (
                 <>
-                  <Play size={15} />{" "}{t("Mulai ngobrol", "Start talking")}
+                  <Play size={15} />{" "}{t("Mulai sesi", "Start session")}
                 </>
               )}
             </Button>

@@ -1115,6 +1115,7 @@ export const TAXONOMY = [
  */
 const LABEL_EN = {
   "Umum / belum terdeteksi spesifik": "General / no specific field detected",
+  "Tidak disebutkan": "Not specified",
   "Administrasi & Sekretariat": "Administration & Secretarial",
   "Transaksi, Keuangan & Treasury": "Transactions, Finance & Treasury",
   "Human Resources & People": "Human Resources & People",

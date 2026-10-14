@@ -67,7 +67,7 @@ export function BagianKomunitas() {
         <div className="pb-komunitas" data-muncul="">
           <div className="pb-komunitas-teks">
             <span className="pb-label">{t("Komunitas", "Community")}</span>
-            <h2 className="pb-h2">{t("Cari kerja nggak harus sendirian.", "You don't have to job hunt alone.")}</h2>
+            <h2 className="pb-h2">{t("Cari kerja tidak harus sendirian.", "You don't have to job hunt alone.")}</h2>
             <p className="pb-sub">
               {t(
                 "Gabung grup Jobly. Dapat info loker pilihan, rekrutmen yang lagi buka, dan tips melamar, langsung di HP-mu.",
