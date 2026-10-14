@@ -56,6 +56,8 @@ const SUMBER = {
 
 import { bahasa } from "../i18n.js";
 import { PROFESI_EN, INSIGHT_EN, LEVEL_EN } from "./panduan.en.js";
+import { PROFESI_TAMBAHAN, KATEGORI_PANDUAN as KATEGORI_ID, KATEGORI_PROFESI_AWAL } from "./panduan2.js";
+import { PROFESI_TAMBAHAN_EN, KATEGORI_EN } from "./panduan2.en.js";
 
 const PROFESI_ID = [
   {
@@ -176,7 +178,7 @@ const PROFESI_ID = [
   },
   {
     slug: "content-writer",
-    judul: "Content Writer",
+    judul: "Penulis Artikel & SEO",
     ikon: "PenLine",
     ringkas: "Menulis artikel, deskripsi produk, dan naskah konten untuk website dan media sosial.",
     level: "Ramah pemula",
@@ -214,7 +216,7 @@ const PROFESI_ID = [
   },
   {
     slug: "desainer-grafis",
-    judul: "Desainer Grafis Freelance",
+    judul: "Desainer Media Sosial, Poster & Kemasan",
     ikon: "Palette",
     ringkas: "Membuat logo, konten media sosial, kemasan, dan materi promosi untuk klien dari mana saja.",
     level: "Butuh latihan",
@@ -662,13 +664,24 @@ const KODE_LEVEL = { "Ramah pemula": "mudah", "Butuh latihan": "latihan", "Butuh
 /** Gabungkan teks Inggris per indeks; bagian yang tidak diterjemahkan tetap memakai aslinya. */
 const gabungDaftar = (asli = [], en) => (Array.isArray(en) ? asli.map((x, i) => (en[i] && typeof x === "object" ? { ...x, ...en[i] } : en[i] ?? x)) : asli);
 
+/** Label tarif Upwork di panduan2.js berpola tetap, jadi diterjemahkan otomatis. */
+function penghasilanEn(g) {
+  const label = g.label
+    .replace(/^Kisaran tarif (.+) di Upwork/, "Upwork rate range for $1")
+    .replace(", sebagai pembanding", ", for comparison")
+    .replace(", sebagai batas bawah", ", as a lower bound");
+  const nilai = g.nilai.replace(" sampai ", " to ").replace(" per jam", " per hour");
+  const sumber = g.sumber && { ...g.sumber, nama: g.sumber.nama.replace(/^Upwork, tarif (.+)$/, "Upwork, $1 rates") };
+  return { ...g, label, nilai, sumber };
+}
+
 function profesiEn(p) {
-  const e = PROFESI_EN[p.slug] || {};
+  const e = PROFESI_EN[p.slug] || PROFESI_TAMBAHAN_EN[p.slug] || {};
   return {
     ...p,
     ...e,
     level: LEVEL_EN[p.level] || p.level,
-    penghasilan: gabungDaftar(p.penghasilan, e.penghasilan),
+    penghasilan: e.penghasilan ? gabungDaftar(p.penghasilan, e.penghasilan) : p.penghasilan.map(penghasilanEn),
     langkah: gabungDaftar(p.langkah, e.langkah),
   };
 }
@@ -690,7 +703,18 @@ function insightEn(p) {
 }
 
 const EN = bahasa() === "en";
-export const PROFESI = PROFESI_ID.map((p) => ({ ...(EN ? profesiEn(p) : p), levelKode: KODE_LEVEL[p.level] }));
+const PROFESI_SEMUA = [
+  ...PROFESI_ID.map((p) => ({ ...p, kategori: KATEGORI_PROFESI_AWAL[p.slug] })),
+  ...PROFESI_TAMBAHAN,
+];
+export const PROFESI = PROFESI_SEMUA.map((p) => ({ ...(EN ? profesiEn(p) : p), levelKode: KODE_LEVEL[p.level] }));
+
+/** Kategori layanan, masing-masing dengan daftar panduannya. */
+export const KATEGORI_PANDUAN = KATEGORI_ID.map((k) => ({
+  ...k,
+  judul: EN ? KATEGORI_EN[k.id] || k.judul : k.judul,
+  profesi: PROFESI.filter((p) => p.kategori === k.id),
+}));
 export const INSIGHT = EN ? INSIGHT_ID.map(insightEn) : INSIGHT_ID;
 
 export const SEMUA_PANDUAN = [

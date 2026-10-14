@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { ArrowRight, ChevronRight, ExternalLink, AlertTriangle, Globe, Calculator, ShieldCheck } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
-import { SEMUA_PANDUAN, PROFESI, cariPanduan } from "../../data/panduan";
+import { SEMUA_PANDUAN, PROFESI, KATEGORI_PANDUAN, cariPanduan } from "../../data/panduan";
 import { cocokkanKursus } from "../../data/kursus";
 import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
@@ -219,12 +219,17 @@ export function DetailPanduanPage({ slug }) {
     );
   }
 
+  const kat = KATEGORI_PANDUAN.find((k) => k.id === p.kategori);
+
   const gulir = (id) => (e) => {
     e.preventDefault();
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const lain = (p.jenis === "profesi" ? PROFESI.filter((x) => x.slug !== p.slug).slice(0, 3) : [])
+  // Utamakan panduan dari kategori yang sama, lalu lengkapi dengan kategori lain
+  const sekategori = PROFESI.filter((x) => x.slug !== p.slug && x.kategori === p.kategori);
+  const lainnya = PROFESI.filter((x) => x.slug !== p.slug && x.kategori !== p.kategori);
+  const lain = (p.jenis === "profesi" ? [...sekategori, ...lainnya].slice(0, 4) : [])
     .concat(SEMUA_PANDUAN.filter((x) => x.jenis === "insight" && x.slug !== p.slug).slice(0, p.jenis === "profesi" ? 2 : 4));
 
   return (
@@ -246,6 +251,12 @@ export function DetailPanduanPage({ slug }) {
         </div>
         {p.jenis === "profesi" && (
           <div className="pb-pd-fakta">
+            {kat && (
+              <span>
+                <b>{t("Kategori", "Category")}</b>
+                <a {...tautan(`/panduan#kat-${kat.id}`)}>{kat.judul}</a>
+              </span>
+            )}
             <span>
               <b>{t("Tingkat", "Level")}</b>
               {p.level}

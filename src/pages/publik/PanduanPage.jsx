@@ -2,17 +2,23 @@ import React, { useEffect } from "react";
 import {
   ArrowRight, Globe, ShieldCheck, Calculator, BookOpen, Headset, MessageCircle, Instagram, PenLine,
   Palette, Keyboard, Clapperboard, BrainCircuit, GraduationCap, Compass, FolderOpen, Handshake,
-  Wallet, Receipt, ShieldAlert,
+  Wallet, Receipt, ShieldAlert, AudioLines, BarChart3, BookText, Briefcase, Brush, CalendarClock,
+  ClipboardCheck, Code2, Feather, FileText, Film, Languages, ListChecks, Mail, Megaphone, Mic,
+  Presentation, ScanSearch, Search, Shapes, Sigma, Smartphone, Sparkles, Table, Target, TrendingUp,
+  UserCheck, Workflow, Wrench,
 } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
-import { PROFESI, INSIGHT } from "../../data/panduan";
+import { PROFESI, INSIGHT, KATEGORI_PANDUAN } from "../../data/panduan";
 import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
 
 // Ikon diimpor satu per satu supaya tidak seluruh pustaka ikon ikut terbundel
 const IKON = {
   Headset, MessageCircle, Instagram, PenLine, Palette, Keyboard, Clapperboard, BrainCircuit,
-  GraduationCap, Calculator, Compass, FolderOpen, Handshake, Wallet, Receipt, ShieldAlert,
+  GraduationCap, Calculator, Compass, FolderOpen, Handshake, Wallet, Receipt, ShieldAlert, AudioLines,
+  BarChart3, BookText, Briefcase, Brush, CalendarClock, ClipboardCheck, Code2, Feather, FileText, Film,
+  Globe, Languages, ListChecks, Mail, Megaphone, Mic, Presentation, ScanSearch, Search, Shapes, Sigma,
+  Smartphone, Sparkles, Table, Target, TrendingUp, UserCheck, Workflow, Wrench,
 };
 
 export function IkonPanduan({ nama, size = 20 }) {
@@ -38,6 +44,11 @@ function KartuProfesi({ p }) {
   );
 }
 
+const gulir = (id) => (e) => {
+  e.preventDefault();
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
 export function PanduanPage() {
   useEffect(() => {
     document.title = t("Panduan Remote Working · Jobly", "Remote Working Guide · Jobly");
@@ -50,8 +61,8 @@ export function PanduanPage() {
         <h1>{t("Mulai kerja remote, dari nol", "Start working remotely, from zero")}</h1>
         <p>
           {t(
-            "Ingin bekerja dari rumah, tetapi belum tahu harus mulai dari mana? Pilih pekerjaan yang paling sesuai dengan kemampuanmu. Setiap panduan menjelaskan tugas sehari-hari, keterampilan yang perlu disiapkan, perkiraan penghasilan, langkah memulai, serta ciri lowongan palsu agar kamu tidak tertipu.",
-            "Want to work from home but not sure where to start? Pick the job that best matches your skills. Each guide explains the daily tasks, the skills to prepare, expected earnings, how to get started, and how to spot fake listings so you don't get scammed.",
+            "Ingin bekerja dari rumah, tetapi belum tahu harus mulai dari mana? Pilih layanan yang paling sesuai dengan kemampuanmu dari delapan kategori di bawah. Setiap panduan menjelaskan tugas sehari-hari, keterampilan yang perlu disiapkan, perkiraan penghasilan, langkah memulai, serta ciri lowongan palsu agar kamu tidak tertipu.",
+            "Want to work from home but not sure where to start? Pick the service that best matches your skills from the eight categories below. Each guide explains the daily tasks, the skills to prepare, expected earnings, how to get started, and how to spot fake listings so you don't get scammed.",
           )}
         </p>
       </div>
@@ -60,13 +71,30 @@ export function PanduanPage() {
         <section aria-labelledby="pd-profesi">
           <div className="pb-pd-headrow">
             <h2 id="pd-profesi" className="pb-h2">{t("Pilih jenis pekerjaan", "Pick a role")}</h2>
-            <span className="pb-pd-jumlah">{PROFESI.length} {t("profesi", "roles")}</span>
+            <span className="pb-pd-jumlah">{PROFESI.length} {t("panduan", "guides")}</span>
           </div>
-          <div className="pb-pd-grid">
-            {PROFESI.map((p) => (
-              <KartuProfesi key={p.slug} p={p} />
+          <nav className="pb-pd-kat-nav" aria-label={t("Kategori layanan", "Service categories")}>
+            {KATEGORI_PANDUAN.map((k) => (
+              <a key={k.id} href={`#kat-${k.id}`} onClick={gulir(`kat-${k.id}`)}>
+                <IkonPanduan nama={k.ikon} size={15} />
+                {k.judul}
+                <span>{k.profesi.length}</span>
+              </a>
             ))}
-          </div>
+          </nav>
+          {KATEGORI_PANDUAN.map((k) => (
+            <div key={k.id} id={`kat-${k.id}`} className="pb-pd-kat">
+              <h3 className="pb-pd-kat-judul">
+                <IkonPanduan nama={k.ikon} size={18} />
+                {k.judul}
+              </h3>
+              <div className="pb-pd-grid">
+                {k.profesi.map((p) => (
+                  <KartuProfesi key={p.slug} p={p} />
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
 
         <section aria-labelledby="pd-insight" style={{ marginTop: 56 }}>

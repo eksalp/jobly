@@ -113,7 +113,7 @@ export const PROFESI_EN = {
     ],
   },
   "content-writer": {
-    judul: "Content Writer",
+    judul: "Blog & SEO Writer",
     ringkas: "Write articles, product descriptions, and content scripts for websites and social media.",
     modal: "Laptop, clean writing, willingness to learn SEO",
     intro:
@@ -146,7 +146,7 @@ export const PROFESI_EN = {
     ],
   },
   "desainer-grafis": {
-    judul: "Freelance Graphic Designer",
+    judul: "Social Media, Poster & Packaging Designer",
     ringkas: "Create logos, social media content, packaging, and promotional material for clients anywhere.",
     modal: "A capable laptop, Canva or Adobe, a portfolio",
     intro:
