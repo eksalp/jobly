@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ArrowRight, ChevronRight, ExternalLink, AlertTriangle, Globe, Calculator, ShieldCheck, Dumbbell, CircleCheckBig } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { SEMUA_PANDUAN, PROFESI, KATEGORI_PANDUAN, cariPanduan } from "../../data/panduan";
@@ -49,7 +49,66 @@ function KartuKursus({ k }) {
 /*  Isi panduan profesi                                                */
 /* ------------------------------------------------------------------ */
 
-function bagianProfesi(p) {
+function BagianKerja({ kerja }) {
+  return (
+    <>
+      <h3>{t("Contoh satu hari kerja", "A typical working day")}</h3>
+      <ol className="pb-pd-hari">
+        {kerja.hari.map((h) => (
+          <li key={h.jam}>
+            <span className="pb-pd-jam">{h.jam}</span>
+            <span>{h.isi}</span>
+          </li>
+        ))}
+      </ol>
+      <h3>{t("Cara kerjamu dinilai", "How your work is judged")}</h3>
+      <Daftar items={kerja.dinilai} />
+      <h3>{t("Tantangan yang sering muncul", "Common challenges")}</h3>
+      <div className="pb-pd-tantangan">
+        {kerja.tantangan.map((x) => (
+          <div key={x.judul}>
+            <b>{x.judul}</b>
+            <p>{x.isi}</p>
+          </div>
+        ))}
+      </div>
+      <h3>{t("Jenjang karier", "Career path")}</h3>
+      <p>{kerja.jenjang}</p>
+    </>
+  );
+}
+
+function BagianLolos({ lolos }) {
+  return (
+    <>
+      <h3>{t("Alur seleksi yang umum", "The usual hiring process")}</h3>
+      <ol className="pb-pd-alur">
+        {lolos.alur.map((x) => (
+          <li key={x}>{x}</li>
+        ))}
+      </ol>
+      <h3>{t("Isi portofolio yang dicari", "What a strong portfolio shows")}</h3>
+      <Daftar items={lolos.portofolio} />
+      <h3>{t("Tes yang biasa diberikan", "Typical tests")}</h3>
+      <p>{lolos.tes}</p>
+      <h3>{t("Pertanyaan interview yang sering muncul", "Common interview questions")}</h3>
+      <div className="pb-pd-tanya">
+        {lolos.pertanyaan.map((x) => (
+          <div key={x.q}>
+            <b>"{x.q}"</b>
+            <p>
+              <span>{t("Cara menjawab:", "How to answer:")}</span> {x.jawab}
+            </p>
+          </div>
+        ))}
+      </div>
+      <h3>{t("Kesalahan yang sering membuat gagal", "Mistakes that often cost the job")}</h3>
+      <Daftar items={lolos.kesalahan} />
+    </>
+  );
+}
+
+function bagianProfesi(p, ekstra) {
   const kursus = cocokkanKursus(p.kursus || [], null, 3);
   const daftar = [
     {
@@ -61,6 +120,10 @@ function bagianProfesi(p) {
           <Daftar items={p.tugas} />
         </>
       ),
+    },
+    ekstra?.kerja && {
+      judul: t("Seperti apa kerjanya", "What the work is really like"),
+      isi: <BagianKerja kerja={ekstra.kerja} />,
     },
     {
       judul: t("Skill dan tools", "Skills and tools"),
@@ -114,6 +177,10 @@ function bagianProfesi(p) {
         </ol>
       ),
     },
+    ekstra?.lolos && {
+      judul: t("Cara lolos seleksi", "How to get hired"),
+      isi: <BagianLolos lolos={ekstra.lolos} />,
+    },
     {
       judul: t("Tempat mencari kerja", "Where to find work"),
       isi: (
@@ -128,7 +195,7 @@ function bagianProfesi(p) {
           {p.remoteQ && (
             <a className="pb-btn pb-btn-primary pb-pd-cta" {...tautan(`/remote?q=${encodeURIComponent(p.remoteQ)}`)}>
               <Globe size={16} />
-              {t("Lihat loker remote", "See remote jobs for")}{" "}{p.judul}
+              {t("Cari loker", "Find jobs:")}{" "}{p.judul}
               <ArrowRight size={16} />
             </a>
           )}
@@ -208,7 +275,7 @@ function AjakanLatihan({ p }) {
         <span>
           {selesai
             ? t("Buka lagi untuk mengulang kuis atau memperbaiki jawabanmu.", "Open it again to retake the quiz or improve your answers.")
-            : t("5 soal situasi kerja dan 2 brief klien untuk dikerjakan, lengkap dengan contoh jawaban. Soal pertama gratis.", "5 work-situation questions and 2 client briefs to complete, with sample answers. The first question is free.")}
+            : t("Kuis situasi kerja, simulasi pesan masuk sepanjang hari, dan 2 brief klien lengkap dengan permintaan revisi. Soal pertama gratis.", "A work-situation quiz, a simulated day of incoming messages, and 2 client briefs with revision requests. The first question is free.")}
         </span>
       </span>
       <span className="pb-lt-ajak-aksi">
@@ -227,7 +294,23 @@ export function DetailPanduanPage({ slug }) {
     window.scrollTo(0, 0);
   }, [p]);
 
-  const bagian = useMemo(() => (p ? (p.jenis === "profesi" ? bagianProfesi(p) : bagianInsight(p)) : []), [p]);
+  // Bagian "cara lolos" dan "seperti apa kerjanya" cukup panjang, jadi dimuat terpisah
+  const [ekstra, setEkstra] = useState(null);
+  useEffect(() => {
+    if (!p || p.jenis !== "profesi") return undefined;
+    let batal = false;
+    import("../../data/panduanKerja/index.js").then((m) => {
+      if (!batal) setEkstra(m.PANDUAN_KERJA[p.slug] || null);
+    });
+    return () => {
+      batal = true;
+    };
+  }, [p]);
+
+  const bagian = useMemo(
+    () => (p ? (p.jenis === "profesi" ? bagianProfesi(p, ekstra) : bagianInsight(p)) : []),
+    [p, ekstra],
+  );
 
   if (!p) {
     return (

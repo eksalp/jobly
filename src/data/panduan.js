@@ -36,6 +36,8 @@ const SUMBER = {
     url: "https://databoks.katadata.co.id/ketenagakerjaan/statistik/6a3dd8b1c7e23/rata-rata-gaji-freelance-di-provinsi-indonesia-awal-2026",
   },
   djp: { nama: "DJP, Coretaxpedia: Penghasilan dari Pekerjaan Bebas", url: "https://pajak.go.id/coretaxpedia/penghasilan-dari-pekerjaan-bebas" },
+  upworkDataEntry: { nama: "Upwork, tarif data entry specialist", url: "https://www.upwork.com/hire/data-entry-specialists/cost/" },
+  upworkVideo: { nama: "Upwork, tarif video editor", url: "https://www.upwork.com/hire/video-editors/cost/" },
   ddtc: {
     nama: "DDTCNews, ketentuan PP 20/2026",
     url: "https://news.ddtc.co.id/komunitas/suluh-pajak/1820255/ketentuan-baru-jasa-pekerjaan-bebas-yang-dikecualikan-pph-final-05",
@@ -136,7 +138,7 @@ const PROFESI_ID = [
       "Gaji sangat tinggi untuk pekerjaan tanpa pengalaman",
     ],
     remoteQ: "customer service",
-    kursus: ["crm", "customer relationship", "customer engagement", "bahasa inggris"],
+    kursus: ["bahasa inggris", "customer relationship"],
   },
   {
     slug: "admin-media-sosial",
@@ -146,7 +148,7 @@ const PROFESI_ID = [
     level: "Ramah pemula",
     modal: "HP dengan kamera bagus, laptop, Canva, CapCut",
     intro:
-      "Hampir semua usaha butuh media sosial yang aktif, tapi pemiliknya jarang sempat. Admin media sosial menyusun rencana konten, membuat atau menjadwalkan unggahan, membalas komentar, dan melaporkan hasilnya. Banyak yang memegang beberapa klien sekaligus dari rumah.",
+      "Hampir semua usaha butuh media sosial yang aktif, tetapi pemiliknya jarang sempat. Admin media sosial menyusun rencana konten, membuat atau menjadwalkan unggahan, membalas komentar, dan melaporkan hasilnya. Banyak yang memegang beberapa klien sekaligus dari rumah.",
     tugas: [
       "Menyusun kalender konten bulanan",
       "Membuat desain feed dan video pendek",
@@ -180,7 +182,7 @@ const PROFESI_ID = [
     slug: "content-writer",
     judul: "Penulis Artikel & SEO",
     ikon: "PenLine",
-    ringkas: "Menulis artikel, deskripsi produk, dan naskah konten untuk website dan media sosial.",
+    ringkas: "Menulis artikel blog dan deskripsi produk yang mudah ditemukan di Google dan enak dibaca.",
     level: "Ramah pemula",
     modal: "Laptop, kemampuan menulis rapi, mau belajar SEO",
     intro:
@@ -218,15 +220,15 @@ const PROFESI_ID = [
     slug: "desainer-grafis",
     judul: "Desainer Media Sosial, Poster & Kemasan",
     ikon: "Palette",
-    ringkas: "Membuat logo, konten media sosial, kemasan, dan materi promosi untuk klien dari mana saja.",
+    ringkas: "Mendesain konten media sosial, poster, kemasan, dan materi promosi untuk klien dari mana saja.",
     level: "Butuh latihan",
     modal: "Laptop yang cukup kuat, Canva atau Adobe, portofolio",
     intro:
-      "Desainer grafis membuat tampilan visual untuk merek: logo, feed Instagram, poster, kemasan, hingga presentasi. Klien hampir selalu menilai dari portofolio, bukan dari ijazah, sehingga kamu bisa mulai dari mana saja asalkan karyanya bagus.",
+      "Desainer grafis membuat materi visual yang dipakai merek sehari-hari: feed Instagram, poster promo, banner, kemasan, dan brosur. Klien hampir selalu menilai dari portofolio, bukan dari ijazah, sehingga kamu bisa mulai dari mana saja asalkan karyanya bagus. Untuk pembuatan logo dan identitas merek, lihat panduan Desainer Logo & Branding.",
     tugas: [
       "Menerjemahkan brief klien menjadi konsep visual",
-      "Membuat logo dan identitas merek",
-      "Mendesain konten media sosial dan materi promosi",
+      "Mendesain feed dan Story media sosial sesuai brand guideline klien",
+      "Membuat poster, banner, brosur, dan desain kemasan",
       "Menyiapkan file siap cetak atau siap unggah",
       "Merevisi sesuai masukan klien",
     ],
@@ -238,9 +240,9 @@ const PROFESI_ID = [
     ],
     catatanGaji: "Untuk proyek freelance, tarif biasanya dihitung per desain atau per paket. Bandingkan dengan proyek serupa di platform freelance sebelum menentukan harga.",
     langkah: [
-      { judul: "Kuasai dasar desain dulu", isi: "Alat bisa dipelajari cepat, tapi desain yang enak dilihat datang dari pemahaman tipografi, warna, dan ruang kosong." },
+      { judul: "Kuasai dasar desain dulu", isi: "Alat bisa dipelajari cepat, tetapi desain yang enak dilihat datang dari pemahaman tipografi, warna, dan ruang kosong." },
       { judul: "Buat proyek fiktif yang realistis", isi: "Redesain logo dan feed untuk usaha lokal yang kamu kenal, lengkap dengan alasan pilihan desainnya. Ini cara paling cepat mengisi portofolio." },
-      { judul: "Tampilkan di Behance atau Dribbble", isi: "Susun 6 sampai 8 karya terbaik. Lebih baik sedikit tapi kuat daripada banyak tapi biasa." },
+      { judul: "Tampilkan di Behance atau Dribbble", isi: "Susun 6 sampai 8 karya terbaik. Lebih baik sedikit, tetapi kuat, daripada banyak tetapi biasa." },
       { judul: "Tentukan paket dan batas revisi", isi: "Contoh: logo dengan 3 konsep awal dan 2 kali revisi. Batas revisi melindungi waktumu." },
       { judul: "Minta uang muka", isi: "Untuk klien baru, minta 30 sampai 50 persen di depan. Kirim file final setelah pelunasan." },
     ],
@@ -256,11 +258,11 @@ const PROFESI_ID = [
     slug: "data-entry",
     judul: "Data Entry",
     ikon: "Keyboard",
-    ringkas: "Memasukkan, merapikan, dan memeriksa data. Mudah dimulai, tapi juga paling banyak penipuannya.",
+    ringkas: "Memasukkan, merapikan, dan memeriksa data. Mudah dimulai, tetapi juga paling banyak penipuannya.",
     level: "Ramah pemula",
     modal: "Laptop, mengetik cepat, Excel atau Google Sheets",
     intro:
-      "Data entry adalah pekerjaan memasukkan dan merapikan data: dari dokumen ke spreadsheet, dari formulir ke sistem, atau memeriksa data yang salah. Pekerjaan ini sering jadi pintu masuk kerja remote, tapi tarifnya cenderung rendah dan banyak lowongan palsu yang memakai nama data entry. Baca bagian waspada dengan teliti.",
+      "Data entry adalah pekerjaan memasukkan dan merapikan data: dari dokumen ke spreadsheet, dari formulir ke sistem, atau memeriksa data yang salah. Pekerjaan ini sering jadi pintu masuk kerja remote, tetapi tarifnya cenderung rendah dan banyak lowongan palsu yang memakai nama data entry. Baca bagian waspada dengan teliti.",
     tugas: [
       "Memindahkan data dari dokumen atau gambar ke spreadsheet",
       "Membersihkan data ganda dan format yang tidak seragam",
@@ -271,7 +273,7 @@ const PROFESI_ID = [
     skill: ["Mengetik cepat dan akurat", "Excel atau Google Sheets (filter, VLOOKUP, pivot)", "Teliti dan konsisten", "Menjaga kerahasiaan data"],
     tools: ["Microsoft Excel", "Google Sheets", "Google Forms", "Alat OCR untuk membaca teks dari gambar"],
     penghasilan: [
-      { label: "Contoh lowongan anotasi data berbahasa Indonesia", nilai: "US$2,45 per jam, 30 sampai 40 jam per minggu", sumber: SUMBER.careerflow },
+      { label: "Kisaran tarif data entry specialist di Upwork", nilai: "US$10 sampai 20 per jam (median US$13)", sumber: SUMBER.upworkDataEntry },
       { label: "Rata-rata pendapatan bersih pekerja bebas di Indonesia", nilai: "Rp1,68 juta per bulan", sumber: SUMBER.bps },
     ],
     catatanGaji: "Data entry murni umumnya bertarif rendah. Supaya penghasilan naik, kembangkan ke pekerjaan yang butuh keahlian lebih, seperti admin data, analis data junior, atau virtual assistant.",
@@ -312,7 +314,7 @@ const PROFESI_ID = [
     skill: ["Ritme editing yang membuat penonton bertahan", "Subtitle dan teks yang mudah dibaca", "Memahami tren tiap platform", "Mengelola file besar dengan rapi"],
     tools: ["CapCut", "Adobe Premiere Pro atau DaVinci Resolve", "Google Drive untuk kirim file", "Pustaka musik bebas royalti"],
     penghasilan: [
-      { label: "Kisaran tarif editor video berbasis AI di Upwork", nilai: "US$10 sampai 60 per jam", sumber: SUMBER.upwork },
+      { label: "Kisaran tarif video editor di Upwork", nilai: "US$10 sampai 60 per jam (median US$35)", sumber: SUMBER.upworkVideo },
     ],
     catatanGaji: "Di dalam negeri, tarif biasanya per video atau per paket bulanan. Bandingkan dengan penawaran serupa di platform freelance.",
     langkah: [
@@ -350,7 +352,7 @@ const PROFESI_ID = [
     langkah: [
       { judul: "Cari dengan kata kunci yang tepat", isi: "Gunakan data annotator, AI trainer, AI rater, atau language specialist Indonesian." },
       { judul: "Siapkan diri untuk tes", isi: "Kebanyakan proses seleksi berupa tes bahasa atau tes ketelitian 15 sampai 60 menit, tanpa wawancara. Kerjakan dengan tenang dan baca instruksi sampai habis." },
-      { judul: "Jaga kualitas di minggu pertama", isi: "Skor kualitas awal biasanya menentukan apakah kamu mendapat lebih banyak tugas. Lebih baik lambat tapi akurat." },
+      { judul: "Jaga kualitas di minggu pertama", isi: "Skor kualitas awal biasanya menentukan apakah kamu mendapat lebih banyak tugas. Lebih baik lambat tetapi akurat." },
       { judul: "Manfaatkan keahlian lain", isi: "Kalau kamu punya latar belakang di bidang tertentu, cari proyek AI untuk bidang itu. Tarifnya lebih tinggi." },
     ],
     platform: ["LinkedIn", "Situs karier perusahaan AI dan penyedia data", "Upwork"],
@@ -399,7 +401,7 @@ const PROFESI_ID = [
     level: "Butuh keahlian",
     modal: "Laptop, dasar akuntansi, Excel",
     intro:
-      "Banyak usaha kecil butuh pembukuan yang rapi tapi belum perlu staf keuangan penuh waktu. Bookkeeper remote mencatat transaksi, mencocokkan mutasi bank, dan menyiapkan laporan bulanan. Lulusan akuntansi atau yang pernah jadi admin keuangan punya modal kuat di sini.",
+      "Banyak usaha kecil butuh pembukuan yang rapi tetapi belum perlu staf keuangan penuh waktu. Bookkeeper remote mencatat transaksi, mencocokkan mutasi bank, dan menyiapkan laporan bulanan. Lulusan akuntansi atau yang pernah jadi admin keuangan punya modal kuat di sini.",
     tugas: [
       "Mencatat pemasukan dan pengeluaran",
       "Rekonsiliasi mutasi bank dengan catatan",
@@ -438,7 +440,7 @@ const INSIGHT_ID = [
     bagian: [
       {
         judul: "Pahami dulu kenyataannya",
-        isi: "Kerja remote memberi kebebasan waktu dan tempat, tapi persaingannya juga lebih luas karena kamu bersaing dengan pelamar dari mana saja. Penghasilan di awal sering belum stabil. Sebagai gambaran, rata-rata pendapatan bersih pekerja bebas di Indonesia pada Februari 2026 sekitar Rp1,68 juta per bulan menurut BPS. Yang bisa jauh di atas angka itu biasanya punya keahlian jelas dan klien tetap.",
+        isi: "Kerja remote memberi kebebasan waktu dan tempat, tetapi persaingannya juga lebih luas karena kamu bersaing dengan pelamar dari mana saja. Penghasilan di awal sering belum stabil. Sebagai gambaran, rata-rata pendapatan bersih pekerja bebas di Indonesia pada Februari 2026 sekitar Rp1,68 juta per bulan menurut BPS. Yang bisa jauh di atas angka itu biasanya punya keahlian jelas dan klien tetap.",
         sumber: SUMBER.bps,
       },
       {
@@ -556,7 +558,7 @@ const INSIGHT_ID = [
           "PayPal: dikenal luas oleh klien luar negeri. Perhatikan biaya penerimaan dan kurs saat menarik ke rupiah.",
           "Payoneer: menyediakan rekening penampung dalam mata uang asing dan banyak dipakai pekerja lepas.",
           "Wise: biaya konversi biasanya transparan. Cek mata uang yang bisa diterima untuk akun yang terdaftar di Indonesia.",
-          "Transfer bank internasional (SWIFT): bisa langsung ke rekening bank Indonesia, tapi biasanya ada potongan dari bank perantara.",
+          "Transfer bank internasional (SWIFT): bisa langsung ke rekening bank Indonesia, tetapi biasanya ada potongan dari bank perantara.",
         ],
       },
       {
@@ -681,7 +683,9 @@ function profesiEn(p) {
     ...p,
     ...e,
     level: LEVEL_EN[p.level] || p.level,
-    penghasilan: e.penghasilan ? gabungDaftar(p.penghasilan, e.penghasilan) : p.penghasilan.map(penghasilanEn),
+    penghasilan: e.penghasilan
+      ? gabungDaftar(p.penghasilan, e.penghasilan).map((g) => ({ ...g, sumber: g.sumber && { ...g.sumber, nama: g.sumber.nama.replace(/^Upwork, tarif (.+)$/, "Upwork, $1 rates") } }))
+      : p.penghasilan.map(penghasilanEn),
     langkah: gabungDaftar(p.langkah, e.langkah),
   };
 }

@@ -114,7 +114,7 @@ export const PROFESI_EN = {
   },
   "content-writer": {
     judul: "Blog & SEO Writer",
-    ringkas: "Write articles, product descriptions, and content scripts for websites and social media.",
+    ringkas: "Write blog articles and product descriptions that rank on Google and read well.",
     modal: "Laptop, clean writing, willingness to learn SEO",
     intro:
       "Content writers produce blog articles, product descriptions, video scripts, and marketing emails. The work suits home-based setups because the output is text. AI speeds up drafting, so what companies look for now are writers who can research, edit, and write with a distinct voice.",
@@ -147,14 +147,14 @@ export const PROFESI_EN = {
   },
   "desainer-grafis": {
     judul: "Social Media, Poster & Packaging Designer",
-    ringkas: "Create logos, social media content, packaging, and promotional material for clients anywhere.",
+    ringkas: "Design social media content, posters, packaging, and promotional material for clients anywhere.",
     modal: "A capable laptop, Canva or Adobe, a portfolio",
     intro:
-      "Graphic designers create the visual side of a brand: logos, Instagram feeds, posters, packaging, and presentations. Clients almost always judge by portfolio, not degree, so you can start from anywhere as long as the work is good.",
+      "Graphic designers create the visuals brands use every day: Instagram feeds, promo posters, banners, packaging, and brochures. Clients almost always judge by portfolio, not degree, so you can start from anywhere as long as the work is good. For logos and brand identity, see the Logo & Branding Designer guide.",
     tugas: [
       "Turning a client brief into a visual concept",
-      "Creating logos and brand identities",
-      "Designing social media content and promotional material",
+      "Designing social feeds and Stories to the client's brand guide",
+      "Creating posters, banners, brochures, and packaging",
       "Preparing print-ready or upload-ready files",
       "Revising based on client feedback",
     ],
@@ -194,7 +194,7 @@ export const PROFESI_EN = {
     skill: ["Fast and accurate typing", "Excel or Google Sheets (filters, VLOOKUP, pivot)", "Careful and consistent", "Keeping data confidential"],
     tools: ["Microsoft Excel", "Google Sheets", "Google Forms", "OCR tools to read text from images"],
     penghasilan: [
-      { label: "Example Indonesian-language data annotation job", nilai: "US$2.45 per hour, 30 to 40 hours a week" },
+      { label: "Upwork rate range for data entry specialists", nilai: "US$10 to 20 per hour (median US$13)" },
       { label: "Average net income of freelance workers in Indonesia", nilai: "Rp1.68 million per month" },
     ],
     catatanGaji: "Pure data entry usually pays little. To earn more, grow into work that needs more skill, such as data admin, junior data analyst, or virtual assistant.",
@@ -228,7 +228,7 @@ export const PROFESI_EN = {
     ],
     skill: ["Editing rhythm that keeps viewers watching", "Readable subtitles and text", "Understanding each platform's trends", "Handling large files neatly"],
     tools: ["CapCut", "Adobe Premiere Pro or DaVinci Resolve", "Google Drive to send files", "Royalty-free music libraries"],
-    penghasilan: [{ label: "Typical AI video editor rates on Upwork", nilai: "US$10 to 60 per hour" }],
+    penghasilan: [{ label: "Upwork rate range for video editors", nilai: "US$10 to 60 per hour (median US$35)" }],
     catatanGaji: "Locally, rates are usually per video or per monthly package. Compare similar offers on freelance platforms.",
     langkah: [
       { judul: "Start with CapCut", isi: "CapCut is free and enough for most short videos. Once you're fluent, learn Premiere or DaVinci for bigger projects." },

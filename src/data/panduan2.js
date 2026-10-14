@@ -68,7 +68,7 @@ export const PROFESI_TAMBAHAN = [
     catatanGaji: CATATAN_LOKAL,
     langkah: [
       { judul: "Bangun reputasi menulis dulu", isi: "Karena karya ghostwriting tidak bisa diklaim, siapkan contoh tulisan atas namamu sendiri di blog atau LinkedIn." },
-      { judul: "Mulai dari unggahan LinkedIn", isi: "Banyak profesional ingin aktif di LinkedIn tapi tidak sempat menulis. Ini pintu masuk yang paling mudah." },
+      { judul: "Mulai dari unggahan LinkedIn", isi: "Banyak profesional ingin aktif di LinkedIn tetapi tidak sempat menulis. Ini pintu masuk yang paling mudah." },
       { judul: "Siapkan proses wawancara", isi: "Buat daftar pertanyaan standar untuk menggali cerita, pendapat, dan istilah yang biasa dipakai klien." },
       { judul: "Gunakan perjanjian kerahasiaan", isi: "Sepakati sejak awal bahwa karya menjadi milik klien, dan bahwa kamu boleh menyebut jenis proyeknya di portofolio tanpa menyebut nama." },
     ],
@@ -246,7 +246,7 @@ export const PROFESI_TAMBAHAN = [
     level: "Ramah pemula",
     modal: "Laptop, PowerPoint atau Google Slides, rasa desain yang rapi",
     intro:
-      "Banyak orang punya isi presentasi yang bagus tapi tampilannya berantakan. Desainer presentasi merapikan alur, data, dan visual sehingga pesan utamanya mudah ditangkap, terutama untuk pitch deck ke investor dan presentasi perusahaan.",
+      "Banyak orang punya isi presentasi yang bagus tetapi tampilannya berantakan. Desainer presentasi merapikan alur, data, dan visual sehingga pesan utamanya mudah ditangkap, terutama untuk pitch deck ke investor dan presentasi perusahaan.",
     tugas: [
       "Merapikan slide yang sudah ada",
       "Mengubah data menjadi grafik yang mudah dibaca",
@@ -460,7 +460,7 @@ export const PROFESI_TAMBAHAN = [
     platform: ["Upwork", "Fiverr", "Codeable", "Sribulancer"],
     waspada: ["Klien yang tidak bisa membuktikan bahwa website itu miliknya"],
     remoteQ: "web developer",
-    kursus: ["web development", "wordpress", "javascript", "html"],
+    kursus: ["wordpress", "html", "css", "website"],
   },
   {
     slug: "ai-specialist",
@@ -748,7 +748,7 @@ export const PROFESI_TAMBAHAN = [
     platform: ["Upwork", "LinkedIn", "Komunitas UMKM dan inkubator bisnis"],
     waspada: ["Permintaan memalsukan data keuangan untuk pengajuan pinjaman"],
     remoteQ: "business",
-    kursus: ["laporan keuangan", "business development", "microsoft excel", "market research"],
+    kursus: ["project management", "riset pasar", "laporan keuangan"],
   },
   {
     slug: "konsultan-pajak",
@@ -874,7 +874,7 @@ export const PROFESI_TAMBAHAN = [
     platform: ["Upwork", "Fiverr", "Komunitas peneliti dan mahasiswa", "Rumah produksi podcast"],
     waspada: ["Situs transkripsi yang meminta biaya pendaftaran atau 'tes berbayar'"],
     remoteQ: "transcription",
-    kursus: ["bahasa inggris", "listening", "spreadsheet dasar"],
+    kursus: ["bahasa inggris", "content writing"],
   },
   {
     slug: "executive-assistant",
@@ -905,7 +905,7 @@ export const PROFESI_TAMBAHAN = [
     platform: ["LinkedIn", "Upwork", "Agensi asisten virtual", "Jobly (filter remote)"],
     waspada: ["Diminta mentransfer uang perusahaan atas instruksi email tanpa verifikasi. Ini modus penipuan yang umum."],
     remoteQ: "executive assistant",
-    kursus: ["bahasa inggris", "microsoft excel", "project management", "ai tools"],
+    kursus: ["bahasa inggris", "project management"],
   },
 
   /* ============================ 8. Pendidikan & Konsultasi */
