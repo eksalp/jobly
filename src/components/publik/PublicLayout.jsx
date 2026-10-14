@@ -30,6 +30,7 @@ import {
   Monitor,
   ArrowUp,
   ArrowRight,
+  HelpCircle,
 } from "lucide-react";
 import "../../styles/publik.css";
 import { useAuth } from "../../context/AuthContext";
@@ -111,10 +112,10 @@ export const MENU_PUBLIK = [
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
     ],
   },
-  { label: t("Panduan Remote Working", "Remote Working Guide"), path: "/panduan" },
-  { label: t("Peta gaji", "Salary map"), path: "/peta-gaji" },
-  { label: t("Harga", "Pricing"), path: "/#harga" },
-  { label: "FAQ", path: "/faq" },
+  { label: t("Panduan Remote Working", "Remote Working Guide"), path: "/panduan", Ikon: BookOpen, sorot: true },
+  { label: t("Peta gaji", "Salary map"), path: "/peta-gaji", Ikon: BarChart3 },
+  { label: t("Harga", "Pricing"), path: "/#harga", Ikon: CreditCard },
+  { label: "FAQ", path: "/faq", Ikon: HelpCircle },
 ];
 
 const MENU_AKUN = [
@@ -551,8 +552,22 @@ export function SiteHeader({ aktif }) {
         </div>
 
         <div className={`pb-mobile-menu ${buka ? "open" : ""}`}>
+          {/* Tautan utama tampil paling atas sebagai tombol berikon, supaya
+              tidak tenggelam di bawah daftar tools yang panjang. */}
+          <div className="pb-mm-grid pb-mm-pintas">
+            {(menu.some((m) => !m.kolom)
+              ? menu.filter((m) => !m.kolom)
+              : [{ label: I.panduan.t, path: I.panduan.path, Ikon: I.panduan.Ikon, sorot: true }]
+            ).map(({ label, path, Ikon, sorot }) => (
+              <a key={path} className={`pb-mm-item ${sorot ? "sorot" : ""}`} {...tautan(path)}>
+                <Ikon size={16} />
+                <span>{label}</span>
+                {sorot && <ArrowRight size={15} className="pb-mm-panah" />}
+              </a>
+            ))}
+          </div>
           {menu.map((m) =>
-            m.kolom ? (
+            !m.kolom ? null : (
               <React.Fragment key={m.label}>
                 <div className="pb-mm-group">{m.label}</div>
                 <div className="pb-mm-grid">
@@ -566,10 +581,6 @@ export function SiteHeader({ aktif }) {
                   ))}
                 </div>
               </React.Fragment>
-            ) : (
-              <a key={m.label} {...tautan(m.path)}>
-                {m.label}
-              </a>
             ),
           )}
           {masuk && (

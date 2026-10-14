@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from "react";
-import { ArrowRight, ChevronRight, ExternalLink, AlertTriangle, Globe, Calculator, ShieldCheck } from "lucide-react";
+import { ArrowRight, ChevronRight, ExternalLink, AlertTriangle, Globe, Calculator, ShieldCheck, Dumbbell, CircleCheckBig } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { SEMUA_PANDUAN, PROFESI, KATEGORI_PANDUAN, cariPanduan } from "../../data/panduan";
 import { cocokkanKursus } from "../../data/kursus";
 import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
 import { IkonPanduan } from "./PanduanPage";
+import { sudahSelesai } from "../../utils/latihanProgres";
 
 const idBagian = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -194,6 +195,30 @@ function bagianInsight(p) {
 
 /* ------------------------------------------------------------------ */
 
+function AjakanLatihan({ p }) {
+  const selesai = sudahSelesai(p.slug);
+  return (
+    <a className={`pb-lt-ajak ${selesai ? "selesai" : ""}`} {...tautan(`/latihan/${p.slug}`)}>
+      <span className="pb-lt-ajak-ikon">{selesai ? <CircleCheckBig size={20} /> : <Dumbbell size={20} />}</span>
+      <span className="pb-lt-ajak-isi">
+        <b>
+          {selesai ? t("Latihan sudah selesai", "Practice completed") : t("Latihan praktik", "Practice")}{" "}
+          <span className="pb-tag pro">Pro</span>
+        </b>
+        <span>
+          {selesai
+            ? t("Buka lagi untuk mengulang kuis atau memperbaiki jawabanmu.", "Open it again to retake the quiz or improve your answers.")
+            : t("5 soal situasi kerja dan 2 brief klien untuk dikerjakan, lengkap dengan contoh jawaban. Soal pertama gratis.", "5 work-situation questions and 2 client briefs to complete, with sample answers. The first question is free.")}
+        </span>
+      </span>
+      <span className="pb-lt-ajak-aksi">
+        {selesai ? t("Buka", "Open") : t("Mulai", "Start")}
+        <ArrowRight size={15} />
+      </span>
+    </a>
+  );
+}
+
 export function DetailPanduanPage({ slug }) {
   const p = cariPanduan(slug);
 
@@ -267,6 +292,7 @@ export function DetailPanduanPage({ slug }) {
             </span>
           </div>
         )}
+        {p.jenis === "profesi" && <AjakanLatihan p={p} />}
       </div>
 
       <div className="pb-wrap pb-doc" style={{ marginTop: 32 }}>

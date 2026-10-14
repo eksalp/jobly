@@ -23,6 +23,7 @@ import { CekLokerPage } from "./publik/CekLokerPage";
 import { PetaGajiPage } from "./publik/PetaGajiPage";
 import { PanduanPage } from "./publik/PanduanPage";
 import { DetailPanduanPage } from "./publik/DetailPanduanPage";
+import { LatihanPage } from "./publik/LatihanPage";
 import {
   adaProsesBerjalan,
   keteranganProses,
@@ -39,11 +40,12 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /kalkulator-gaji  Kalkulator gaji mata uang asing → rupiah
  *   /panduan          Panduan Remote Working untuk pemula
  *   /panduan/<slug>   Satu panduan (profesi atau topik umum)
+ *   /latihan/<slug>   Latihan praktik untuk satu profesi (Pro)
  *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "cek", "petagaji", "panduan", "panduanDetail"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "cek", "petagaji", "panduan", "panduanDetail", "latihan"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 
@@ -70,6 +72,7 @@ function parsePath(pathname) {
   if (path === "/kalkulator-gaji") return { page: "kalkulator" };
   if (path === "/panduan") return { page: "panduan" };
   if (path.startsWith("/panduan/")) return { page: "panduanDetail", slug: path.slice("/panduan/".length) };
+  if (path.startsWith("/latihan/")) return { page: "latihan", slug: path.slice("/latihan/".length) };
   if (path === "/remote") return { page: "remote" };
   if (path === "/cek-loker") return { page: "cek" };
   if (path === "/peta-gaji") return { page: "petagaji" };
@@ -173,7 +176,7 @@ function JobFinderApp() {
       } catch {
         /* abaikan */
       }
-      if (tujuan && tujuan.startsWith("/dashboard/")) {
+      if (tujuan && (tujuan.startsWith("/dashboard/") || tujuan.startsWith("/latihan/"))) {
         window.history.pushState({}, "", tujuan);
         terapkan(parsePath(window.location.pathname));
         window.scrollTo(0, 0);
@@ -247,6 +250,9 @@ function JobFinderApp() {
       break;
     case "panduanDetail":
       isi = <DetailPanduanPage key={rute.slug} slug={rute.slug} />;
+      break;
+    case "latihan":
+      isi = <LatihanPage key={rute.slug} slug={rute.slug} />;
       break;
     case "dokumen":
       isi = <DokumenPage jenis={rute.jenis} />;

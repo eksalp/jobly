@@ -5,12 +5,13 @@ import {
   Wallet, Receipt, ShieldAlert, AudioLines, BarChart3, BookText, Briefcase, Brush, CalendarClock,
   ClipboardCheck, Code2, Feather, FileText, Film, Languages, ListChecks, Mail, Megaphone, Mic,
   Presentation, ScanSearch, Search, Shapes, Sigma, Smartphone, Sparkles, Table, Target, TrendingUp,
-  UserCheck, Workflow, Wrench,
+  UserCheck, Workflow, Wrench, Dumbbell, CircleCheckBig,
 } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { PROFESI, INSIGHT, KATEGORI_PANDUAN } from "../../data/panduan";
 import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
+import { sudahSelesai } from "../../utils/latihanProgres";
 
 // Ikon diimpor satu per satu supaya tidak seluruh pustaka ikon ikut terbundel
 const IKON = {
@@ -37,6 +38,12 @@ function KartuProfesi({ p }) {
         <span className="pb-pd-ringkas">{p.ringkas}</span>
         <span className="pb-pd-meta">
           <span className={`pb-pd-level ${p.levelKode === "mudah" ? "mudah" : ""}`}>{p.level}</span>
+          {sudahSelesai(p.slug) && (
+            <span className="pb-pd-selesai">
+              <CircleCheckBig size={12} />
+              {t("Latihan selesai", "Practice done")}
+            </span>
+          )}
         </span>
       </span>
       <ArrowRight size={16} className="pb-pd-panah" aria-hidden="true" />
@@ -68,6 +75,16 @@ export function PanduanPage() {
       </div>
 
       <div className="pb-wrap pb-pd-wrap">
+        <div className="pb-lt-info">
+          <Dumbbell size={18} />
+          <span>
+            <b>{t("Baru: latihan praktik untuk setiap pekerjaan.", "New: hands-on practice for every role.")}</b>{" "}
+            {t(
+              "Buka panduan mana saja, lalu coba kuis situasi kerja dan brief klien sungguhan. Tersedia di paket Pro.",
+              "Open any guide, then try the work-situation quiz and real client briefs. Available on the Pro plan.",
+            )}
+          </span>
+        </div>
         <section aria-labelledby="pd-profesi">
           <div className="pb-pd-headrow">
             <h2 id="pd-profesi" className="pb-h2">{t("Pilih jenis pekerjaan", "Pick a role")}</h2>
