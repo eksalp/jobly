@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Search, Globe, Clock, Calculator, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
@@ -6,7 +6,7 @@ import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunc
 import { useJobs } from "../../context/JobsContext";
 import { useDaftarLoker, useTunda } from "../../hooks/useLoker";
 import { tautan } from "../../utils/navigasi";
-import { useHitungNaik, useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
+import { useHitungNaik, usePintasanCari } from "../../utils/interaksi";
 import { lokal, t } from "../../i18n.js";
 
 
@@ -45,7 +45,6 @@ export function RemotePage() {
   const [saring, setSaring] = useState("semua");
   // ?q=... dari tautan lain (mis. tombol di halaman Panduan)
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get("q") || "");
-  const sentinel = useRef(null);
   usePintasanCari("cari-remote");
 
   useEffect(() => {
@@ -60,7 +59,7 @@ export function RemotePage() {
     tipe: ["full-time", "freelance", "kontrak"].includes(saring) ? saring : "",
   };
   const { jobs: hasil, total, terkunci, loading, adaLagi, memuatLagi, muatLagi } = useDaftarLoker(filter);
-  useMuatOtomatis(sentinel, !loading && adaLagi && !memuatLagi, muatLagi);
+  // Loker berikutnya dimuat lewat tombol "Lihat lebih banyak", tidak otomatis saat menggulir
 
   const statistik = { total: st.remote || 0, asing: st.remoteAsing || 0, baru: st.baru7 || 0 };
 
@@ -150,9 +149,9 @@ export function RemotePage() {
           )}
         </div>
         {!loading && adaLagi && (
-          <div className="pb-more" ref={sentinel}>
+          <div className="pb-more">
             <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={memuatLagi}>
-              {memuatLagi ? t("Memuat…", "Loading…") : t("Muat lebih banyak", "Load more")}
+              {memuatLagi ? t("Memuat…", "Loading…") : t("Lihat lebih banyak", "Show more")}
             </button>
           </div>
         )}

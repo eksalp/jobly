@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import {
   PublicLayout,
@@ -11,7 +11,7 @@ import { useDaftarLoker, useTunda } from "../../hooks/useLoker";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
 import { TautanGrup } from "../../components/publik/Komunitas";
 import { grupAktif } from "../../data/situs";
-import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
+import { usePintasanCari } from "../../utils/interaksi";
 import { infoSumber, LABEL_LOKASI_KERJA, LABEL_TIPE_KERJA } from "../../utils/sumberLoker";
 import { lokal, t } from "../../i18n.js";
 
@@ -60,7 +60,6 @@ export function LokerPage() {
   const [toast, elemenToast] = useToast();
 
   const ubah = (sebagian) => setF((lama) => ({ ...lama, ...sebagian }));
-  const sentinel = useRef(null);
   usePintasanCari("cari-loker");
 
   useEffect(() => {
@@ -97,7 +96,7 @@ export function LokerPage() {
   );
 
   // Gulir sampai bawah = muat 24 berikutnya, tanpa perlu menekan tombol
-  useMuatOtomatis(sentinel, !loading && adaLagi && !memuatLagi, muatLagi);
+  // Loker berikutnya dimuat lewat tombol "Lihat lebih banyak", tidak otomatis saat menggulir
 
   const adaFilter = f.q || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
   const reset = () =>
@@ -283,9 +282,9 @@ export function LokerPage() {
         </div>
 
         {!loading && adaLagi && (
-          <div className="pb-more" ref={sentinel}>
+          <div className="pb-more">
             <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={memuatLagi}>
-              {memuatLagi ? t("Memuat…", "Loading…") : t("Muat lebih banyak", "Load more")}
+              {memuatLagi ? t("Memuat…", "Loading…") : t("Lihat lebih banyak", "Show more")}
             </button>
             {t(
               `Menampilkan ${hasil.length.toLocaleString(lokal())} dari ${(total ?? 0).toLocaleString(lokal())} lowongan`,

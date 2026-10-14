@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Search, X, Sparkles } from "lucide-react";
 import { useJobs } from "../../context/JobsContext";
 import { useUserProfile } from "../../context/UserProfileContext";
@@ -18,7 +18,7 @@ import { useToast } from "../../components/publik/PublicLayout";
 import { useApplications } from "../../hooks/useApplications";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
-import { useMuatOtomatis, usePintasanCari } from "../../utils/interaksi";
+import { usePintasanCari } from "../../utils/interaksi";
 import { lokal, t } from "../../i18n.js";
 import { labelTampil } from "../../data/taxonomy.js";
 
@@ -113,7 +113,6 @@ export function JobFinderPanel({ setActive }) {
   const { user } = useAuth();
   const { tambah: tambahLamaran, sudahDilamar } = useApplications();
   const hp = useLayarKecil(600);
-  const sentinel = useRef(null);
   usePintasanCari("cari-cocok");
   const [toast, elemenToast] = useToast();
 
@@ -208,7 +207,7 @@ export function JobFinderPanel({ setActive }) {
   const muatLagi = () => (modeCocok ? setTampil((n) => n + PER_MUAT) : daftar.muatLagi());
   const tampilkan = modeCocok ? filteredCocok.slice(0, tampil) : daftar.jobs;
 
-  useMuatOtomatis(sentinel, !loading && adaLagi && !daftar.memuatLagi, muatLagi);
+  // Loker berikutnya dimuat lewat tombol "Lihat lebih banyak", tidak otomatis saat menggulir
 
   useEffect(() => {
     setTampil(PER_MUAT);
@@ -392,9 +391,9 @@ export function JobFinderPanel({ setActive }) {
       </div>
 
       {!loading && adaLagi && (
-        <div className="pb-more" ref={sentinel}>
+        <div className="pb-more">
           <button type="button" className="pb-btn pb-btn-outline" onClick={muatLagi} disabled={daftar.memuatLagi}>
-            {daftar.memuatLagi ? t("Memuat…", "Loading…") : t("Muat lebih banyak", "Load more")}
+            {daftar.memuatLagi ? t("Memuat…", "Loading…") : t("Lihat lebih banyak", "Show more")}
           </button>
           {t("Menampilkan", "Showing")}{" "}{tampilkan.length.toLocaleString(lokal())} {t("dari", "of")} {jumlah.toLocaleString(lokal())}
         </div>
