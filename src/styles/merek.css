@@ -12,101 +12,163 @@
   transform-box: fill-box;
   transform-origin: 50% 100%;
 }
+.tj-kilau {
+  opacity: 0;
+}
 
 /*
- * Gerak berulang (siklus 8 detik):
- *   0–15%   pita ditulis seperti goresan pena
- *   15–84%  diam sebentar
- *   84–95%  pita "dihapus" searah tulisan, lalu ditulis lagi
- * Titik di atas memantul terus (siklus 2,4 detik), seperti bola
- * yang memantul di ujung batang: melar saat naik, gepeng saat mendarat.
+ * Satu siklus 6 detik (persen = detik / 6):
+ *   0    – 0,75 dtk  pita ditulis (ease cepat di tengah, halus di ujung)
+ *   0,70 – 1,40 dtk  titik meloncat dari ujung pita, mendarat dengan gepeng
+ *   2,00 – 2,90 dtk  kilau tipis menyapu sepanjang pita
+ *   3,30 – 4,05 dtk  titik meloncat kecil
+ *   4,75 – 5,50 dtk  titik masuk ke batang, pita ditarik kembali
+ * Lengkung atas simpul baru tampak saat pena melewatinya (6,03%) dan hilang
+ * saat pena kembali melewatinya (86,1%), supaya batang selalu terlihat
+ * lewat di bawah simpul.
  */
 @media (prefers-reduced-motion: no-preference) {
   .tj:not(.tj-diam) .tj-pena {
-    stroke-dasharray: 100 101;
-    animation: tj-tulis 8s linear 0.15s infinite both;
+    stroke-dasharray: 100 102;
+    animation: tj-tulis 6s linear 0.1s infinite both;
   }
-  /* Lengkung atas simpul baru tampak saat pena sampai di sana, supaya
-     batang terlihat lewat di bawahnya (lihat komentar di komponen) */
   .tj:not(.tj-diam) .tj-atas {
-    animation: tj-atas 8s linear 0.15s infinite both;
+    animation: tj-atas 6s linear 0.1s infinite both;
+  }
+  .tj:not(.tj-diam) .tj-kilau {
+    stroke-dasharray: 9 200;
+    animation: tj-kilau 6s linear 0.1s infinite both;
   }
   .tj:not(.tj-diam) .tj-titik {
-    animation:
-      tj-jatuh 0.45s cubic-bezier(0.3, 1.5, 0.5, 1) 1.3s both,
-      tj-mantul 2.4s linear 2.2s infinite;
+    animation: tj-titik 6s linear 0.1s infinite both;
+  }
+  /* Arahkan kursor ke logo: titik meloncat sekali */
+  a:hover > .tj:not(.tj-diam) svg {
+    animation: tj-angguk 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
   }
 }
 
 @keyframes tj-tulis {
   0% {
-    stroke-dashoffset: 100;
-    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 1);
+    /* 101, bukan 100: supaya ujung bulat garis mask tidak tampak sebagai titik */
+    stroke-dashoffset: 101;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.3, 1);
   }
-  15% {
+  12.5%,
+  81.667% {
     stroke-dashoffset: 0;
   }
-  84% {
-    stroke-dashoffset: 0;
-    animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1);
+  81.667% {
+    animation-timing-function: cubic-bezier(0.6, 0, 0.3, 1);
   }
-  95% {
-    stroke-dashoffset: -100;
-  }
+  91.667%,
   100% {
-    stroke-dashoffset: -100;
+    stroke-dashoffset: 101;
   }
 }
+
 @keyframes tj-atas {
   0%,
-  7.7% {
+  6% {
     opacity: 0;
   }
-  7.8%,
-  95% {
+  6.05%,
+  86.1% {
     opacity: 1;
   }
-  95.1%,
+  86.15%,
   100% {
     opacity: 0;
   }
 }
-@keyframes tj-jatuh {
-  from {
+
+@keyframes tj-kilau {
+  0%,
+  33.33% {
     opacity: 0;
-    transform: translateY(-8px);
+    stroke-dashoffset: 9;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
-  to {
+  35% {
+    opacity: 0.55;
+  }
+  46.5% {
+    opacity: 0.55;
+  }
+  48.33%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes tj-titik {
+  0%,
+  11.67% {
+    opacity: 0;
+    transform: translate(0.5px, 47.5px) scale(0.35);
+    animation-timing-function: cubic-bezier(0.2, 0.75, 0.35, 1);
+  }
+  12.4% {
+    opacity: 1;
+  }
+  /* melayang di puncak, sedikit memanjang */
+  16.67% {
+    opacity: 1;
+    transform: translate(0, -7px) scale(0.92, 1.1);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5);
+  }
+  /* mendarat: gepeng */
+  19.33% {
+    transform: translate(0, 0.6px) scale(1.18, 0.8);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  21.33% {
+    transform: translate(0, -2.5px) scale(0.96, 1.05);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.6);
+  }
+  23.33%,
+  55% {
     opacity: 1;
     transform: none;
   }
-}
-@keyframes tj-mantul {
-  0% {
+  /* loncatan kecil */
+  57% {
+    transform: translate(0, 0.6px) scale(1.12, 0.86);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  60.33% {
+    transform: translate(0, -7px) scale(0.94, 1.08);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5);
+  }
+  63.67% {
+    transform: translate(0, 0.5px) scale(1.12, 0.86);
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+  }
+  65.67% {
+    transform: translate(0, -1.5px) scale(0.98, 1.03);
+  }
+  67.33%,
+  79.17% {
+    opacity: 1;
     transform: none;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0.3);
   }
-  8% {
-    transform: translateY(0.6px) scale(1.14, 0.84);
-    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  /* masuk ke batang, lalu hilang */
+  83% {
+    opacity: 0.8;
+    transform: translate(0, 9px) scale(0.45);
   }
-  26% {
-    transform: translateY(-9px) scale(0.92, 1.1);
-    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5);
-  }
-  44% {
-    transform: translateY(0.6px) scale(1.16, 0.82);
-    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
-  }
-  54% {
-    transform: translateY(-3px) scale(0.97, 1.04);
-    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.5);
-  }
-  62% {
-    transform: translateY(0.3px) scale(1.06, 0.94);
-  }
-  70%,
+  84.5%,
   100% {
-    transform: none;
+    opacity: 0;
+    transform: translate(0, 11px) scale(0.2);
+  }
+}
+
+@keyframes tj-angguk {
+  40% {
+    transform: translateY(-2px) rotate(-4deg);
   }
 }
 

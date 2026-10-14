@@ -11,9 +11,10 @@ import React, { useId } from "react";
  *   2. gradasi di bagian batang yang lewat di bawah simpul
  *   3. lengkung atas simpul digambar ulang di paling atas
  *
- * Animasi (src/styles/merek.css): pita "ditulis" berulang seperti goresan pena,
- * mengikuti urutan menulis huruf j (batang turun, lalu memutar jadi simpul),
- * lewat mask yang garisnya memanjang. Titiknya memantul terus.
+ * Animasi (src/styles/merek.css), satu siklus 6 detik:
+ *   pita ditulis cepat seperti goresan pena → titik meloncat keluar dari
+ *   ujung pita dan mendarat di atas → kilau menyapu pita → titik meloncat
+ *   kecil → pita ditarik kembali, titik masuk ke batang → ulang.
  * Prop `diam` mematikan animasi.
  */
 const BIRU = "#1660F5";
@@ -52,6 +53,8 @@ export function TandaJobly({ ukuran = 32, diam = false }) {
           <path d={PITA_UTUH} stroke={BIRU} strokeLinecap="round" strokeLinejoin="round" />
           <path d={PITA_BAWAH} stroke={`url(#tjg${id})`} />
           <path className="tj-atas" d={PITA_ATAS} stroke={BIRU} strokeLinecap="round" />
+          {/* kilau: garis tipis terang yang menyapu sepanjang pita */}
+          <path className="tj-kilau" d={PITA_UTUH} pathLength="100" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
         </g>
         <circle className="tj-titik" cx="45.5" cy="8.5" r="5.6" fill={BIRU} />
       </svg>
