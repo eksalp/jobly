@@ -16,7 +16,7 @@ import {
 import { T } from "../../theme";
 import { Glass } from "../../components/ui/Glass";
 import { Button } from "../../components/ui/Button";
-import { OrbSuara } from "../../components/ui/OrbSuara";
+import { PewawancaraHRD, NAMA_PEWAWANCARA } from "../../components/ui/PewawancaraHRD";
 import { KartuPelatihan } from "../../components/ui/KartuPelatihan";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
@@ -31,6 +31,8 @@ import { lokal, t } from "../../i18n.js";
 /** Sesi di bawah batas ini dibatalkan tanpa penilaian dan kuota dikembalikan. */
 const MIN_JAWABAN_DINILAI = 2;
 const BATAS_BATAL_DETIK = 120;
+/** Kalau kandidat belum juga menekan "Mulai bicara" selama ini, sesi ditutup tanpa memotong kuota. */
+const BATAS_MENUNGGU_DETIK = 5 * 60;
 
 const TAHAP = { siap: "siap", berlangsung: "berlangsung", selesai: "selesai" };
 
@@ -58,6 +60,9 @@ export function SimulasiInterviewPanel({ setActive }) {
   const [menilai, setMenilai] = useState(false);
   const [galat, setGalat] = useState("");
   const [detik, setDetik] = useState(0);
+  // Hitung mundur baru berjalan saat kandidat pertama kali menekan
+  // "Mulai bicara", bukan saat sesi tersambung.
+  const [waktuJalan, setWaktuJalan] = useState(false);
   const [hasil, setHasil] = useState(null);
   const [jumlahGiliran, setJumlahGiliran] = useState(0);
   const [galatPosisi, setGalatPosisi] = useState("");
@@ -129,9 +134,35 @@ export function SimulasiInterviewPanel({ setActive }) {
     muatRiwayat();
   }, [muatRiwayat]);
 
+  /* Saat halaman dibuka, server diminta memeriksa sesi sebelumnya yang
+     kuotanya sudah terpotong tetapi hasilnya tidak pernah tersimpan
+     (misalnya penilaian gagal atau tab tertutup). Kalau ada, kuotanya
+     dikembalikan. Pemeriksaannya di server, jadi tidak bisa dipalsukan. */
+  const sudahKlaimRef = useRef(false);
+  useEffect(() => {
+    if (!user || !supabaseConfigured || sudahKlaimRef.current) return;
+    sudahKlaimRef.current = true;
+    supabase.functions
+      .invoke("kembalikan-kuota", { body: { klaimTertinggal: true } })
+      .then(({ data }) => {
+        if (data?.jumlah > 0) {
+          setGalat(
+            t(
+              "Sesi simulasi sebelumnya tidak sempat dinilai, jadi kuotanya sudah dikembalikan.",
+              "Your previous mock interview wasn't scored, so its credit has been refunded.",
+            ),
+          );
+          langganan.refresh();
+        }
+      })
+      .catch(() => {
+        /* diabaikan: halaman tetap bisa dipakai */
+      });
+  }, [user?.id]);
+
   /* Hitung mundur */
   useEffect(() => {
-    if (tahap !== TAHAP.berlangsung) return;
+    if (tahap !== TAHAP.berlangsung || !waktuJalan) return;
     timerRef.current = setInterval(() => {
       setDetik((d) => {
         if (d + 1 >= DURASI_DETIK) {
@@ -143,7 +174,15 @@ export function SimulasiInterviewPanel({ setActive }) {
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [tahap]);
+  }, [tahap, waktuJalan]);
+
+  /* Sesi yang dibiarkan tanpa bicara terlalu lama ditutup otomatis.
+     Karena belum ada jawaban, kuotanya dikembalikan (lihat akhiri). */
+  useEffect(() => {
+    if (tahap !== TAHAP.berlangsung || waktuJalan) return;
+    const pewaktu = setTimeout(() => akhiriRef.current?.(), BATAS_MENUNGGU_DETIK * 1000);
+    return () => clearTimeout(pewaktu);
+  }, [tahap, waktuJalan]);
 
   const sisaDetik = Math.max(0, DURASI_DETIK - detik);
   const formatDurasi = (d) =>
@@ -195,7 +234,7 @@ export function SimulasiInterviewPanel({ setActive }) {
 
       tokenIdRef.current = data.token_id ?? null;
 
-      const instruksi = `Kamu pewawancara kerja profesional di Indonesia yang sedang
+      const instruksi = `Kamu adalah ${NAMA_PEWAWANCARA}, seorang HR Recruiter perempuan, pewawancara kerja profesional di Indonesia yang sedang
 mewawancarai kandidat untuk posisi "${posisi}". Fokus wawancara: ${kategori.nama}.
 
 Wawancara ini berlangsung sekitar ${DURASI_MENIT} menit.
@@ -233,7 +272,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
       )}`;
 
       try {
-        await live.mulai({ token: data.token, instruksi, model: pilihModelLive(data.model_live) });
+        await live.mulai({ token: data.token, instruksi, suara: "Kore", model: pilihModelLive(data.model_live) });
       } catch (e) {
         // Token sudah diterbitkan (kuota terpotong) tapi koneksi gagal —
         // kuotanya dikembalikan karena tidak ada biaya AI yang keluar.
@@ -242,6 +281,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
       }
 
       setDetik(0);
+      setWaktuJalan(false);
       setJumlahGiliran(0);
       gagalRef.current = false;
       setTahap(TAHAP.berlangsung);
@@ -339,7 +379,14 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
       }
 
       console.error("[simulasi] gagal menilai:", pesan);
-      setGalat(pesan);
+      // Penilaian gagal berarti hasil tidak tersimpan, jadi kuota dikembalikan.
+      await kembalikanKuota();
+      setGalat(
+        t(
+          `Penilaian gagal: ${pesan} Kuota simulasimu sudah dikembalikan.`,
+          `Scoring failed: ${pesan} Your mock interview credit has been refunded.`,
+        ),
+      );
       setTahap(TAHAP.selesai);
     } finally {
       setMenilai(false);
@@ -761,6 +808,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
                 }}
               >
                 <Clock size={12} /> {formatDurasi(sisaDetik)}
+                {!waktuJalan && (
+                  <span style={{ fontSize: 11, fontWeight: 500, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+                    {t("· mulai saat kamu bicara", "· starts when you speak")}
+                  </span>
+                )}
               </span>
             </div>
 
@@ -786,10 +838,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
 
           {/* Orb + tombol bicara */}
           <Glass style={{ padding: hp ? 18 : 24, marginBottom: 12 }}>
-            <OrbSuara
+            <PewawancaraHRD
               keadaan={keadaanOrb}
               tingkat={live.tingkat}
-              ukuran={hp ? 130 : 155}
+              tingkatAi={live.tingkatAi}
+              ukuran={hp ? 170 : 210}
             />
 
             {/* Panduan berubah mengikuti keadaan. Dalam percakapan suara
@@ -808,11 +861,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
               }}
             >
               {live.berbicara
-                ? t("Pewawancara sedang bicara, dengarkan dulu", "The interviewer is speaking, listen first")
+                ? t(`${NAMA_PEWAWANCARA} sedang bicara, dengarkan dulu`, `${NAMA_PEWAWANCARA} is speaking, listen first`)
                 : live.sedangBicara
                   ? t("Silakan bicara. Tekan Selesai kalau sudah.", "Go ahead. Press Done when finished.")
                   : jumlahGiliran === 0
-                    ? t("Tekan tombol di bawah, lalu ucapkan salam pembuka dan perkenalkan dirimu.", "Press the button below, then greet the interviewer and introduce yourself.")
+                    ? t(`Waktu belum berjalan. Tekan tombol di bawah, lalu sapa ${NAMA_PEWAWANCARA} dan perkenalkan dirimu.`, `The timer hasn't started. Press the button below, then greet ${NAMA_PEWAWANCARA} and introduce yourself.`)
                     : t("Tekan tombol di bawah saat siap menjawab", "Press the button below when you're ready to answer")}
             </div>
 
@@ -824,6 +877,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
                     setJumlahGiliran((n) => n + 1);
                   } else {
                     live.mulaiBicara();
+                    setWaktuJalan(true);
                   }
                 }}
                 disabled={!live.terhubung || menilai}

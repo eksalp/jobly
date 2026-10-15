@@ -27,6 +27,37 @@ const tidur = (ms) => new Promise((r) => setTimeout(r, ms));
 const bolehUlang = (status) =>
   status === 429 || status === 500 || status === 503 || status === 529;
 
+// Status yang berarti kunci API bermasalah: percuma mencoba model lain.
+const galatKunci = (status) => status === 401 || status === 403;
+
+// Edge Function diputus Supabase setelah sekitar 150 detik. Setiap panggilan
+// dibatasi waktunya, dan seluruh percobaan dijaga di bawah anggaran ini agar
+// user menerima pesan galat yang jelas, bukan koneksi yang diputus.
+const BATAS_PANGGILAN_MS = 60000;
+const ANGGARAN_MS = 115000;
+const mulaiProses = { waktu: Date.now() };
+const sisaAnggaran = () => ANGGARAN_MS - (Date.now() - mulaiProses.waktu);
+const batasPanggilan = () =>
+  Math.max(15000, Math.min(BATAS_PANGGILAN_MS, sisaAnggaran() - 5000));
+
+/** fetch dengan batas waktu; galat waktu habis diberi status 503 agar dicoba ulang. */
+async function fetchBerbatas(url, opsi, batasMs) {
+  const pembatal = new AbortController();
+  const pewaktu = setTimeout(() => pembatal.abort(), batasMs);
+  try {
+    return await fetch(url, { ...opsi, signal: pembatal.signal });
+  } catch (e) {
+    if (e?.name === "AbortError") {
+      const err = new Error(`AI tidak merespons dalam ${Math.round(batasMs / 1000)} detik.`);
+      err.status = 503;
+      throw err;
+    }
+    throw e;
+  } finally {
+    clearTimeout(pewaktu);
+  }
+}
+
 /* ---------- Gemini ---------- */
 
 async function panggilGemini(
@@ -39,8 +70,9 @@ async function panggilGemini(
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("GEMINI_API_KEY belum di-set.");
 
+  const batas = batasPanggilan();
   const kirim = (denganThinking) =>
-    fetch(GEMINI_URL(model), {
+    fetchBerbatas(GEMINI_URL(model), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,14 +84,17 @@ async function panggilGemini(
           // Dua baris inilah yang menjamin JSON valid sesuai struktur.
           responseMimeType: "application/json",
           responseSchema: hanyaDraft ? buatSkemaDraft(bahasa) : buatSkema(bahasa),
-          maxOutputTokens: maksToken,
+          // Token "berpikir" Gemini 3 ikut dihitung dalam batas ini, jadi
+          // batasnya diberi ruang lebih agar JSON tidak terpotong. Yang
+          // ditagih hanya token yang benar-benar dipakai.
+          maxOutputTokens: Math.max(maksToken, 12000),
           temperature: 0.4,
           // Token "berpikir" ditagih sebagai output. Tugas ini terstruktur,
           // jadi level rendah sudah cukup dan memangkas biaya per analisis.
           ...(denganThinking ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
         },
       }),
-    });
+    }, batas);
 
   let res = await kirim(true);
   // Model yang tidak mengenal thinkingLevel menolak dengan 400 —
@@ -125,6 +160,8 @@ async function panggilGeminiTangguh(prompt, maksToken, bahasa, hanyaDraft) {
 
   for (let i = 0; i < percobaan.length; i++) {
     const { model, jeda } = percobaan[i];
+    // Percobaan berikutnya dilewati kalau waktunya tidak lagi cukup.
+    if (i > 0 && sisaAnggaran() < 25000) break;
     if (jeda) await tidur(jeda);
 
     try {
@@ -141,8 +178,16 @@ async function panggilGeminiTangguh(prompt, maksToken, bahasa, hanyaDraft) {
       terakhir = e;
       const status = e?.status;
 
-      // Error permanen: percuma diulang
-      if (status && !bolehUlang(status)) throw e;
+      // Kunci API salah: percuma diulang ke model mana pun.
+      if (galatKunci(status)) throw e;
+      // 400/404 biasanya berarti model ini tidak mengenali permintaannya
+      // (atau modelnya tidak tersedia untuk akun ini). Model yang sama
+      // tidak perlu diulang; langsung lompat ke model cadangan.
+      if (status && !bolehUlang(status)) {
+        const idxCadangan = percobaan.findIndex((p, j) => j > i && p.model !== model);
+        if (idxCadangan === -1) break;
+        i = idxCadangan - 1;
+      }
 
       console.warn(
         `Percobaan ${i + 1}/${percobaan.length} gagal (${model}): ${e.message}`,
@@ -172,7 +217,8 @@ async function panggilClaude(prompt, maksToken, bahasa, hanyaDraft) {
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY belum di-set.");
 
-  const res = await fetch(ANTHROPIC_URL, {
+  if (sisaAnggaran() < 20000) throw new Error("Waktu proses habis sebelum cadangan dicoba.");
+  const res = await fetchBerbatas(ANTHROPIC_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -185,13 +231,11 @@ async function panggilClaude(prompt, maksToken, bahasa, hanyaDraft) {
       system:
         "Kamu hanya membalas dengan satu objek JSON valid. Tanpa penjelasan, tanpa markdown fence. " +
         "Ikuti struktur yang diminta persis, termasuk semua field.",
-      messages: [
-        { role: "user", content: prompt },
-        // Prefill: memaksa Claude langsung masuk ke JSON
-        { role: "assistant", content: "{" },
-      ],
+      // Tanpa prefill: model Claude terbaru menolak pesan assistant di
+      // akhir percakapan. JSON diambil dari teks dengan ekstrakJson.
+      messages: [{ role: "user", content: prompt }],
     }),
-  });
+  }, batasPanggilan());
 
   if (!res.ok) {
     const teks = await res.text();
@@ -208,8 +252,7 @@ async function panggilClaude(prompt, maksToken, bahasa, hanyaDraft) {
   }
 
   const teks = (data.content || []).map((c) => c.text || "").join("");
-  // Prefill "{" tidak ikut di respons, jadi ditambahkan kembali
-  return ekstrakJson("{" + teks);
+  return ekstrakJson(teks);
 }
 
 /* ---------- Pemilih penyedia ---------- */
@@ -220,6 +263,7 @@ export async function jalankanAnalisis(
   bahasa = "id",
   hanyaDraft = false,
 ) {
+  mulaiProses.waktu = Date.now();
   const utama = (Deno.env.get("AI_PROVIDER") ?? "gemini").toLowerCase();
   const cadanganAktif = Deno.env.get("AI_FALLBACK") !== "false";
 

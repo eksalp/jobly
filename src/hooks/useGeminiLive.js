@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { lokal, t } from "../i18n.js";
+import { t } from "../i18n.js";
 
 /**
  * Koneksi Gemini Live API lewat SDK resmi (@google/genai).
@@ -10,15 +10,22 @@ import { lokal, t } from "../i18n.js";
  * Pasang dulu: npm install @google/genai
  */
 
-// Model suara untuk simulasi interview. Sengaja dikunci ke model 2.5
-// native audio karena gemini-3.8-live menolak sesi dengan galat
-// "Precondition check failed". Catatan: Google menjadwalkan model 2.5
-// native audio dimatikan mulai 17 November 2026, jadi sebelum tanggal itu
-// model ini perlu diganti.
+// Model suara untuk simulasi interview. Sesuai permintaan, model lama
+// (2.5 native audio) tetap dipakai lebih dulu. Google sudah membatasi
+// akses model 2.5 untuk akun yang memakainya belakangan ini, jadi kalau
+// server melaporkan model itu tidak tersedia, gemini-3.8-live dipakai.
+//
+// Catatan: galat "Precondition check failed" sebelumnya bukan karena
+// modelnya, melainkan karena audio dikirim lewat kolom lama `media`.
+// Model 3.x mengabaikan kolom itu, sehingga giliran bicara tiba di server
+// tanpa audio dan ditolak. Sekarang audio dikirim lewat kolom `audio`.
 const MODEL_LIVE = "models/gemini-2.5-flash-native-audio-preview-12-2025";
+const MODEL_LIVE_BARU = "models/gemini-3.8-live";
 
-/** Daftar dari server diabaikan; selalu memakai MODEL_LIVE. */
-export function pilihModelLive() {
+export function pilihModelLive(tersedia = []) {
+  const ada = new Set(tersedia || []);
+  if (!ada.size || ada.has(MODEL_LIVE)) return MODEL_LIVE;
+  if (ada.has(MODEL_LIVE_BARU)) return MODEL_LIVE_BARU;
   return MODEL_LIVE;
 }
 
@@ -85,6 +92,8 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
   const [mendengar, setMendengar] = useState(false);
   const [berbicara, setBerbicara] = useState(false);
   const [tingkat, setTingkat] = useState(0);
+  // Kerasnya suara pewawancara (0-1), untuk menggerakkan mulut avatar.
+  const [tingkatAi, setTingkatAi] = useState(0);
   const [galat, setGalat] = useState("");
   // Apakah user sedang menekan tombol bicara. Ini yang menentukan
   // audio dikirim atau tidak — bukan lagi deteksi otomatis.
@@ -126,7 +135,8 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       const buffer = s.antrian.shift();
       const sumber = s.ctxKeluar.createBufferSource();
       sumber.buffer = buffer;
-      sumber.connect(s.ctxKeluar.destination);
+      // Lewat penganalisis dulu supaya kerasnya suara AI bisa diukur.
+      sumber.connect(s.analisKeluar || s.ctxKeluar.destination);
 
       const sekarang = s.ctxKeluar.currentTime;
 
@@ -213,6 +223,10 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
           sampleRate: LAJU_KELUAR,
           latencyHint: "interactive",
         });
+        s.analisKeluar = s.ctxKeluar.createAnalyser();
+        s.analisKeluar.fftSize = 512;
+        s.analisKeluar.smoothingTimeConstant = 0.3;
+        s.analisKeluar.connect(s.ctxKeluar.destination);
 
         // 2. Koneksi lewat SDK
         const ai = new GoogleGenAI({
@@ -224,9 +238,10 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
           model: model || MODEL_LIVE,
           config: {
             responseModalities: [Modality.AUDIO],
+            // Model native audio memilih bahasa sendiri dan tidak menerima
+            // kode bahasa; bahasanya diatur lewat instruksi.
             speechConfig: {
               voiceConfig: { prebuiltVoiceConfig: { voiceName: suara } },
-              languageCode: lokal(),
             },
             systemInstruction: instruksi,
             inputAudioTranscription: {},
@@ -346,12 +361,15 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
 
           const data = e.inputBuffer.getChannelData(0);
           try {
+            // Kolom `audio`, bukan `media`: model Live 3.x mengabaikan
+            // `media`, dan giliran tanpa audio ditolak server.
             s.sesi.sendRealtimeInput({
-              media: {
+              audio: {
                 data: keBase64(keP16(data)),
                 mimeType: `audio/pcm;rate=${LAJU_MASUK}`,
               },
             });
+            s.potonganGiliran += 1;
           } catch {
             /* sesi sudah tertutup */
           }
@@ -359,13 +377,27 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
 
         setMendengar(true);
 
-        // 4. Pengukur volume untuk menggerakkan orb
+        // 4. Pengukur volume untuk menggerakkan avatar
         const data = new Uint8Array(s.analis.frequencyBinCount);
+        const dataAi = new Uint8Array(s.analisKeluar.fftSize);
+        let halusAi = 0;
         const ukur = () => {
           if (!s.analis) return;
           s.analis.getByteFrequencyData(data);
           const rata = data.reduce((a, b) => a + b, 0) / data.length;
           setTingkat(Math.min(1, rata / 90));
+          if (s.analisKeluar) {
+            // RMS bentuk gelombang: lebih mengikuti suku kata daripada spektrum.
+            s.analisKeluar.getByteTimeDomainData(dataAi);
+            let jumlah = 0;
+            for (let i = 0; i < dataAi.length; i++) {
+              const v = (dataAi[i] - 128) / 128;
+              jumlah += v * v;
+            }
+            const rms = Math.sqrt(jumlah / dataAi.length);
+            halusAi = halusAi * 0.55 + Math.min(1, rms * 5) * 0.45;
+            setTingkatAi(halusAi < 0.02 ? 0 : halusAi);
+          }
           s.frame = requestAnimationFrame(ukur);
         };
         ukur();
@@ -394,6 +426,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       hentikanSuaraAi();
       s.sesi.sendRealtimeInput({ activityStart: {} });
       s.giliranAktif = true;
+      s.potonganGiliran = 0;
       setSedangBicara(true);
     } catch {
       /* sesi sudah tertutup */
@@ -405,6 +438,17 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     if (!s.sesi || !s.siap || !s.giliranAktif) return;
 
     try {
+      // Tombol dilepas terlalu cepat (belum ada audio terkirim): kirim
+      // sedikit keheningan agar giliran tidak kosong. Giliran kosong
+      // ditolak server dengan "Precondition check failed".
+      if (!s.potonganGiliran) {
+        s.sesi.sendRealtimeInput({
+          audio: {
+            data: keBase64(keP16(new Float32Array(UKURAN_POTONGAN * 4))),
+            mimeType: `audio/pcm;rate=${LAJU_MASUK}`,
+          },
+        });
+      }
       // Penanda ini yang memicu AI mulai menyusun jawaban.
       s.sesi.sendRealtimeInput({ activityEnd: {} });
     } catch {
@@ -455,6 +499,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
       stream: null,
       prosesor: null,
       analis: null,
+      analisKeluar: null,
       frame: null,
       antrian: [],
       sumberAktif: [],
@@ -468,6 +513,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     setBerbicara(false);
     setSedangBicara(false);
     setTingkat(0);
+    setTingkatAi(0);
   }, [hentikanSuaraAi]);
 
   useEffect(() => () => akhiri(), [akhiri]);
@@ -481,6 +527,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     mendengar,
     berbicara,
     tingkat,
+    tingkatAi,
     galat,
     sedangBicara,
     mulai,

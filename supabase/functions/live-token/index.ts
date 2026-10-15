@@ -88,10 +88,11 @@ serve(async (req) => {
       throw new Error("Gagal menyiapkan sesi.");
     }
 
-    // Sesi dibatasi 10 menit di klien. Token berlaku 12 menit sebagai
-    // pagar di sisi server, supaya sesi yang lupa ditutup tidak terus
-    // menagih biaya audio.
-    const kedaluwarsa = new Date(Date.now() + 12 * 60 * 1000).toISOString();
+    // Sesi dibatasi 10 menit bicara di klien, dan hitung mundurnya baru
+    // berjalan saat kandidat mulai bicara (paling lama 5 menit menunggu).
+    // Token berlaku 18 menit sebagai pagar di sisi server, supaya sesi yang
+    // lupa ditutup tidak terus menagih biaya audio.
+    const kedaluwarsa = new Date(Date.now() + 18 * 60 * 1000).toISOString();
     const bolehMulaiSampai = new Date(Date.now() + 2 * 60 * 1000).toISOString();
 
     const res = await fetch(

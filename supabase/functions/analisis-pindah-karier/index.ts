@@ -78,7 +78,8 @@ async function panggilGemini(
           // untuk struktur bersarang tertentu. Mode tanpa skema dipakai
           // sebagai cadangan, dengan parsing manual sebagai gantinya.
           ...(pakaiSkema ? { responseSchema: SKEMA_PINDAH } : {}),
-          maxOutputTokens: 5000,
+          // Token berpikir ikut dihitung; diberi ruang agar JSON tidak terpotong.
+          maxOutputTokens: 10000,
           // Level berpikir rendah: cukup untuk tugas terstruktur, lebih hemat
           ...(pakaiThinking ? { thinkingConfig: { thinkingLevel: "low" } } : {}),
           temperature: 0.4,
@@ -124,24 +125,30 @@ async function panggilGemini(
 }
 
 async function jalankan(prompt) {
-  // Dua percobaan saja. Dengan batas 45 detik per panggilan, tiga
-  // percobaan bisa menembus batas waktu Edge Function itu sendiri.
+  // Urutan: model utama dengan skema → (kalau skema ditolak) model utama
+  // tanpa skema → model cadangan. Semua dijaga dalam ANGGARAN_MS agar
+  // tidak menembus batas waktu Edge Function.
+  const mulai = Date.now();
+  const sisa = () => ANGGARAN_MS - (Date.now() - mulai);
   const percobaan = [
-    { model: MODEL, jeda: 0 },
-    { model: MODEL_CADANGAN, jeda: 1000 },
+    { model: MODEL, skema: true, jeda: 0 },
+    { model: MODEL, skema: false, jeda: 0, hanyaJika400: true },
+    { model: MODEL_CADANGAN, skema: true, jeda: 1000 },
   ];
   let terakhir;
-  for (const { model, jeda, skema } of percobaan) {
+  for (const { model, skema, jeda, hanyaJika400 } of percobaan) {
+    // Percobaan tanpa skema hanya berguna kalau skema yang ditolak (400).
+    if (hanyaJika400 && terakhir?.status !== 400) continue;
+    if (terakhir && sisa() < 20000) break;
     if (jeda) await tidur(jeda);
     try {
-      return await panggilGemini(prompt, model);
+      const batas = Math.max(15000, Math.min(BATAS_PANGGILAN_MS, sisa() - 3000));
+      return await panggilGemini(prompt, model, batas, skema);
     } catch (e) {
       terakhir = e;
-      // Status 400 biasanya berarti skema ditolak — percobaan berikutnya
-      // berjalan tanpa skema, jadi jangan dihentikan di sini.
-      const layakUlang = bolehUlang(e?.status) || (e?.status === 400 && skema);
-      if (e?.status && !layakUlang) throw e;
-      console.warn(`Percobaan gagal (${model}): ${e.message}`);
+      // Kunci API salah: percuma mencoba model lain.
+      if (e?.status === 401 || e?.status === 403) throw e;
+      console.warn(`Percobaan gagal (${model}, skema=${skema}): ${e.message}`);
     }
   }
   throw terakhir;

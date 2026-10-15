@@ -71,7 +71,10 @@ async function panggilModel(model, prompt, maksToken) {
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
           responseMimeType: "application/json",
-          maxOutputTokens: maksToken,
+          // Token "berpikir" Gemini 3 ikut dihitung dalam batas ini. Batas
+          // yang terlalu kecil membuat JSON terpotong dan penilaian gagal,
+          // jadi diberi ruang cukup. Yang ditagih hanya token terpakai.
+          maxOutputTokens: Math.max(maksToken, 4000),
           temperature: 0.7,
           thinkingConfig: { thinkingLevel: "low" },
         },
@@ -93,6 +96,9 @@ async function panggilModel(model, prompt, maksToken) {
   }
 
   const data = await res.json();
+  if (data?.candidates?.[0]?.finishReason === "MAX_TOKENS") {
+    throw new Error("Output AI terpotong.");
+  }
   const teks = (data?.candidates?.[0]?.content?.parts || [])
     .map((p) => p.text || "")
     .join("");
@@ -354,8 +360,16 @@ serve(async (req) => {
       const menit = Math.max(1, Math.round(num(body.durasiDetik, 0) / 60));
       const h = await panggilGemini(
         promptPenilaian({ posisi, kategori, dialog: dialogNilai, menit }),
-        1600,
-      );
+        6000,
+      ).catch(async (e) => {
+        // Penilaian gagal: tanda "terpakai" dilepas lagi supaya sesi ini
+        // bisa dinilai ulang atau kuotanya dikembalikan.
+        await supabaseAdmin
+          .from("sesi_token")
+          .update({ terpakai: false })
+          .eq("id", tokenId);
+        throw e;
+      });
 
       const tingkat = ["kurang", "cukup", "baik", "sangat baik"];
       const bersih = (v) => (tingkat.includes(v) ? v : "cukup");
