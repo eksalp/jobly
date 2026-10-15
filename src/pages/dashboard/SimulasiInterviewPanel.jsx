@@ -28,6 +28,10 @@ import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
 import { useGeminiLive, pilihModelLive } from "../../hooks/useGeminiLive";
 import { lokal, t } from "../../i18n.js";
 
+/** Sesi di bawah batas ini dibatalkan tanpa penilaian dan kuota dikembalikan. */
+const MIN_JAWABAN_DINILAI = 2;
+const BATAS_BATAL_DETIK = 120;
+
 const TAHAP = { siap: "siap", berlangsung: "berlangsung", selesai: "selesai" };
 
 // 10 menit: cukup untuk 5–7 pertanyaan yang digali, dan menjaga biaya
@@ -268,10 +272,26 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
 
     // Sesi terlalu pendek tidak layak dinilai — hasilnya akan asal-asalan
     // dan justru menyesatkan kandidat.
-    if (transkrip.filter((d) => d.dari === "user").length === 0) {
+    const jawaban = transkrip.filter((d) => d.dari === "user");
+    if (jawaban.length === 0) {
       await kembalikanKuota();
       setTahap(TAHAP.siap);
       setGalat(t("Sesi berakhir sebelum ada jawaban, jadi kuotamu dikembalikan.", "The session ended before any answer, so your quota was refunded."));
+      return;
+    }
+
+    // Sesi yang diakhiri dalam 2 menit pertama dengan kurang dari 2 jawaban
+    // (misalnya baru memperkenalkan diri) dianggap batal: tidak dinilai dan
+    // kuota dikembalikan. Batas waktu mencegah sesi panjang ikut dibatalkan.
+    if (jawaban.length < MIN_JAWABAN_DINILAI && detik < BATAS_BATAL_DETIK) {
+      await kembalikanKuota();
+      setTahap(TAHAP.siap);
+      setGalat(
+        t(
+          `Sesi diakhiri terlalu cepat untuk dinilai (minimal ${MIN_JAWABAN_DINILAI} jawaban), jadi kuotamu dikembalikan. Mulai lagi kapan saja.`,
+          `The session ended too early to be scored (at least ${MIN_JAWABAN_DINILAI} answers), so your quota was refunded. Start again any time.`,
+        ),
+      );
       return;
     }
 
