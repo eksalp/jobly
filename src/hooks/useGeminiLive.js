@@ -10,22 +10,16 @@ import { lokal, t } from "../i18n.js";
  * Pasang dulu: npm install @google/genai
  */
 
-// Urutan pilihan model suara. Server mengirim daftar model Live yang
-// tersedia untuk akun ini; yang pertama cocok dipakai. Model 2.5 native
-// audio dijadwalkan dimatikan Google mulai 17 November 2026.
-const PILIHAN_MODEL_LIVE = [
-  "models/gemini-3.8-live",
-  "models/gemini-2.5-flash-native-audio-preview-12-2025",
-];
+// Model suara untuk simulasi interview. Sengaja dikunci ke model 2.5
+// native audio karena gemini-3.8-live menolak sesi dengan galat
+// "Precondition check failed". Catatan: Google menjadwalkan model 2.5
+// native audio dimatikan mulai 17 November 2026, jadi sebelum tanggal itu
+// model ini perlu diganti.
+const MODEL_LIVE = "models/gemini-2.5-flash-native-audio-preview-12-2025";
 
-export function pilihModelLive(tersedia = []) {
-  const ada = new Set(tersedia);
-  if (!ada.size) return PILIHAN_MODEL_LIVE[0];
-  return (
-    PILIHAN_MODEL_LIVE.find((m) => ada.has(m)) ||
-    tersedia.find((m) => /live/i.test(m)) ||
-    PILIHAN_MODEL_LIVE[0]
-  );
+/** Daftar dari server diabaikan; selalu memakai MODEL_LIVE. */
+export function pilihModelLive() {
+  return MODEL_LIVE;
 }
 
 const LAJU_MASUK = 16000; // Live API menerima PCM 16 kHz
@@ -179,7 +173,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     async ({ token, instruksi, suara = "Puck", model }) => {
       setGalat("");
       const s = r.current;
-      s.pemakaian = { masuk: 0, keluar: 0, total: 0, model: model || PILIHAN_MODEL_LIVE[0] };
+      s.pemakaian = { masuk: 0, keluar: 0, total: 0, model: model || MODEL_LIVE };
       s.ditutupSengaja = false;
       s.siap = false;
       s.giliranAktif = false;
@@ -227,7 +221,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
         });
 
         const sesi = await ai.live.connect({
-          model: model || PILIHAN_MODEL_LIVE[0],
+          model: model || MODEL_LIVE,
           config: {
             responseModalities: [Modality.AUDIO],
             speechConfig: {
