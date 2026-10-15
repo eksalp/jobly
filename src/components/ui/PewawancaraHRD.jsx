@@ -3,7 +3,8 @@ import { Mic, Volume2, Loader2, Hand } from "lucide-react";
 import { t } from "../../i18n.js";
 
 /**
- * Avatar pewawancara: ilustrasi seorang HRD perempuan.
+ * Avatar pewawancara: ilustrasi kartun seorang HRD perempuan berblazer
+ * abu-abu dengan rambut disanggul, tersenyum dan bersedekap.
  *
  * Keadaan:
  *   diam      → bernapas pelan dan berkedip, menunggu giliran kandidat
@@ -25,7 +26,8 @@ export function PewawancaraHRD({ keadaan = "diam", tingkat = 0, tingkatAi = 0, u
   // Bukaan mulut 0-1. Saat AI bicara tetapi suaranya sedang di jeda antar
   // kata, mulut menutup sebentar seperti orang sungguhan.
   const buka = bicara ? Math.min(1, tingkatAi * 1.6) : 0;
-  const mulut = `M${110.5 - buka} 132 Q120 ${129 - buka * 1.5} ${129.5 + buka} 132 Q120 ${134 + buka * 13} ${110.5 - buka} 132 Z`;
+  // Senyum lebar dengan gigi terlihat; bibir bawah turun saat bicara.
+  const mulut = `M${104 - buka * 2} 121 Q120 ${126 - buka * 2} ${136 + buka * 2} 121 Q120 ${134 + buka * 16} ${104 - buka * 2} 121 Z`;
 
   const LABEL = {
     diam: { teks: t("Giliranmu", "Your turn"), Ikon: Hand, warna: "#64748B" },
@@ -55,100 +57,111 @@ export function PewawancaraHRD({ keadaan = "diam", tingkat = 0, tingkatAi = 0, u
               <circle cx="120" cy="120" r="120" />
             </clipPath>
             <linearGradient id="hrd-latar" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#EAF1FB" />
-              <stop offset="1" stopColor="#D5E1F3" />
+              <stop offset="0" stopColor="#EEF3FB" />
+              <stop offset="1" stopColor="#DCE6F5" />
             </linearGradient>
-            <linearGradient id="hrd-jilbab" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#C8939C" />
-              <stop offset="1" stopColor="#B07C86" />
+            <radialGradient id="hrd-kulit" cx="0.45" cy="0.38" r="0.7">
+              <stop offset="0" stopColor="#FAD3B4" />
+              <stop offset="1" stopColor="#EDB590" />
+            </radialGradient>
+            <linearGradient id="hrd-rambut" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#8A5530" />
+              <stop offset="1" stopColor="#5E3519" />
             </linearGradient>
             <linearGradient id="hrd-jas" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#2B4470" />
-              <stop offset="1" stopColor="#1F3354" />
+              <stop offset="0" stopColor="#7A7F88" />
+              <stop offset="1" stopColor="#5F646D" />
             </linearGradient>
+            <clipPath id="hrd-mulut">
+              <path d={mulut} />
+            </clipPath>
           </defs>
 
           <g clipPath="url(#hrd-klip)">
             {/* Latar: ruang kantor yang terang */}
             <rect width="240" height="240" fill="url(#hrd-latar)" />
-            <rect x="22" y="34" width="54" height="78" rx="4" fill="#F7FAFE" opacity="0.75" />
-            <line x1="49" y1="34" x2="49" y2="112" stroke="#D5E1F3" strokeWidth="3" />
-            <line x1="22" y1="73" x2="76" y2="73" stroke="#D5E1F3" strokeWidth="3" />
-            <g opacity="0.55">
-              <ellipse cx="200" cy="132" rx="9" ry="20" fill="#7FB59A" transform="rotate(-18 200 132)" />
-              <ellipse cx="214" cy="140" rx="8" ry="18" fill="#6AA587" transform="rotate(22 214 140)" />
-              <ellipse cx="206" cy="118" rx="7" ry="16" fill="#8CC2A6" />
+            <rect x="18" y="40" width="50" height="74" rx="4" fill="#F8FBFF" opacity="0.8" />
+            <line x1="43" y1="40" x2="43" y2="114" stroke="#DCE6F5" strokeWidth="3" />
+            <line x1="18" y1="77" x2="68" y2="77" stroke="#DCE6F5" strokeWidth="3" />
+            <g opacity="0.5">
+              <ellipse cx="204" cy="128" rx="8" ry="19" fill="#7FB59A" transform="rotate(-18 204 128)" />
+              <ellipse cx="218" cy="136" rx="7" ry="17" fill="#6AA587" transform="rotate(22 218 136)" />
+              <ellipse cx="210" cy="114" rx="6.5" ry="15" fill="#8CC2A6" />
             </g>
 
-            <g transform="translate(120 252) scale(1.22) translate(-120 -240)">
+            <g transform="translate(120 126) scale(1.12) translate(-120 -126)">
             <g className="hrd-tubuh">
-              {/* Bahu dan blazer */}
-              <path d="M26 240 C30 204 60 184 96 178 L144 178 C180 184 210 204 214 240 Z" fill="url(#hrd-jas)" />
-              {/* Ujung jilbab yang jatuh di dada */}
-              <path d="M82 146 C78 176 90 200 120 212 C150 200 162 176 158 146 Z" fill="url(#hrd-jilbab)" />
-              <path d="M120 212 C104 204 92 190 88 170" fill="none" stroke="#9E6C76" strokeWidth="1.6" opacity="0.6" />
-              {/* Kerah blazer */}
-              <path d="M96 178 L114 214 L104 240 L80 240 C80 214 86 192 96 178 Z" fill="#33507F" />
-              <path d="M144 178 L126 214 L136 240 L160 240 C160 214 154 192 144 178 Z" fill="#33507F" />
-              {/* Tali dan kartu identitas */}
-              <path d="M110 200 L128 226" stroke="#1D5BF0" strokeWidth="2.4" />
-              <path d="M132 200 L130 226" stroke="#1D5BF0" strokeWidth="2.4" />
-              <rect x="119" y="222" width="22" height="16" rx="2.5" fill="#FFFFFF" />
-              <rect x="119" y="222" width="22" height="4.5" rx="2" fill="#1D5BF0" />
-              <rect x="123" y="229.5" width="9" height="2" rx="1" fill="#94A3B8" />
+              {/* Rambut bagian belakang */}
+              <path d="M70 104 C66 64 92 44 122 44 C154 44 176 66 172 104 C170 128 160 146 150 152 L92 152 C80 146 72 128 70 104 Z" fill="#5E3519" />
+
+              {/* Leher */}
+              <path d="M106 138 L106 166 C112 172 128 172 134 166 L134 138 Z" fill="#E8AC86" />
+
+              {/* Blazer abu-abu dan kemeja putih */}
+              <path d="M22 240 C26 198 56 176 98 168 L142 168 C184 176 214 198 218 240 Z" fill="url(#hrd-jas)" />
+              <path d="M101 167 L120 204 L139 167 C134 174 106 174 101 167 Z" fill="#F4F6FA" />
+              <path d="M100 166 L112 196 L96 186 L94 172 Z" fill="#FFFFFF" stroke="#D5DAE3" strokeWidth="1" />
+              <path d="M140 166 L128 196 L144 186 L146 172 Z" fill="#FFFFFF" stroke="#D5DAE3" strokeWidth="1" />
+              <path d="M96 170 L120 214 L108 240 L76 240 C76 210 84 184 96 170 Z" fill="#585D66" />
+              <path d="M144 170 L120 214 L132 240 L164 240 C164 210 156 184 144 170 Z" fill="#585D66" />
+
+              {/* Tangan bersedekap */}
+              <path d="M44 214 C44 202 58 196 72 198 L176 206 C190 208 194 226 182 232 L66 236 C52 236 44 226 44 214 Z" fill="#6E737C" />
+              <path d="M196 220 C196 208 182 202 168 204 L64 212 C50 214 46 232 58 238 L176 240 C190 240 196 232 196 220 Z" fill="url(#hrd-jas)" />
+              <rect x="160" y="203" width="12" height="16" rx="3" fill="#FFFFFF" transform="rotate(8 166 211)" />
+              <rect x="68" y="208" width="12" height="17" rx="3" fill="#FFFFFF" transform="rotate(-6 74 216)" />
+              <ellipse cx="180" cy="211" rx="12" ry="9" fill="#F2BE98" transform="rotate(-18 180 211)" />
+              <ellipse cx="60" cy="218" rx="12" ry="9" fill="#F2BE98" transform="rotate(14 60 218)" />
 
               <g className="hrd-kepala">
-                {/* Jilbab bagian kepala */}
-                <path
-                  d="M120 42 C80 42 63 74 65 108 C67 136 78 152 94 162 L146 162 C162 152 173 136 175 108 C177 74 160 42 120 42 Z"
-                  fill="url(#hrd-jilbab)"
-                />
-                <ellipse cx="120" cy="111" rx="36" ry="42" fill="#A56F7A" />
+                {/* Telinga */}
+                <ellipse cx="77" cy="106" rx="7" ry="10" fill="#EDB590" />
+                <ellipse cx="163" cy="106" rx="7" ry="10" fill="#EDB590" />
                 {/* Wajah */}
-                <ellipse cx="120" cy="113" rx="32" ry="38" fill="#E9B993" />
-                <path d="M93 128 C98 146 108 151 120 151 C132 151 142 146 147 128 C140 140 131 145 120 145 C109 145 100 140 93 128 Z" fill="#DCA67F" opacity="0.55" />
-                {/* Ciput di dahi */}
-                <path d="M86 102 C85 72 155 72 154 102 C147 88 133 82 120 82 C107 82 93 88 86 102 Z" fill="#B98590" />
+                <ellipse cx="120" cy="100" rx="44" ry="47" fill="url(#hrd-kulit)" />
+
+                {/* Rambut depan dan sanggul */}
+                <circle cx="156" cy="40" r="19" fill="url(#hrd-rambut)" />
+                <path d="M144 36 C150 28 164 30 166 40 M146 46 C154 50 164 46 168 40" fill="none" stroke="#9C6639" strokeWidth="2.2" strokeLinecap="round" />
+                <path
+                  d="M74 104 C68 64 94 48 122 48 C150 48 172 64 166 102 C162 86 152 72 136 66 C128 78 108 84 86 84 C80 90 76 96 74 104 Z"
+                  fill="url(#hrd-rambut)"
+                />
+                <path d="M100 58 C112 52 132 52 146 60" fill="none" stroke="#A06A3C" strokeWidth="2.2" strokeLinecap="round" opacity="0.8" />
+                <path d="M76 104 C74 118 76 128 80 134" fill="none" stroke="#6B3D1E" strokeWidth="3" strokeLinecap="round" />
+                <path d="M164 102 C166 116 164 126 160 132" fill="none" stroke="#6B3D1E" strokeWidth="3" strokeLinecap="round" />
 
                 {/* Alis */}
                 <g className="hrd-alis">
-                  <path d="M99 98 Q106 93.5 114 96.5" fill="none" stroke="#4A3428" strokeWidth="2.6" strokeLinecap="round" />
-                  <path d="M126 96.5 Q134 93.5 141 98" fill="none" stroke="#4A3428" strokeWidth="2.6" strokeLinecap="round" />
+                  <path d="M94 88 Q103 82 112 86" fill="none" stroke="#6B3D1E" strokeWidth="3.4" strokeLinecap="round" />
+                  <path d="M128 86 Q137 82 146 88" fill="none" stroke="#6B3D1E" strokeWidth="3.4" strokeLinecap="round" />
                 </g>
 
-                {/* Mata */}
+                {/* Mata besar */}
                 <g className="hrd-mata">
-                  <g className="hrd-kedip">
-                    <ellipse cx="107" cy="107" rx="3.8" ry="4.4" fill="#2B2018" />
-                    <circle cx="108.3" cy="105.6" r="1.2" fill="#FFFFFF" />
-                  </g>
-                  <g className="hrd-kedip">
-                    <ellipse cx="133" cy="107" rx="3.8" ry="4.4" fill="#2B2018" />
-                    <circle cx="134.3" cy="105.6" r="1.2" fill="#FFFFFF" />
-                  </g>
+                  {[103, 137].map((x) => (
+                    <g key={x} className="hrd-kedip">
+                      <ellipse cx={x} cy="102" rx="10" ry="11" fill="#FFFFFF" />
+                      <circle cx={x + 1} cy="103" r="7" fill="#7A4A22" />
+                      <circle cx={x + 1} cy="103" r="3.6" fill="#1F140C" />
+                      <circle cx={x + 3.4} cy="100" r="2" fill="#FFFFFF" />
+                      <path d={`M${x - 11} 99 Q${x} 88 ${x + 11} 98`} fill="none" stroke="#2B1A10" strokeWidth="2.8" strokeLinecap="round" />
+                    </g>
+                  ))}
                 </g>
 
                 {/* Hidung dan pipi */}
-                <path d="M120 110 Q116.5 119 119.5 122 Q122 123 124.5 121" fill="none" stroke="#C98F6C" strokeWidth="1.8" strokeLinecap="round" />
-                <circle cx="100" cy="124" r="6.5" fill="#EE8F86" opacity="0.32" />
-                <circle cx="140" cy="124" r="6.5" fill="#EE8F86" opacity="0.32" />
+                <path d="M118 110 Q116 117 120 118 Q123 118 124 116" fill="none" stroke="#D99572" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="94" cy="118" r="7.5" fill="#F29A8E" opacity="0.35" />
+                <circle cx="146" cy="118" r="7.5" fill="#F29A8E" opacity="0.35" />
 
-                {/* Mulut */}
-                {buka < 0.06 ? (
-                  <path d="M110.5 131.5 Q120 138.5 129.5 131.5" fill="none" stroke="#A4464F" strokeWidth="2.6" strokeLinecap="round" />
-                ) : (
-                  <g>
-                    <clipPath id="hrd-mulut">
-                      <path d={mulut} />
-                    </clipPath>
-                    <path d={mulut} fill="#6E2830" />
-                    <g clipPath="url(#hrd-mulut)">
-                      <rect x="110" y={128.5 - buka} width="20" height="4.2" rx="1.5" fill="#FFFFFF" opacity="0.92" />
-                      <ellipse cx="120" cy={134 + buka * 8} rx="7" ry="4.5" fill="#C65B66" />
-                    </g>
-                    <path d={mulut} fill="none" stroke="#A4464F" strokeWidth="1.8" strokeLinejoin="round" />
-                  </g>
-                )}
+                {/* Mulut: selalu tersenyum, terbuka lebih lebar saat bicara */}
+                <path d={mulut} fill="#7A2B33" />
+                <g clipPath="url(#hrd-mulut)">
+                  <rect x="100" y="120" width="40" height="6" rx="2" fill="#FFFFFF" />
+                  <ellipse cx="120" cy={133 + buka * 9} rx="9" ry="6" fill="#D2646F" />
+                </g>
+                <path d={mulut} fill="none" stroke="#B4505A" strokeWidth="1.6" strokeLinejoin="round" />
               </g>
             </g>
             </g>
@@ -198,7 +211,7 @@ const CSS = `
 .hrd-mendengar .hrd-kepala{animation:hrd-angguk 2.6s ease-in-out infinite}
 @keyframes hrd-angguk{0%,60%,100%{transform:translateY(0) rotate(1deg)}75%{transform:translateY(2.5px) rotate(1deg)}}
 .hrd-mendengar .hrd-alis{transform:translateY(-2px)}
-.hrd-berpikir .hrd-mata{transform:translate(2px,-2.5px)}
+.hrd-berpikir .hrd-mata{transform:translate(1.5px,-2px)}
 .hrd-berpikir .hrd-alis{transform:translateY(-1.5px)}
 
 .hrd-titik{position:absolute;top:8%;right:2%;display:flex;gap:4px;padding:7px 9px;border-radius:14px;background:#fff;box-shadow:0 4px 14px rgba(15,23,42,.15)}
