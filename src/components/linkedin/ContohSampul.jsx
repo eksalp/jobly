@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import "./contoh.css";
-import { Download, Loader2 } from "lucide-react";
+import { Download, Loader2, Check } from "lucide-react";
 import { t } from "../../i18n.js";
 
 /**
@@ -162,8 +162,8 @@ function GambarSampul({ c, judul, sub, svgRef }) {
   );
 }
 
-/** Ubah SVG menjadi PNG 1584×396 lalu unduh. */
-async function unduhPng(svgEl, namaFile) {
+/** Gambar SVG ke kanvas 1584×396. */
+async function svgKeKanvas(svgEl) {
   const xml = new XMLSerializer().serializeToString(svgEl);
   const url = URL.createObjectURL(new Blob([xml], { type: "image/svg+xml;charset=utf-8" }));
   try {
@@ -177,20 +177,28 @@ async function unduhPng(svgEl, namaFile) {
     kanvas.width = W;
     kanvas.height = H;
     kanvas.getContext("2d").drawImage(img, 0, 0, W, H);
-    const blob = await new Promise((ok) => kanvas.toBlob(ok, "image/png"));
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = namaFile;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    return kanvas;
   } finally {
     URL.revokeObjectURL(url);
   }
 }
 
-function KartuSampul({ c, judul, sub, urutan }) {
+/** Ubah SVG menjadi PNG 1584×396 lalu unduh. */
+async function unduhPng(svgEl, namaFile) {
+  const kanvas = await svgKeKanvas(svgEl);
+  const blob = await new Promise((ok) => kanvas.toBlob(ok, "image/png"));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = namaFile;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+function KartuSampul({ c, judul, sub, urutan, onTerapkan, terpasang, onTerpasang }) {
   const ref = useRef(null);
   const [proses, setProses] = useState(false);
+  const [memasang, setMemasang] = useState(false);
+  const [galat, setGalat] = useState("");
   return (
     <figure className="ctl-sampul">
       <div className="ctl-sampul-gambar">
@@ -205,6 +213,30 @@ function KartuSampul({ c, judul, sub, urutan }) {
           </b>
           <span>{t("Cocok untuk", "Suits")}: {c.cocok}</span>
         </span>
+        <span className="ctl-sampul-aksi">
+        {onTerapkan && (
+          <button
+            type="button"
+            className={`utama ${terpasang ? "terpasang" : ""}`}
+            disabled={memasang}
+            onClick={async () => {
+              if (!ref.current) return;
+              setMemasang(true);
+              setGalat("");
+              try {
+                await onTerapkan(await svgKeKanvas(ref.current));
+                onTerpasang?.();
+              } catch (e) {
+                setGalat(e?.message || t("Gagal memasang sampul.", "Couldn't apply the cover."));
+              } finally {
+                setMemasang(false);
+              }
+            }}
+          >
+            {memasang ? <Loader2 size={13} className="ctl-putar" /> : <Check size={13} />}
+            {terpasang ? t("Terpasang", "Applied") : t("Terapkan", "Apply")}
+          </button>
+        )}
         <button
           type="button"
           disabled={proses}
@@ -221,7 +253,9 @@ function KartuSampul({ c, judul, sub, urutan }) {
           {proses ? <Loader2 size={13} className="ctl-putar" /> : <Download size={13} />}
           {t("Unduh PNG", "Download PNG")}
         </button>
+        </span>
       </figcaption>
+      {galat && <div className="ctl-unggah-pesan galat" style={{ padding: "0 11px 9px" }}>{galat}</div>}
     </figure>
   );
 }
@@ -230,7 +264,8 @@ function KartuSampul({ c, judul, sub, urutan }) {
  * @param headline  headline user (dipakai sebagai teks utama sampul)
  * @param nama      nama user (dipakai sebagai teks kecil)
  */
-export function GaleriSampul({ headline, nama }) {
+export function GaleriSampul({ headline, nama, onTerapkan }) {
+  const [terpasang, setTerpasang] = useState("");
   // Headline LinkedIn sering panjang dan dipisah "|". Untuk sampul cukup
   // dua bagian pertama, supaya teksnya besar dan mudah dibaca di HP.
   const bagianHeadline = String(headline || "")
@@ -244,13 +279,22 @@ export function GaleriSampul({ headline, nama }) {
     <div className="ctl-galeri">
       <div className="ctl-sampul-grid">
         {CONTOH_SAMPUL.map((c, i) => (
-          <KartuSampul key={c.id} c={c} judul={judul} sub={sub} urutan={i + 1} />
+          <KartuSampul
+            key={c.id}
+            c={c}
+            judul={judul}
+            sub={sub}
+            urutan={i + 1}
+            onTerapkan={onTerapkan}
+            terpasang={terpasang === c.id}
+            onTerpasang={() => setTerpasang(c.id)}
+          />
         ))}
       </div>
       <p className="ctl-catatan">
         {t(
-          "Teks di sampul diambil dari headline dan namamu. Kotak putus-putus di kiri bawah menandai area yang tertutup foto profil, jadi bagian itu sengaja dibiarkan kosong. Setelah diunduh, unggah lewat ikon pensil di sampul LinkedIn.",
-          "The cover text uses your headline and name. The dashed box at the bottom left marks the area covered by your profile photo, so it's left empty on purpose. After downloading, upload it with the pencil icon on your LinkedIn cover.",
+          "Teks di sampul diambil dari headline dan namamu. Lingkaran putus-putus di kiri bawah menandai area yang tertutup foto profil, jadi bagian itu sengaja dibiarkan kosong. Terapkan memasang sampul ke pratinjau di sebelah kiri; Unduh PNG menyimpannya untuk diunggah lewat ikon pensil di sampul LinkedIn.",
+          "The cover text uses your headline and name. The dashed circle at the bottom left marks the area covered by your profile photo, so it's left empty on purpose. Apply puts the cover on the preview on the left; Download PNG saves it so you can upload it with the pencil icon on your LinkedIn cover.",
         )}
       </p>
     </div>

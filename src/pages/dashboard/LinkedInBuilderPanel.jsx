@@ -26,6 +26,8 @@ import {
 import { linkedinKeTeks, tandaiKirimanReview } from "../../utils/kirimKeReview";
 import { GaleriSampul } from "../../components/linkedin/ContohSampul";
 import { GaleriFotoProfil } from "../../components/linkedin/ContohFotoProfil";
+import { KelolaGambar } from "../../components/linkedin/KelolaGambar";
+import { ATURAN_GAMBAR, kompresGambar, unggahGambarLinkedin, hapusGambarLinkedin } from "../../utils/gambarLinkedin";
 import { T } from "../../theme";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useAuth } from "../../context/AuthContext";
@@ -268,6 +270,8 @@ function KartuLI({
 function PanelReview({
   bagian,
   profil,
+  onPasangGambar,
+  onHapusGambar,
   review,
   spec,
   saranAi,
@@ -332,6 +336,16 @@ function PanelReview({
       <div style={{ fontSize: 12, color: T.inkSoft, marginBottom: 18 }}>
         {review?.ringkas}
       </div>
+
+      {/* Unggah gambar untuk pratinjau */}
+      {(bagian === "cover" || bagian === "photo") && onPasangGambar && (
+        <KelolaGambar
+          jenis={bagian === "photo" ? "foto" : "sampul"}
+          url={bagian === "photo" ? profil?.photoUrl : profil?.coverUrl}
+          onPasang={(blob) => onPasangGambar(bagian === "photo" ? "foto" : "sampul", blob)}
+          onHapus={() => onHapusGambar(bagian === "photo" ? "foto" : "sampul")}
+        />
+      )}
 
       {/* Spesifikasi teknis */}
       <div style={{ marginBottom: 18 }}>
@@ -469,7 +483,11 @@ function PanelReview({
               : t("10 contoh gaya foto profil", "10 profile photo style examples")}
           </div>
           {bagian === "cover" ? (
-            <GaleriSampul headline={profil?.headline} nama={profil?.nama} />
+            <GaleriSampul
+              headline={profil?.headline}
+              nama={profil?.nama}
+              onTerapkan={onPasangGambar ? (kanvas) => onPasangGambar("sampul", kanvas) : undefined}
+            />
           ) : (
             <GaleriFotoProfil />
           )}
@@ -777,11 +795,41 @@ export function LinkedInBuilderPanel({ setActive }) {
     setTimeout(() => setPesan(""), 2200);
   }, [user?.id, p]);
 
+  /* Foto profil dan sampul. Alamat gambar langsung disimpan ke profil
+     tanpa menunggu tombol Simpan, karena berkasnya sudah tersimpan di
+     Storage. Hanya kolom gambar yang diperbarui, isi lain tidak ikut. */
+  const simpanKolomGambar = async (kunci, nilai) => {
+    if (!user || !supabaseConfigured) return;
+    const { data: row } = await supabase
+      .from("profiles")
+      .select("linkedin_json")
+      .eq("id", user.id)
+      .maybeSingle();
+    await supabase
+      .from("profiles")
+      .update({ linkedin_json: { ...(row?.linkedin_json || {}), [kunci]: nilai }, updated_at: new Date().toISOString() })
+      .eq("id", user.id);
+  };
+
+  const pasangGambar = async (jenis, sumber) => {
+    const blob = sumber instanceof Blob ? sumber : await kompresGambar(sumber, ATURAN_GAMBAR[jenis]);
+    const url = await unggahGambarLinkedin(user?.id, jenis, blob);
+    const kunci = jenis === "foto" ? "photoUrl" : "coverUrl";
+    setP((prev) => ({ ...prev, [kunci]: url }));
+    await simpanKolomGambar(kunci, url);
+  };
+
+  const hapusGambar = async (jenis) => {
+    await hapusGambarLinkedin(user?.id, jenis);
+    const kunci = jenis === "foto" ? "photoUrl" : "coverUrl";
+    setP((prev) => ({ ...prev, [kunci]: "" }));
+    await simpanKolomGambar(kunci, "");
+  };
+
   /* Saran AI per bagian — teks bebas untuk bagian naratif,
      ringkasan terformat untuk bagian berbentuk daftar. */
   // Bagian yang sarannya berupa nasihat, bukan isi yang bisa dimasukkan
-  // ke form. Keduanya menyangkut berkas gambar yang harus diunggah user
-  // sendiri di LinkedIn.
+  // ke form. Gambarnya dipasang lewat unggahan atau contoh sampul.
   const HANYA_NASIHAT = ["cover", "photo"];
 
   const saranUntuk = (bagian) => {
@@ -1841,6 +1889,8 @@ export function LinkedInBuilderPanel({ setActive }) {
             <PanelReview
               bagian={dipilih}
               profil={p}
+              onPasangGambar={pasangGambar}
+              onHapusGambar={hapusGambar}
               review={review[dipilih]}
               spec={LI_SPECS[dipilih]}
               saranAi={saranUntuk(dipilih)}
@@ -1891,6 +1941,8 @@ export function LinkedInBuilderPanel({ setActive }) {
             <PanelReview
               bagian={dipilih}
               profil={p}
+              onPasangGambar={pasangGambar}
+              onHapusGambar={hapusGambar}
               review={review[dipilih]}
               spec={LI_SPECS[dipilih]}
               saranAi={saranUntuk(dipilih)}
