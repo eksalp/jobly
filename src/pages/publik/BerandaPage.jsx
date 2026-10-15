@@ -562,7 +562,7 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag pro">{t("Berbayar", "Paid")}</span>
                 <h3>
-                  <FileSearch size={17} /> {t("Review CV dengan AI", "AI CV review")}
+                  <FileSearch size={17} /> {t("Review CV & LinkedIn dengan AI", "AI CV & LinkedIn review")}
                 </h3>
                 <p>{t("Dapat skor ATS, tahu bagian CV yang masih lemah, plus versi perbaikannya dalam bahasa Indonesia dan Inggris.", "Get an ATS score, see the weak parts of your CV, plus an improved version in Indonesian and English.")}</p>
               </div>

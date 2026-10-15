@@ -29,7 +29,7 @@ import { t } from "../../i18n.js";
 export const PANEL_META = {
   overview: {
     grup: t("Persiapan", "Prepare"),
-    title: t("Review CV & arah karier", "CV review & career direction"),
+    title: t("Review CV & LinkedIn", "CV & LinkedIn review"),
     desc: t("Unggah CV atau profil LinkedIn untuk melihat skor ATS, bidang yang paling cocok, dan loker yang relevan.", "Upload your CV or LinkedIn profile to see your ATS score, best-fit fields, and relevant jobs."),
   },
   profile: {
@@ -122,7 +122,7 @@ function PanelTidakDitemukan() {
     <div style={{ padding: "48px 28px", color: "var(--muted)", fontSize: 14, lineHeight: 1.7 }}>
       {t("Halaman ini tidak ditemukan.", "This page wasn't found.")}{" "}
       <a {...tautan("/dashboard/overview")} style={{ color: "var(--brand)", fontWeight: 600 }}>
-        {t("Kembali ke Review CV", "Back to CV review")}
+        {t("Kembali ke Review CV & LinkedIn", "Back to CV & LinkedIn review")}
       </a>
     </div>
   );

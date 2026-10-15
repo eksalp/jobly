@@ -67,7 +67,7 @@ const I = {
   cv: { t: "CV Builder", d: t("Buat CV yang rapi, unduh dalam PDF", "Build a clean CV, download as PDF"), path: ke("cvbuilder"), Ikon: FilePlus2 },
   linkedin: { t: "LinkedIn Builder", d: t("Buat profil LinkedIn yang lebih menarik", "Make your LinkedIn profile stand out"), path: ke("linkedinbuilder"), Ikon: Linkedin },
   latihan: { t: t("Latihan interview", "Interview practice"), d: t("140+ pertanyaan, dari yang mudah sampai yang paling sulit", "140+ questions, from easy to the hardest"), path: ke("interview"), Ikon: MessageSquareQuote },
-  review: { t: t("Review CV", "CV review"), d: t("Skor ATS dan saran perbaikan CV", "ATS score and CV improvement tips"), path: ke("overview"), Ikon: FileSearch, pro: true },
+  review: { t: t("Review CV & LinkedIn", "CV & LinkedIn review"), d: t("Skor ATS, saran perbaikan, dan draft baru untuk CV atau profil LinkedIn", "ATS score, fixes, and a new draft for your CV or LinkedIn profile"), path: ke("overview"), Ikon: FileSearch, pro: true },
   pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
   rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
   simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
@@ -387,6 +387,80 @@ export function PilihBahasa({ kecil }) {
   );
 }
 
+/**
+ * Sisa kuota AI di header. Ketiga jenis kuota ditampilkan berdampingan
+ * dengan ikonnya, dan bila diklik terbuka rincian: sisa dari total,
+ * kegunaannya, tautan ke fiturnya, serta masa berlaku paket.
+ */
+export function ChipKuota({ l, aktif }) {
+  const [buka, setBuka] = useState(false);
+  const ref = useTutupLuar(buka, setBuka);
+  useEffect(() => setBuka(false), [aktif]);
+
+  const daftar = [
+    { Ikon: FileSearch, singkat: "CV", label: t("Review CV & LinkedIn", "CV & LinkedIn review"), ket: t("Skor ATS, saran, dan draft baru", "ATS score, fixes, and a new draft"), sisa: l.sisaAnalisis ?? 0, total: l.kuotaAnalisis ?? 0, path: ke("overview") },
+    { Ikon: Route, singkat: t("Karier", "Career"), label: t("Pindah Karier", "Career Switch"), ket: t("Rencana pindah ke bidang baru", "A plan for moving to a new field"), sisa: l.sisaPindah ?? 0, total: l.kuotaPindah ?? 0, path: ke("pindahkarier") },
+    { Ikon: Mic, singkat: t("Simulasi", "Mock"), label: t("Simulasi Interview", "Mock Interview"), ket: t("Interview suara 10 menit dengan AI", "A 10-minute voice interview with AI"), sisa: l.sisaInterview ?? 0, total: l.kuotaInterview ?? 0, path: ke("simulasi") },
+  ];
+  const berakhir = l?.berakhirAt
+    ? new Date(l.berakhirAt).toLocaleDateString(lokal(), { day: "numeric", month: "long", year: "numeric" })
+    : null;
+
+  return (
+    <div className="pb-dd" ref={ref}>
+      <button
+        type="button"
+        className="pb-quota"
+        aria-expanded={buka}
+        aria-haspopup="true"
+        onClick={() => setBuka((v) => !v)}
+        title={t("Lihat rincian sisa kuota AI", "See remaining AI credits")}
+      >
+        <span className="pb-quota-judul">{t("Sisa kuota", "Credits")}</span>
+        {daftar.map(({ Ikon, singkat, sisa, total }) => (
+          <span key={singkat} className={`pb-quota-item ${total ? "" : "redup"}`}>
+            <Ikon size={13} aria-hidden="true" />
+            <b>{sisa}</b>
+            <span className="pb-quota-label">{singkat}</span>
+          </span>
+        ))}
+        <ChevronDown size={13} className={`pb-quota-panah ${buka ? "buka" : ""}`} aria-hidden="true" />
+      </button>
+      {buka && (
+        <div className="pb-dd-menu kanan pb-kuota-menu" role="menu" style={{ top: "calc(100% + 10px)" }}>
+          <div className="pb-kuota-head">
+            <b>{t("Sisa kuota AI", "Remaining AI credits")}</b>
+            {l.detailPaket?.nama && <span>{t(`Paket ${l.detailPaket.nama}`, `${l.detailPaket.nama} plan`)}</span>}
+          </div>
+          {daftar.map(({ Ikon, label, ket, sisa, total, path }) => (
+            <a key={label} {...tautan(path)} className={`pb-kuota-baris ${total ? "" : "redup"}`}>
+              <span className="pb-dd-ic">
+                <Ikon size={16} />
+              </span>
+              <span className="pb-kuota-isi">
+                <span className="atas">
+                  <span>{label}</span>
+                  <b>{total ? `${sisa} / ${total}` : t("Tidak termasuk", "Not included")}</b>
+                </span>
+                {total > 0 && (
+                  <span className="bar">
+                    <i style={{ width: `${Math.min(100, (sisa / total) * 100)}%` }} />
+                  </span>
+                )}
+                <span className="ket">{ket}</span>
+              </span>
+            </a>
+          ))}
+          <div className="pb-kuota-kaki">
+            <span>{berakhir ? t(`Berlaku sampai ${berakhir}`, `Active until ${berakhir}`) : t("Paket belum aktif", "No active plan")}</span>
+            <a {...tautan(ke("paket"))}>{t("Kelola paket", "Manage plan")}</a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MenuAkun({ aktif }) {
   const { user, signOut } = useAuth();
   const { fullName } = useUserProfile();
@@ -429,7 +503,7 @@ function MenuAkun({ aktif }) {
             {adaKuota ? (
               <>
                 <div className="row">
-                  <span>{t("Review CV (AI)", "CV review (AI)")}</span>
+                  <span>{t("Review CV & LinkedIn", "CV & LinkedIn review")}</span>
                   <b>{l.sisaAnalisis ?? 0}x</b>
                 </div>
                 <div className="row">
@@ -522,11 +596,7 @@ export function SiteHeader({ aktif }) {
             <TombolTema />
             {masuk ? (
               <>
-                {(l?.aktif || l?.punyaKuota) && (
-                  <a className="pb-quota" {...tautan(ke("paket"))} title={t("Sisa kuota fitur AI", "Remaining AI credits")}>
-                    {t("Kuota AI", "AI credits")} <b>{l.sisaAnalisis ?? 0}</b> {t("review", "reviews")} · <b>{l.sisaInterview ?? 0}</b> {t("simulasi", "mock")}
-                  </a>
-                )}
+                {(l?.aktif || l?.punyaKuota) && <ChipKuota l={l} aktif={aktif} />}
                 <MenuAkun aktif={aktif} />
               </>
             ) : (
@@ -648,7 +718,7 @@ export function SiteFooter() {
         ["LinkedIn Builder", ke("linkedinbuilder")],
         [t("Latihan interview", "Interview practice"), ke("interview")],
         [t("Rencana lamar", "Application plan"), ke("rencana")],
-        [t("Review CV dengan AI", "AI CV review"), ke("overview")],
+        [t("Review CV & LinkedIn dengan AI", "AI CV & LinkedIn review"), ke("overview")],
         [t("Kalkulator gaji USD", "USD salary calculator"), "/kalkulator-gaji"],
       ],
     },

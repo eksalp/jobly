@@ -23,7 +23,9 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  FileSearch,
 } from "lucide-react";
+import { cvKeTeks, tandaiKirimanReview } from "../../utils/kirimKeReview";
 import { T } from "../../theme";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
@@ -1874,7 +1876,7 @@ function PilihGayaCv({ gaya, onUbah, lang }) {
 /*  MAIN PANEL                                                          */
 /* ------------------------------------------------------------------ */
 export function CVBuilderPanel({ setActive }) {
-  const { fullName, headline, location, summary, skills } = useUserProfile();
+  const { fullName, headline, location, summary, skills, setCvText } = useUserProfile();
   const { user } = useAuth();
   const [lang, setLang] = useState(bahasa() === "en" ? "EN" : "ID"); // "ID" | "EN", awalnya mengikuti bahasa tampilan
   const layarKecil = useLayarKecil(1000);
@@ -2133,6 +2135,17 @@ export function CVBuilderPanel({ setActive }) {
   };
 
   const handleManualSave = () => saveDraft(data);
+
+  /* Kirim isi CV ini langsung ke halaman Review CV & LinkedIn: tidak
+     perlu mengunduh PDF lalu mengunggahnya lagi. */
+  const teksUntukReview = cvKeTeks(data);
+  const cukupUntukReview = teksUntukReview.length >= 120;
+  const kirimKeReview = () => {
+    if (!cukupUntukReview) return;
+    setCvText?.(teksUntukReview);
+    tandaiKirimanReview("cv", "CV Builder");
+    setActive?.("overview");
+  };
 
   /* ---------- Tandai ada perubahan yang belum disimpan ---------- */
   useEffect(() => {
@@ -3133,6 +3146,24 @@ export function CVBuilderPanel({ setActive }) {
                   </button>
                 ))}
               </div>
+              <Button
+                variant="outline"
+                onClick={kirimKeReview}
+                disabled={!cukupUntukReview}
+                title={
+                  cukupUntukReview
+                    ? lang === "ID"
+                      ? "Nilai CV ini dengan AI: skor ATS, saran, dan draft baru"
+                      : "Score this CV with AI: ATS score, tips, and a new draft"
+                    : lang === "ID"
+                      ? "Isi CV dulu (ringkasan dan pengalaman) sebelum direview"
+                      : "Fill in your CV (summary and experience) before reviewing"
+                }
+                style={{ fontSize: 12, padding: "8px 12px" }}
+              >
+                <FileSearch size={13} />{" "}
+                {lang === "ID" ? "Review CV ini" : "Review this CV"}
+              </Button>
               <Button
                 variant="outline"
                 onClick={handleManualSave}

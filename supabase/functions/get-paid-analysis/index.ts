@@ -23,6 +23,83 @@ const corsHeaders = {
 // Instruksi bahasa output. Ditulis spesifik, bukan sekadar "pakai bahasa X",
 // karena CV berbahasa Inggris punya konvensi sendiri yang berbeda dari
 // sekadar menerjemahkan CV Indonesia kata per kata.
+/* Standar penulisan draft. Ditulis rinci karena kualitas draft paling
+   ditentukan oleh aturan ini, bukan oleh model yang dipakai. */
+const STANDAR_DRAFT = {
+  id: `STANDAR KUALITAS DRAFT CV (cv_draft):
+- headline: jabatan target + 2-3 keahlian inti, maksimal 70 karakter.
+  Contoh: "Staf Admin Keuangan | Rekonsiliasi Bank, Microsoft Excel".
+- summary: 3-4 kalimat (50-90 kata), tanpa kata "saya". Isi berurutan:
+  jabatan dan lama pengalaman (hitung dari tanggal di input bila jelas),
+  2-4 keahlian inti yang sesuai posisi_target, 1-2 pencapaian terbaik dari
+  input, lalu jenis peran yang dicari.
+- experiences: urutkan dari yang terbaru. Posisi terbaru 4-5 bullet, posisi
+  lama 2-3 bullet. Setiap bullet:
+  * diawali kata kerja aktif yang berbeda-beda (Menyusun, Mengelola,
+    Merekonsiliasi, Menangani, Meningkatkan, Mengoordinasikan, dst.),
+  * pola: apa yang dikerjakan + bagaimana/alat yang dipakai + hasil atau
+    cakupannya,
+  * maksimal 25 kata, tanpa titik di akhir,
+  * angka HANYA bila ada di input. Kalau tidak ada angka, tulis cakupan
+    atau dampak secara kualitatif tanpa mengarang jumlah.
+- skills: 8-15 keahlian, keahlian teknis dan tools lebih dulu, nama baku
+  ("Microsoft Excel", bukan "excel"), relevan dengan posisi_target. Jangan
+  isi dengan sifat pribadi ("jujur", "pekerja keras", "team player").
+- Tanggal seragam: "Jan 2023" sampai "Sekarang". Jangan menambah tanggal
+  yang tidak ada di input.
+- education.desc: hanya hal yang menambah nilai (IPK bila 3,00 ke atas,
+  skripsi atau kegiatan relevan). Boleh kosong.
+
+STANDAR KUALITAS DRAFT LINKEDIN (linkedin_draft):
+- headline (maks 220 karakter): "Jabatan | 2-3 spesialisasi | nilai yang
+  ditawarkan", memuat kata kunci yang dicari recruiter untuk posisi_target.
+- about: 180-300 kata, orang pertama, 4 paragraf dipisah baris kosong:
+  1) pembuka kuat dalam 270 karakter pertama (siapa dan apa keahlian utama),
+  2) pengalaman dan cara kerja dengan bukti dari input,
+  3) 3-4 pencapaian atau keahlian berupa daftar berawalan "• ",
+  4) ajakan: jenis peluang yang dicari dan cara menghubungi.
+- experiences.desc: 2-4 poin per posisi, boleh sedikit lebih bercerita
+  daripada CV, tetap berbasis fakta input.
+- skills: 10-20 keahlian, diurutkan dari yang paling relevan untuk
+  posisi_target (LinkedIn menampilkan beberapa teratas lebih menonjol).
+
+STANDAR AUDIT (cv_audit dan linkedin_audit):
+- Setiap masalah harus spesifik: kutip potongan pendek dari input yang
+  bermasalah, dan "perbaikan" berisi contoh tulisan pengganti yang siap
+  dipakai, bukan nasihat umum.
+- skor_ats dihitung dengan bobot: kata kunci sesuai posisi_target 30,
+  pencapaian terukur 25, struktur dan format 20, kelengkapan bagian 15,
+  kejelasan bahasa 10. Jangan memberi skor tinggi pada CV yang tipis.`,
+
+  en: `CV DRAFT QUALITY STANDARD (cv_draft):
+- headline: target role + 2-3 core skills, max 70 characters.
+- summary: 3-4 sentences (50-90 words), no "I". In order: role and years of
+  experience (computed from input dates when clear), 2-4 core skills that fit
+  the target roles, 1-2 best achievements from the input, then the kind of
+  role sought.
+- experiences: most recent first. Latest role 4-5 bullets, older roles 2-3.
+  Each bullet starts with a different strong action verb, follows "what +
+  how/tools + result or scope", max 25 words, no trailing period. Numbers
+  ONLY when present in the input; otherwise describe scope or impact
+  qualitatively without inventing figures.
+- skills: 8-15 items, hard skills and tools first, standard names
+  ("Microsoft Excel"), relevant to the target roles. No personality traits.
+- Consistent dates: "Jan 2023" to "Present". Do not add dates that are not in
+  the input.
+
+LINKEDIN DRAFT QUALITY STANDARD (linkedin_draft):
+- headline (max 220 chars): "Role | 2-3 specialties | value offered", with
+  the keywords recruiters search for.
+- about: 180-300 words, first person, 4 paragraphs separated by blank lines:
+  1) a strong opening within the first 270 characters, 2) experience and way
+  of working with evidence from the input, 3) 3-4 achievements or skills as a
+  list starting with "• ", 4) a call to action: opportunities sought and how
+  to get in touch.
+- experiences.desc: 2-4 points per role, slightly more narrative than the CV,
+  still grounded in the input.
+- skills: 10-20 items ordered by relevance to the target roles.`,
+};
+
 const INSTRUKSI_BAHASA = {
   id: `Tulis SEMUA teks dalam Bahasa Indonesia yang baik dan profesional.
 Kecualikan nama tools, sertifikasi, dan jabatan yang memang lazim dipakai dalam
@@ -246,7 +323,9 @@ serve(async (req) => {
     const sisaKuota = hasilKuota.sisa;
 
     const isLinkedIn = sourceType === "linkedin";
-    const inputUser = str(cvText).slice(0, 6000);
+    // Batas dinaikkan dari 6.000: CV dua halaman sering lebih panjang, dan
+    // bagian yang terpotong biasanya justru pengalaman lama dan pendidikan.
+    const inputUser = str(cvText).slice(0, 12000);
     const asal = isLinkedIn ? "salinan profil LinkedIn" : "CV";
 
     /* ===== Satu panggilan: audit + draft =====
@@ -318,6 +397,9 @@ ATURAN:
 - linkedin_draft.experiences[].skills: maksimal 5 per posisi.
 - languages[].proficiency HARUS persis salah satu dari: ${TINGKAT_BAHASA.id.map((x) => `"${x}"`).join(", ")}.
 - cover_saran & photo_saran: spesifik untuk bidang kerja user ini, bukan nasihat umum.
+
+${STANDAR_DRAFT.id}
+
 ${INSTRUKSI_BAHASA.id}`;
 
     // Panggilan kedua: draft versi Inggris.
@@ -362,6 +444,10 @@ RULES:
 - Fields absent from the input: use "" or []. Empty arrays are fine.
 - languages[].proficiency MUST be exactly one of: ${TINGKAT_BAHASA.en.map((x) => `"${x}"`).join(", ")}.
 - linkedin_draft.experiences[].skills: max 5 per role.
+- cover_saran & photo_saran: specific to this candidate's field, not generic advice.
+
+${STANDAR_DRAFT.en}
+
 ${INSTRUKSI_BAHASA.en}`;
 
     let utama, versiEn;

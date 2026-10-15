@@ -88,7 +88,7 @@ export function KuotaSaya({ langganan, onLangganan, ringkas = false }) {
   const daftar = [
     {
       Ikon: FileText,
-      label: t("Analisis CV", "CV analysis"),
+      label: t("Review CV & LinkedIn", "CV & LinkedIn review"),
       sisa: langganan.sisaAnalisis,
       total: langganan.kuotaAnalisis,
     },

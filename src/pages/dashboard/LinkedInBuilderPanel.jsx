@@ -21,7 +21,11 @@ import {
   Trash2,
   ChevronDown,
   Info,
+  FileSearch,
 } from "lucide-react";
+import { linkedinKeTeks, tandaiKirimanReview } from "../../utils/kirimKeReview";
+import { GaleriSampul } from "../../components/linkedin/ContohSampul";
+import { GaleriFotoProfil } from "../../components/linkedin/ContohFotoProfil";
 import { T } from "../../theme";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useAuth } from "../../context/AuthContext";
@@ -263,6 +267,7 @@ function KartuLI({
 /* ------------------------------------------------------------------ */
 function PanelReview({
   bagian,
+  profil,
   review,
   spec,
   saranAi,
@@ -447,6 +452,30 @@ function PanelReview({
         ))}
       </div>
 
+      {/* Contoh siap pakai untuk bagian visual */}
+      {(bagian === "cover" || bagian === "photo") && (
+        <div style={{ marginTop: 18, marginBottom: saranAi ? 18 : 0 }}>
+          <div
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: T.inkFaint,
+              marginBottom: 8,
+              letterSpacing: "0.03em",
+            }}
+          >
+            {bagian === "cover"
+              ? t("5 contoh sampul, bisa langsung diunduh", "5 cover examples, ready to download")
+              : t("10 contoh gaya foto profil", "10 profile photo style examples")}
+          </div>
+          {bagian === "cover" ? (
+            <GaleriSampul headline={profil?.headline} nama={profil?.nama} />
+          ) : (
+            <GaleriFotoProfil />
+          )}
+        </div>
+      )}
+
       {/* Tulisan hasil AI, kalau ada.
           Bagian seperti foto dan sampul hanya menghasilkan nasihat — tidak
           ada isi yang bisa dimasukkan ke form, jadi tombolnya tidak
@@ -509,7 +538,7 @@ function PanelReview({
 /*  PANEL UTAMA                                                         */
 /* ------------------------------------------------------------------ */
 export function LinkedInBuilderPanel({ setActive }) {
-  const { fullName, headline, location, summary, skills } = useUserProfile();
+  const { fullName, headline, location, summary, skills, setCvText } = useUserProfile();
   const { user } = useAuth();
   const langganan = useLangganan();
   const layarKecil = useLayarKecil(1000);
@@ -896,6 +925,26 @@ export function LinkedInBuilderPanel({ setActive }) {
             {t("Belum tersimpan", "Not saved yet")}
           </span>
         )}
+        <Button
+          variant="outline"
+          onClick={() => {
+            const teks = linkedinKeTeks(p);
+            if (teks.length < 120) return;
+            setCvText?.(teks);
+            tandaiKirimanReview("linkedin", "LinkedIn Builder");
+            setActive?.("overview");
+          }}
+          disabled={linkedinKeTeks(p).length < 120}
+          title={t("Nilai profil ini dengan AI: skor, saran, dan draft baru", "Score this profile with AI: score, tips, and a new draft")}
+          style={{
+            fontSize: 12.5,
+            padding: "9px 14px",
+            flexShrink: 0,
+            ...(layarKecil ? { flexBasis: "100%", justifyContent: "center" } : null),
+          }}
+        >
+          <FileSearch size={13} /> {t("Review profil ini", "Review this profile")}
+        </Button>
         <Button
           variant="primary"
           onClick={simpan}
@@ -1791,6 +1840,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           >
             <PanelReview
               bagian={dipilih}
+              profil={p}
               review={review[dipilih]}
               spec={LI_SPECS[dipilih]}
               saranAi={saranUntuk(dipilih)}
@@ -1840,6 +1890,7 @@ export function LinkedInBuilderPanel({ setActive }) {
           >
             <PanelReview
               bagian={dipilih}
+              profil={p}
               review={review[dipilih]}
               spec={LI_SPECS[dipilih]}
               saranAi={saranUntuk(dipilih)}

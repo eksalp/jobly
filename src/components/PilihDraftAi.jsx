@@ -87,6 +87,13 @@ function Cuplikan({ draft, bahasa, ringkas = false }) {
   );
 }
 
+const CSS_PILIH = `
+.pda-pemilih{transition:border-color .15s, box-shadow .15s}
+.pda-pemilih:hover{border-color:var(--t-teal,#14b8a6)!important;box-shadow:0 0 0 3px rgba(20,184,166,.12)}
+.pda-opsi{transition:background .12s}
+.pda-opsi:hover{background:rgba(20,184,166,.06)!important}
+`;
+
 export function PilihDraftAi({
   kolom,
   onTerapkan,
@@ -344,10 +351,31 @@ export function PilihDraftAi({
         </div>
       </div>
 
-      {/* Pemilih versi — hanya muncul kalau memang ada lebih dari satu */}
+      <style>{CSS_PILIH}</style>
+      {/* Pemilih versi — hanya muncul kalau memang ada lebih dari satu.
+          Diberi judul dan tombol "Ganti" yang jelas supaya user tahu
+          daftar ini bisa dipilih, bukan sekadar catatan riwayat. */}
       {daftar.length > 1 && (
         <div style={{ marginBottom: 11 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              gap: 8,
+              marginBottom: 6,
+            }}
+          >
+            <span style={{ fontSize: 11.5, fontWeight: 700, color: T.ink }}>
+              {t(`Pilih hasil analisis (${daftar.length} tersedia)`, `Choose an analysis (${daftar.length} available)`)}
+            </span>
+            <span style={{ fontSize: 10.5, color: T.inkFaint }}>
+              {t("Setiap analisis punya draft sendiri", "Each analysis has its own draft")}
+            </span>
+          </div>
           <button
+            aria-expanded={bukaDaftar}
+            className="pda-pemilih"
             onClick={() => setBukaDaftar(!bukaDaftar)}
             style={{
               width: "100%",
@@ -365,6 +393,9 @@ export function PilihDraftAi({
             }}
           >
             <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: T.teal, letterSpacing: "0.04em", marginBottom: 2 }}>
+                {t("SEDANG DIPILIH", "SELECTED")}
+              </div>
               <div
                 style={{
                   fontSize: 12,
@@ -383,19 +414,35 @@ export function PilihDraftAi({
                 {labelRingkas(terpilih)}
               </div>
             </div>
-            <ChevronDown
-              size={15}
-              color={T.inkFaint}
+            <span
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
                 flexShrink: 0,
-                transform: bukaDaftar ? "rotate(180deg)" : "none",
-                transition: "transform .15s",
+                fontSize: 11.5,
+                fontWeight: 600,
+                color: T.teal,
+                padding: "5px 9px",
+                borderRadius: 8,
+                background: "rgba(20,184,166,0.1)",
               }}
-            />
+            >
+              {bukaDaftar ? t("Tutup", "Close") : t("Ganti", "Change")}
+              <ChevronDown
+                size={13}
+                style={{
+                  transform: bukaDaftar ? "rotate(180deg)" : "none",
+                  transition: "transform .15s",
+                }}
+              />
+            </span>
           </button>
 
           {bukaDaftar && (
             <div
+              role="radiogroup"
+              aria-label={t("Daftar hasil analisis", "List of analyses")}
               style={{
                 marginTop: 6,
                 border: `1px solid ${T.border}`,
@@ -411,6 +458,9 @@ export function PilihDraftAi({
                 return (
                   <button
                     key={d.id}
+                    className="pda-opsi"
+                    role="radio"
+                    aria-checked={aktif}
                     onClick={() => {
                       setTerpilih(d);
                       setBukaDaftar(false);
@@ -428,9 +478,26 @@ export function PilihDraftAi({
                       fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                       display: "flex",
                       alignItems: "flex-start",
-                      gap: 8,
+                      gap: 10,
                     }}
                   >
+                    {/* Penanda pilihan berbentuk radio: jelas bisa diklik */}
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: "50%",
+                        flexShrink: 0,
+                        marginTop: 1,
+                        border: `2px solid ${aktif ? T.teal : T.border}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {aktif && <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.teal }} />}
+                    </span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
@@ -458,13 +525,17 @@ export function PilihDraftAi({
                         )}
                       </div>
                     </div>
-                    {aktif && (
-                      <Check
-                        size={13}
-                        color={T.teal}
-                        style={{ flexShrink: 0, marginTop: 2 }}
-                      />
-                    )}
+                    <span
+                      style={{
+                        flexShrink: 0,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: aktif ? T.teal : T.inkSoft,
+                        marginTop: 1,
+                      }}
+                    >
+                      {aktif ? t("Dipilih", "Selected") : t("Pilih", "Select")}
+                    </span>
                   </button>
                 );
               })}

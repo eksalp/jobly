@@ -520,7 +520,7 @@ export function DetailLokerPage({ slug }) {
                 {t("Supaya peluang dipanggil interview makin besar.", "Improve your chances of getting an interview.")}
               </p>
               {[
-                { label: t("Review CV dengan AI", "AI CV review"), pro: true, panel: "overview", Ikon: FileText },
+                { label: t("Review CV & LinkedIn dengan AI", "AI CV & LinkedIn review"), pro: true, panel: "overview", Ikon: FileText },
                 { label: t("Latihan 140+ pertanyaan", "Practise 140+ questions"), pro: false, panel: "interview", Ikon: MessageSquareQuote },
                 { label: t("Bandingkan di Peta gaji", "Compare on the salary map"), pro: false, path: `/peta-gaji?posisi=${encodeURIComponent((job.posisi || "").split(/[\s(,/-]+/).slice(0, 2).join(" "))}`, panel: "peta", Ikon: Wallet },
                 { label: t("Simulasi interview AI", "AI mock interview"), pro: true, panel: "simulasi", Ikon: Bot },

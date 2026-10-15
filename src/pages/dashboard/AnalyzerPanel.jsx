@@ -9,6 +9,7 @@ import {
   Info,
   Loader2,
   X,
+  FileText,
 } from "lucide-react";
 import { T } from "../../theme";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
@@ -38,6 +39,7 @@ import { JobRow } from "../../components/JobRow";
 import { Section } from "../../components/Section";
 import DataSourceBanner from "../../components/DataSourceBanner";
 import { lokal, t } from "../../i18n.js";
+import { ambilKirimanReview, cvKeTeks, linkedinKeTeks } from "../../utils/kirimKeReview";
 import { labelTampil } from "../../data/taxonomy.js";
 
 // Kartu audit — menampilkan skor + daftar masalah & perbaikannya
@@ -197,10 +199,47 @@ export function AnalyzerPanel({ setActive }) {
   const [aiError, setAiError] = useState("");
   const [aiResult, setAiResult] = useState(null);
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
-  const [sourceType, setSourceType] = useState("cv"); // "cv" | "linkedin"
+  // Isi yang dikirim dari CV Builder / LinkedIn Builder lewat tombol
+  // "Review ... ini". Dibaca sekali saat halaman dibuka.
+  const [kiriman] = useState(() => ambilKirimanReview());
+  const [sourceType, setSourceType] = useState(kiriman?.sumber === "linkedin" ? "linkedin" : "cv"); // "cv" | "linkedin"
   const [orderTerakhir, setOrderTerakhir] = useState(null);
 
   const [bolehCobaLagi, setBolehCobaLagi] = useState(false);
+  const [ambilBuilder, setAmbilBuilder] = useState({ loading: false, pesan: "" });
+
+  /* Mengambil isi CV Builder / LinkedIn Builder yang sudah disimpan,
+     sebagai jalan pintas selain mengunggah berkas. */
+  const ambilDariBuilder = async () => {
+    if (!user || !supabaseConfigured) return;
+    setAmbilBuilder({ loading: true, pesan: "" });
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("cv_json, linkedin_json")
+      .eq("id", user.id)
+      .maybeSingle();
+    const sumber = sourceType === "linkedin" ? data?.linkedin_json : data?.cv_json;
+    const teks = sumber ? (sourceType === "linkedin" ? linkedinKeTeks(sumber) : cvKeTeks(sumber)) : "";
+    if (error || teks.length < 120) {
+      setAmbilBuilder({
+        loading: false,
+        pesan:
+          sourceType === "linkedin"
+            ? t("Belum ada profil tersimpan di LinkedIn Builder. Isi dan simpan dulu di sana.", "No saved profile in LinkedIn Builder yet. Fill it in and save it there first.")
+            : t("Belum ada CV tersimpan di CV Builder. Isi dan simpan dulu di sana.", "No saved CV in CV Builder yet. Fill it in and save it there first."),
+      });
+      return;
+    }
+    setText(teks);
+    setFileName("");
+    setAmbilBuilder({
+      loading: false,
+      pesan:
+        sourceType === "linkedin"
+          ? t("Profil dari LinkedIn Builder sudah dimasukkan.", "Your LinkedIn Builder profile has been added.")
+          : t("CV dari CV Builder sudah dimasukkan.", "Your CV Builder CV has been added."),
+    });
+  };
   const [tampilPanduanLi, setTampilPanduanLi] = useState(false);
 
   // Mendeteksi kalau user cuma menempel TAUTAN profil, bukan isinya.
@@ -757,6 +796,51 @@ export function AnalyzerPanel({ setActive }) {
             {bacaGalat}
           </div>
         )}
+
+        {/* Jalan pintas dari builder */}
+        {kiriman && (
+          <div
+            style={{
+              fontSize: 12.5,
+              color: T.ink,
+              lineHeight: 1.6,
+              background: "rgba(20,184,166,0.08)",
+              border: `1px solid ${T.teal}`,
+              borderRadius: 12,
+              padding: "10px 13px",
+              marginBottom: 12,
+            }}
+          >
+            {t(`Isi dari ${kiriman.asal} sudah dimasukkan di bawah. Periksa sebentar, lalu tekan tombol analisis.`, `Your ${kiriman.asal} content has been added below. Check it, then press the analyze button.`)}
+          </div>
+        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+          <button
+            type="button"
+            onClick={ambilDariBuilder}
+            disabled={ambilBuilder.loading}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "7px 12px",
+              borderRadius: 10,
+              border: `1px solid ${T.border}`,
+              background: "var(--t-surface)",
+              color: T.accent,
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: ambilBuilder.loading ? "wait" : "pointer",
+              fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+            }}
+          >
+            {ambilBuilder.loading ? <Loader2 size={13} style={{ animation: "spin 1s linear infinite" }} /> : <FileText size={13} />}
+            {sourceType === "linkedin"
+              ? t("Ambil dari LinkedIn Builder", "Use my LinkedIn Builder profile")
+              : t("Ambil dari CV Builder", "Use my CV Builder CV")}
+          </button>
+          {ambilBuilder.pesan && <span style={{ fontSize: 12, color: T.inkSoft }}>{ambilBuilder.pesan}</span>}
+        </div>
 
         <textarea
           value={text}

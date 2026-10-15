@@ -246,7 +246,7 @@ export function PaketPanel() {
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
               {[
-                [t("Review CV", "CV review"), langganan.sisaAnalisis, langganan.kuotaAnalisis],
+                [t("Review CV & LinkedIn", "CV & LinkedIn review"), langganan.sisaAnalisis, langganan.kuotaAnalisis],
                 [t("Pindah Karier", "Career switch"), langganan.sisaPindah, langganan.kuotaPindah],
                 [t("Simulasi interview", "Mock interview"), langganan.sisaInterview, langganan.kuotaInterview],
               ].map(([label, sisa, total]) => (
