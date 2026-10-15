@@ -88,7 +88,7 @@ export function KelolaGambar({ jenis, url, onPasang, onHapus }) {
         </div>
       )}
       <ul className="ctl-unggah-ket">
-        <li>{t(`Format JPG, PNG, atau WebP, maksimal ${MAKS_MB_ASLI} MB.`, `JPG, PNG, or WebP, up to ${MAKS_MB_ASLI} MB.`)}</li>
+        <li>{t(`Format JPG, PNG, atau WebP, maksimal ${MAKS_MB_ASLI} MB. Berkas besar dikecilkan di perangkatmu, jadi yang tersimpan hanya hasil kecilnya.`, `JPG, PNG, or WebP, up to ${MAKS_MB_ASLI} MB. Large files are shrunk on your device, so only the small result is stored.`)}</li>
         <li>
           {foto
             ? t(`Otomatis dipotong persegi di bagian tengah dan dikecilkan ke ${aturan.label}, maksimal ${aturan.maksKB} KB.`, `Automatically cropped square from the centre and resized to ${aturan.label}, max ${aturan.maksKB} KB.`)

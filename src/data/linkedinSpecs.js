@@ -6,7 +6,8 @@ export const LI_SPECS = {
     spec: [
       [t("Ukuran ideal", "Ideal size"), "1584 × 396 px (4:1)"],
       ["Format", "JPG, PNG, GIF"],
-      [t("Ukuran file", "File size"), t("Maksimal 8 MB", "Max 8 MB")],
+      [t("Batas file di LinkedIn", "LinkedIn file limit"), t("8 MB", "8 MB")],
+      [t("Disimpan di Jobly", "Stored on Jobly"), t("Maks 200 KB (otomatis)", "Max 200 KB (automatic)")],
       [t("Zona aman", "Safe zone"), t("Kiri bawah tertutup foto profil", "Bottom left is covered by the profile photo")],
     ],
     panduan: [
@@ -20,7 +21,8 @@ export const LI_SPECS = {
     spec: [
       [t("Ukuran minimal", "Minimum size"), "400 × 400 px"],
       [t("Ukuran maksimal", "Maximum size"), "7680 × 4320 px"],
-      [t("Ukuran file", "File size"), t("Maksimal 8 MB", "Max 8 MB")],
+      [t("Batas file di LinkedIn", "LinkedIn file limit"), t("8 MB", "8 MB")],
+      [t("Disimpan di Jobly", "Stored on Jobly"), t("Maks 100 KB (otomatis)", "Max 100 KB (automatic)")],
       [t("Proporsi wajah", "Face proportion"), t("Wajah mengisi ±60% bingkai", "Face fills ±60% of the frame")],
     ],
     panduan: [
