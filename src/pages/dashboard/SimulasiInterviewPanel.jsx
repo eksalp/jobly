@@ -291,7 +291,18 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
           },
         },
       );
-      if (error) throw new Error(error.message);
+      if (error) {
+        let pesan = error.message;
+        let mentah = "";
+        try {
+          mentah = (await error.context?.text?.()) ?? "";
+          const body = mentah ? JSON.parse(mentah) : null;
+          if (body?.error) pesan = body.error;
+        } catch {
+          if (mentah) pesan = mentah.slice(0, 300);
+        }
+        throw new Error(pesan);
+      }
       if (data?.error) throw new Error(data.error);
 
       setHasil(data);

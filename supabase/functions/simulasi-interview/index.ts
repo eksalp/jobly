@@ -20,6 +20,9 @@ const MODEL =
   Deno.env.get("GEMINI_MODEL_SIMULASI") ??
   Deno.env.get("GEMINI_MODEL") ??
   "gemini-3.8-flash";
+// Dipakai kalau model utama menolak atau gagal, agar penilaian tetap jalan.
+const MODEL_CADANGAN =
+  Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-3.6-flash";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -43,6 +46,15 @@ function ekstrakJson(mentah) {
 }
 
 async function panggilGemini(prompt, maksToken = 1200) {
+  try {
+    return await panggilModel(MODEL, prompt, maksToken);
+  } catch (e) {
+    console.warn(`Model ${MODEL} gagal, mencoba ${MODEL_CADANGAN}:`, e?.message);
+    return await panggilModel(MODEL_CADANGAN, prompt, maksToken);
+  }
+}
+
+async function panggilModel(model, prompt, maksToken) {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("GEMINI_API_KEY belum di-set.");
 
@@ -51,7 +63,7 @@ async function panggilGemini(prompt, maksToken = 1200) {
 
   let res;
   try {
-    res = await fetch(GEMINI_URL(MODEL), {
+    res = await fetch(GEMINI_URL(model), {
       signal: pembatal.signal,
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },

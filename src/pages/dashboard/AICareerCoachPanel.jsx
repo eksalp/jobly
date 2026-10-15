@@ -71,7 +71,18 @@ export function AICareerCoachPanel() {
         },
       );
 
-      if (fnError) throw fnError;
+      if (fnError) {
+        let pesan = fnError.message;
+        let mentah = "";
+        try {
+          mentah = (await fnError.context?.text?.()) ?? "";
+          const body = mentah ? JSON.parse(mentah) : null;
+          if (body?.error) pesan = body.error;
+        } catch {
+          if (mentah) pesan = mentah.slice(0, 300);
+        }
+        throw new Error(pesan);
+      }
       if (data?.error) throw new Error(data.error);
 
       const replyText = (data.content || [])
