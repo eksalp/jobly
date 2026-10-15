@@ -212,7 +212,7 @@ function bagianProfesi(p, ekstra) {
             ))}
           </div>
           <p className="pb-pd-catatan">
-            {t("Sebagian tautan kursus adalah tautan afiliasi. Kursus dipilih berdasarkan kecocokan dengan skill di panduan ini.", "Some course links are affiliate links. Courses are chosen based on the skills in this guide.")}
+            {t("Kursus dipilih berdasarkan kecocokan dengan skill di panduan ini. Pembelian lewat tautan ini ikut mendukung Jobly tanpa biaya tambahan untukmu.", "Courses are chosen based on the skills in this guide. Buying through these links helps support Jobly at no extra cost to you.")}
           </p>
         </>
       ),

@@ -825,7 +825,7 @@ export function PindahKarierPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  {t("Sebagian tautan kursus adalah tautan afiliasi. Rekomendasi kami disusun berdasarkan kecocokan dengan kebutuhanmu.", "Some course links are affiliate links. Our recommendations are based on what fits your needs.")}
+                  {t("Kursus dipilih berdasarkan kecocokan dengan kebutuhanmu. Pembelian lewat tautan ini ikut mendukung Jobly tanpa biaya tambahan untukmu.", "Courses are picked based on what fits your needs. Buying through these links helps support Jobly at no extra cost to you.")}
                 </span>
               </div>
             </Glass>
