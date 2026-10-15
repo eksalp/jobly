@@ -2177,6 +2177,9 @@ export function CVBuilderPanel({ setActive }) {
         contentW = pageW - margin * 2,
         BATAS_BAWAH = 278; // batas bawah area cetak (mm)
       let y = margin;
+      // True tepat setelah judul section digambar. Judul sudah memastikan
+      // entri pertamanya muat, jadi entri itu tidak boleh dipindah lagi.
+      let setelahJudul = false;
 
       // Font yang disematkan memuat seluruh huruf Latin (é, ü, “ ”, –),
       // jadi cukup buang karakter di luar itu (emoji, aksara lain).
@@ -2325,10 +2328,13 @@ export function CVBuilderPanel({ setActive }) {
 
       // Garis DI BAWAH judul, mengikuti pratinjau — judul jadi menempel
       // pada isinya, bukan mengambang di antara dua bagian.
-      const section = (title) => {
-        // Judul section butuh ruang untuk dirinya plus setidaknya
-        // satu entri pendek di bawahnya, supaya tidak tertinggal sendirian.
-        if (y + 22 > BATAS_BAWAH) {
+      const section = (title, tinggiIsiAwal = 14) => {
+        // Judul section harus muat bersama awal entri pertamanya (judul
+        // entri, nama instansi, dan dua bullet pertama). Sebelumnya hanya
+        // disediakan 22 mm, sehingga entri pertama yang lebih tinggi pindah
+        // ke halaman berikutnya dan judul section tertinggal sendirian.
+        const tinggiJudul = (ringkas ? 3 : 4) + 9;
+        if (y + tinggiJudul + Math.min(tinggiIsiAwal, 70) > BATAS_BAWAH) {
           doc.addPage();
           y = margin;
         }
@@ -2350,6 +2356,7 @@ export function CVBuilderPanel({ setActive }) {
           doc.line(margin, ty, pageW / 2 - w / 2 - 3, ty);
           doc.line(pageW / 2 + w / 2 + 3, ty, pageW - margin, ty);
           y += 5;
+          setelahJudul = true;
           return;
         }
 
@@ -2364,6 +2371,7 @@ export function CVBuilderPanel({ setActive }) {
           doc.text(judul, margin + 3.2, y);
           doc.setCharSpace(0);
           y += 4.6;
+          setelahJudul = true;
           return;
         }
 
@@ -2380,14 +2388,17 @@ export function CVBuilderPanel({ setActive }) {
         doc.setLineWidth(tema === "klasik" ? 0.45 : 0.25);
         doc.line(margin, y, pageW - margin, y);
         y += 5.6;
+        setelahJudul = true;
       };
 
       /**
-       * Padanan `break-inside: avoid` untuk jsPDF.
+       * Tinggi "kepala" satu entri: judul, nama instansi, dan dua bullet
+       * pertama. Bagian ini dijaga tetap utuh dalam satu halaman, sedangkan
+       * bullet sisanya boleh berlanjut ke halaman berikutnya.
        *
-       * Tinggi satu entri dihitung dulu; kalau tidak muat di sisa halaman,
-       * halaman baru dibuka SEBELUM entri digambar. Tanpa ini, judul bisa
-       * tertinggal sendirian di dasar halaman sementara isinya pindah.
+       * Sebelumnya seluruh entri dipaksa utuh. Entri yang panjang lalu
+       * pindah seluruhnya ke halaman baru dan meninggalkan ruang kosong
+       * besar di halaman sebelumnya.
        */
       const tinggiEntri = (judulKiri, tanggal, subTeks, bullets) => {
         let tt = 0;
@@ -2414,15 +2425,22 @@ export function CVBuilderPanel({ setActive }) {
         if (Array.isArray(bullets)) {
           setUkuran(8.8);
           doc.setFont(F, "normal");
-          bullets.filter(Boolean).forEach((b) => {
-            tt += doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
-          });
+          bullets
+            .filter(Boolean)
+            .slice(0, 2)
+            .forEach((b) => {
+              tt += doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
+            });
         }
 
         return tt + 2;
       };
 
       const mulaiEntri = (tinggi) => {
+        if (setelahJudul) {
+          setelahJudul = false;
+          return;
+        }
         const sisa = BATAS_BAWAH - y;
         // Entri yang lebih tinggi dari satu halaman penuh tetap dibiarkan
         // terpotong — memindahkannya tidak menolong apa pun.
@@ -2503,7 +2521,7 @@ export function CVBuilderPanel({ setActive }) {
 
       y += ringkas ? -1 : 0;
       if (data.summary) {
-        section(L.summary);
+        section(L.summary, 16);
         addText(data.summary, {
           size: 9.2,
           color: [50, 50, 50],
@@ -2514,7 +2532,8 @@ export function CVBuilderPanel({ setActive }) {
 
       const exps = data.experiences.filter((e) => e.role || e.company);
       if (exps.length) {
-        section(L.experience);
+        const e0 = exps[0];
+        section(L.experience, tinggiEntri(e0.role || "Posisi", [e0.start, e0.end].filter(Boolean).join(" - "), e0.company, e0.desc));
         exps.forEach((e) => {
           const tgl = [e.start, e.end].filter(Boolean).join(" - ");
           mulaiEntri(tinggiEntri(e.role || "Posisi", tgl, e.company, e.desc));
@@ -2528,7 +2547,8 @@ export function CVBuilderPanel({ setActive }) {
 
       const orgs = data.organizations.filter((o) => o.role || o.org);
       if (orgs.length) {
-        section(L.organization);
+        const o0 = orgs[0];
+        section(L.organization, tinggiEntri(o0.role || "Jabatan", [o0.start, o0.end].filter(Boolean).join(" - "), o0.org, o0.desc));
         orgs.forEach((o) => {
           const tgl = [o.start, o.end].filter(Boolean).join(" - ");
           mulaiEntri(tinggiEntri(o.role || "Jabatan", tgl, o.org, o.desc));
@@ -2542,7 +2562,8 @@ export function CVBuilderPanel({ setActive }) {
 
       const vols = (data.volunteers || []).filter((v) => v.role || v.org);
       if (vols.length) {
-        section(L.volunteer);
+        const v0 = vols[0];
+        section(L.volunteer, tinggiEntri(v0.role || "Peran", [v0.start, v0.end].filter(Boolean).join(" - "), v0.org, v0.desc));
         vols.forEach((v) => {
           const tgl = [v.start, v.end].filter(Boolean).join(" - ");
           mulaiEntri(tinggiEntri(v.role || "Peran", tgl, v.org, v.desc));
@@ -2556,7 +2577,8 @@ export function CVBuilderPanel({ setActive }) {
 
       const edus = data.education.filter((e) => e.school || e.degree);
       if (edus.length) {
-        section(L.education);
+        const d0 = edus[0];
+        section(L.education, tinggiEntri(d0.school || "Institusi", [d0.start, d0.end].filter(Boolean).join(" - "), d0.degree, d0.desc));
         edus.forEach((e) => {
           const tgl = [e.start, e.end].filter(Boolean).join(" - ");
           mulaiEntri(
@@ -2572,7 +2594,7 @@ export function CVBuilderPanel({ setActive }) {
 
       const aws = data.awards.filter((a) => a.title);
       if (aws.length) {
-        section(L.awards);
+        section(L.awards, tinggiEntri(aws[0].title, aws[0].year, aws[0].issuer, null));
         aws.forEach((a) => {
           mulaiEntri(tinggiEntri(a.title, a.year, a.issuer, null));
           rowLR(a.title, a.year);
@@ -2584,7 +2606,7 @@ export function CVBuilderPanel({ setActive }) {
 
       const certs = (data.certifications || []).filter((c) => c.name);
       if (certs.length) {
-        section(L.certifications);
+        section(L.certifications, tinggiEntri(certs[0].name, certs[0].year, [certs[0].issuer, certs[0].license].filter(Boolean).join(" · "), null));
         certs.forEach((c) => {
           const sub0 = [c.issuer, c.license].filter(Boolean).join(" · ");
           mulaiEntri(
@@ -2605,7 +2627,7 @@ export function CVBuilderPanel({ setActive }) {
       // lingkaran dengan ukuran yang sama persis dengan bullet di bagian
       // lain. Karakter "·" jauh lebih kecil dan terlihat tidak sepadan.
       if (data.skills.length) {
-        section(L.skills);
+        section(L.skills, 10);
 
         setUkuran(9.2);
         doc.setFont(F, "normal");
