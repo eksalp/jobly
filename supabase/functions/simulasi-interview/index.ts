@@ -11,18 +11,10 @@
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { DAFTAR_MODEL } from "../_shared/modelGemini.ts";
 
 const GEMINI_URL = (m) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
-// gemini-2.0-flash sudah dimatikan Google (1 Juni 2026). Variabel
-// terpisah supaya model fungsi lain tidak ikut berubah.
-const MODEL =
-  Deno.env.get("GEMINI_MODEL_SIMULASI") ??
-  Deno.env.get("GEMINI_MODEL") ??
-  "gemini-3.8-flash";
-// Dipakai kalau model utama menolak atau gagal, agar penilaian tetap jalan.
-const MODEL_CADANGAN =
-  Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-3.6-flash";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -46,12 +38,19 @@ function ekstrakJson(mentah) {
 }
 
 async function panggilGemini(prompt, maksToken = 1200) {
-  try {
-    return await panggilModel(MODEL, prompt, maksToken);
-  } catch (e) {
-    console.warn(`Model ${MODEL} gagal, mencoba ${MODEL_CADANGAN}:`, e?.message);
-    return await panggilModel(MODEL_CADANGAN, prompt, maksToken);
+  // Model dicoba berurutan; yang berikutnya dipakai kalau kuota atau
+  // server model sebelumnya sedang penuh.
+  let terakhir;
+  for (const model of DAFTAR_MODEL) {
+    try {
+      return await panggilModel(model, prompt, maksToken);
+    } catch (e) {
+      terakhir = e;
+      if (e?.status === 401 || e?.status === 403) throw e;
+      console.warn(`Model ${model} gagal:`, e?.message);
+    }
   }
+  throw terakhir;
 }
 
 async function panggilModel(model, prompt, maksToken) {

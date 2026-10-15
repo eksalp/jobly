@@ -7,12 +7,10 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SKEMA_PINDAH } from "./skema-pindah.ts";
+import { DAFTAR_MODEL } from "../_shared/modelGemini.ts";
 
 const GEMINI_URL = (m) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
-const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.8-flash";
-const MODEL_CADANGAN =
-  Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-3.6-flash";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -131,9 +129,9 @@ async function jalankan(prompt) {
   const mulai = Date.now();
   const sisa = () => ANGGARAN_MS - (Date.now() - mulai);
   const percobaan = [
-    { model: MODEL, skema: true, jeda: 0 },
-    { model: MODEL, skema: false, jeda: 0, hanyaJika400: true },
-    { model: MODEL_CADANGAN, skema: true, jeda: 1000 },
+    { model: DAFTAR_MODEL[0], skema: true, jeda: 0 },
+    { model: DAFTAR_MODEL[0], skema: false, jeda: 0, hanyaJika400: true },
+    ...DAFTAR_MODEL.slice(1).map((model) => ({ model, skema: true, jeda: 800 })),
   ];
   let terakhir;
   for (const { model, skema, jeda, hanyaJika400 } of percobaan) {

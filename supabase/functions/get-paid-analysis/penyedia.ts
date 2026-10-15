@@ -6,16 +6,12 @@
 // atau output tidak valid), permintaan diulang ke Claude secara otomatis.
 
 import { buatSkema, buatSkemaDraft } from "./skema.ts";
+import { DAFTAR_MODEL, kuotaHabis } from "../_shared/modelGemini.ts";
 
 const GEMINI_URL = (model) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 
-const MODEL_GEMINI = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.8-flash";
-// Model cadangan dengan harga sama, beban trafiknya berbeda.
-// Dipakai saat model utama sedang penuh.
-const MODEL_GEMINI_CADANGAN =
-  Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-3.6-flash";
 const MODEL_ANTHROPIC = Deno.env.get("ANTHROPIC_MODEL") ?? "claude-sonnet-5";
 
 /* ---------- Util ---------- */
@@ -65,7 +61,7 @@ async function panggilGemini(
   maksToken,
   bahasa,
   hanyaDraft,
-  model = MODEL_GEMINI,
+  model = DAFTAR_MODEL[0],
 ) {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("GEMINI_API_KEY belum di-set.");
@@ -147,13 +143,14 @@ async function panggilGemini(
  * tinggi, dan itu hampir selalu sembuh dalam hitungan detik. Tanpa retry,
  * user yang sudah membayar melihat kegagalan padahal masalahnya sesaat.
  *
- * Urutan percobaan: utama → utama → cadangan.
+ * Urutan percobaan: setiap model di DAFTAR_MODEL, lalu model pertama sekali lagi.
  */
 async function panggilGeminiTangguh(prompt, maksToken, bahasa, hanyaDraft) {
+  // Setiap model dicoba sekali; model terakhir yang sempat sibuk (503)
+  // dicoba ulang sekali lagi di akhir kalau waktunya masih cukup.
   const percobaan = [
-    { model: MODEL_GEMINI, jeda: 0 },
-    { model: MODEL_GEMINI, jeda: 1200 },
-    { model: MODEL_GEMINI_CADANGAN, jeda: 2500 },
+    ...DAFTAR_MODEL.map((model, i) => ({ model, jeda: i === 0 ? 0 : 800 })),
+    { model: DAFTAR_MODEL[0], jeda: 2000 },
   ];
 
   let terakhir;
@@ -296,10 +293,12 @@ export async function jalankanAnalisis(
   // Bedakan "server AI sedang penuh" dari kegagalan lain — yang pertama
   // hanya perlu ditunggu, dan pesannya harus mencerminkan itu.
   const semuaSibuk = galat.every((g) =>
-    /503|429|UNAVAILABLE|high demand|overload/i.test(g),
+    /503|429|UNAVAILABLE|high demand|overload|RESOURCE_EXHAUSTED/i.test(g),
   );
   const pesan = semuaSibuk
-    ? "Server AI sedang penuh. Tunggu sebentar lalu coba lagi. Pembayaranmu tetap tersimpan."
+    ? galat.some(kuotaHabis)
+      ? "Layanan AI sedang ramai dan batas pemakaian sementara tercapai. Kuota analisismu sudah dikembalikan. Coba lagi dalam beberapa menit."
+      : "Server AI sedang penuh. Tunggu sebentar lalu coba lagi. Kuota analisismu sudah dikembalikan."
     : `Analisis gagal diproses. ${galat.join(" | ")}`;
 
   const err = new Error(pesan);
