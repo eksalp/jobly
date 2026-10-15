@@ -2422,18 +2422,22 @@ export function CVBuilderPanel({ setActive }) {
         }
 
         // Bullet
+        let semua = tt;
         if (Array.isArray(bullets)) {
           setUkuran(8.8);
           doc.setFont(F, "normal");
-          bullets
-            .filter(Boolean)
-            .slice(0, 2)
-            .forEach((b) => {
-              tt += doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
-            });
+          bullets.filter(Boolean).forEach((b, i) => {
+            const h = doc.splitTextToSize(safe(b), contentW - 5).length * 4.5;
+            semua += h;
+            if (i < 2) tt += h;
+          });
         }
 
-        return tt + 2;
+        // Entri yang tingginya wajar (sampai 9 cm) dijaga utuh dalam satu
+        // halaman. Entri yang sangat panjang cukup dijaga kepalanya (judul,
+        // instansi, dua bullet pertama) supaya tidak meninggalkan halaman
+        // yang setengah kosong.
+        return (semua <= 90 ? semua : tt) + 2;
       };
 
       const mulaiEntri = (tinggi) => {
