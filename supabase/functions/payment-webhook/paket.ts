@@ -26,9 +26,9 @@ export const PAKET = {
     id: "serius",
     nama: "Max",
     harga: 29000,
-    kuotaAnalisis: 12,
-    kuotaPindah: 5,
-    kuotaInterview: 3,
+    kuotaAnalisis: 10,
+    kuotaPindah: 4,
+    kuotaInterview: 2,
     durasiHari: 365, // 1 tahun
   },
 };
