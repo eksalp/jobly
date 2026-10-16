@@ -10,23 +10,28 @@ import { t } from "../i18n.js";
  * Pasang dulu: npm install @google/genai
  */
 
-// Model suara untuk simulasi interview. Sesuai permintaan, model lama
-// (2.5 native audio) tetap dipakai lebih dulu. Google sudah membatasi
-// akses model 2.5 untuk akun yang memakainya belakangan ini, jadi kalau
-// server melaporkan model itu tidak tersedia, gemini-3.8-live dipakai.
+// Model suara untuk simulasi interview. Pilihan utamanya ditentukan server
+// (secret GEMINI_MODEL_LIVE di Supabase, bawaan gemini-3.8-live), sehingga
+// model bisa diganti tanpa build ulang situs.
 //
-// Catatan: galat "Precondition check failed" sebelumnya bukan karena
-// modelnya, melainkan karena audio dikirim lewat kolom lama `media`.
-// Model 3.x mengabaikan kolom itu, sehingga giliran bicara tiba di server
-// tanpa audio dan ditolak. Sekarang audio dikirim lewat kolom `audio`.
-const MODEL_LIVE = "models/gemini-2.5-flash-native-audio-preview-12-2025";
-const MODEL_LIVE_BARU = "models/gemini-3.8-live";
+// Catatan: galat "Precondition check failed" dulu bukan karena modelnya,
+// melainkan karena audio dikirim lewat kolom lama `media`. Model 3.x
+// mengabaikan kolom itu sehingga giliran bicara tiba tanpa audio. Sekarang
+// audio dikirim lewat kolom `audio`.
+const MODEL_LIVE = "models/gemini-3.8-live";
+const MODEL_LIVE_LAMA = "models/gemini-2.5-flash-native-audio-preview-12-2025";
+/** Model suara cadangan bila model utama gagal tersambung. */
+export const MODEL_LIVE_CADANGAN = MODEL_LIVE_LAMA;
 
-export function pilihModelLive(tersedia = []) {
+const pakaiAwalan = (m) => (m && !m.startsWith("models/") ? `models/${m}` : m);
+
+export function pilihModelLive(tersedia = [], pilihan = "") {
   const ada = new Set(tersedia || []);
-  if (!ada.size || ada.has(MODEL_LIVE)) return MODEL_LIVE;
-  if (ada.has(MODEL_LIVE_BARU)) return MODEL_LIVE_BARU;
-  return MODEL_LIVE;
+  const utama = pakaiAwalan(pilihan) || MODEL_LIVE;
+  if (!ada.size || ada.has(utama)) return utama;
+  if (ada.has(MODEL_LIVE)) return MODEL_LIVE;
+  if (ada.has(MODEL_LIVE_LAMA)) return MODEL_LIVE_LAMA;
+  return utama;
 }
 
 const LAJU_MASUK = 16000; // Live API menerima PCM 16 kHz

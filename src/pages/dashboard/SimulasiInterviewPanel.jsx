@@ -25,7 +25,7 @@ import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { GerbangFitur } from "../../components/GerbangFitur";
 import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
-import { useGeminiLive, pilihModelLive } from "../../hooks/useGeminiLive";
+import { useGeminiLive, pilihModelLive, MODEL_LIVE_CADANGAN } from "../../hooks/useGeminiLive";
 import { lokal, t } from "../../i18n.js";
 
 /** Sesi di bawah batas ini dibatalkan tanpa penilaian dan kuota dikembalikan. */
@@ -271,13 +271,36 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
         "\n\nBAHASA: Kandidat memilih tampilan bahasa Inggris. Lakukan SELURUH wawancara dalam bahasa Inggris yang natural, termasuk sapaan pembuka.",
       )}`;
 
+      // Model utama (3.8 Live) dicoba lebih dulu. Kalau koneksinya gagal,
+      // sesi dicoba sekali lagi dengan model suara cadangan memakai token
+      // yang sama (token diterbitkan untuk dua kali pakai).
+      const modelUtama = pilihModelLive(data.model_live, data.model_pilihan);
+      const tersedia = new Set(data.model_live || []);
+      const modelCadangan =
+        MODEL_LIVE_CADANGAN !== modelUtama && (!tersedia.size || tersedia.has(MODEL_LIVE_CADANGAN))
+          ? MODEL_LIVE_CADANGAN
+          : null;
       try {
-        await live.mulai({ token: data.token, instruksi, suara: "Kore", model: pilihModelLive(data.model_live) });
+        await live.mulai({ token: data.token, instruksi, suara: "Kore", model: modelUtama });
       } catch (e) {
-        // Token sudah diterbitkan (kuota terpotong) tapi koneksi gagal —
-        // kuotanya dikembalikan karena tidak ada biaya AI yang keluar.
-        await kembalikanKuota();
-        throw e;
+        let galatAkhir = e;
+        // Izin mikrofon ditolak bukan masalah model, jadi tidak dicoba ulang
+        if (modelCadangan && e?.name !== "NotAllowedError") {
+          console.warn("[simulasi] model utama gagal, mencoba cadangan:", e?.message);
+          live.akhiri();
+          try {
+            await live.mulai({ token: data.token, instruksi, suara: "Kore", model: modelCadangan });
+            galatAkhir = null;
+          } catch (e2) {
+            galatAkhir = e2;
+          }
+        }
+        if (galatAkhir) {
+          // Token sudah diterbitkan (kuota terpotong) tapi koneksi gagal —
+          // kuotanya dikembalikan karena tidak ada biaya AI yang keluar.
+          await kembalikanKuota();
+          throw galatAkhir;
+        }
       }
 
       setDetik(0);

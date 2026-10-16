@@ -7,7 +7,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SKEMA_PINDAH } from "./skema-pindah.ts";
-import { DAFTAR_MODEL } from "../_shared/modelGemini.ts";
+import { MODEL_PINDAH as DAFTAR_MODEL } from "../_shared/modelGemini.ts";
 
 const GEMINI_URL = (m) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;

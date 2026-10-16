@@ -1,25 +1,49 @@
 // @ts-nocheck
-// Daftar model Gemini untuk semua fungsi teks (Review CV, Pindah Karier,
-// penilaian Simulasi Interview), dicoba berurutan.
+// Pilihan model Gemini per fitur, disusun untuk kualitas jawaban setara
+// analis HR dengan margin tetap besar (perhitungan: Jobly v5).
 //
-// Urutannya disusun untuk API gratis (tanpa billing). Kuota gratis dihitung
-// per model, dan per proyek:
-//   - model Flash-Lite: sekitar 15 permintaan/menit dan 500/hari
-//   - model Flash:      sekitar 5 permintaan/menit dan hanya 20/hari
-// Jadi Flash-Lite dipakai lebih dulu, dan model berikutnya dicoba saat kuota
-// model sebelumnya habis (galat 429). Setiap model punya kuota sendiri,
-// sehingga kapasitas hariannya ikut bertambah.
+// Prinsipnya: model yang lebih cerdas (3.8 Flash) hanya dipakai di bagian
+// yang butuh penilaian, sedangkan pekerjaan menulis ulang dikerjakan model
+// murah (Flash-Lite). Setiap daftar dicoba berurutan: kalau model pertama
+// penuh, kuotanya habis, atau gangguan, model berikutnya langsung dipakai.
 //
-// Setelah billing aktif, urutan bisa diganti tanpa mengubah kode lewat
-// secret Supabase, misalnya:
-//   npx supabase secrets set GEMINI_MODELS=gemini-3.8-flash,gemini-3.6-flash
-export const DAFTAR_MODEL: string[] = (
-  Deno.env.get("GEMINI_MODELS") ??
-  "gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.8-flash"
-)
-  .split(",")
-  .map((m) => m.trim())
-  .filter(Boolean);
+// Bisa diubah tanpa mengubah kode lewat secret Supabase, misalnya:
+//   npx supabase secrets set GEMINI_MODELS_ANALISIS=gemini-3.5-flash-lite,gemini-3.1-flash-lite
+// GEMINI_MODELS (tanpa akhiran) mengganti SEMUA daftar sekaligus.
+
+const daftar = (nama: string, bawaan: string): string[] =>
+  (Deno.env.get(nama) ?? Deno.env.get("GEMINI_MODELS") ?? bawaan)
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+
+/** Review CV & LinkedIn: analisis, audit, dan draft bahasa Indonesia. */
+export const MODEL_ANALISIS = daftar(
+  "GEMINI_MODELS_ANALISIS",
+  "gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite",
+);
+
+/** Review CV & LinkedIn: draft bahasa Inggris (menulis ulang, bukan menilai). */
+export const MODEL_TERJEMAH = daftar(
+  "GEMINI_MODELS_TERJEMAH",
+  "gemini-3.1-flash-lite,gemini-3.5-flash-lite,gemini-3.8-flash",
+);
+
+/** Rencana Pindah Karier. */
+export const MODEL_PINDAH = daftar(
+  "GEMINI_MODELS_PINDAH",
+  "gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite",
+);
+
+/** Penilaian di akhir simulasi interview. */
+export const MODEL_PENILAIAN = daftar(
+  "GEMINI_MODELS_PENILAIAN",
+  "gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite",
+);
+
+/** Model suara untuk simulasi interview (Live API). */
+export const MODEL_LIVE =
+  Deno.env.get("GEMINI_MODEL_LIVE") ?? "models/gemini-3.8-live";
 
 /** True bila galat berarti kuota (harian atau per menit) habis. */
 export const kuotaHabis = (teks = "") =>

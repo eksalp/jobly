@@ -11,6 +11,7 @@
 // Google tanpa pernah menyentuh API key aslinya.
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { MODEL_LIVE } from "../_shared/modelGemini.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -104,7 +105,9 @@ serve(async (req) => {
           "x-goog-api-key": apiKey,
         },
         body: JSON.stringify({
-          uses: 1,
+          // Dua kali pakai: satu untuk model utama, satu untuk model cadangan
+          // kalau model utama gagal tersambung.
+          uses: 2,
           expireTime: kedaluwarsa,
           newSessionExpireTime: bolehMulaiSampai,
         }),
@@ -168,6 +171,8 @@ serve(async (req) => {
       token,
       token_id: catatan.id,
       model_live: modelLive,
+      // Model suara pilihan (bisa diganti lewat secret GEMINI_MODEL_LIVE)
+      model_pilihan: MODEL_LIVE,
       sisa_interview: hk.sisa,
     });
   } catch (err) {

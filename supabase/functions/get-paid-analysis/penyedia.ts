@@ -6,7 +6,7 @@
 // atau output tidak valid), permintaan diulang ke Claude secara otomatis.
 
 import { buatSkema, buatSkemaDraft } from "./skema.ts";
-import { DAFTAR_MODEL, kuotaHabis } from "../_shared/modelGemini.ts";
+import { MODEL_ANALISIS, MODEL_TERJEMAH, kuotaHabis } from "../_shared/modelGemini.ts";
 
 const GEMINI_URL = (model) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -61,7 +61,7 @@ async function panggilGemini(
   maksToken,
   bahasa,
   hanyaDraft,
-  model = DAFTAR_MODEL[0],
+  model = MODEL_ANALISIS[0],
 ) {
   const apiKey = Deno.env.get("GEMINI_API_KEY");
   if (!apiKey) throw new Error("GEMINI_API_KEY belum di-set.");
@@ -143,14 +143,16 @@ async function panggilGemini(
  * tinggi, dan itu hampir selalu sembuh dalam hitungan detik. Tanpa retry,
  * user yang sudah membayar melihat kegagalan padahal masalahnya sesaat.
  *
- * Urutan percobaan: setiap model di DAFTAR_MODEL, lalu model pertama sekali lagi.
+ * Urutan percobaan: setiap model di daftar fitur ini, lalu model pertama sekali lagi.
+ * Draft bahasa Inggris (hanyaDraft) memakai daftar model murah.
  */
 async function panggilGeminiTangguh(prompt, maksToken, bahasa, hanyaDraft) {
+  const daftarModel = hanyaDraft ? MODEL_TERJEMAH : MODEL_ANALISIS;
   // Setiap model dicoba sekali; model terakhir yang sempat sibuk (503)
   // dicoba ulang sekali lagi di akhir kalau waktunya masih cukup.
   const percobaan = [
-    ...DAFTAR_MODEL.map((model, i) => ({ model, jeda: i === 0 ? 0 : 800 })),
-    { model: DAFTAR_MODEL[0], jeda: 2000 },
+    ...daftarModel.map((model, i) => ({ model, jeda: i === 0 ? 0 : 800 })),
+    { model: daftarModel[0], jeda: 2000 },
   ];
 
   let terakhir;
