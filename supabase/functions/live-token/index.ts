@@ -96,32 +96,56 @@ serve(async (req) => {
     const kedaluwarsa = new Date(Date.now() + 18 * 60 * 1000).toISOString();
     const bolehMulaiSampai = new Date(Date.now() + 2 * 60 * 1000).toISOString();
 
-    const res = await fetch(
-      "https://generativelanguage.googleapis.com/v1alpha/auth_tokens",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
+    /* Beberapa variasi permintaan dicoba berurutan. Google pernah menolak
+       (400) bentuk tertentu untuk sebagian akun, misalnya token dua kali
+       pakai atau versi API tertentu. Begitu satu berhasil, langsung dipakai. */
+    const variasi = [
+      { versi: "v1alpha", uses: 2 },
+      { versi: "v1alpha", uses: 1 },
+      { versi: "v1beta", uses: 2 },
+      { versi: "v1beta", uses: 1 },
+    ];
+    let res = null;
+    let galatGoogle = "";
+    for (const v of variasi) {
+      res = await fetch(
+        `https://generativelanguage.googleapis.com/${v.versi}/auth_tokens`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey,
+          },
+          body: JSON.stringify({
+            uses: v.uses,
+            expireTime: kedaluwarsa,
+            newSessionExpireTime: bolehMulaiSampai,
+          }),
         },
-        body: JSON.stringify({
-          // Dua kali pakai: satu untuk model utama, satu untuk model cadangan
-          // kalau model utama gagal tersambung.
-          uses: 2,
-          expireTime: kedaluwarsa,
-          newSessionExpireTime: bolehMulaiSampai,
-        }),
-      },
-    );
-
-    if (!res.ok) {
-      const teks = await res.text();
-      console.error(
-        "Gagal menerbitkan token Live:",
-        res.status,
-        teks.slice(0, 300),
       );
-      throw new Error(`Gagal menyiapkan sesi suara (${res.status}).`);
+      if (res.ok) break;
+      galatGoogle = (await res.text()).slice(0, 300);
+      console.error(`Gagal menerbitkan token Live (${v.versi}, uses ${v.uses}):`, res.status, galatGoogle);
+      // Kunci API ditolak atau kuota habis: variasi lain tidak akan menolong
+      if (res.status !== 400 && res.status !== 404) break;
+    }
+
+    if (!res || !res.ok) {
+      // Kuota sudah terpotong di atas, jadi dikembalikan karena sesi
+      // tidak pernah bisa dimulai.
+      await supabaseAdmin.rpc("kembalikan_kuota_token", {
+        p_user_id: user.id,
+        p_token_id: catatan.id,
+      });
+      let alasan = "";
+      try {
+        alasan = JSON.parse(galatGoogle)?.error?.message ?? "";
+      } catch {
+        alasan = galatGoogle;
+      }
+      throw new Error(
+        `Gagal menyiapkan sesi suara (${res?.status ?? "?"}). Kuota simulasimu sudah dikembalikan.${alasan ? " Detail: " + alasan.slice(0, 160) : ""}`,
+      );
     }
 
     const data = await res.json();
