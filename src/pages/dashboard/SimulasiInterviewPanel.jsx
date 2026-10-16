@@ -160,6 +160,36 @@ export function SimulasiInterviewPanel({ setActive }) {
       });
   }, [user?.id]);
 
+  /* Catatan sisa waktu untuk pewawancara, dikirim sekali per ambang */
+  // Status "AI sedang bicara" terbaru, dibaca oleh pewaktu di bawah
+  const berbicaraRef = useRef(false);
+  berbicaraRef.current = live.berbicara;
+
+  const catatanTerkirimRef = useRef({ dua: false, akhir: false });
+  useEffect(() => {
+    if (tahap !== TAHAP.berlangsung || !waktuJalan) return;
+    const sisa = DURASI_DETIK - detik;
+    const c = catatanTerkirimRef.current;
+    if (sisa <= 120 && !c.dua) {
+      c.dua = true;
+      live.kirimCatatan(
+        t(
+          "[CATATAN SISTEM] Sisa waktu wawancara sekitar 2 menit. Arahkan ke satu atau dua pertanyaan penutup.",
+          "[SYSTEM NOTE] About 2 minutes of interview time remain. Move to one or two closing questions.",
+        ),
+      );
+    }
+    if (sisa <= 40 && !c.akhir) {
+      c.akhir = true;
+      live.kirimCatatan(
+        t(
+          "[CATATAN SISTEM] Waktu hampir habis. Jangan bertanya lagi. Tanggapi jawaban terakhir kandidat dengan singkat, ucapkan terima kasih, lalu tutup wawancara.",
+          "[SYSTEM NOTE] Time is almost up. Do not ask any more questions. Briefly respond to the candidate's last answer, thank them, and close the interview.",
+        ),
+      );
+    }
+  }, [detik, tahap, waktuJalan]);
+
   /* Hitung mundur */
   useEffect(() => {
     if (tahap !== TAHAP.berlangsung || !waktuJalan) return;
@@ -167,7 +197,17 @@ export function SimulasiInterviewPanel({ setActive }) {
       setDetik((d) => {
         if (d + 1 >= DURASI_DETIK) {
           clearInterval(timerRef.current);
-          setTimeout(() => akhiriRef.current?.(), 0);
+          // Beri waktu pewawancara menyelesaikan kalimat penutupnya
+          // (paling lama 20 detik) sebelum sesi diakhiri.
+          const batas = Date.now() + 20000;
+          const tunggu = () => {
+            if (berbicaraRef.current && Date.now() < batas) {
+              setTimeout(tunggu, 500);
+            } else {
+              akhiriRef.current?.();
+            }
+          };
+          setTimeout(tunggu, 0);
           return DURASI_DETIK;
         }
         return d + 1;
@@ -257,14 +297,19 @@ CARA BICARA:
   tidak terdengar kaku.
 - Ajukan SATU pertanyaan per giliran. Jangan menumpuk beberapa pertanyaan
   sekaligus, karena kandidat akan bingung menjawab yang mana.
-- JANGAN menutup atau menyudahi wawancara atas inisiatifmu sendiri. Kamu
-  tidak tahu sisa waktunya, dan menyudahi terlalu cepat membuat kandidat
-  kehilangan sebagian besar sesi yang sudah ia bayar.
+- Jangan menutup wawancara atas inisiatifmu sendiri sebelum ada catatan
+  waktu dari sistem. Menyudahi terlalu cepat membuat kandidat kehilangan
+  sesi yang sudah ia bayar.
 - Teruslah menggali topik baru selama kandidat masih menjawab. Kalau satu
   topik sudah tuntas, pindah ke aspek lain dari posisi yang dilamar:
   pengalaman, cara kerja, penanganan masalah, rencana ke depan.
-- Sesi akan dihentikan oleh sistem saat waktunya habis. Sampai itu terjadi,
-  anggap wawancara masih panjang.
+- Sistem akan mengirim CATATAN WAKTU (diawali "[CATATAN SISTEM]"). Itu
+  bukan ucapan kandidat; jangan dibacakan atau ditanggapi langsung.
+  Patuhi isinya pada giliran bicaramu berikutnya:
+  * "sisa sekitar 2 menit": arahkan ke satu atau dua pertanyaan penutup.
+  * "waktu hampir habis": JANGAN bertanya lagi. Tanggapi jawaban terakhir
+    kandidat secara singkat, ucapkan terima kasih, dan tutup wawancara
+    dengan hangat dalam dua sampai tiga kalimat.
 
 Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
         "",
@@ -305,6 +350,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
 
       setDetik(0);
       setWaktuJalan(false);
+      catatanTerkirimRef.current = { dua: false, akhir: false };
       setJumlahGiliran(0);
       gagalRef.current = false;
       setTahap(TAHAP.berlangsung);

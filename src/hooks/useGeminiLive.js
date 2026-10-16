@@ -287,6 +287,7 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
               if (!sc) return;
 
               if (sc.interrupted) {
+                s.aiMenjawab = false;
                 hentikanSuaraAi();
                 return;
               }
@@ -310,7 +311,16 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
               if (s.antrian.length > 0) putarAntrian();
 
               if (sc.turnComplete) {
+                s.aiMenjawab = false;
                 cb.current.onTranskrip?.("giliran-selesai", "");
+                // Catatan waktu yang tertunda dikirim begitu giliran AI selesai
+                if (s.catatanTertunda) {
+                  const teks = s.catatanTertunda;
+                  s.catatanTertunda = null;
+                  kirimCatatanSekarang(teks);
+                }
+              } else if (bagian.length || sc.outputTranscription?.text) {
+                s.aiMenjawab = true;
               }
             },
 
@@ -523,6 +533,37 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
 
   useEffect(() => () => akhiri(), [akhiri]);
 
+  /* ---------- Catatan sistem (misalnya sisa waktu) ---------- */
+
+  // Dikirim sebagai konteks tanpa memicu jawaban (turnComplete: false),
+  // sehingga pewawancara memakainya saat giliran berikutnya.
+  function kirimCatatanSekarang(teks) {
+    const s = r.current;
+    try {
+      s.sesi?.sendClientContent({
+        turns: [{ role: "user", parts: [{ text: teks }] }],
+        turnComplete: false,
+      });
+    } catch {
+      /* sesi sudah tertutup */
+    }
+  }
+
+  /**
+   * Kirim catatan ke pewawancara. Kalau kandidat sedang bicara atau AI sedang
+   * menjawab, catatan ditunda sampai giliran AI selesai supaya tidak
+   * memotong percakapan.
+   */
+  const kirimCatatan = useCallback((teks) => {
+    const s = r.current;
+    if (!s.sesi || !s.siap) return;
+    if (s.giliranAktif || s.aiMenjawab) {
+      s.catatanTertunda = teks;
+      return;
+    }
+    kirimCatatanSekarang(teks);
+  }, []);
+
   /** Pemakaian token sesi terakhir: { masuk, keluar, total, model } */
   const pemakaian = useCallback(() => ({ ...(r.current.pemakaian || {}) }), []);
 
@@ -539,5 +580,6 @@ export function useGeminiLive({ onTranskrip, onSelesai, onGalat } = {}) {
     akhiri,
     mulaiBicara,
     selesaiBicara,
+    kirimCatatan,
   };
 }
