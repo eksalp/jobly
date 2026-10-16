@@ -47,7 +47,7 @@ export const PAKET: Record<string, any> = {
     nama: "Starter",
     harga: 9000,
     kuotaAnalisis: 2,
-    kuotaPindah: 0,
+    kuotaPindah: 1,
     kuotaInterview: 0,
     durasiHari: 90, // 3 bulan
     ringkas: "Coba fitur AI",
@@ -57,9 +57,10 @@ export const PAKET: Record<string, any> = {
       "Latihan praktik lengkap untuk 40 pekerjaan remote",
       "Masa aktif 3 bulan",
       "2x analisis AI (CV atau LinkedIn)",
+      "1x Rencana Pindah Karier",
       "Draft CV & LinkedIn dalam dua bahasa",
     ],
-    tanpa: ["Rencana Pindah Karier", "Simulasi interview dengan AI"],
+    tanpa: ["Simulasi interview dengan AI"],
   },
 
   aktif: {

@@ -49,7 +49,7 @@ export const PAKET = {
     nama: "Starter",
     harga: 9000,
     kuotaAnalisis: 2,
-    kuotaPindah: 0,
+    kuotaPindah: 1,
     kuotaInterview: 0,
     durasiHari: 90, // 3 bulan
     ringkas: t("Latihan kerja dan coba fitur AI", "Practice and try the AI features"),
@@ -59,12 +59,10 @@ export const PAKET = {
       t("Latihan praktik lengkap untuk 40 pekerjaan remote", "Full hands-on practice for 40 remote roles"),
       t("Masa aktif 3 bulan", "Active for 3 months"),
       t("2x analisis AI (CV atau LinkedIn)", "2 AI analyses (CV or LinkedIn)"),
+      t("1x Rencana Pindah Karier", "1 Career Switch plan"),
       t("Draft CV & LinkedIn dalam dua bahasa", "CV & LinkedIn drafts in two languages"),
     ],
-    tanpa: [
-      t("Rencana Pindah Karier", "Career Switch plan"),
-      t("Simulasi interview dengan AI", "AI mock interview"),
-    ],
+    tanpa: [t("Simulasi interview dengan AI", "AI mock interview")],
   },
 
   aktif: {

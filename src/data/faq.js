@@ -137,8 +137,8 @@ export const FAQ = [
         beranda: true,
         a: [
           t(
-            `Tersedia tiga paket: ${hargaRingkas}. Setiap paket membuka latihan praktik dan berisi kuota Review CV, dan paket Pro serta Max juga berisi kuota Pindah Karier dan Simulasi Interview.`,
-            `There are three plans: ${hargaRingkas}. Every plan unlocks hands-on practice and includes CV Review credits, and Pro and Max also include Career Switch and Mock Interview credits.`,
+            `Tersedia tiga paket: ${hargaRingkas}. Setiap paket membuka latihan praktik dan berisi kuota Review CV dan Pindah Karier, sedangkan paket Pro serta Max juga berisi kuota Simulasi Interview.`,
+            `There are three plans: ${hargaRingkas}. Every plan unlocks hands-on practice and includes CV Review and Career Switch credits, while Pro and Max also include Mock Interview credits.`,
           ),
           t(
             "Pembayaran dilakukan sekali untuk setiap pembelian. Tidak ada tagihan berulang dan tidak ada perpanjangan otomatis.",

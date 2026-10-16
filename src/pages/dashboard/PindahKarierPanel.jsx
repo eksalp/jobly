@@ -324,7 +324,7 @@ export function PindahKarierPanel({ setActive }) {
             kuotaHabis
               ? t(`Kamu sudah memakai seluruh ${langganan.kuotaPindah} analisis Pindah Karier di paket ini. Beli paket baru untuk menambah kuota. Sisa masa aktif paketmu tidak hangus, dan kuotanya digabung.`, `You've used all ${langganan.kuotaPindah} Career Switch analyses in this plan. Buy a new plan to add quota. Your remaining active days carry over and the quotas are combined.`)
               : sudahLangganan
-                ? t("Fitur ini tersedia di paket Pro dan Max. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya.", "Available on Pro and Max. AI assesses which of your skills still apply in the target field, what you need to learn, and how long it takes.")
+                ? t("Fitur ini tersedia di semua paket berbayar, mulai Starter. AI menilai keahlian mana dari pengalamanmu yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya.", "Available on every paid plan, from Starter. AI assesses which of your skills still apply in the target field, what you need to learn, and how long it takes.")
                 : t("AI menilai keahlian mana dari pengalamanmu sekarang yang masih terpakai di bidang tujuan, apa yang perlu dipelajari, dan berapa lama waktunya. Termasuk penilaian jujur soal risikonya.", "AI assesses which of your current skills still apply in the target field, what you need to learn, and how long it takes. Including an honest look at the risks.")
           }
           onLangganan={() => setActive?.("paket")}

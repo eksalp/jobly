@@ -9,7 +9,7 @@ export const PAKET = {
     nama: "Starter",
     harga: 9000,
     kuotaAnalisis: 2,
-    kuotaPindah: 0,
+    kuotaPindah: 1,
     kuotaInterview: 0,
     durasiHari: 90, // 3 bulan
   },

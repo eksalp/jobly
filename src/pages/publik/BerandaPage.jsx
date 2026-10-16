@@ -587,7 +587,7 @@ export function BerandaPage() {
               <FilePlus2 size={16} /> LinkedIn Builder
             </a>
             <a {...tautan(fitur("pindahkarier"))}>
-              <BarChart3 size={16} /> {t("Pindah karier", "Career switch")} <span className="pb-tag pro">Pro</span>
+              <BarChart3 size={16} /> {t("Pindah karier", "Career switch")} <span className="pb-tag pro">{t("Berbayar", "Paid")}</span>
             </a>
             <a {...tautan(fitur("applications"))}>
               <MessageSquareQuote size={16} /> {t("Pelacak lamaran", "Application tracker")}
