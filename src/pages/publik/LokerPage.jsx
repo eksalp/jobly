@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, Building2 } from "lucide-react";
 import {
   PublicLayout,
   KOTA_POPULER,
@@ -13,7 +13,8 @@ import { TautanGrup } from "../../components/publik/Komunitas";
 import { grupAktif } from "../../data/situs";
 import { usePintasanCari } from "../../utils/interaksi";
 import { infoSumber, LABEL_LOKASI_KERJA, LABEL_TIPE_KERJA } from "../../utils/sumberLoker";
-import { lokal, t } from "../../i18n.js";
+import { lokal, t, bahasa } from "../../i18n.js";
+import { DAFTAR_NEGARA, cariNegara } from "../../data/negara.js";
 
 
 const OPSI_LOKASI = [["", t("Semua", "All")], ...Object.entries(LABEL_LOKASI_KERJA)];
@@ -30,6 +31,8 @@ function bacaUrl() {
   const p = new URLSearchParams(window.location.search);
   return {
     q: p.get("q") || "",
+    pt: p.get("pt") || "",
+    negara: p.get("negara") || "",
     kota: p.get("kota") || "",
     lokasi: p.get("lokasi") || "",
     tipe: p.get("tipe") || "",
@@ -42,6 +45,8 @@ function bacaUrl() {
 function tulisUrl(f) {
   const p = new URLSearchParams();
   if (f.q) p.set("q", f.q);
+  if (f.pt) p.set("pt", f.pt);
+  if (f.negara) p.set("negara", f.negara);
   if (f.kota) p.set("kota", f.kota);
   if (f.lokasi) p.set("lokasi", f.lokasi);
   if (f.tipe) p.set("tipe", f.tipe);
@@ -68,8 +73,11 @@ export function LokerPage() {
 
   // Kata kunci dikirim ke server setelah berhenti mengetik sebentar
   const q = useTunda(f.q, 350);
+  const pt = useTunda(f.pt, 350);
   const { jobs: hasil, total, terkunci, loading, error, adaLagi, memuatLagi, muatLagi } = useDaftarLoker({
     q: q.trim(),
+    pt: pt.trim(),
+    negara: f.negara,
     kota: f.kota,
     lokasi: f.lokasi,
     tipe: f.tipe,
@@ -98,22 +106,39 @@ export function LokerPage() {
   // Gulir sampai bawah = muat 24 berikutnya, tanpa perlu menekan tombol
   // Loker berikutnya dimuat lewat tombol "Lihat lebih banyak", tidak otomatis saat menggulir
 
-  const adaFilter = f.q || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
+  const adaFilter = f.q || f.pt || f.negara || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
   const reset = () =>
-    setF({ q: "", kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
+    setF({ q: "", pt: "", negara: "", kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
+
+  // Negara yang punya loker, diurutkan dari yang terbanyak
+  const daftarNegara = useMemo(() => {
+    const jml = statistik.negara || {};
+    const ada = Object.keys(jml).length > 0;
+    return DAFTAR_NEGARA.filter((n) => !ada || jml[n.kode] || n.kode === f.negara)
+      .map((n) => ({ ...n, n: jml[n.kode] || 0 }))
+      .sort((a, b) => b.n - a.n);
+  }, [statistik.negara, f.negara]);
+  const namaNegara = (n) => (bahasa() === "en" ? n.en : n.id);
+  // Pilihan kota hanya berisi kota di Indonesia
+  const kotaAktif = !f.negara || f.negara === "id";
 
   // Judul halaman mengikuti filter, mis. "Loker di Bandung"
+  const negaraDipilih = cariNegara(f.negara);
   const judul = f.kota
     ? t(`Loker di ${f.kota}`, `Jobs in ${f.kota}`)
-    : f.lokasi === "remote"
+    : negaraDipilih
+      ? t(`Loker di ${negaraDipilih.id}`, `Jobs in ${negaraDipilih.en}`)
+      : f.pt
+        ? t(`Loker di ${f.pt}`, `Jobs at ${f.pt}`)
+        : f.lokasi === "remote"
       ? t("Loker remote", "Remote jobs")
       : f.q
         ? t(`Loker “${f.q}”`, `“${f.q}” jobs`)
         : t("Semua lowongan", "All jobs");
 
   useEffect(() => {
-    document.title = `${f.kota || f.q ? judul : t("Semua loker", "All jobs")} · Jobly`;
-  }, [judul, f.kota, f.q]);
+    document.title = `${f.kota || f.q || f.negara || f.pt ? judul : t("Semua loker", "All jobs")} · Jobly`;
+  }, [judul, f.kota, f.q, f.negara, f.pt]);
 
   return (
     <PublicLayout aktif="/loker">
@@ -138,7 +163,7 @@ export function LokerPage() {
                 id="cari-loker"
                 value={f.q}
                 onChange={(e) => ubah({ q: e.target.value })}
-                placeholder={t("Posisi, perusahaan, atau kata kunci…  (tekan / )", "Role, company, or keyword…  (press / )")}
+                placeholder={t("Posisi atau kata kunci, mis. akuntan, admin, IT…  (tekan / )", "Role or keyword, e.g. accountant, admin, IT…  (press / )")}
                 autoComplete="off"
               />
               {f.q && (
@@ -153,11 +178,53 @@ export function LokerPage() {
               )}
             </label>
 
+            <label className="pb-input pb-input-pt">
+              <Building2 size={16} color="#7A8597" />
+              <span className="pb-sr">{t("Nama perusahaan", "Company name")}</span>
+              <input
+                value={f.pt}
+                onChange={(e) => ubah({ pt: e.target.value })}
+                placeholder={t("Perusahaan", "Company")}
+                autoComplete="off"
+              />
+              {f.pt && (
+                <button
+                  type="button"
+                  onClick={() => ubah({ pt: "" })}
+                  aria-label={t("Hapus nama perusahaan", "Clear company")}
+                  style={{ border: 0, background: "none", cursor: "pointer", color: "#7A8597", display: "flex" }}
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </label>
+
+            <label className="pb-sr" htmlFor="filter-negara">{t("Negara", "Country")}</label>
+            <select
+              id="filter-negara"
+              className="pb-select"
+              value={f.negara}
+              onChange={(e) => {
+                const negara = e.target.value;
+                // Kota hanya berlaku untuk Indonesia
+                ubah(negara && negara !== "id" ? { negara, kota: "" } : { negara });
+              }}
+            >
+              <option value="">{t("Semua negara", "All countries")}</option>
+              {daftarNegara.map((n) => (
+                <option key={n.kode} value={n.kode}>
+                  {namaNegara(n)}{n.n ? ` (${n.n.toLocaleString(lokal())})` : ""}
+                </option>
+              ))}
+            </select>
+
             <label className="pb-sr" htmlFor="filter-kota">{t("Kota", "City")}</label>
             <select
               id="filter-kota"
               className="pb-select"
               value={f.kota}
+              disabled={!kotaAktif}
+              title={kotaAktif ? undefined : t("Pilihan kota hanya untuk Indonesia", "City options are for Indonesia only")}
               onChange={(e) => ubah({ kota: e.target.value })}
             >
               <option value="">{t("Semua kota", "All cities")}</option>

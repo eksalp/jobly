@@ -12,6 +12,9 @@
  * Mendukung dua project Supabase (db1 & db2) seperti versi sebelumnya.
  */
 
+import { KATA_CARI_ABAIKAN, padananKata } from "../../src/data/sinonimCari.js";
+import { cariNegara } from "../../src/data/negara.js";
+
 const KOLOM_DIINGINKAN = [
   "id", "title", "posisi", "company", "perusahaan", "location", "lokasi",
   "category", "kategori", "job_url", "job_url_direct", "link", "url",
@@ -121,35 +124,77 @@ const bersih = (t) =>
     .slice(0, 40);
 
 export function kataDari(q) {
-  return bersih(q)
+  const semua = bersih(q)
     .toLowerCase()
     .split(" ")
-    .filter((k) => k.length >= 2)
-    .slice(0, 6);
+    .filter((k) => k.length >= 2);
+  // "loker admin di jakarta" → "admin jakarta". Bila semuanya kata umum
+  // (mis. hanya "loker"), pencarian tidak menyaring apa pun.
+  return semua.filter((k) => !KATA_CARI_ABAIKAN.has(k)).slice(0, 6);
 }
+
+/** Nilai di dalam or() yang memuat , ( ) harus diberi tanda kutip. */
+const kutip = (v) => (/[,()]/.test(v) ? `"${v}"` : v);
+
+/**
+ * Pola ILIKE untuk satu istilah.
+ * Kata pendek (≤3 huruf, mis. "it", "hr", "qa", "sql") harus berdiri
+ * sendiri sebagai kata — kalau tidak, "it" ikut cocok dengan "digital",
+ * "security", "ritel", dan hampir semua judul lain.
+ */
+export function polaKata(istilah) {
+  const w = String(istilah || "").toLowerCase().trim();
+  if (!w) return [];
+  if (w.length > 3 || w.includes(" ")) return [`*${w}*`];
+  return [w, `${w} *`, `* ${w}`, `* ${w} *`, `${w}/*`, `* ${w}/*`, `*/${w}`, `*/${w} *`, `*/${w}/*`, `${w}-*`, `* ${w}-*`];
+}
+
+const ilikeSemua = (kolom, istilah) =>
+  polaKata(istilah).flatMap((pola) => kolom.map((c) => `${c}.ilike.${kutip(pola)}`));
 
 /**
  * Susun parameter filter PostgREST dari permintaan.
- * f: { q, kota, lokasi, tipe, sumber, gaji, asing, kata, ids, gratisFilter }
+ * f: { q, pt, negara, kota, lokasi, tipe, sumber, gaji, asing, kata, ids, gratisFilter }
  */
 export function susunFilter(sk, f, agregator) {
   const p = [];
   const dan = []; // kelompok or(...) yang semuanya wajib terpenuhi
 
-  const kolomCari = [sk.judul, sk.pt, sk.lok, sk.kat, sk.ada.has("job_level") && "job_level", sk.ada.has("job_function") && "job_function"].filter(Boolean);
+  const fungsi = sk.ada.has("job_function") && "job_function";
+  const kolomCari = [sk.judul, sk.pt, sk.lok, sk.kat, sk.ada.has("job_level") && "job_level", fungsi].filter(Boolean);
+  // Padanan kata hanya dicari di kolom yang menggambarkan posisi, bukan
+  // di nama perusahaan atau lokasi.
+  const kolomPosisi = [sk.judul, sk.kat, fungsi].filter(Boolean);
   for (const w of kataDari(f.q)) {
-    dan.push(`or(${kolomCari.map((c) => `${c}.ilike.*${w}*`).join(",")})`);
+    const isi = ilikeSemua(kolomCari, w);
+    for (const lain of padananKata(w)) {
+      if (lain !== w) isi.push(...ilikeSemua(kolomPosisi, lain));
+    }
+    dan.push(`or(${isi.join(",")})`);
   }
 
   // Pencocokan profil: cukup SALAH SATU kata kunci muncul di judul/kategori
   if (f.kata?.length) {
     const kol = [sk.judul, sk.kat].filter(Boolean);
     const isi = f.kata
-      .map(bersih)
+      .map((k) => bersih(k).toLowerCase())
       .filter((k) => k.length >= 2)
       .slice(0, 24)
-      .flatMap((k) => kol.map((c) => `${c}.ilike.*${k}*`));
+      .flatMap((k) => ilikeSemua(kol, k));
     if (isi.length) dan.push(`or(${isi.join(",")})`);
+  }
+
+  // Nama perusahaan
+  if (f.pt && sk.pt) {
+    const pt = bersih(f.pt);
+    if (pt) p.push([sk.pt, `ilike.*${pt}*`]);
+  }
+
+  // Negara: dikenali dari teks lokasi (lihat src/data/negara.js)
+  if (f.negara) {
+    const n = cariNegara(f.negara);
+    if (n && sk.lok) dan.push(`or(${n.pola.map((pola) => `${sk.lok}.ilike.${kutip(pola)}`).join(",")})`);
+    else p.push(["id", "eq.-1"]);
   }
 
   if (f.kota && sk.lok) p.push([sk.lok, `ilike.*${bersih(f.kota)}*`]);

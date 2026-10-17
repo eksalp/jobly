@@ -31,6 +31,7 @@ import {
 } from "./_lib/db.js";
 import { KOTA_POPULER, SUMBER_DIKENAL, SUMBER_AGREGATOR } from "../src/data/kota.js";
 import { mapSupabaseJob } from "../src/utils/petaLoker.js";
+import { DAFTAR_NEGARA } from "../src/data/negara.js";
 import { hitungPetaGaji, gajiPosisi } from "../src/utils/petaGaji.js";
 
 const MAKS_HALAMAN = 48;
@@ -66,6 +67,8 @@ async function aksiDaftar(p, penuh) {
 
   const f = {
     q: p.get("q"),
+    pt: p.get("pt"),
+    negara: p.get("negara"),
     kota: p.get("kota"),
     lokasi: p.get("lokasi"),
     tipe: p.get("tipe"),
@@ -190,6 +193,13 @@ async function aksiStatistik() {
   const hasilKota = await paralel(KOTA_POPULER.map((k) => () => hitung(() => ({ kota: k }))), 4);
   KOTA_POPULER.forEach((k, i) => (kota[k] = typeof hasilKota[i] === "number" ? hasilKota[i] : 0));
 
+  const negara = {};
+  const hasilNegara = await paralel(DAFTAR_NEGARA.map((n) => () => hitung(() => ({ negara: n.kode }))), 4);
+  DAFTAR_NEGARA.forEach((n, i) => {
+    const jml = typeof hasilNegara[i] === "number" ? hasilNegara[i] : 0;
+    if (jml) negara[n.kode] = jml;
+  });
+
   const sumber = {};
   const hasilSumber = await paralel(SUMBER_DIKENAL.map((s) => () => hitung(() => ({ sumber: s }))), 4);
   SUMBER_DIKENAL.forEach((s, i) => {
@@ -206,6 +216,7 @@ async function aksiStatistik() {
     remote,
     remoteAsing,
     kota,
+    negara,
     sumber,
     terbaru,
     remoteContoh: contohRemote,

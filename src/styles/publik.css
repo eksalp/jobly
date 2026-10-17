@@ -6247,3 +6247,23 @@ html[data-tema="gelap"] .pb-gaji-legenda .pita {
     display: none;
   }
 }
+
+/* Kolom nama perusahaan di filter loker */
+.pb-filter-row .pb-input.pb-input-pt {
+  flex: 0 1 220px;
+  min-width: 170px;
+}
+.pb-select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+@media (max-width: 600px) {
+  .pb-filter-row .pb-input.pb-input-pt {
+    flex: 1 1 100%;
+  }
+  /* Pilihan negara, kota, sumber, urutan: dua per baris */
+  .pb-filter-row .pb-select {
+    flex: 1 1 calc(50% - 5px);
+    min-width: 0;
+  }
+}

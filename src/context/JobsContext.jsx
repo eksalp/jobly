@@ -19,6 +19,7 @@ const KOSONG = {
   remote: 0,
   remoteAsing: 0,
   kota: {},
+  negara: {},
   sumber: {},
   terbaru: [],
   remoteContoh: [],
