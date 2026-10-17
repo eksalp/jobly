@@ -19,6 +19,7 @@ import { KalkulatorPage } from "./publik/KalkulatorPage";
 import { FaqPage } from "./publik/FaqPage";
 import { DokumenPage } from "./publik/DokumenPage";
 import { RemotePage } from "./publik/RemotePage";
+import { FreelancePage } from "./publik/FreelancePage";
 import { CekLokerPage } from "./publik/CekLokerPage";
 import { PetaGajiPage } from "./publik/PetaGajiPage";
 import { PanduanPage } from "./publik/PanduanPage";
@@ -74,6 +75,7 @@ function parsePath(pathname) {
   if (path.startsWith("/panduan/")) return { page: "panduanDetail", slug: path.slice("/panduan/".length) };
   if (path.startsWith("/latihan/")) return { page: "latihan", slug: path.slice("/latihan/".length) };
   if (path === "/remote") return { page: "remote" };
+  if (path === "/freelance") return { page: "freelance" };
   if (path === "/cek-loker") return { page: "cek" };
   if (path === "/peta-gaji") return { page: "petagaji" };
   if (path === "/faq") return { page: "faq" };
@@ -238,6 +240,9 @@ function JobFinderApp() {
       break;
     case "remote":
       isi = <RemotePage />;
+      break;
+    case "freelance":
+      isi = <FreelancePage />;
       break;
     case "cek":
       isi = <CekLokerPage />;

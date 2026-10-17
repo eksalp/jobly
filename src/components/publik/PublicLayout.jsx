@@ -21,6 +21,7 @@ import {
   Settings,
   LogOut,
   Globe,
+  Handshake,
   GraduationCap,
   ShieldCheck,
   BarChart3,
@@ -54,6 +55,7 @@ const ke = (panel) => `/dashboard/${panel}`;
 const I = {
   semua: { t: t("Semua loker", "All jobs"), d: t("Dari situs karier, LinkedIn, Indeed, dan lainnya", "From career sites, LinkedIn, Indeed, and more"), path: "/loker", Ikon: Search },
   remote: { t: t("Loker remote", "Remote jobs"), d: t("Kerja dari mana saja, digaji rupiah atau dolar", "Work from anywhere, paid in rupiah or dollars"), path: "/remote", Ikon: Globe },
+  freelance: { t: t("Loker freelance", "Freelance jobs"), d: t("Kerja per proyek, atur waktumu sendiri", "Project-based work on your own schedule"), path: "/freelance", Ikon: Handshake, baru: true },
   magang: { t: t("Magang & fresh graduate", "Internships & fresh graduates"), d: t("Cocok buat yang baru mulai kerja", "For people starting their first job"), path: "/loker?tipe=magang", Ikon: GraduationCap },
   cocok: { t: t("Cocok untukku", "Matched for me"), d: t("Loker yang paling sesuai dengan CV-mu", "Jobs that best fit your CV"), path: ke("jobfinder"), Ikon: Sparkles },
   simpan: { t: t("Tersimpan", "Saved"), d: t("Loker yang sudah kamu simpan", "Jobs you have saved"), path: ke("saved"), Ikon: Bookmark },
@@ -79,7 +81,7 @@ export const MENU_APLIKASI = [
     label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: t("Cari", "Search"), items: [I.semua, I.remote, I.cocok] },
+      { judul: t("Cari", "Search"), items: [I.semua, I.remote, I.freelance, I.cocok] },
       { judul: t("Punyaku", "Mine"), items: [I.simpan, I.lamaran, I.rencana] },
     ],
   },
@@ -101,7 +103,7 @@ export const MENU_PUBLIK = [
     label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.remote, I.magang] },
+      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.remote, I.freelance, I.magang] },
       { judul: t("Riset sebelum melamar", "Research before applying"), items: [I.peta, I.cek, I.kalkulator] },
     ],
   },
@@ -704,6 +706,7 @@ export function SiteFooter() {
       tautan: [
         [t("Semua loker", "All jobs"), "/loker"],
         [t("Loker remote", "Remote jobs"), "/remote"],
+        [t("Loker freelance", "Freelance jobs"), "/freelance"],
         [t("Panduan Remote Working", "Remote Working Guide"), "/panduan"],
         [t("Magang", "Internships"), "/loker?tipe=magang"],
         ["Fresh graduate", "/loker?q=fresh%20graduate"],
