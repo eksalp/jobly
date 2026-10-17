@@ -22,6 +22,7 @@ import {
   LogOut,
   Globe,
   Handshake,
+  Briefcase,
   GraduationCap,
   ShieldCheck,
   BarChart3,
@@ -68,6 +69,7 @@ const I = {
   profil: { t: t("Profil karier", "Career profile"), d: t("Data diri, skill, dan pengalaman", "Personal details, skills, and experience"), path: ke("profile"), Ikon: User },
   cv: { t: "CV Builder", d: t("Buat CV yang rapi, unduh dalam PDF", "Build a clean CV, download as PDF"), path: ke("cvbuilder"), Ikon: FilePlus2 },
   linkedin: { t: "LinkedIn Builder", d: t("Buat profil LinkedIn yang lebih menarik", "Make your LinkedIn profile stand out"), path: ke("linkedinbuilder"), Ikon: Linkedin },
+  portofolio: { t: t("Portofolio", "Portfolio"), d: t("2 proyek studi kasus, unduh PDF & Excel", "2 case-study projects, download PDF & Excel"), path: ke("portofolio"), Ikon: Briefcase, baru: true, pro: true },
   latihan: { t: t("Latihan interview", "Interview practice"), d: t("140+ pertanyaan, dari yang mudah sampai yang paling sulit", "140+ questions, from easy to the hardest"), path: ke("interview"), Ikon: MessageSquareQuote },
   review: { t: t("Review CV & LinkedIn", "CV & LinkedIn review"), d: t("Skor ATS, saran perbaikan, dan draft baru untuk CV atau profil LinkedIn", "ATS score, fixes, and a new draft for your CV or LinkedIn profile"), path: ke("overview"), Ikon: FileSearch, pro: true },
   pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
@@ -85,7 +87,7 @@ export const MENU_APLIKASI = [
       { judul: t("Punyaku", "Mine"), items: [I.simpan, I.lamaran, I.rencana] },
     ],
   },
-  { label: t("Profil & CV", "Profile & CV"), kolom: [{ items: [I.profil, I.cv, I.linkedin] }] },
+  { label: t("Profil & CV", "Profile & CV"), kolom: [{ items: [I.profil, I.cv, I.linkedin, I.portofolio] }] },
   {
     label: t("Persiapan", "Prepare"),
     kolom: [

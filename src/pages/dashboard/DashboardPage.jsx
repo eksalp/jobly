@@ -13,6 +13,7 @@ import { LatihanInterviewPanel } from "./LatihanInterviewPanel";
 import { SimulasiInterviewPanel } from "./SimulasiInterviewPanel";
 import { SettingsPanel } from "./SettingsPanel";
 import { RencanaPanel } from "./RencanaPanel";
+import { PortofolioPanel } from "./PortofolioPanel";
 import { SiteHeader, useAnimasiMuncul } from "../../components/publik/PublicLayout";
 import { tautan } from "../../utils/navigasi";
 import { SITUS } from "../../data/situs";
@@ -41,6 +42,14 @@ export const PANEL_META = {
     grup: t("Profil & CV", "Profile & CV"),
     title: "CV Builder",
     desc: t("Susun CV yang mudah dibaca sistem penyaringan, lalu unduh dalam PDF.", "Build a CV that screening systems can read, then download it as a PDF."),
+  },
+  portofolio: {
+    grup: t("Profil & CV", "Profile & CV"),
+    title: t("Portofolio", "Portfolio"),
+    desc: t(
+      "Kerjakan 2 proyek studi kasus dari 40 profesi remote, lalu unduh hasilnya sebagai PDF portofolio dan Excel.",
+      "Complete 2 case-study projects from 40 remote roles, then download a PDF portfolio and Excel files.",
+    ),
   },
   linkedinbuilder: {
     grup: t("Profil & CV", "Profile & CV"),
@@ -114,6 +123,7 @@ export const PANEL_COMPONENTS = {
   paket: PaketPanel,
   settings: SettingsPanel,
   rencana: RencanaPanel,
+  portofolio: PortofolioPanel,
 };
 
 /** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */

@@ -41,6 +41,7 @@ export const PAKET = {
       t("Analisis AI (CV & LinkedIn)", "AI analysis (CV & LinkedIn)"),
       t("Rencana Pindah Karier", "Career Switch plan"),
       t("Simulasi interview dengan AI", "AI mock interview"),
+      t("Portofolio proyek (PDF & Excel)", "Project portfolio (PDF & Excel)"),
     ],
   },
 
@@ -62,7 +63,7 @@ export const PAKET = {
       t("1x Rencana Pindah Karier", "1 Career Switch plan"),
       t("Draft CV & LinkedIn dalam dua bahasa", "CV & LinkedIn drafts in two languages"),
     ],
-    tanpa: [t("Simulasi interview dengan AI", "AI mock interview")],
+    tanpa: [t("Simulasi interview dengan AI", "AI mock interview"), t("Portofolio proyek (PDF & Excel)", "Project portfolio (PDF & Excel)")],
   },
 
   aktif: {
@@ -81,6 +82,7 @@ export const PAKET = {
       t("5x analisis AI, cukup untuk cek ulang setelah revisi CV", "5 AI analyses, enough to recheck after revising your CV"),
       t("2x Rencana Pindah Karier", "2 Career Switch plans"),
       t("1x simulasi interview AI bersuara (10 menit)", "1 AI voice mock interview (10 minutes)"),
+      t("Portofolio: 2 proyek studi kasus, unduh PDF & Excel", "Portfolio: 2 case-study projects, download PDF & Excel"),
       t("Riwayat analisis tersimpan, bisa dibandingkan", "Saved analysis history you can compare"),
     ],
     tanpa: [],
