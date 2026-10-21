@@ -77,6 +77,7 @@ serve(async (req) => {
         kuota_terpakai: 0,
         kuota_pindah: paket.kuotaPindah ?? 0,
         kuota_interview: paket.kuotaInterview ?? 0,
+        kuota_fgd: paket.kuotaFgd ?? 0,
         harga: paket.harga,
         order_id: orderId,
       });

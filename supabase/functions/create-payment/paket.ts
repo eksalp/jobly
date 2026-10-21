@@ -30,6 +30,7 @@ export const PAKET: Record<string, any> = {
     kuotaAnalisis: 0,
     kuotaPindah: 0,
     kuotaInterview: 0,
+    kuotaFgd: 0,
     durasiHari: 0, // tanpa masa berlaku — selamanya
     selamanya: true,
     ringkas: "Mulai tanpa biaya",
@@ -49,6 +50,7 @@ export const PAKET: Record<string, any> = {
     kuotaAnalisis: 2,
     kuotaPindah: 1,
     kuotaInterview: 0,
+    kuotaFgd: 0,
     durasiHari: 90, // 3 bulan
     ringkas: "Coba fitur AI",
     // Semua yang di Free, PLUS milik Starter
@@ -70,6 +72,7 @@ export const PAKET: Record<string, any> = {
     kuotaAnalisis: 5,
     kuotaPindah: 2,
     kuotaInterview: 1,
+    kuotaFgd: 0,
     durasiHari: 180, // 6 bulan
     populer: true,
     ringkas: "Paling pas untuk masa melamar",
@@ -87,10 +90,11 @@ export const PAKET: Record<string, any> = {
   serius: {
     id: "serius",
     nama: "Max",
-    harga: 29000,
+    harga: 39000,
     kuotaAnalisis: 10,
     kuotaPindah: 4,
     kuotaInterview: 2,
+    kuotaFgd: 1,
     durasiHari: 365, // 1 tahun
     ringkas: "Untuk pencarian yang butuh waktu",
     fitur: [

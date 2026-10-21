@@ -14,6 +14,7 @@ import { SimulasiInterviewPanel } from "./SimulasiInterviewPanel";
 import { SettingsPanel } from "./SettingsPanel";
 import { RencanaPanel } from "./RencanaPanel";
 import { PortofolioPanel } from "./PortofolioPanel";
+import { TesKerjaPanel } from "./TesKerjaPanel";
 import { SiteHeader, useAnimasiMuncul } from "../../components/publik/PublicLayout";
 import { tautan } from "../../utils/navigasi";
 import { SITUS } from "../../data/situs";
@@ -91,6 +92,14 @@ export const PANEL_META = {
     title: t("Latihan interview", "Interview practice"),
     desc: t("140+ pertanyaan dari yang umum sampai level neraka, lengkap dengan strategi, contoh jawaban, dan mode tantangan berwaktu.", "140+ questions from the common to the brutal, with strategies, sample answers, and a timed challenge mode."),
   },
+  tes: {
+    grup: t("Persiapan", "Prepare"),
+    title: t("Tes persiapan kerja", "Job tests practice"),
+    desc: t(
+      "Latihan psikotes yang umum dipakai perusahaan dan BUMN: Kraepelin, TPA verbal & numerik, penalaran, ketelitian, dan kepribadian.",
+      "Practise the psychometric tests companies use: Kraepelin, verbal & numerical aptitude, reasoning, accuracy, and personality.",
+    ),
+  },
   simulasi: {
     grup: t("Persiapan", "Prepare"),
     title: t("Simulasi interview", "Mock interview"),
@@ -124,6 +133,7 @@ export const PANEL_COMPONENTS = {
   settings: SettingsPanel,
   rencana: RencanaPanel,
   portofolio: PortofolioPanel,
+  tes: TesKerjaPanel,
 };
 
 /** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */

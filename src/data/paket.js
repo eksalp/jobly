@@ -32,6 +32,7 @@ export const PAKET = {
     kuotaAnalisis: 0,
     kuotaPindah: 0,
     kuotaInterview: 0,
+    kuotaFgd: 0,
     durasiHari: 0, // tanpa masa berlaku — selamanya
     selamanya: true,
     ringkas: t("Mulai tanpa biaya", "Start at no cost"),
@@ -42,6 +43,7 @@ export const PAKET = {
       t("Rencana Pindah Karier", "Career Switch plan"),
       t("Simulasi interview dengan AI", "AI mock interview"),
       t("Portofolio proyek (PDF & Excel)", "Project portfolio (PDF & Excel)"),
+      t("Simulasi FGD & tes persiapan kerja", "FGD simulation & job tests"),
     ],
   },
 
@@ -52,6 +54,7 @@ export const PAKET = {
     kuotaAnalisis: 2,
     kuotaPindah: 1,
     kuotaInterview: 0,
+    kuotaFgd: 0,
     durasiHari: 90, // 3 bulan
     ringkas: t("Latihan kerja dan coba fitur AI", "Practice and try the AI features"),
     // Semua yang di Free, PLUS milik Starter
@@ -63,7 +66,11 @@ export const PAKET = {
       t("1x Rencana Pindah Karier", "1 Career Switch plan"),
       t("Draft CV & LinkedIn dalam dua bahasa", "CV & LinkedIn drafts in two languages"),
     ],
-    tanpa: [t("Simulasi interview dengan AI", "AI mock interview"), t("Portofolio proyek (PDF & Excel)", "Project portfolio (PDF & Excel)")],
+    tanpa: [
+      t("Simulasi interview dengan AI", "AI mock interview"),
+      t("Portofolio proyek (PDF & Excel)", "Project portfolio (PDF & Excel)"),
+      t("Simulasi FGD & tes persiapan kerja", "FGD simulation & job tests"),
+    ],
   },
 
   aktif: {
@@ -73,6 +80,7 @@ export const PAKET = {
     kuotaAnalisis: 5,
     kuotaPindah: 2,
     kuotaInterview: 1,
+    kuotaFgd: 0,
     durasiHari: 180, // 6 bulan
     populer: true,
     ringkas: t("Paling pas untuk masa melamar", "Best for an active job search"),
@@ -85,16 +93,17 @@ export const PAKET = {
       t("Portofolio: 2 proyek studi kasus, unduh PDF & Excel", "Portfolio: 2 case-study projects, download PDF & Excel"),
       t("Riwayat analisis tersimpan, bisa dibandingkan", "Saved analysis history you can compare"),
     ],
-    tanpa: [],
+    tanpa: [t("Simulasi FGD & tes persiapan kerja", "FGD simulation & job tests")],
   },
 
   serius: {
     id: "serius",
     nama: "Max",
-    harga: 29000,
+    harga: 39000,
     kuotaAnalisis: 10,
     kuotaPindah: 4,
     kuotaInterview: 2,
+    kuotaFgd: 1,
     durasiHari: 365, // 1 tahun
     ringkas: t("Untuk pencarian yang butuh waktu", "For a longer job search"),
     fitur: [
@@ -103,6 +112,9 @@ export const PAKET = {
       t("10x analisis AI", "10 AI analyses"),
       t("4x Rencana Pindah Karier", "4 Career Switch plans"),
       t("2x simulasi interview AI bersuara (@10 menit)", "2 AI voice mock interviews (10 minutes each)"),
+      t("1x simulasi FGD dengan AI (20 menit)", "1 AI group discussion (FGD) simulation (20 minutes)"),
+      t("Tes persiapan kerja: Kraepelin, TPA, penalaran, ketelitian, kepribadian (1x tiap tes)", "Job tests: Kraepelin, aptitude, reasoning, accuracy, personality (once each)"),
+      t("Rapor kesiapan kerja dari CV sampai FGD", "Job-readiness report from CV to FGD"),
     ],
     tanpa: [],
   },

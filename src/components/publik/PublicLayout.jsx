@@ -25,6 +25,7 @@ import {
   Briefcase,
   Landmark,
   LayoutGrid,
+  ListChecks,
   GraduationCap,
   ShieldCheck,
   BarChart3,
@@ -78,6 +79,7 @@ const I = {
   review: { t: t("Review CV & LinkedIn", "CV & LinkedIn review"), d: t("Skor ATS, saran perbaikan, dan draft baru untuk CV atau profil LinkedIn", "ATS score, fixes, and a new draft for your CV or LinkedIn profile"), path: ke("overview"), Ikon: FileSearch, pro: true },
   pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
   rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
+  tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("Psikotes, Kraepelin, TPA, ketelitian, kepribadian", "Psychometrics, Kraepelin, aptitude, accuracy, personality"), path: ke("tes"), Ikon: ListChecks, baru: true, max: true },
   simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
 };
 
@@ -97,6 +99,7 @@ export const MENU_APLIKASI = [
     kolom: [
       { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi, I.panduan] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
+      { judul: t("Khusus Max", "Max only"), items: [I.tes] },
     ],
   },
   { label: t("Riset", "Research"), kolom: [{ items: [I.peta, I.cek, I.kalkulator] }] },
@@ -118,6 +121,7 @@ export const MENU_PUBLIK = [
     kolom: [
       { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.rencana] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
+      { judul: t("Khusus Max", "Max only"), items: [I.tes] },
     ],
   },
   { label: t("Panduan Remote Working", "Remote Working Guide"), path: "/panduan", Ikon: BookOpen, sorot: true },
@@ -182,6 +186,7 @@ function ItemMenu({ item, aktif }) {
         <span className="pb-dd-t">
           {judul}
           {pro && <span className="pb-tag pro">Pro</span>}
+          {item.max && <span className="pb-tag pro">Max</span>}
           {baru && <span className="pb-tag baru">{t("Baru", "New")}</span>}
         </span>
         <span className="pb-dd-d">{d}</span>
@@ -654,6 +659,7 @@ export function SiteHeader({ aktif }) {
                       <Ikon size={16} />
                       <span>{judul}</span>
                       {pro && <span className="pb-tag pro">Pro</span>}
+          {item.max && <span className="pb-tag pro">Max</span>}
                       {baru && <span className="pb-tag baru">{t("Baru", "New")}</span>}
                     </a>
                   ))}

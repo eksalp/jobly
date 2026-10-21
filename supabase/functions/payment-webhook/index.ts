@@ -131,6 +131,7 @@ serve(async (req) => {
         kuota_analisis: paket.kuotaAnalisis,
         kuota_pindah: paket.kuotaPindah ?? 0,
         kuota_interview: paket.kuotaInterview ?? 0,
+        kuota_fgd: paket.kuotaFgd ?? 0,
       })
       .eq("id", lang.id);
 

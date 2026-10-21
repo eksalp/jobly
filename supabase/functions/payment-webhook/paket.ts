@@ -11,6 +11,7 @@ export const PAKET = {
     kuotaAnalisis: 2,
     kuotaPindah: 1,
     kuotaInterview: 0,
+    kuotaFgd: 0,
     durasiHari: 90, // 3 bulan
   },
   aktif: {
@@ -20,15 +21,17 @@ export const PAKET = {
     kuotaAnalisis: 5,
     kuotaPindah: 2,
     kuotaInterview: 1,
+    kuotaFgd: 0,
     durasiHari: 180, // 6 bulan
   },
   serius: {
     id: "serius",
     nama: "Max",
-    harga: 29000,
+    harga: 39000,
     kuotaAnalisis: 10,
     kuotaPindah: 4,
     kuotaInterview: 2,
+    kuotaFgd: 1,
     durasiHari: 365, // 1 tahun
   },
 };
