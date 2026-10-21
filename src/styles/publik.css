@@ -291,7 +291,8 @@
 .pb-dd-t {
   display: flex;
   align-items: center;
-  gap: 7px;
+  flex-wrap: wrap;
+  gap: 4px 7px;
   font-size: 14px;
   font-weight: 600;
 }
@@ -2201,7 +2202,7 @@ button.pb-quota {
   gap: 6px;
 }
 .pb-dd-col {
-  width: 290px;
+  width: 270px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -8193,4 +8194,72 @@ html[data-tema="gelap"] .fgd-ruang {
 }
 .rp-langkah li .pb-btn {
   float: right;
+}
+
+/* Filter loker: di HP dilipat dan tidak menempel di atas layar */
+.pb-filter-toggle {
+  display: none;
+}
+.pb-filter-lanjut {
+  display: contents;
+}
+@media (max-width: 760px) {
+  .pb-filterbar {
+    position: static;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding-block: 12px;
+  }
+  .pb-filter-row {
+    flex-wrap: nowrap;
+  }
+  .pb-filter-row > .pb-input:first-child {
+    min-width: 0;
+  }
+  .pb-filter-toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .pb-filter-toggle.on {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+  .pb-filter-toggle b {
+    min-width: 20px;
+    height: 20px;
+    border-radius: 99px;
+    display: grid;
+    place-items: center;
+    font-size: 11.5px;
+    color: #fff;
+    background: var(--brand);
+  }
+  .pb-filter-lanjut {
+    display: none;
+  }
+  .pb-filter-lanjut.buka {
+    display: block;
+  }
+  .pb-filter-row .pb-filter-lanjut.buka {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex-basis: 100%;
+    margin-top: 10px;
+  }
+  .pb-filter-row:has(.pb-filter-lanjut.buka) {
+    flex-wrap: wrap;
+  }
 }

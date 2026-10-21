@@ -47,7 +47,7 @@ export function TautanGrup({ ringkas = false }) {
       {daftar.map(({ jenis, label, url }) => {
         const Ikon = IKON_GRUP[jenis] || Users;
         return (
-          <a key={jenis} href={url} {...luar} className={`pb-grup-pil ${jenis}`}>
+          <a key={url} href={url} {...luar} className={`pb-grup-pil ${jenis}`}>
             <Ikon size={15} /> {label}
           </a>
         );
@@ -86,7 +86,7 @@ export function BagianKomunitas() {
               {grup.map(({ jenis, label, ket, anggota, url, aksi }) => {
                 const Ikon = IKON_GRUP[jenis] || Users;
                 return (
-                  <a key={jenis} href={url} {...luar} className={`pb-grup-kartu ${jenis}`}>
+                  <a key={url} href={url} {...luar} className={`pb-grup-kartu ${jenis}`}>
                     <span className="ic">
                       <Ikon size={22} />
                     </span>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Search, X, Building2 } from "lucide-react";
+import { Search, X, Building2, SlidersHorizontal } from "lucide-react";
 import {
   PublicLayout,
   KOTA_POPULER,
@@ -114,6 +114,10 @@ export function LokerPage() {
   // Gulir sampai bawah = muat 24 berikutnya, tanpa perlu menekan tombol
   // Loker berikutnya dimuat lewat tombol "Lihat lebih banyak", tidak otomatis saat menggulir
 
+  // Di HP, filter lanjutan dilipat supaya daftar loker tidak tertutup
+  const [filterBuka, setFilterBuka] = useState(false);
+  const jumlahFilter = [f.pt, f.negara, f.kota, f.sumber, f.urut !== "terbaru", f.bidang, f.lokasi, f.tipe, f.gaji, f.bumn].filter(Boolean).length;
+
   const adaFilter = f.q || f.pt || f.negara || f.bidang || f.bumn || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
   const reset = () =>
     setF({ q: "", pt: "", negara: "", bidang: "", bumn: false, kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
@@ -191,6 +195,17 @@ export function LokerPage() {
               )}
             </label>
 
+            <button
+              type="button"
+              className={`pb-filter-toggle ${filterBuka ? "on" : ""}`}
+              aria-expanded={filterBuka}
+              onClick={() => setFilterBuka((x) => !x)}
+            >
+              <SlidersHorizontal size={16} /> {t("Filter", "Filters")}
+              {jumlahFilter > 0 && <b>{jumlahFilter}</b>}
+            </button>
+
+            <div className={`pb-filter-lanjut ${filterBuka ? "buka" : ""}`}>
             <label className="pb-input pb-input-pt">
               <Building2 size={16} color="#7A8597" />
               <span className="pb-sr">{t("Nama perusahaan", "Company name")}</span>
@@ -276,8 +291,10 @@ export function LokerPage() {
               <option value="terbaru">{t("Terbaru", "Newest")}</option>
               <option value="gaji">{t("Gaji tertinggi", "Highest pay")}</option>
             </select>
+            </div>
           </div>
 
+          <div className={`pb-filter-lanjut ${filterBuka ? "buka" : ""}`}>
           <div className="pb-bidang-strip" role="group" aria-label={t("Bidang", "Field")}>
             <button type="button" className={`pb-bidang-chip ${!f.bidang ? "on" : ""}`} onClick={() => ubah({ bidang: "" })}>
               {t("Semua bidang", "All fields")}
@@ -330,6 +347,7 @@ export function LokerPage() {
             <button type="button" className={`pb-chip ${f.bumn ? "on" : ""}`} onClick={() => ubah({ bumn: !f.bumn })}>
               {t("Hanya BUMN", "State-owned only")}
             </button>
+          </div>
           </div>
         </div>
       </div>

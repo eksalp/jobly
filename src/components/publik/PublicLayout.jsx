@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   Menu,
   BookOpen,
@@ -81,9 +81,9 @@ const I = {
   review: { t: t("Review CV & LinkedIn", "CV & LinkedIn review"), d: t("Skor ATS, saran perbaikan, dan draft baru untuk CV atau profil LinkedIn", "ATS score, fixes, and a new draft for your CV or LinkedIn profile"), path: ke("overview"), Ikon: FileSearch, pro: true },
   pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
   rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
-  tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("Psikotes, Kraepelin, TPA, ketelitian, kepribadian", "Psychometrics, Kraepelin, aptitude, accuracy, personality"), path: ke("tes"), Ikon: ListChecks, baru: true, max: true },
-  fgd: { t: t("Simulasi FGD", "FGD simulation"), d: t("Diskusi kelompok 20 menit dengan peserta AI", "20-minute group discussion with AI participants"), path: ke("fgd"), Ikon: Users, baru: true, max: true },
-  rapor: { t: t("Rapor kesiapan kerja", "Job-readiness report"), d: t("Skor CV, interview, tes, sampai FGD", "CV, interview, tests, and FGD scores"), path: ke("rapor"), Ikon: Gauge, baru: true, max: true },
+  tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("Psikotes, Kraepelin, TPA, ketelitian, kepribadian", "Psychometrics, Kraepelin, aptitude, accuracy, personality"), path: ke("tes"), Ikon: ListChecks, max: true },
+  fgd: { t: t("Simulasi FGD", "FGD simulation"), d: t("Diskusi kelompok 20 menit dengan peserta AI", "20-minute group discussion with AI participants"), path: ke("fgd"), Ikon: Users, max: true },
+  rapor: { t: t("Rapor kesiapan kerja", "Job-readiness report"), d: t("Skor CV, interview, tes, sampai FGD", "CV, interview, tests, and FGD scores"), path: ke("rapor"), Ikon: Gauge, max: true },
   simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
 };
 
@@ -225,6 +225,21 @@ function MenuTurun({ grup, aktif, kecuali = [] }) {
   useEffect(() => setBuka(false), [aktif]);
   useEffect(() => () => clearTimeout(tunda.current), []);
 
+  // Geser menu ke kiri bila melewati tepi kanan layar
+  const menuRef = useRef(null);
+  const [geser, setGeser] = useState(0);
+  useLayoutEffect(() => {
+    if (!buka) {
+      setGeser(0);
+      return;
+    }
+    const el = menuRef.current;
+    if (!el) return;
+    const kotak = el.getBoundingClientRect();
+    const lebih = kotak.right - (window.innerWidth - 16);
+    if (lebih > 0) setGeser(-Math.min(lebih, Math.max(0, kotak.left - 16)));
+  }, [buka]);
+
   // Buka saat kursor diarahkan (perangkat dengan mouse), tutup dengan
   // jeda kecil supaya tidak tertutup saat kursor melintas ke menu.
   const hover = window.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
@@ -251,7 +266,7 @@ function MenuTurun({ grup, aktif, kecuali = [] }) {
         {grup.label} <ChevronDown size={14} />
       </button>
       {buka && (
-        <div className={`pb-dd-menu ${lebar ? "lebar" : ""}`} role="menu">
+        <div ref={menuRef} className={`pb-dd-menu ${lebar ? "lebar" : ""}`} role="menu" style={geser ? { transform: `translateX(${geser}px)` } : undefined}>
           <div className="pb-dd-cols">
             {grup.kolom.map((k, i) => (
               <div key={i} className="pb-dd-col">

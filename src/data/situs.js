@@ -37,6 +37,16 @@ export const GRUP = [
     url: "https://t.me/productivebyeksal",
   },
   {
+    // Bot Telegram pencari loker (supabase/functions/telegram-bot).
+    // Isi setelah bot dibuat di @BotFather, mis. "https://t.me/JoblyLokerBot".
+    jenis: "telegram",
+    label: t("Bot cari loker", "Job search bot"),
+    ket: t("Ketik posisi yang dicari, bot kirim lokernya di Telegram", "Type a role and the bot sends matching jobs on Telegram"),
+    aksi: t("Buka bot", "Open bot"),
+    anggota: "",
+    url: "",
+  },
+  {
     // wa.me = chat pribadi. Kalau nanti punya grup/saluran WhatsApp,
     // ganti url ke tautan chat.whatsapp.com/… atau whatsapp.com/channel/…
     jenis: "whatsapp",
