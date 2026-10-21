@@ -5,8 +5,12 @@
  */
 import { t } from "../i18n.js";
 
-/** Nilai kolom `site` yang seluruh isinya loker BUMN. */
-export const SITUS_BUMN = ["lokerbumn", "pertamina_ptc", "pertamina", "telkom", "bni", "mandiri", "sig", "kai", "citilink"];
+/**
+ * Nilai kolom `site` dari scraper khusus BUMN. Halaman BUMN HANYA
+ * menampilkan loker dari situs-situs ini, sesuai hasil scrap.
+ * Tambahkan nama site di sini bila ada scraper BUMN baru.
+ */
+export const SITUS_BUMN = ["lokerbumn", "pertamina_ptc"];
 
 /** Nama perusahaan BUMN (dicocokkan ke kolom perusahaan, huruf besar/kecil sama). */
 export const NAMA_BUMN = [

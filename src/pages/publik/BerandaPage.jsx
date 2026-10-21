@@ -319,8 +319,8 @@ export function BerandaPage() {
           </h1>
           <p className="pb-lede">
             {t(
-              "Setiap hari Jobly mengumpulkan lowongan dari situs karier perusahaan, BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek gajinya, lalu lamar langsung ke sumbernya. Gratis.",
-              "Every day Jobly collects openings from company career sites, state-owned enterprises, LinkedIn, and Indeed. Search in one place, check the pay, then apply directly at the source. Free.",
+              "Setiap hari Jobly mengumpulkan lowongan dari situs karier perusahaan, BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek gajinya, lalu lamar langsung ke sumbernya.",
+              "Every day Jobly collects openings from company career sites, state-owned enterprises, LinkedIn, and Indeed. Search in one place, check the pay, then apply directly at the source.",
             )}
           </p>
 

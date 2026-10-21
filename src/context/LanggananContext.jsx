@@ -30,8 +30,47 @@ const KOSONG = {
   sisaPindah: 0,
   kuotaInterview: 0,
   sisaInterview: 0,
+  kuotaFgd: 0,
+  sisaFgd: 0,
+  kuotaTes: 0,
+  sisaTes: 0,
   jumlahPaket: 0,
 };
+
+/** Jumlah jenis tes persiapan kerja (lihat src/data/tesKerja.js). */
+const JUMLAH_TES = 6;
+
+/**
+ * Kuota FGD dan tes tidak ada di fungsi cek_langganan, jadi dihitung
+ * langsung dari tabel subscriptions dan tes_sesi (keduanya bisa dibaca
+ * pemiliknya sendiri). Kalau tabel/kolomnya belum dibuat, hasilnya 0.
+ */
+async function muatKuotaMax(userId) {
+  try {
+    const kini = new Date().toISOString();
+    const { data: subs, error } = await supabase
+      .from("subscriptions")
+      .select("id, paket, kuota_fgd, kuota_fgd_terpakai, berakhir_at")
+      .eq("user_id", userId)
+      .eq("status", "aktif")
+      .gt("berakhir_at", kini);
+    if (error || !subs) return {};
+    const kuotaFgd = subs.reduce((a, s) => a + (s.kuota_fgd || 0), 0);
+    const sisaFgd = subs.reduce((a, s) => a + Math.max(0, (s.kuota_fgd || 0) - (s.kuota_fgd_terpakai || 0)), 0);
+    const max = subs.filter((s) => s.paket === "serius").sort((a, b) => (a.berakhir_at < b.berakhir_at ? 1 : -1))[0];
+    let sisaTes = 0;
+    if (max) {
+      const { count } = await supabase
+        .from("tes_sesi")
+        .select("id", { count: "exact", head: true })
+        .eq("langganan_id", String(max.id));
+      sisaTes = Math.max(0, JUMLAH_TES - (count || 0));
+    }
+    return { kuotaFgd, sisaFgd, kuotaTes: max ? JUMLAH_TES : 0, sisaTes };
+  } catch {
+    return {};
+  }
+}
 
 export function LanggananProvider({ children }) {
   const { user } = useAuth();
@@ -54,7 +93,10 @@ export function LanggananProvider({ children }) {
     }
 
     const b = Array.isArray(data) ? data[0] : data;
+    const tambahan = b?.aktif ? await muatKuotaMax(user.id) : {};
     setStatus({
+      ...KOSONG,
+      ...tambahan,
       aktif: Boolean(b?.aktif),
       paket: b?.paket ?? null,
       berakhirAt: b?.berakhir_at ?? null,

@@ -18,7 +18,7 @@ import { t } from "../../i18n.js";
  */
 export const NAMA_PEWAWANCARA = "Rina";
 
-export function PewawancaraHRD({ keadaan = "diam", tingkat = 0, tingkatAi = 0, ukuran = 180 }) {
+export function PewawancaraHRD({ keadaan = "diam", tingkat = 0, tingkatAi = 0, ukuran = 180, peran }) {
   const bicara = keadaan === "bicara";
   const mendengar = keadaan === "mendengar";
   const berpikir = keadaan === "berpikir";
@@ -179,7 +179,7 @@ export function PewawancaraHRD({ keadaan = "diam", tingkat = 0, tingkatAi = 0, u
 
       <div className="hrd-nama">
         <b>{NAMA_PEWAWANCARA}</b>
-        <span>{t("HR Recruiter", "HR Recruiter")}</span>
+        <span>{peran || t("HR Recruiter", "HR Recruiter")}</span>
       </div>
       <div className="hrd-status" style={{ color: l.warna }}>
         <Ikon size={13} className={berpikir ? "hrd-putar" : undefined} />

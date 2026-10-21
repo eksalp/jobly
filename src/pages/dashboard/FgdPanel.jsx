@@ -430,7 +430,11 @@ export function FgdPanel({ setActive }) {
             ))}
           </div>
           {galat && <div className="pb-po-galat" style={{ marginTop: 14 }}>{galat}</div>}
-          <button type="button" className="pb-btn pb-btn-primary" style={{ marginTop: 18 }} disabled={sibuk} onClick={mulai}>
+          <div className="fgd-kuota">
+            <Users size={15} />
+            {t("Sisa kuota FGD", "FGD credits left")}: <b>{langganan.sisaFgd ?? 0} / {langganan.kuotaFgd ?? 0}</b>
+          </div>
+          <button type="button" className="pb-btn pb-btn-primary" style={{ marginTop: 12 }} disabled={sibuk || !(langganan.sisaFgd > 0)} onClick={mulai}>
             {sibuk ? <Loader2 size={15} className="pb-po-putar" /> : <Play size={15} />} {t("Masuk ruang diskusi", "Enter the discussion room")}
           </button>
           <p className="pb-tk-ket">{t("Kuota terpakai saat diskusi dimulai. Jika kamu bicara kurang dari 2 kali, kuota dikembalikan.", "Quota is used when the discussion starts. If you speak fewer than 2 times, it's refunded.")}</p>

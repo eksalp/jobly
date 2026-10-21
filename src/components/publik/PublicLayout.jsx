@@ -433,6 +433,8 @@ export function ChipKuota({ l, aktif }) {
     { Ikon: FileSearch, singkat: "CV", label: t("Review CV & LinkedIn", "CV & LinkedIn review"), ket: t("Skor ATS, saran, dan draft baru", "ATS score, fixes, and a new draft"), sisa: l.sisaAnalisis ?? 0, total: l.kuotaAnalisis ?? 0, path: ke("overview") },
     { Ikon: Route, singkat: t("Karier", "Career"), label: t("Pindah Karier", "Career Switch"), ket: t("Rencana pindah ke bidang baru", "A plan for moving to a new field"), sisa: l.sisaPindah ?? 0, total: l.kuotaPindah ?? 0, path: ke("pindahkarier") },
     { Ikon: Mic, singkat: t("Simulasi", "Mock"), label: t("Simulasi Interview", "Mock Interview"), ket: t("Interview suara 10 menit dengan AI", "A 10-minute voice interview with AI"), sisa: l.sisaInterview ?? 0, total: l.kuotaInterview ?? 0, path: ke("simulasi") },
+    { Ikon: Users, singkat: "FGD", label: t("Simulasi FGD", "FGD simulation"), ket: t("Diskusi kelompok 20 menit dengan AI", "A 20-minute group discussion with AI"), sisa: l.sisaFgd ?? 0, total: l.kuotaFgd ?? 0, path: ke("fgd") },
+    { Ikon: ListChecks, singkat: t("Tes", "Tests"), label: t("Tes persiapan kerja", "Job tests"), ket: t("Setiap jenis tes bisa dikerjakan sekali", "Each test type can be taken once"), sisa: l.sisaTes ?? 0, total: l.kuotaTes ?? 0, path: ke("tes"), diMenuSaja: true },
   ];
   const berakhir = l?.berakhirAt
     ? new Date(l.berakhirAt).toLocaleDateString(lokal(), { day: "numeric", month: "long", year: "numeric" })
@@ -449,7 +451,7 @@ export function ChipKuota({ l, aktif }) {
         title={t("Lihat rincian sisa kuota AI", "See remaining AI credits")}
       >
         <span className="pb-quota-judul">{t("Sisa kuota", "Credits")}</span>
-        {daftar.map(({ Ikon, singkat, sisa, total }) => (
+        {daftar.filter((x) => !x.diMenuSaja).map(({ Ikon, singkat, sisa, total }) => (
           <span key={singkat} className={`pb-quota-item ${total ? "" : "redup"}`}>
             <Ikon size={13} aria-hidden="true" />
             <b>{sisa}</b>
@@ -461,7 +463,7 @@ export function ChipKuota({ l, aktif }) {
       {buka && (
         <div className="pb-dd-menu kanan pb-kuota-menu" role="menu" style={{ top: "calc(100% + 10px)" }}>
           <div className="pb-kuota-head">
-            <b>{t("Sisa kuota AI", "Remaining AI credits")}</b>
+            <b>{t("Sisa kuota", "Remaining credits")}</b>
             {l.detailPaket?.nama && <span>{t(`Paket ${l.detailPaket.nama}`, `${l.detailPaket.nama} plan`)}</span>}
           </div>
           {daftar.map(({ Ikon, label, ket, sisa, total, path }) => (
@@ -591,6 +593,15 @@ export function SiteHeader({ aktif }) {
   const l = useLangganan();
   const masuk = Boolean(session);
   const [buka, setBuka] = useState(false);
+  // Saat menu HP terbuka, halaman di belakangnya tidak ikut tergulir
+  useEffect(() => {
+    if (!buka) return undefined;
+    const lama = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = lama;
+    };
+  }, [buka]);
   const [gulir, setGulir] = useState(false);
   const menu = masuk ? MENU_APLIKASI : MENU_PUBLIK;
 

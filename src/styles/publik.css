@@ -8263,3 +8263,25 @@ html[data-tema="gelap"] .fgd-ruang {
     flex-wrap: wrap;
   }
 }
+.fgd-kuota {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--ink2);
+}
+.fgd-kuota b {
+  color: var(--brand);
+}
+
+/* Menu HP: bisa digulir sendiri, tidak terpotong di bawah layar */
+@media (max-width: 980px) {
+  .pb-mobile-menu.open {
+    max-height: calc(100dvh - var(--head, 64px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    background: var(--card);
+  }
+}

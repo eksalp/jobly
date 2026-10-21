@@ -24,7 +24,47 @@ import { useLangganan } from "../../hooks/useLangganan";
 import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { GerbangFitur } from "../../components/GerbangFitur";
 import { KuotaSaya } from "../../components/ui/KuotaSaya";
-import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
+/**
+ * Jenis wawancara. Menggantikan pilihan "fokus pertanyaan": di seleksi
+ * sungguhan yang berbeda adalah SIAPA yang mewawancarai.
+ */
+const JENIS_INTERVIEW = [
+  {
+    slug: "hr",
+    nama: t("Interview HR", "HR interview"),
+    namaPendek: "HR",
+    peran: t("HR Recruiter", "HR Recruiter"),
+    ket: t("Motivasi, kepribadian, budaya kerja, ekspektasi gaji", "Motivation, personality, culture fit, salary"),
+    arah: `Kamu HR Recruiter. Ini wawancara HR (tahap awal). Gali: motivasi melamar dan alasan memilih perusahaan,
+  perkenalan diri, kekuatan dan kelemahan, pengalaman kerja sama tim dan konflik (minta contoh nyata, pola STAR),
+  cara menghadapi tekanan, kesesuaian dengan budaya kerja, rencana karier, kesiapan penempatan dan jam kerja,
+  serta ekspektasi gaji menjelang akhir. Nada ramah tetapi teliti; perhatikan konsistensi jawaban.`,
+  },
+  {
+    slug: "user",
+    nama: t("Interview user (calon atasan)", "Hiring manager interview"),
+    namaPendek: t("User", "Hiring manager"),
+    peran: t("Calon atasan (user)", "Hiring manager"),
+    ket: t("Teknis pekerjaan, studi kasus, cara kerja, hasil nyata", "Job skills, case questions, ways of working, results"),
+    arah: `Kamu calon atasan langsung (user) untuk posisi ini, BUKAN HR. Ini wawancara user. Gali kemampuan teknis dan
+  cara kerja yang benar-benar dipakai di posisi ini: proyek atau tugas yang pernah dikerjakan secara rinci (apa
+  peran kandidat, alat/metode, angka hasilnya), berikan satu sampai dua studi kasus singkat khas posisi ini dan minta
+  kandidat menjelaskan langkahnya, cara menentukan prioritas, cara menangani kesalahan, dan apa yang akan ia lakukan
+  di 3 bulan pertama. Nada lugas dan praktis; kejar detail sampai jelas apakah kandidat benar-benar bisa.`,
+  },
+  {
+    slug: "bod",
+    nama: t("Interview direksi (BOD)", "Board / director interview"),
+    namaPendek: "BOD",
+    peran: t("Direktur", "Director"),
+    ket: t("Visi, dampak bisnis, kepemimpinan, integritas", "Vision, business impact, leadership, integrity"),
+    arah: `Kamu anggota direksi (BOD) yang mewawancarai di tahap akhir. Pertanyaan bersifat strategis dan menantang:
+  pemahaman kandidat tentang bisnis dan industri perusahaan, kontribusi terbesar yang bisa ia berikan dan dampaknya
+  ke bisnis, keputusan sulit yang pernah diambil, kepemimpinan dan integritas (dilema etis), cara berpikir saat
+  menghadapi ketidakpastian, serta komitmen jangka panjang. Nada tenang, berwibawa, dan to the point. Boleh
+  menantang jawaban yang normatif ("Semua kandidat bilang begitu. Apa bedanya kamu?").`,
+  },
+];
 import { useGeminiLive, pilihModelLive, MODEL_LIVE_CADANGAN } from "../../hooks/useGeminiLive";
 import { lokal, t, bahasa } from "../../i18n.js";
 
@@ -54,7 +94,7 @@ export function SimulasiInterviewPanel({ setActive }) {
   const hp = useLayarKecil(600);
 
   const [posisi, setPosisi] = useState("");
-  const [kategori, setKategori] = useState(KATEGORI_INTERVIEW[0]);
+  const [kategori, setKategori] = useState(JENIS_INTERVIEW[0]);
   // Bahasa wawancara bisa berbeda dari bahasa tampilan situs
   const [bahasaIv, setBahasaIv] = useState(() => (bahasa() === "en" ? "en" : "id"));
   const [tahap, setTahap] = useState(TAHAP.siap);
@@ -276,8 +316,9 @@ export function SimulasiInterviewPanel({ setActive }) {
 
       tokenIdRef.current = data.token_id ?? null;
 
-      const instruksi = `Kamu adalah ${NAMA_PEWAWANCARA}, seorang HR Recruiter perempuan, pewawancara kerja profesional di Indonesia yang sedang
-mewawancarai kandidat untuk posisi "${posisi}". Fokus wawancara: ${kategori.nama}.
+      const instruksi = `Kamu adalah ${NAMA_PEWAWANCARA}, perempuan, pewawancara kerja profesional di Indonesia yang sedang
+mewawancarai kandidat untuk posisi "${posisi}". Jenis wawancara: ${kategori.nama}.
+${kategori.arah}
 
 Wawancara ini berlangsung sekitar ${DURASI_MENIT} menit.
 
@@ -787,7 +828,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${
                 letterSpacing: "0.03em",
               }}
             >
-              {t("FOKUS PERTANYAAN", "QUESTION FOCUS")}
+              {t("JENIS INTERVIEW", "INTERVIEW TYPE")}
             </div>
             <div
               style={{
@@ -797,7 +838,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${
                 marginBottom: 16,
               }}
             >
-              {KATEGORI_INTERVIEW.map((k) => (
+              {JENIS_INTERVIEW.map((k) => (
                 <button
                   key={k.slug}
                   onClick={() => setKategori(k)}
@@ -816,10 +857,11 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${
                     color: kategori.slug === k.slug ? T.accent : T.inkSoft,
                   }}
                 >
-                  {k.namaPendek}
+                  {k.nama}
                 </button>
               ))}
             </div>
+            <div style={{ fontSize: 12, color: T.inkSoft, margin: "-8px 0 16px", lineHeight: 1.5 }}>{kategori.ket}</div>
 
             <Button
               variant="primary"
@@ -953,6 +995,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${
               tingkat={live.tingkat}
               tingkatAi={live.tingkatAi}
               ukuran={hp ? 170 : 210}
+              peran={kategori.peran}
             />
 
             {/* Panduan berubah mengikuti keadaan. Dalam percakapan suara

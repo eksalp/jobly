@@ -15,7 +15,7 @@
 import { KATA_CARI_ABAIKAN, padananKata } from "../../src/data/sinonimCari.js";
 import { cariNegara } from "../../src/data/negara.js";
 import { cariBidang } from "../../src/data/bidang.js";
-import { SITUS_BUMN, NAMA_BUMN } from "../../src/data/bumn.js";
+import { SITUS_BUMN } from "../../src/data/bumn.js";
 
 const KOLOM_DIINGINKAN = [
   "id", "title", "posisi", "company", "perusahaan", "location", "lokasi",
@@ -202,11 +202,9 @@ export function susunFilter(sk, f, agregator) {
     } else p.push(["id", "eq.-1"]);
   }
 
-  // BUMN: situs khusus BUMN, atau nama perusahaan BUMN
+  // BUMN: hanya loker hasil scraper khusus BUMN (kolom site, terindeks → cepat)
   if (f.bumn) {
-    const isi = sk.pt ? NAMA_BUMN.flatMap((k) => ilikeSemua([sk.pt], k)) : [];
-    if (sk.ada.has("site")) isi.push(`site.in.(${SITUS_BUMN.join(",")})`);
-    if (isi.length) dan.push(`or(${isi.join(",")})`);
+    if (sk.ada.has("site")) p.push(["site", `in.(${SITUS_BUMN.join(",")})`]);
     else p.push(["id", "eq.-1"]);
   }
 

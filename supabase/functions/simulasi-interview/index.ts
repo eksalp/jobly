@@ -166,7 +166,9 @@ function promptPenilaian({ posisi, kategori, dialog, menit, bahasaInterview = "i
     .join("\n");
 
   return `Kamu pewawancara profesional. Berikut transkrip wawancara ${menit} menit
-untuk posisi "${posisi}" dengan fokus ${kategori}:
+untuk posisi "${posisi}" (jenis wawancara: ${kategori}). Sesuaikan standar penilaian dengan jenisnya:
+wawancara HR menilai motivasi, kepribadian, dan kecocokan budaya; wawancara user menilai kedalaman teknis
+dan cara kerja; wawancara direksi menilai cara berpikir strategis, dampak bisnis, dan integritas.
 
 ${riwayat}
 
