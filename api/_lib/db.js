@@ -14,6 +14,8 @@
 
 import { KATA_CARI_ABAIKAN, padananKata } from "../../src/data/sinonimCari.js";
 import { cariNegara } from "../../src/data/negara.js";
+import { cariBidang } from "../../src/data/bidang.js";
+import { SITUS_BUMN, NAMA_BUMN } from "../../src/data/bumn.js";
 
 const KOLOM_DIINGINKAN = [
   "id", "title", "posisi", "company", "perusahaan", "location", "lokasi",
@@ -154,7 +156,7 @@ const ilikeSemua = (kolom, istilah) =>
 
 /**
  * Susun parameter filter PostgREST dari permintaan.
- * f: { q, pt, negara, kota, lokasi, tipe, sumber, gaji, asing, kata, ids, gratisFilter }
+ * f: { q, pt, negara, bidang, bumn, kota, lokasi, tipe, sumber, gaji, asing, kata, ids, gratisFilter }
  */
 export function susunFilter(sk, f, agregator) {
   const p = [];
@@ -188,6 +190,24 @@ export function susunFilter(sk, f, agregator) {
   if (f.pt && sk.pt) {
     const pt = bersih(f.pt);
     if (pt) p.push([sk.pt, `ilike.*${pt}*`]);
+  }
+
+  // Bidang kerja: kategori dari bot, atau kata kunci di judul
+  if (f.bidang) {
+    const b = cariBidang(f.bidang);
+    if (b && sk.judul) {
+      const isi = b.kata.flatMap((k) => ilikeSemua([sk.judul], k));
+      if (sk.kat && b.kategori.length) isi.push(`${sk.kat}.in.(${b.kategori.join(",")})`);
+      dan.push(`or(${isi.join(",")})`);
+    } else p.push(["id", "eq.-1"]);
+  }
+
+  // BUMN: situs khusus BUMN, atau nama perusahaan BUMN
+  if (f.bumn) {
+    const isi = sk.pt ? NAMA_BUMN.flatMap((k) => ilikeSemua([sk.pt], k)) : [];
+    if (sk.ada.has("site")) isi.push(`site.in.(${SITUS_BUMN.join(",")})`);
+    if (isi.length) dan.push(`or(${isi.join(",")})`);
+    else p.push(["id", "eq.-1"]);
   }
 
   // Negara: dikenali dari teks lokasi (lihat src/data/negara.js)

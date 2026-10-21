@@ -20,6 +20,8 @@ import { FaqPage } from "./publik/FaqPage";
 import { DokumenPage } from "./publik/DokumenPage";
 import { RemotePage } from "./publik/RemotePage";
 import { FreelancePage } from "./publik/FreelancePage";
+import { BumnPage } from "./publik/BumnPage";
+import { BidangPage } from "./publik/BidangPage";
 import { CekLokerPage } from "./publik/CekLokerPage";
 import { PetaGajiPage } from "./publik/PetaGajiPage";
 import { PanduanPage } from "./publik/PanduanPage";
@@ -46,7 +48,7 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "cek", "petagaji", "panduan", "panduanDetail", "latihan"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "bumn", "bidang", "cek", "petagaji", "panduan", "panduanDetail", "latihan"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 
@@ -76,6 +78,8 @@ function parsePath(pathname) {
   if (path.startsWith("/latihan/")) return { page: "latihan", slug: path.slice("/latihan/".length) };
   if (path === "/remote") return { page: "remote" };
   if (path === "/freelance") return { page: "freelance" };
+  if (path === "/bumn") return { page: "bumn" };
+  if (path === "/bidang") return { page: "bidang" };
   if (path === "/cek-loker") return { page: "cek" };
   if (path === "/peta-gaji") return { page: "petagaji" };
   if (path === "/faq") return { page: "faq" };
@@ -243,6 +247,12 @@ function JobFinderApp() {
       break;
     case "freelance":
       isi = <FreelancePage />;
+      break;
+    case "bumn":
+      isi = <BumnPage />;
+      break;
+    case "bidang":
+      isi = <BidangPage />;
       break;
     case "cek":
       isi = <CekLokerPage />;

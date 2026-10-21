@@ -20,6 +20,11 @@ const KOSONG = {
   remoteAsing: 0,
   kota: {},
   negara: {},
+  bidang: {},
+  freelance: 0,
+  freelanceContoh: [],
+  bumn: 0,
+  bumnContoh: [],
   sumber: {},
   terbaru: [],
   remoteContoh: [],
@@ -59,6 +64,8 @@ export function JobsProvider({ children }) {
         ...d,
         terbaru: (d.terbaru || []).map(keJob),
         remoteContoh: (d.remoteContoh || []).map(keJob),
+        freelanceContoh: (d.freelanceContoh || []).map(keJob),
+        bumnContoh: (d.bumnContoh || []).map(keJob),
       });
     } catch (e) {
       setError(e.message || t("Data loker sedang tidak bisa dimuat.", "Job data can't be loaded right now."));

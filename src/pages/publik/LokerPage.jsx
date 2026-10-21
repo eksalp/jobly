@@ -15,6 +15,8 @@ import { usePintasanCari } from "../../utils/interaksi";
 import { infoSumber, LABEL_LOKASI_KERJA, LABEL_TIPE_KERJA } from "../../utils/sumberLoker";
 import { lokal, t, bahasa } from "../../i18n.js";
 import { DAFTAR_NEGARA, cariNegara } from "../../data/negara.js";
+import { BIDANG, cariBidang } from "../../data/bidang.js";
+import { IkonBidang } from "../../components/publik/IkonBidang";
 
 
 const OPSI_LOKASI = [["", t("Semua", "All")], ...Object.entries(LABEL_LOKASI_KERJA)];
@@ -33,6 +35,8 @@ function bacaUrl() {
     q: p.get("q") || "",
     pt: p.get("pt") || "",
     negara: p.get("negara") || "",
+    bidang: p.get("bidang") || "",
+    bumn: p.get("bumn") === "1",
     kota: p.get("kota") || "",
     lokasi: p.get("lokasi") || "",
     tipe: p.get("tipe") || "",
@@ -47,6 +51,8 @@ function tulisUrl(f) {
   if (f.q) p.set("q", f.q);
   if (f.pt) p.set("pt", f.pt);
   if (f.negara) p.set("negara", f.negara);
+  if (f.bidang) p.set("bidang", f.bidang);
+  if (f.bumn) p.set("bumn", "1");
   if (f.kota) p.set("kota", f.kota);
   if (f.lokasi) p.set("lokasi", f.lokasi);
   if (f.tipe) p.set("tipe", f.tipe);
@@ -78,6 +84,8 @@ export function LokerPage() {
     q: q.trim(),
     pt: pt.trim(),
     negara: f.negara,
+    bidang: f.bidang,
+    bumn: f.bumn,
     kota: f.kota,
     lokasi: f.lokasi,
     tipe: f.tipe,
@@ -106,9 +114,9 @@ export function LokerPage() {
   // Gulir sampai bawah = muat 24 berikutnya, tanpa perlu menekan tombol
   // Loker berikutnya dimuat lewat tombol "Lihat lebih banyak", tidak otomatis saat menggulir
 
-  const adaFilter = f.q || f.pt || f.negara || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
+  const adaFilter = f.q || f.pt || f.negara || f.bidang || f.bumn || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
   const reset = () =>
-    setF({ q: "", pt: "", negara: "", kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
+    setF({ q: "", pt: "", negara: "", bidang: "", bumn: false, kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
 
   // Negara yang punya loker, diurutkan dari yang terbanyak
   const daftarNegara = useMemo(() => {
@@ -124,7 +132,12 @@ export function LokerPage() {
 
   // Judul halaman mengikuti filter, mis. "Loker di Bandung"
   const negaraDipilih = cariNegara(f.negara);
-  const judul = f.kota
+  const bidangDipilih = cariBidang(f.bidang);
+  const judul = bidangDipilih
+    ? t(`Loker ${bidangDipilih.nama}`, `${bidangDipilih.nama} jobs`)
+    : f.bumn
+      ? t("Loker BUMN", "State-owned enterprise jobs")
+      : f.kota
     ? t(`Loker di ${f.kota}`, `Jobs in ${f.kota}`)
     : negaraDipilih
       ? t(`Loker di ${negaraDipilih.id}`, `Jobs in ${negaraDipilih.en}`)
@@ -137,8 +150,8 @@ export function LokerPage() {
         : t("Semua lowongan", "All jobs");
 
   useEffect(() => {
-    document.title = `${f.kota || f.q || f.negara || f.pt ? judul : t("Semua loker", "All jobs")} · Jobly`;
-  }, [judul, f.kota, f.q, f.negara, f.pt]);
+    document.title = `${f.kota || f.q || f.negara || f.pt || f.bidang || f.bumn ? judul : t("Semua loker", "All jobs")} · Jobly`;
+  }, [judul, f.kota, f.q, f.negara, f.pt, f.bidang, f.bumn]);
 
   return (
     <PublicLayout aktif="/loker">
@@ -265,6 +278,25 @@ export function LokerPage() {
             </select>
           </div>
 
+          <div className="pb-bidang-strip" role="group" aria-label={t("Bidang", "Field")}>
+            <button type="button" className={`pb-bidang-chip ${!f.bidang ? "on" : ""}`} onClick={() => ubah({ bidang: "" })}>
+              {t("Semua bidang", "All fields")}
+            </button>
+            {BIDANG.map((b) => (
+              <button
+                key={b.slug}
+                type="button"
+                className={`pb-bidang-chip ${f.bidang === b.slug ? "on" : ""}`}
+                style={{ "--warna": b.warna }}
+                onClick={() => ubah({ bidang: f.bidang === b.slug ? "" : b.slug })}
+              >
+                <IkonBidang nama={b.ikon} size={14} />
+                {b.nama}
+                {statistik.bidang?.[b.slug] ? <small>{statistik.bidang[b.slug].toLocaleString(lokal())}</small> : null}
+              </button>
+            ))}
+          </div>
+
           <div className="pb-chips">
             {OPSI_LOKASI.map(([v, l]) => (
               <button
@@ -294,6 +326,9 @@ export function LokerPage() {
               onClick={() => ubah({ gaji: !f.gaji })}
             >
               {t("Ada info gaji", "Shows salary")}
+            </button>
+            <button type="button" className={`pb-chip ${f.bumn ? "on" : ""}`} onClick={() => ubah({ bumn: !f.bumn })}>
+              {t("Hanya BUMN", "State-owned only")}
             </button>
           </div>
         </div>

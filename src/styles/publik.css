@@ -6830,3 +6830,234 @@ html[data-tema="gelap"] .pb-gaji-legenda .pita {
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* ========================================================= bidang */
+.pb-bidang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+.pb-bidang {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--ink);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.pb-bidang::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(160px 80px at 0% 0%, color-mix(in srgb, var(--warna) 14%, transparent), transparent 70%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.pb-bidang:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--warna) 45%, var(--line));
+  box-shadow: 0 14px 28px -20px color-mix(in srgb, var(--warna) 70%, transparent);
+}
+.pb-bidang-ikon {
+  position: relative;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--warna);
+  background: color-mix(in srgb, var(--warna) 13%, var(--card));
+  transition: transform 0.25s;
+}
+.pb-bidang:hover .pb-bidang-ikon {
+  transform: rotate(-8deg) scale(1.08);
+}
+.pb-bidang-teks {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.pb-bidang-teks b {
+  font-size: 14.5px;
+}
+.pb-bidang-teks small {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.pb-bidang-jml {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--warna);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pb-bidang-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-top: 12px;
+  padding: 2px 0 10px;
+  margin-bottom: 4px;
+  scrollbar-width: thin;
+}
+.pb-bidang-chip {
+  --warna: var(--brand);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink2);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.pb-bidang-chip svg {
+  color: var(--warna);
+}
+.pb-bidang-chip small {
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pb-bidang-chip:hover {
+  border-color: color-mix(in srgb, var(--warna) 50%, var(--line));
+}
+.pb-bidang-chip.on {
+  color: #fff;
+  background: var(--warna);
+  border-color: var(--warna);
+}
+.pb-bidang-chip.on svg,
+.pb-bidang-chip.on small {
+  color: #fff;
+}
+
+/* ========================================================= duo freelance & BUMN */
+.pb-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.pb-duo-kol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+}
+.pb-duo-kol > .pb-btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+.pb-duo-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.pb-duo-head h2 {
+  font-size: 21px;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+.pb-duo-head p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+.pb-duo-ikon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+}
+.pb-duo-ikon.fl {
+  color: #ea580c;
+  background: rgba(234, 88, 12, 0.12);
+}
+.pb-duo-ikon.bumn {
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+.pb-duo-list {
+  display: grid;
+  gap: 10px;
+}
+@media (max-width: 860px) {
+  .pb-duo {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================================= BUMN */
+.pb-bumn-hias {
+  position: relative;
+  height: 250px;
+  display: grid;
+  place-items: center;
+}
+.pb-bumn-gedung {
+  width: 120px;
+  height: 120px;
+  border-radius: 32px;
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-line);
+}
+.pb-bumn-chip {
+  position: absolute;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink2);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 6px 12px;
+  box-shadow: 0 8px 20px -12px rgba(17, 27, 41, 0.4);
+  animation: pb-apung 5s ease-in-out infinite;
+}
+.pb-bumn-chip.c1 { top: 18px; left: 8%; }
+.pb-bumn-chip.c2 { top: 30px; right: 6%; animation-delay: -1s; }
+.pb-bumn-chip.c3 { top: 46%; left: 0; animation-delay: -2s; }
+.pb-bumn-chip.c4 { top: 50%; right: 0; animation-delay: -3s; }
+.pb-bumn-chip.c5 { bottom: 18px; left: 14%; animation-delay: -1.5s; }
+.pb-bumn-chip.c6 { bottom: 26px; right: 12%; animation-delay: -2.5s; }
+@media (prefers-reduced-motion: reduce) {
+  .pb-bumn-chip,
+  .pb-bidang,
+  .pb-bidang-ikon {
+    animation: none;
+    transition: none;
+  }
+}
+@media (max-width: 860px) {
+  .pb-bumn-hias {
+    display: none;
+  }
+}

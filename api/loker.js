@@ -32,6 +32,7 @@ import {
 import { KOTA_POPULER, SUMBER_DIKENAL, SUMBER_AGREGATOR } from "../src/data/kota.js";
 import { mapSupabaseJob } from "../src/utils/petaLoker.js";
 import { DAFTAR_NEGARA } from "../src/data/negara.js";
+import { BIDANG } from "../src/data/bidang.js";
 import { hitungPetaGaji, gajiPosisi } from "../src/utils/petaGaji.js";
 
 const MAKS_HALAMAN = 48;
@@ -69,6 +70,8 @@ async function aksiDaftar(p, penuh) {
     q: p.get("q"),
     pt: p.get("pt"),
     negara: p.get("negara"),
+    bidang: p.get("bidang"),
+    bumn: bool(p.get("bumn")),
     kota: p.get("kota"),
     lokasi: p.get("lokasi"),
     tipe: p.get("tipe"),
@@ -179,7 +182,7 @@ async function aksiStatistik() {
       .map((x) => x.row);
   };
 
-  const [total, baru7, baru2, remote, remoteAsing, terbaru, contohRemote] = await Promise.all([
+  const [total, baru7, baru2, remote, remoteAsing, terbaru, contohRemote, freelance, contohFreelance, bumn, contohBumn] = await Promise.all([
     hitung(() => ({})),
     hitung(() => ({ mulai: iso(7) })),
     hitung(() => ({ mulai: iso(2) })),
@@ -187,7 +190,18 @@ async function aksiStatistik() {
     hitung(() => ({ lokasi: "remote", asing: true })),
     ambil({}, 8),
     ambil({ lokasi: "remote" }, 4),
+    hitung(() => ({ tipe: "freelance" })),
+    ambil({ tipe: "freelance" }, 4),
+    hitung(() => ({ bumn: true })),
+    ambil({ bumn: true }, 4),
   ]);
+
+  const bidang = {};
+  const hasilBidang = await paralel(BIDANG.map((b) => () => hitung(() => ({ bidang: b.slug }))), 4);
+  BIDANG.forEach((b, i) => {
+    const jml = typeof hasilBidang[i] === "number" ? hasilBidang[i] : 0;
+    if (jml) bidang[b.slug] = jml;
+  });
 
   const kota = {};
   const hasilKota = await paralel(KOTA_POPULER.map((k) => () => hitung(() => ({ kota: k }))), 4);
@@ -220,6 +234,11 @@ async function aksiStatistik() {
     sumber,
     terbaru,
     remoteContoh: contohRemote,
+    freelance,
+    freelanceContoh: contohFreelance,
+    bumn,
+    bumnContoh: contohBumn,
+    bidang,
     diperbarui: new Date(kini).toISOString(),
   };
 }

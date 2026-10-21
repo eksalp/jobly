@@ -26,7 +26,7 @@ import { GerbangFitur } from "../../components/GerbangFitur";
 import { KuotaSaya } from "../../components/ui/KuotaSaya";
 import { KATEGORI_INTERVIEW } from "../../data/interviewBank";
 import { useGeminiLive, pilihModelLive, MODEL_LIVE_CADANGAN } from "../../hooks/useGeminiLive";
-import { lokal, t } from "../../i18n.js";
+import { lokal, t, bahasa } from "../../i18n.js";
 
 /** Sesi di bawah batas ini dibatalkan tanpa penilaian dan kuota dikembalikan. */
 const MIN_JAWABAN_DINILAI = 2;
@@ -55,6 +55,8 @@ export function SimulasiInterviewPanel({ setActive }) {
 
   const [posisi, setPosisi] = useState("");
   const [kategori, setKategori] = useState(KATEGORI_INTERVIEW[0]);
+  // Bahasa wawancara bisa berbeda dari bahasa tampilan situs
+  const [bahasaIv, setBahasaIv] = useState(() => (bahasa() === "en" ? "en" : "id"));
   const [tahap, setTahap] = useState(TAHAP.siap);
   const [menyiapkan, setMenyiapkan] = useState(false);
   const [menilai, setMenilai] = useState(false);
@@ -311,10 +313,11 @@ CARA BICARA:
     kandidat secara singkat, ucapkan terima kasih, dan tutup wawancara
     dengan hangat dalam dua sampai tiga kalimat.
 
-Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
-        "",
-        "\n\nBAHASA: Kandidat memilih tampilan bahasa Inggris. Lakukan SELURUH wawancara dalam bahasa Inggris yang natural, termasuk sapaan pembuka.",
-      )}`;
+Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${
+        bahasaIv === "en"
+          ? "\n\nBAHASA: Kandidat memilih wawancara dalam BAHASA INGGRIS. Lakukan SELURUH wawancara dalam bahasa Inggris profesional yang natural, termasuk sapaan pembuka dan penutup, seperti interview di perusahaan multinasional. Jika kandidat menjawab dalam bahasa Indonesia, tanggapi tetap dalam bahasa Inggris dan dorong ia menjawab dalam bahasa Inggris."
+          : "\n\nBAHASA: Lakukan seluruh wawancara dalam bahasa Indonesia yang sopan dan natural."
+      }`;
 
       // Model utama (3.8 Live) dicoba lebih dulu. Kalau koneksinya gagal,
       // sesi dicoba sekali lagi dengan model suara cadangan memakai token
@@ -414,6 +417,8 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
             tokenId: tokenIdRef.current,
             posisi,
             kategori: kategori.nama,
+            bahasaInterview: bahasaIv,
+            bahasaTampilan: bahasa() === "en" ? "en" : "id",
             dialog: transkrip.map(({ dari, teks }) => ({ dari, teks })),
             durasiDetik: detik,
             pemakaian: live.pemakaian(),
@@ -460,7 +465,7 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
     } finally {
       setMenilai(false);
     }
-  }, [live, posisi, kategori, detik, muatRiwayat, kembalikanKuota]);
+  }, [live, posisi, kategori, bahasaIv, detik, muatRiwayat, kembalikanKuota]);
 
   useEffect(() => {
     akhiriRef.current = akhiri;
@@ -737,6 +742,42 @@ Kamu adalah pewawancaranya. Jangan keluar dari peran itu.${t(
               </div>
             )}
 
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: T.inkFaint,
+                marginBottom: 7,
+                letterSpacing: "0.03em",
+              }}
+            >
+              {t("BAHASA INTERVIEW", "INTERVIEW LANGUAGE")}
+            </div>
+            <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>
+              {[
+                ["id", "Bahasa Indonesia"],
+                ["en", "English"],
+              ].map(([kode, label]) => (
+                <button
+                  key={kode}
+                  type="button"
+                  onClick={() => setBahasaIv(kode)}
+                  style={{
+                    fontSize: 11.5,
+                    padding: "6px 12px",
+                    borderRadius: 99,
+                    cursor: "pointer",
+                    fontWeight: 600,
+                    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+                    border: `1px solid ${bahasaIv === kode ? T.accent : T.border}`,
+                    background: bahasaIv === kode ? T.accentSoft : "var(--t-field)",
+                    color: bahasaIv === kode ? T.accent : T.inkSoft,
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div
               style={{
                 fontSize: 11,

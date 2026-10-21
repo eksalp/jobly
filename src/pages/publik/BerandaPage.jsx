@@ -13,7 +13,10 @@ import {
   BarChart3,
   Flame,
   History,
+  Handshake,
+  Landmark,
 } from "lucide-react";
+import { GridBidang } from "./BidangPage";
 import {
   PublicLayout,
   KOTA_POPULER,
@@ -496,6 +499,74 @@ export function BerandaPage() {
             {loading
               ? Array.from({ length: 4 }, (_, i) => <KartuLokerSkeleton key={i} />)
               : data.remote.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ per bidang */}
+      <section className="pb-section">
+        <div className="pb-wrap">
+          <div className="pb-head" data-muncul="">
+            <div>
+              <span className="pb-label">{t("Jelajahi per bidang", "Browse by field")}</span>
+              <h2>{t("Pilih bidangmu, langsung lihat lokernya", "Pick your field, see its jobs")}</h2>
+            </div>
+            <a className="pb-link" {...tautan("/bidang")}>
+              {t("Semua bidang", "All fields")} <ArrowRight size={15} />
+            </a>
+          </div>
+          <GridBidang jumlah={st.bidang} loading={loading} batas={10} />
+        </div>
+      </section>
+
+      {/* ============================================ freelance & BUMN */}
+      <section className="pb-section tint">
+        <div className="pb-wrap pb-duo">
+          <div className="pb-duo-kol" data-muncul="">
+            <div className="pb-duo-head">
+              <span className="pb-duo-ikon fl">
+                <Handshake size={18} />
+              </span>
+              <div>
+                <h2>{t("Loker freelance", "Freelance jobs")}</h2>
+                <p>
+                  {loading
+                    ? t("Memuat…", "Loading…")
+                    : t(`${angka(st.freelance || 0)} proyek lepas & kerja per proyek. Atur waktumu sendiri.`, `${angka(st.freelance || 0)} freelance and project-based jobs. Set your own hours.`)}
+                </p>
+              </div>
+            </div>
+            <div className="pb-duo-list">
+              {loading
+                ? Array.from({ length: 3 }, (_, i) => <KartuLokerSkeleton key={i} />)
+                : (st.freelanceContoh || []).slice(0, 3).map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+            </div>
+            <a className="pb-btn pb-btn-outline" {...tautan("/freelance")}>
+              {t("Lihat loker freelance", "See freelance jobs")} <ArrowRight size={15} />
+            </a>
+          </div>
+          <div className="pb-duo-kol" data-muncul="" style={{ "--tunda": "80ms" }}>
+            <div className="pb-duo-head">
+              <span className="pb-duo-ikon bumn">
+                <Landmark size={18} />
+              </span>
+              <div>
+                <h2>{t("Loker BUMN", "State-owned firms")}</h2>
+                <p>
+                  {loading
+                    ? t("Memuat…", "Loading…")
+                    : t(`${angka(st.bumn || 0)} loker dari Pertamina, PLN, Telkom, bank BUMN, dan lainnya.`, `${angka(st.bumn || 0)} jobs from Pertamina, PLN, Telkom, state banks, and more.`)}
+                </p>
+              </div>
+            </div>
+            <div className="pb-duo-list">
+              {loading
+                ? Array.from({ length: 3 }, (_, i) => <KartuLokerSkeleton key={i} />)
+                : (st.bumnContoh || []).slice(0, 3).map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+            </div>
+            <a className="pb-btn pb-btn-outline" {...tautan("/bumn")}>
+              {t("Lihat loker BUMN", "See state-owned jobs")} <ArrowRight size={15} />
+            </a>
           </div>
         </div>
       </section>

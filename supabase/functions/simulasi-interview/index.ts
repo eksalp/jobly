@@ -160,7 +160,7 @@ ATURAN BICARA — ini wawancara LISAN, bukan tertulis:
   (kosongkan kalau belum ada jawaban). Tidak dibacakan ke kandidat.`;
 }
 
-function promptPenilaian({ posisi, kategori, dialog, menit }) {
+function promptPenilaian({ posisi, kategori, dialog, menit, bahasaInterview = "id", bahasaTampilan = "id" }) {
   const riwayat = dialog
     .map((d) => `${d.dari === "ai" ? "PEWAWANCARA" : "KANDIDAT"}: ${d.teks}`)
     .join("\n");
@@ -190,9 +190,18 @@ ATURAN:
 - "kekuatan" dan "perbaikan": MAKSIMAL 3 poin masing-masing, spesifik dan
   merujuk pada apa yang benar-benar kandidat katakan, bukan nasihat umum.
 - "catatan": 2-3 kalimat penutup yang membangun.
-Semua dalam Bahasa Indonesia yang lazim dan lugas, seperti pewawancara yang
+${bahasaInterview === "en" ? `- Wawancara ini dilakukan dalam BAHASA INGGRIS. Nilai juga kemampuan bahasa
+  Inggris kandidat (kelancaran, kosakata profesional, tata bahasa). Sebutkan
+  minimal satu poin tentang bahasa Inggrisnya di "kekuatan" atau "perbaikan",
+  lengkap dengan contoh kalimat kandidat dan versi yang lebih baik.
+` : ""}${bahasaTampilan === "en"
+  ? `Write "kekuatan", "perbaikan", and "catatan" in clear, natural English, like an
+interviewer giving direct feedback. Keep "kejelasan", "struktur", and "relevansi"
+as one of the Indonesian values shown above. Do NOT use em dashes (—); use
+commas, full stops, or colons.`
+  : `Semua dalam Bahasa Indonesia yang lazim dan lugas, seperti pewawancara yang
 memberi masukan langsung. JANGAN memakai tanda pisah panjang (—); pakai koma,
-titik, atau titik dua.`;
+titik, atau titik dua.`}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -358,7 +367,14 @@ serve(async (req) => {
 
       const menit = Math.max(1, Math.round(num(body.durasiDetik, 0) / 60));
       const h = await panggilGemini(
-        promptPenilaian({ posisi, kategori, dialog: dialogNilai, menit }),
+        promptPenilaian({
+          posisi,
+          kategori,
+          dialog: dialogNilai,
+          menit,
+          bahasaInterview: str(body.bahasaInterview) === "en" ? "en" : "id",
+          bahasaTampilan: str(body.bahasaTampilan) === "en" ? "en" : "id",
+        }),
         6000,
       ).catch(async (e) => {
         // Penilaian gagal: tanda "terpakai" dilepas lagi supaya sesi ini
