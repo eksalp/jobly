@@ -8056,3 +8056,141 @@ html[data-tema="gelap"] .fgd-ruang {
     animation: none !important;
   }
 }
+
+/* ========================================================= rapor kesiapan kerja */
+.rp {
+  display: grid;
+  gap: 16px;
+}
+.rp-atas {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rp-atas > div {
+  flex: 1;
+  min-width: 240px;
+}
+.rp-atas h2 {
+  font-size: 26px;
+  margin: 4px 0 6px;
+  letter-spacing: -0.02em;
+}
+.rp-atas p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink2);
+}
+.rp-cincin {
+  width: 130px;
+  height: 130px;
+  flex: none;
+}
+.rp-cincin circle {
+  fill: none;
+  stroke-width: 12;
+}
+.rp-cincin .latar {
+  stroke: var(--surface2);
+}
+.rp-cincin .isi {
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 65px 65px;
+  transition: stroke-dasharray 0.8s ease;
+}
+.rp-cincin text {
+  font-size: 30px;
+  font-weight: 800;
+  fill: var(--ink);
+}
+.rp-lengkap {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface2);
+  overflow: hidden;
+  max-width: 360px;
+}
+.rp-lengkap i {
+  display: block;
+  height: 100%;
+  background: var(--brand);
+}
+.rp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+.rp-kartu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  font: inherit;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.rp-kartu:hover {
+  border-color: var(--brand-line);
+}
+.rp-kartu .ikon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+.rp-kartu .isi {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.rp-kartu .isi b {
+  font-size: 14.5px;
+  color: var(--ink);
+}
+.rp-kartu .isi small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.rp-kartu .nilai {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.rp-langkah h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rp-langkah ol {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 12px;
+}
+.rp-langkah li > div {
+  display: inline-grid;
+  gap: 2px;
+  width: calc(100% - 90px);
+  vertical-align: middle;
+}
+.rp-langkah li span {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+.rp-langkah li .pb-btn {
+  float: right;
+}

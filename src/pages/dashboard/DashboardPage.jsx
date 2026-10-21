@@ -16,6 +16,7 @@ import { RencanaPanel } from "./RencanaPanel";
 import { PortofolioPanel } from "./PortofolioPanel";
 import { TesKerjaPanel } from "./TesKerjaPanel";
 import { FgdPanel } from "./FgdPanel";
+import { RaporPanel } from "./RaporPanel";
 import { SiteHeader, useAnimasiMuncul } from "../../components/publik/PublicLayout";
 import { tautan } from "../../utils/navigasi";
 import { SITUS } from "../../data/situs";
@@ -109,6 +110,14 @@ export const PANEL_META = {
       "A 20-minute voice group discussion with 3 AI participants and an assessor, scored like on selection day.",
     ),
   },
+  rapor: {
+    grup: t("Persiapan", "Prepare"),
+    title: t("Rapor kesiapan kerja", "Job-readiness report"),
+    desc: t(
+      "Ringkasan CV, LinkedIn, simulasi interview, tes persiapan, dan FGD dalam satu indeks, plus langkah berikutnya.",
+      "Your CV, LinkedIn, mock interview, job tests, and FGD in one index, plus next steps.",
+    ),
+  },
   simulasi: {
     grup: t("Persiapan", "Prepare"),
     title: t("Simulasi interview", "Mock interview"),
@@ -144,6 +153,7 @@ export const PANEL_COMPONENTS = {
   portofolio: PortofolioPanel,
   tes: TesKerjaPanel,
   fgd: FgdPanel,
+  rapor: RaporPanel,
 };
 
 /** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */

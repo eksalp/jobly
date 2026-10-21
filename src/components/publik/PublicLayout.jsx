@@ -27,6 +27,7 @@ import {
   LayoutGrid,
   ListChecks,
   Users,
+  Gauge,
   GraduationCap,
   ShieldCheck,
   BarChart3,
@@ -82,6 +83,7 @@ const I = {
   rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
   tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("Psikotes, Kraepelin, TPA, ketelitian, kepribadian", "Psychometrics, Kraepelin, aptitude, accuracy, personality"), path: ke("tes"), Ikon: ListChecks, baru: true, max: true },
   fgd: { t: t("Simulasi FGD", "FGD simulation"), d: t("Diskusi kelompok 20 menit dengan peserta AI", "20-minute group discussion with AI participants"), path: ke("fgd"), Ikon: Users, baru: true, max: true },
+  rapor: { t: t("Rapor kesiapan kerja", "Job-readiness report"), d: t("Skor CV, interview, tes, sampai FGD", "CV, interview, tests, and FGD scores"), path: ke("rapor"), Ikon: Gauge, baru: true, max: true },
   simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
 };
 
@@ -101,7 +103,7 @@ export const MENU_APLIKASI = [
     kolom: [
       { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi, I.panduan] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
-      { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes] },
+      { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes, I.rapor] },
     ],
   },
   { label: t("Riset", "Research"), kolom: [{ items: [I.peta, I.cek, I.kalkulator] }] },
@@ -123,7 +125,7 @@ export const MENU_PUBLIK = [
     kolom: [
       { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.rencana] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
-      { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes] },
+      { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes, I.rapor] },
     ],
   },
   { label: t("Panduan Remote Working", "Remote Working Guide"), path: "/panduan", Ikon: BookOpen, sorot: true },
