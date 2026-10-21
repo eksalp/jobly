@@ -8356,3 +8356,35 @@ html[data-tema="gelap"] .fgd-ruang {
   .fgd-kelompok { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
   .fgd-kelompok .pb-chip { flex: none; white-space: nowrap; }
 }
+
+/* Portofolio: nilai jual, bukti, galeri, studi kasus */
+.pb-po-format.kuat { background: var(--brand-soft); color: var(--brand); border-color: var(--brand-line); }
+.pb-po-jual { margin: 16px 0 4px; padding: 13px 15px; border: 1px solid var(--brand-line); border-radius: 12px; background: var(--brand-soft); display: grid; gap: 6px; }
+.pb-po-jual b { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--brand); }
+.pb-po-jual p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+.pb-po-jual .pb-po-format { justify-self: start; background: var(--card); }
+.pb-po-bukti { margin-top: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+.pb-po-bukti > b { font-size: 14px; }
+.pb-po-bukti > p { margin: 4px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink2); }
+.pb-po-isian small.salah { color: var(--danger); }
+.pb-po-isian small.bantu { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-top: -2px; }
+.pb-po-isian > span em { font-style: normal; font-weight: 500; color: var(--muted); }
+.pb-po-isian-label { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--ink2); }
+.pb-po-galeri { margin-top: 8px; }
+.pb-po-galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 10px; margin-bottom: 10px; }
+.pb-po-galeri-grid figure { margin: 0; display: grid; gap: 6px; }
+.pb-po-galeri-grid .foto { position: relative; aspect-ratio: 4 / 3; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--tint); display: grid; place-items: center; }
+.pb-po-galeri-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pb-po-galeri-grid .sampul { position: absolute; left: 6px; top: 6px; padding: 2px 7px; border-radius: 999px; background: var(--brand); color: #fff; font-size: 10.5px; font-weight: 700; }
+.pb-po-galeri-grid .aksi { position: absolute; right: 6px; top: 6px; display: flex; gap: 4px; }
+.pb-po-galeri-grid .aksi button { width: 26px; height: 26px; display: grid; place-items: center; border: 0; border-radius: 8px; background: rgba(0, 0, 0, .55); color: #fff; cursor: pointer; }
+.pb-po-galeri-grid input { width: 100%; font: inherit; font-size: 12.5px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); }
+.pb-po-galeri-bawah { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.pb-po-galeri-bawah small { font-size: 12px; color: var(--muted); }
+.pb-po-galeri-bawah small b { color: var(--danger); font-weight: 600; }
+.pb-po-studi-atas { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-top: 20px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.pb-po-studi-atas > b { font-size: 15px; }
+.pb-po-metrik { display: flex; gap: 8px; margin-top: 4px; padding: 10px 12px; border-radius: 10px; background: var(--tint); font-size: 12.5px; color: var(--ink2); }
+.pb-po-metrik svg { flex: none; margin-top: 2px; color: var(--brand); }
+.pb-po-metrik b { font-size: 12.5px; }
+.pb-po-metrik ul { margin: 4px 0 0; padding-left: 16px; line-height: 1.6; }

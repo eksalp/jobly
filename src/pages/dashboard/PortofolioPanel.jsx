@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft, ArrowRight, Briefcase, Check, Clock, Download, FileSpreadsheet, FileText, Lock,
-  Loader2, Plus, Search, Send, Sparkles, Table2, Trash2, X, Link2, Eye, EyeOff,
+  Loader2, Plus, Search, Send, Sparkles, Table2, Trash2, X, Link2, Eye, EyeOff, ImagePlus, Image as IkonGambar,
+  Lightbulb, Wand2, Target, Video, Code2,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
@@ -9,8 +10,10 @@ import { useLangganan } from "../../context/LanggananContext";
 import { useUserProfile } from "../../context/UserProfileContext";
 import {
   MAKS_PROYEK, PAKET_PORTOFOLIO, MIN_HASIL, MIN_REVISI, DAFTAR_KATEGORI,
-  muatKatalog, idProyek, tabelAwal, tabelTerisi, statusProyek, namaBerkas,
+  muatKatalog, idProyek, tabelAwal, tabelTerisi, statusProyek, namaBerkas, TAHAP_PROYEK,
 } from "../../data/portofolio";
+import { panduanJual, BIDANG_STUDI, MAKS_GAMBAR } from "../../data/portofolioJual";
+import { unggahGambar, hapusGambar, urlGambar, gambarUntukPdf } from "../../utils/gambarPortofolio";
 import { buatXlsx, unduhBlob } from "../../utils/xlsxSederhana";
 import { t, lokal } from "../../i18n.js";
 
@@ -151,7 +154,10 @@ function profilPdf(profil, user) {
 
 async function unduhPdf(item, profil, namaPendek) {
   const { buatPdfPortofolio } = await import("../../utils/portofolioPdf");
-  const blob = await buatPdfPortofolio({ profil, proyek: item });
+  // Gambar lampiran diunduh dulu dari penyimpanan privat
+  const lengkap = [];
+  for (const x of item) lengkap.push({ ...x, data: { ...x.data, gambar: await gambarUntukPdf(x.data.lampiran) } });
+  const blob = await buatPdfPortofolio({ profil, proyek: lengkap });
   unduhBlob(blob, `${namaBerkas("portofolio", namaPendek, profil.nama) || "portofolio"}.pdf`);
 }
 
@@ -177,6 +183,15 @@ function unduhExcel(proyek, data, profil) {
       lebar: [100],
     });
   }
+  const studi = data.studi || {};
+  if (BIDANG_STUDI.some((b) => String(studi[b.k] || "").trim())) {
+    lembar.push({
+      nama: t("Studi kasus", "Case study"),
+      judul: t("Studi kasus", "Case study"),
+      baris: BIDANG_STUDI.filter((b) => String(studi[b.k] || "").trim()).map((b) => [b.label, studi[b.k]]),
+      lebar: [26, 100],
+    });
+  }
   lembar.push({
     nama: t("Tentang", "About"),
     judul: t("Tentang proyek ini", "About this project"),
@@ -196,11 +211,129 @@ function unduhExcel(proyek, data, profil) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Lampiran gambar / mockup                                           */
+/* ------------------------------------------------------------------ */
+
+function LampiranGambar({ userId, proyekId, lampiran, onUbah, wajib }) {
+  const [url, setUrl] = useState({});
+  const [sibuk, setSibuk] = useState(false);
+  const [galat, setGalat] = useState("");
+  const input = useRef(null);
+
+  useEffect(() => {
+    const kurang = lampiran.map((g) => g.path).filter((p) => !url[p]);
+    if (!kurang.length) return;
+    let batal = false;
+    urlGambar(kurang).then((m) => !batal && setUrl((u) => ({ ...u, ...m })));
+    return () => {
+      batal = true;
+    };
+  }, [lampiran, url]);
+
+  const pilihBerkas = async (e) => {
+    const berkas = [...(e.target.files || [])].slice(0, MAKS_GAMBAR - lampiran.length);
+    e.target.value = "";
+    if (!berkas.length) return;
+    setSibuk(true);
+    setGalat("");
+    let daftar = [...lampiran];
+    for (const f of berkas) {
+      try {
+        const g = await unggahGambar(userId, proyekId, f);
+        daftar = [...daftar, g];
+        onUbah(daftar);
+      } catch (err) {
+        setGalat(err?.message || t("Gagal mengunggah gambar.", "Couldn't upload the image."));
+        break;
+      }
+    }
+    setSibuk(false);
+  };
+
+  const hapus = async (g) => {
+    if (!window.confirm(t("Hapus gambar ini?", "Delete this image?"))) return;
+    onUbah(lampiran.filter((x) => x.path !== g.path));
+    await hapusGambar(g.path).catch(() => {});
+  };
+
+  const geser = (i, arah) => {
+    const j = i + arah;
+    if (j < 0 || j >= lampiran.length) return;
+    const baru = [...lampiran];
+    [baru[i], baru[j]] = [baru[j], baru[i]];
+    onUbah(baru);
+  };
+
+  return (
+    <div className="pb-po-galeri">
+      {lampiran.length > 0 && (
+        <div className="pb-po-galeri-grid">
+          {lampiran.map((g, i) => (
+            <figure key={g.path}>
+              <div className="foto">
+                {url[g.path] ? <img src={url[g.path]} alt={g.ket || t(`Lampiran ${i + 1}`, `Attachment ${i + 1}`)} /> : <Loader2 size={16} className="pb-po-putar" />}
+                {i === 0 && <span className="sampul">{t("Gambar utama", "Cover")}</span>}
+                <div className="aksi">
+                  {i > 0 && (
+                    <button type="button" onClick={() => geser(i, -1)} aria-label={t("Geser ke kiri", "Move left")}>
+                      <ArrowLeft size={13} />
+                    </button>
+                  )}
+                  <button type="button" onClick={() => hapus(g)} aria-label={t("Hapus gambar", "Delete image")}>
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              </div>
+              <input
+                value={g.ket || ""}
+                maxLength={140}
+                placeholder={t("Keterangan, mis. Mockup feed di layar HP", "Caption, e.g. Feed mockup on a phone")}
+                onChange={(e) => onUbah(lampiran.map((x) => (x.path === g.path ? { ...x, ket: e.target.value } : x)))}
+              />
+            </figure>
+          ))}
+        </div>
+      )}
+      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={pilihBerkas} />
+      <div className="pb-po-galeri-bawah">
+        <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" disabled={sibuk || lampiran.length >= MAKS_GAMBAR} onClick={() => input.current?.click()}>
+          {sibuk ? <Loader2 size={14} className="pb-po-putar" /> : <ImagePlus size={14} />} {t("Unggah gambar", "Upload images")}
+        </button>
+        <small>
+          {lampiran.length}/{MAKS_GAMBAR} · {t("JPG/PNG/WebP, dikompres otomatis", "JPG/PNG/WebP, auto-compressed")}
+          {wajib && !lampiran.length && <b> · {t("wajib minimal 1", "at least 1 required")}</b>}
+        </small>
+      </div>
+      {galat && <div className="pb-po-galat" style={{ marginTop: 10 }}>{galat}</div>}
+    </div>
+  );
+}
+
+/** Kerangka awal studi kasus dari brief, untuk diedit pengguna. */
+function kerangkaStudi(proyek, studi) {
+  const kalimat = String(proyek.brief || "").replace(/\s+/g, " ").split(/(?<=[.!?])\s+/).slice(0, 2).join(" ");
+  const klien = proyek.dari?.peran || t("Klien", "The client");
+  const isi = {
+    tantangan: `${klien}: ${kalimat}`,
+    peran: t(`Saya mengerjakan proyek ini sendiri sebagai ${proyek.namaProfesi}, mulai dari memahami brief sampai menanggapi revisi klien. Alat yang dipakai: `, `I handled this project on my own as a ${proyek.namaProfesi}, from reading the brief to handling the client's revision. Tools used: `),
+    proses: (proyek.langkah || []).map((l, i) => `${i + 1}. ${l}`).join("\n"),
+  };
+  const baru = { ...studi };
+  Object.entries(isi).forEach(([k, v]) => {
+    if (!String(baru[k] || "").trim()) baru[k] = v;
+  });
+  return baru;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Ruang kerja satu proyek                                            */
 /* ------------------------------------------------------------------ */
 
 export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil }) {
+  const { user } = useAuth();
   const [data, setData] = useState(() => ({
+    studi: baris.studi && typeof baris.studi === "object" ? baris.studi : {},
+    lampiran: Array.isArray(baris.lampiran) ? baris.lampiran : [],
     jawaban: baris.jawaban || "",
     tabel: baris.tabel || null,
     dikirim: Boolean(baris.dikirim),
@@ -209,6 +342,7 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
     tautan: baris.tautan || "",
   }));
   const [simpan, setSimpan] = useState("tersimpan"); // tersimpan | menyimpan | gagal
+  const [pesanSimpan, setPesanSimpan] = useState("");
   const [pakaiTabel, setPakaiTabel] = useState(Boolean(baris.tabel) || proyek.tabelAwal);
   const [lihatContoh, setLihatContoh] = useState(false);
   const [unduh, setUnduh] = useState("");
@@ -229,7 +363,8 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
     clearTimeout(tunda.current);
     tunda.current = setTimeout(async () => {
       const ok = await onSimpan(baris.id, tertunda.current);
-      setSimpan(ok ? "tersimpan" : "gagal");
+      setSimpan(ok === true ? "tersimpan" : "gagal");
+      setPesanSimpan(ok === true ? "" : String(ok || ""));
     }, 1000);
   };
 
@@ -245,7 +380,10 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
     [],
   );
 
-  const belumDikerjakan = !data.jawaban.trim() && !data.tabel && !data.dikirim;
+  const belumDikerjakan = !data.jawaban.trim() && !data.tabel && !data.dikirim && !data.lampiran.length;
+  const panduan = st.panduan || panduanJual(proyek.profesi, proyek.kategori, proyek.tugas);
+  const jenisBukti = panduan.jenis;
+  const ubahStudi = (k, v) => ubah({ studi: { ...data.studi, [k]: v } });
   const kurang = Math.max(0, MIN_HASIL - data.jawaban.trim().length);
 
   const jalankanUnduh = async (jenis) => {
@@ -270,12 +408,13 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
           {simpan === "menyimpan" ? t("Menyimpan…", "Saving…") : simpan === "gagal" ? t("Gagal menyimpan, coba ketik lagi", "Couldn't save, try typing again") : t("Tersimpan", "Saved")}
         </span>
       </div>
+      {pesanSimpan && <div className="pb-po-galat">{pesanSimpan}</div>}
 
       <div className="pb-panel">
         <span className="pb-label">{proyek.namaProfesi}</span>
         <h2 className="pb-po-judul">{proyek.judul}</h2>
         <ol className="pb-po-tahap">
-          {[t("Kerjakan", "Do the work"), t("Kirim ke klien", "Send to client"), t("Tanggapi revisi", "Handle revision"), t("Periksa ulang", "Final check")].map((x, i) => (
+          {TAHAP_PROYEK.map((x, i) => (
             <li key={x} className={st.langkah > i + 1 ? "beres" : st.langkah === i + 1 ? "aktif" : ""}>
               <span>{st.langkah > i + 1 ? <Check size={12} /> : i + 1}</span>
               {x}
@@ -294,6 +433,18 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
             ))}
           </ol>
         )}
+
+        <div className="pb-po-jual">
+          <b>
+            <Target size={15} /> {t("Yang dicari perekrut dari proyek ini", "What recruiters look for here")}
+          </b>
+          <p>{panduan.nilai}</p>
+          {jenisBukti.pendek && (
+            <span className={`pb-po-format ${panduan.wajib ? "kuat" : ""}`}>
+              {panduan.bukti === "gambar" ? <IkonGambar size={12} /> : panduan.bukti === "media" ? <Video size={12} /> : <Code2 size={12} />} {jenisBukti.label}
+            </span>
+          )}
+        </div>
 
         <h3 className="pb-po-sub">{t("1. Hasil kerjamu", "1. Your work")}</h3>
         <p className="pb-po-ket">
@@ -341,18 +492,6 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
           </small>
         </label>
 
-        <label className="pb-po-isian">
-          <span>
-            <Link2 size={13} /> {t("Tautan ke hasil kerja (opsional)", "Link to your work (optional)")}
-          </span>
-          <input
-            type="url"
-            value={data.tautan}
-            onChange={(e) => ubah({ tautan: e.target.value.slice(0, 500) })}
-            placeholder={t("mis. Google Docs/Sheets, Canva, Figma, Notion, GitHub", "e.g. Google Docs/Sheets, Canva, Figma, Notion, GitHub")}
-          />
-        </label>
-
         <h3 className="pb-po-sub">{t("2. Kirim ke klien", "2. Send to the client")}</h3>
         {!data.dikirim ? (
           <button type="button" className="pb-btn pb-btn-primary" disabled={!st.hasilCukup} onClick={() => ubah({ dikirim: true })}>
@@ -391,7 +530,108 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
 
         {data.dikirim && st.revisiBeres && (
           <>
-            <h3 className="pb-po-sub">{t("4. Periksa ulang sebelum diserahkan", "4. Final check before handing over")}</h3>
+            <h3 className="pb-po-sub">{t("4. Susun studi kasus & bukti", "4. Build the case study & proof")}</h3>
+            <p className="pb-po-ket">
+              {t(
+                "Bagian inilah yang membuat portofolio bernilai jual. Perekrut membaca ringkasan dan hasil lebih dulu, baru melihat detail kerja. Tulis dengan bahasa yang lugas dan sebutkan angka bila ada.",
+                "This is what gives the portfolio selling power. Recruiters read the summary and results first, then the details. Write plainly and include numbers where you can.",
+              )}
+            </p>
+
+            <div className="pb-po-bukti">
+              <b>{jenisBukti.label}</b>
+              <p>{jenisBukti.petunjuk}</p>
+              <label className="pb-po-isian">
+                <span>
+                  <Link2 size={13} />{" "}
+                  {panduan.bukti === "media"
+                    ? t("Tautan video/audio (opsional)", "Video/audio link (optional)")
+                    : panduan.bukti === "kode"
+                      ? t("Tautan demo atau repositori (opsional)", "Demo or repository link (optional)")
+                      : t("Tautan ke hasil kerja (opsional)", "Link to your work (optional)")}
+                </span>
+                <input
+                  type="url"
+                  value={data.tautan}
+                  onChange={(e) => ubah({ tautan: e.target.value.slice(0, 500) })}
+                  placeholder={
+                    panduan.bukti === "media"
+                      ? "https://youtu.be/… · https://drive.google.com/…"
+                      : panduan.bukti === "kode"
+                        ? "https://github.com/… · https://proyekku.vercel.app"
+                        : t("mis. Google Docs/Sheets, Canva, Figma, Notion", "e.g. Google Docs/Sheets, Canva, Figma, Notion")
+                  }
+                />
+                {data.tautan && !/^https?:\/\/\S+\.\S+/i.test(data.tautan.trim()) && (
+                  <small className="salah">{t("Tautan harus diawali https://", "The link must start with https://")}</small>
+                )}
+              </label>
+              <span className="pb-po-isian-label">
+                <IkonGambar size={13} />{" "}
+                {panduan.bukti === "gambar"
+                  ? panduan.wajib
+                    ? t("Gambar hasil akhir / mockup (wajib)", "Final images / mockups (required)")
+                    : t("Gambar hasil akhir / mockup (disarankan)", "Final images / mockups (recommended)")
+                  : panduan.bukti === "media"
+                    ? t("Thumbnail atau frame kunci (opsional)", "Thumbnail or key frames (optional)")
+                    : panduan.bukti === "kode"
+                      ? t("Tangkapan layar (opsional)", "Screenshots (optional)")
+                      : t("Tangkapan layar atau grafik (opsional)", "Screenshots or charts (optional)")}
+              </span>
+              <LampiranGambar
+                userId={user?.id}
+                proyekId={baris.id}
+                lampiran={data.lampiran}
+                wajib={jenisBukti.minGambar > 0}
+                onUbah={(lampiran) => ubah({ lampiran })}
+              />
+            </div>
+
+            <div className="pb-po-studi-atas">
+              <b>{t("Studi kasus", "Case study")}</b>
+              <button type="button" className="pb-po-teks-tombol" onClick={() => ubah({ studi: kerangkaStudi(proyek, data.studi) })}>
+                <Wand2 size={14} /> {t("Isi kerangka dari brief", "Draft from the brief")}
+              </button>
+            </div>
+            {BIDANG_STUDI.map((b) => {
+              const n = String(data.studi[b.k] || "").trim().length;
+              return (
+                <label key={b.k} className="pb-po-isian">
+                  <span>
+                    {b.label}
+                    {b.min === 0 && <em> · {t("opsional", "optional")}</em>}
+                  </span>
+                  <small className="bantu">{b.bantu}</small>
+                  <textarea
+                    value={data.studi[b.k] || ""}
+                    onChange={(e) => ubahStudi(b.k, e.target.value)}
+                    rows={b.baris}
+                    maxLength={b.maks}
+                    placeholder={b.contoh || ""}
+                  />
+                  <small>{n < b.min ? t(`Minimal ${b.min} karakter (kurang ${b.min - n}).`, `At least ${b.min} characters (${b.min - n} to go).`) : `${n}/${b.maks}`}</small>
+                  {b.k === "hasil" && (
+                    <div className="pb-po-metrik">
+                      <Lightbulb size={13} />
+                      <div>
+                        <b>{t("Contoh hasil yang bisa diukur di bidang ini", "Measurable results that fit this field")}</b>
+                        <ul>
+                          {panduan.metrik.map((m) => (
+                            <li key={m}>{m}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </label>
+              );
+            })}
+          </>
+        )}
+
+        {data.dikirim && st.revisiBeres && st.studiBeres && st.buktiBeres && (
+          <>
+            <h3 className="pb-po-sub">{t("5. Periksa ulang sebelum diserahkan", "5. Final check before handing over")}</h3>
             <p className="pb-po-ket">{t("Centang hanya yang benar-benar sudah kamu penuhi. Daftar ini tercetak di PDF sebagai penilaian sendiri.", "Tick only what you've truly done. This list is printed in the PDF as a self-assessment.")}</p>
             <div className="pb-po-cek">
               {(proyek.rubrik || []).map((r, i) => (
@@ -428,7 +668,7 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
             <span>
               {st.selesai
                 ? t("Unduh hasilnya, atau gabungkan dengan proyek lain di halaman portofolio.", "Download it, or combine it with your other project on the portfolio page.")
-                : t("Unduhan terbuka setelah keempat langkah selesai.", "Downloads unlock once all four steps are done.")}
+                : t("Unduhan terbuka setelah kelima langkah selesai.", "Downloads unlock once all five steps are done.")}
             </span>
           </div>
           <div className="pb-po-unduh-tombol">
@@ -512,9 +752,15 @@ export function PortofolioPanel({ setActive }) {
         revisi: data.revisi,
         cek: data.cek,
         tautan: data.tautan,
+        studi: data.studi || {},
+        lampiran: data.lampiran || [],
       })
       .eq("id", id);
-    if (error) return false;
+    if (error) {
+      return /studi|lampiran|schema cache/i.test(error.message)
+        ? t("Kolom studi kasus belum ada di database. Jalankan supabase/sql/09_portofolio_lampiran.sql.", "Case-study columns are missing in the database. Run supabase/sql/09_portofolio_lampiran.sql.")
+        : error.message;
+    }
     setBaris((lama) => (lama || []).map((b) => (b.id === id ? { ...b, ...data } : b)));
     return true;
   }, []);
@@ -610,8 +856,8 @@ export function PortofolioPanel({ setActive }) {
         <h2>{t("Portofolio khusus paket Pro dan Max", "Portfolio is for Pro and Max plans")}</h2>
         <p>
           {t(
-            "Pilih 2 proyek dari 40 profesi remote (VA, data entry, desain, penulis, dan lainnya), kerjakan seperti untuk klien sungguhan, lalu unduh hasilnya sebagai PDF portofolio dan Excel. Cocok untuk dilampirkan di lamaran atau proposal Upwork saat kamu belum punya pengalaman.",
-            "Pick 2 projects from 40 remote roles (VA, data entry, design, writing, and more), do them as you would for a real client, then download a PDF portfolio and Excel files. Great to attach to applications or Upwork proposals when you don't have experience yet.",
+            "Pilih 2 proyek dari 40 profesi remote (VA, data entry, desain, penulis, dan lainnya), kerjakan seperti untuk klien sungguhan, susun menjadi studi kasus lengkap dengan mockup atau tautan hasil, lalu unduh sebagai PDF portofolio. Cocok untuk dilampirkan di lamaran atau proposal Upwork saat kamu belum punya pengalaman.",
+            "Pick 2 projects from 40 remote roles (VA, data entry, design, writing, and more), do them as you would for a real client, turn them into case studies with mockups or live links, then download a PDF portfolio. Great to attach to applications or Upwork proposals when you don't have experience yet.",
           )}
         </p>
         <button type="button" className="pb-btn pb-btn-primary" onClick={() => setActive?.("paket")}>
@@ -666,9 +912,9 @@ export function PortofolioPanel({ setActive }) {
                     <small>{p.namaProfesi}</small>
                     <b>{p.judul}</b>
                     <span className="pb-po-bar">
-                      <i style={{ width: `${((Math.min(st.langkah, 5) - 1) / 4) * 100}%` }} />
+                      <i style={{ width: `${((Math.min(st.langkah, 6) - 1) / 5) * 100}%` }} />
                     </span>
-                    <small>{st.selesai ? t("Selesai", "Complete") : t(`Langkah ${st.langkah} dari 4`, `Step ${st.langkah} of 4`)}</small>
+                    <small>{st.selesai ? t("Selesai", "Complete") : t(`Langkah ${st.langkah} dari 5`, `Step ${st.langkah} of 5`)}</small>
                   </span>
                   <ArrowRight size={16} />
                 </button>
@@ -717,6 +963,15 @@ export function PortofolioPanel({ setActive }) {
                       <FileSpreadsheet size={12} /> Excel
                     </span>
                   )}
+                  {(() => {
+                    const pj = panduanJual(p.profesi, p.kategori, p.tugas);
+                    if (!pj.jenis.pendek) return null;
+                    return (
+                      <span className={`pb-po-format ${pj.wajib ? "kuat" : ""}`} title={pj.jenis.label}>
+                        {pj.bukti === "gambar" ? <IkonGambar size={12} /> : pj.bukti === "media" ? <Video size={12} /> : <Code2 size={12} />} {pj.wajib ? "" : "+ "}{pj.jenis.pendek}
+                      </span>
+                    );
+                  })()}
                   <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" disabled={!!memilih} onClick={() => pilih(p)}>
                     {memilih === p.id ? <Loader2 size={13} className="pb-po-putar" /> : <Plus size={13} />} {t("Pilih", "Pick")}
                   </button>

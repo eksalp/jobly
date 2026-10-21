@@ -3,9 +3,10 @@
  *
  *   buatPdfPortofolio({ profil, proyek: [{ proyek, data }] })  → Blob
  *
- * Satu halaman sampul, lalu setiap proyek dimulai di halaman baru:
- * brief klien, langkah yang dikerjakan, hasil kerja (termasuk tabel),
- * tanggapan atas revisi klien, dan daftar periksa.
+ * Satu halaman sampul, lalu setiap proyek dimulai di halaman baru dan
+ * disusun sebagai studi kasus: ringkasan, gambar utama, tantangan &
+ * brief, peran, proses, hasil & dampak, galeri, hasil kerja lengkap,
+ * revisi klien, pelajaran, dan daftar periksa.
  *
  * Setiap halaman diberi keterangan "Proyek latihan di Jobly" supaya
  * jelas bahwa ini studi kasus latihan, bukan pengalaman kerja dengan
@@ -251,6 +252,79 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
     y += 4;
   };
 
+  /** Satu gambar selebar `w` mm, tinggi maksimal `maksH` mm. */
+  const ukurGambar = (g, w, maksH) => {
+    let lebar = w;
+    let tinggi = (w * (g.h || 1)) / (g.w || 1);
+    if (tinggi > maksH) {
+      lebar = (lebar * maksH) / tinggi;
+      tinggi = maksH;
+    }
+    return { lebar, tinggi };
+  };
+
+  const pasangGambar = (g, x, yy, lebar, tinggi) => {
+    try {
+      doc.addImage(g.dataUrl, "JPEG", x, yy, lebar, tinggi, undefined, "FAST");
+      doc.setDrawColor(...GARIS);
+      doc.setLineWidth(0.2);
+      doc.rect(x, yy, lebar, tinggi);
+    } catch {
+      /* gambar rusak dilewati */
+    }
+  };
+
+  const keterangan = (teks, x, yy, lebar) => {
+    if (!String(teks || "").trim()) return 0;
+    huruf(8, false, ABU);
+    const baris = doc.splitTextToSize(tulisAman(teks), lebar).slice(0, 2);
+    baris.forEach((l, i) => doc.text(l, x, yy + 3.6 + i * 3.6));
+    return baris.length * 3.6 + 1.5;
+  };
+
+  const gambarBesar = (g) => {
+    const { lebar, tinggi } = ukurGambar(g, ISI, 120);
+    pastikan(tinggi + 10);
+    const x = M + (ISI - lebar) / 2;
+    pasangGambar(g, x, y, lebar, tinggi);
+    y += tinggi;
+    y += keterangan(g.ket, x, y, lebar) + 4;
+  };
+
+  const galeri = (daftar) => {
+    const kolomW = (ISI - 6) / 2;
+    for (let i = 0; i < daftar.length; i += 2) {
+      const pasangan = daftar.slice(i, i + 2).map((g) => ({ g, ...ukurGambar(g, kolomW, 85) }));
+      const tinggiMaks = Math.max(...pasangan.map((x) => x.tinggi));
+      pastikan(tinggiMaks + 12);
+      let tambahan = 0;
+      pasangan.forEach((x, j) => {
+        const kiri = M + j * (kolomW + 6) + (kolomW - x.lebar) / 2;
+        pasangGambar(x.g, kiri, y, x.lebar, x.tinggi);
+        tambahan = Math.max(tambahan, keterangan(x.g.ket, M + j * (kolomW + 6), y + x.tinggi, kolomW));
+      });
+      y += tinggiMaks + tambahan + 5;
+    }
+  };
+
+  /** Ringkasan satu kalimat dalam kotak menonjol. */
+  const kotakRingkasan = (teks) => {
+    huruf(12.5, true, AKSEN);
+    const baris = doc.splitTextToSize(tulisAman(teks), ISI - 12);
+    const tinggi = baris.length * 6 + 9;
+    pastikan(tinggi + 4);
+    doc.setFillColor(...LATAR);
+    doc.roundedRect(M, y, ISI, tinggi, 2.5, 2.5, "F");
+    doc.setFillColor(...AKSEN);
+    doc.rect(M, y, 1.6, tinggi, "F");
+    let yy = y + 8;
+    baris.forEach((l) => {
+      doc.text(l, M + 7, yy);
+      yy += 6;
+    });
+    y += tinggi + 5;
+  };
+
   /* --------------------------------------------------- sampul */
   doc.setFillColor(...AKSEN);
   doc.rect(0, 0, LEBAR, 92, "F");
@@ -287,7 +361,16 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
     });
     huruf(9.5, false, ABU);
     doc.text(tulisAman(`${p.namaProfesi}${p.dari?.peran ? `  ·  ${t("Klien", "Client")}: ${p.dari.peran}` : ""}`), M + 8, y);
-    y += 10;
+    y += 5;
+    const ringkas = String(proyek[i].data?.studi?.ringkasan || "").trim();
+    if (ringkas) {
+      huruf(9.5, false, TINTA);
+      doc.splitTextToSize(tulisAman(ringkas), ISI - 10).slice(0, 2).forEach((l) => {
+        doc.text(l, M + 8, y);
+        y += 4.6;
+      });
+    }
+    y += 5;
   });
 
   y += 4;
@@ -297,8 +380,8 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
   y += 7;
   paragraf(
     t(
-      "Portofolio ini berisi proyek latihan berbasis studi kasus yang saya kerjakan di Jobly. Brief, klien, dan data di dalamnya adalah simulasi yang disusun menyerupai pekerjaan nyata. Setiap proyek mencakup brief klien, hasil kerja, tanggapan atas permintaan revisi, dan daftar periksa yang saya nilai sendiri.",
-      "This portfolio contains case-study practice projects I completed on Jobly. The briefs, clients, and data are simulations modelled on real work. Each project includes the client brief, my work, my response to a revision request, and a self-assessed checklist.",
+      "Portofolio ini berisi proyek latihan berbasis studi kasus yang saya kerjakan di Jobly. Brief, klien, dan data di dalamnya adalah simulasi yang disusun menyerupai pekerjaan nyata. Setiap proyek disajikan sebagai studi kasus: tantangan klien, peran dan proses saya, hasil kerja beserta buktinya, tanggapan atas revisi, dan pelajaran yang saya ambil.",
+      "This portfolio contains case-study practice projects I completed on Jobly. The briefs, clients, and data are simulations modelled on real work. Each project is presented as a case study: the client's challenge, my role and process, the work and its evidence, my response to a revision, and lessons learned.",
     ),
     { ukuran: 9.5, warna: ABU, jarak: 4.7 },
   );
@@ -331,20 +414,50 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
     ].filter(Boolean);
     if (meta.length) paragraf(meta.join("   ·   "), { ukuran: 9, warna: ABU, sesudah: 3 });
 
-    judulBagian(t("Brief dari klien", "Client brief"));
-    kotakPesan(p.dari?.nama ? `${p.dari.nama}${p.kanal ? ` · ${p.kanal}` : ""}` : "", p.brief);
+    const studi = data.studi || {};
+    const ada = (k) => String(studi[k] || "").trim();
+    const gambar = Array.isArray(data.gambar) ? data.gambar : [];
 
-    if (p.langkah?.length) {
-      judulBagian(t("Yang dikerjakan", "What I did"));
-      daftarButir(p.langkah, { nomor: true });
+    if (ada("ringkasan")) kotakRingkasan(studi.ringkasan);
+    if (gambar.length) gambarBesar(gambar[0]);
+
+    judulBagian(t("Tantangan klien", "The challenge"));
+    if (ada("tantangan")) paragraf(studi.tantangan, { ukuran: 10 });
+    kotakPesan(p.dari?.nama ? `${t("Brief", "Brief")} · ${p.dari.nama}${p.kanal ? ` · ${p.kanal}` : ""}` : t("Brief", "Brief"), p.brief);
+
+    if (ada("peran")) {
+      judulBagian(t("Peran saya & alat", "My role & tools"));
+      paragraf(studi.peran, { ukuran: 10 });
     }
 
-    judulBagian(t("Hasil kerja", "My work"));
+    judulBagian(t("Pendekatan & proses", "Approach & process"));
+    if (ada("proses")) paragraf(studi.proses, { ukuran: 10 });
+    else if (p.langkah?.length) daftarButir(p.langkah, { nomor: true });
+
+    if (ada("hasil")) {
+      judulBagian(t("Hasil & dampak", "Results & impact"));
+      paragraf(studi.hasil, { ukuran: 10 });
+    }
+
+    if (gambar.length > 1) {
+      judulBagian(t("Galeri hasil", "Gallery"));
+      galeri(gambar.slice(1));
+    }
+
+    judulBagian(t("Hasil kerja lengkap", "The full deliverable"));
     if (tabelTerisi(data.tabel)) tabel(data.tabel);
     if (String(data.jawaban || "").trim()) paragraf(data.jawaban, { ukuran: 10 });
 
     if (data.tautan) {
-      paragraf(`${t("Tautan hasil kerja", "Link to the work")}: ${data.tautan}`, { ukuran: 9.5, warna: AKSEN });
+      huruf(9.5, true, AKSEN);
+      pastikan(8);
+      const label = `${t("Lihat hasil kerja", "View the work")}: `;
+      doc.text(tulisAman(label), M, y);
+      const lebarLabel = doc.getTextWidth(tulisAman(label));
+      huruf(9.5, false, AKSEN);
+      const tautan = tulisAman(data.tautan).slice(0, 110);
+      doc.textWithLink(tautan, M + lebarLabel, y, { url: data.tautan });
+      y += 7;
     }
 
     if (p.revisi && String(data.revisi || "").trim()) {
@@ -352,6 +465,11 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
       kotakPesan(p.dari?.nama || "", p.revisi.pesan);
       judulBagian(t("Tanggapan saya", "My response"));
       paragraf(data.revisi, { ukuran: 10 });
+    }
+
+    if (ada("pelajaran")) {
+      judulBagian(t("Pelajaran & langkah berikutnya", "Lessons & next steps"));
+      paragraf(studi.pelajaran, { ukuran: 10 });
     }
 
     if (p.rubrik?.length) {

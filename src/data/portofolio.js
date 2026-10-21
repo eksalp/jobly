@@ -8,6 +8,7 @@
  */
 import { PROFESI, KATEGORI_PANDUAN } from "./panduan.js";
 import { t } from "../i18n.js";
+import { panduanJual, studiLengkap, buktiLengkap } from "./portofolioJual.js";
 
 export const MAKS_PROYEK = 2;
 export const PAKET_PORTOFOLIO = ["aktif", "serius"]; // Pro, Max
@@ -100,16 +101,29 @@ export const tabelTerisi = (tabel) =>
 
 const panjang = (s) => String(s || "").trim().length;
 
+/** Langkah pengerjaan proyek (urutan sama dengan statusProyek().langkah). */
+export const TAHAP_PROYEK = [
+  t("Kerjakan", "Do the work"),
+  t("Kirim ke klien", "Send to client"),
+  t("Tanggapi revisi", "Handle revision"),
+  t("Studi kasus & bukti", "Case study & proof"),
+  t("Periksa ulang", "Final check"),
+];
+
 /** Status pengerjaan satu proyek. */
 export function statusProyek(proyek, data) {
   const hasilCukup = panjang(data?.jawaban) >= MIN_HASIL || (tabelTerisi(data?.tabel) && panjang(data?.jawaban) >= 40);
   const revisiPerlu = Boolean(proyek?.revisi);
   const revisiBeres = !revisiPerlu || panjang(data?.revisi) >= MIN_REVISI;
+  const panduan = panduanJual(proyek?.profesi, proyek?.kategori, proyek?.tugas);
+  const studiBeres = studiLengkap(data?.studi);
+  const buktiBeres = buktiLengkap(panduan, data);
   const cek = Array.isArray(data?.cek) ? data.cek : [];
   const jumlahCek = (proyek?.rubrik || []).filter((_, i) => cek[i]).length;
-  const selesai = hasilCukup && Boolean(data?.dikirim) && revisiBeres && jumlahCek === (proyek?.rubrik || []).length;
-  const langkah = !hasilCukup ? 1 : !data?.dikirim ? 2 : !revisiBeres ? 3 : jumlahCek < (proyek?.rubrik || []).length ? 4 : 5;
-  return { hasilCukup, revisiBeres, jumlahCek, selesai, langkah };
+  const cekBeres = jumlahCek === (proyek?.rubrik || []).length;
+  const selesai = hasilCukup && Boolean(data?.dikirim) && revisiBeres && studiBeres && buktiBeres && cekBeres;
+  const langkah = !hasilCukup ? 1 : !data?.dikirim ? 2 : !revisiBeres ? 3 : !(studiBeres && buktiBeres) ? 4 : !cekBeres ? 5 : 6;
+  return { hasilCukup, revisiBeres, studiBeres, buktiBeres, jumlahCek, selesai, langkah, panduan };
 }
 
 /** Nama berkas aman: "portofolio-virtual-assistant-budi.pdf" */
