@@ -1,19 +1,142 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft, ArrowRight, Check, Clock, Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Lock,
-  Loader2, Play, RotateCcw, X, AlertTriangle, Eye,
+  Loader2, Play, RotateCcw, X, AlertTriangle, Eye, Languages, Shapes, Focus, GraduationCap, Lightbulb, BookOpen,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
 import { useLangganan } from "../../context/LanggananContext";
 import {
   JENIS_TES, buatSoal, buatAcak, buatKraepelin, nilaiKraepelin, nilaiPilihan, hitungKepribadian,
-  DIMENSI, KRAEPELIN, labelSkor,
+  DIMENSI, KRAEPELIN, labelSkor, buatKecermatan, nilaiKecermatan, KECERMATAN, LABEL_KECERMATAN,
 } from "../../data/tesKerja";
 import { t } from "../../i18n.js";
 
-const IKON = { Columns3, BookA, Sigma, Brain, ScanSearch, UserRound };
+const IKON = { Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Languages, Shapes, Focus, GraduationCap };
 const LIKERT = [t("Sangat tidak sesuai", "Strongly disagree"), t("Tidak sesuai", "Disagree"), t("Netral", "Neutral"), t("Sesuai", "Agree"), t("Sangat sesuai", "Strongly agree")];
+
+/* ------------------------------------------------------------------ */
+/*  Gambar untuk soal figural                                          */
+/* ------------------------------------------------------------------ */
+
+const bacaFigur = (x) => {
+  if (typeof x !== "string") return x;
+  try {
+    return JSON.parse(x);
+  } catch {
+    return null;
+  }
+};
+
+export function Figur({ data, ukuran = 56 }) {
+  const f = bacaFigur(data);
+  if (!f) return null;
+  const c = 50, R = 34;
+  const warna = f.f ? "currentColor" : "none";
+  let bentuk;
+  if (f.s === 0) bentuk = <circle cx={c} cy={c} r={R} />;
+  else if (f.s === 1) bentuk = <path d="M50 12 L74 42 L59 42 L59 86 L41 86 L41 42 L26 42 Z" />;
+  else {
+    const titik = Array.from({ length: f.s }, (_, i) => {
+      const a = (-90 + (360 / f.s) * i) * (Math.PI / 180);
+      return `${(c + R * Math.cos(a)).toFixed(1)},${(c + R * Math.sin(a)).toFixed(1)}`;
+    }).join(" ");
+    bentuk = <polygon points={titik} />;
+  }
+  const n = f.n || 0;
+  const kolom = n <= 4 ? 2 : 3;
+  const baris = Math.ceil(n / kolom);
+  const jarak = 13;
+  const titikIsi = Array.from({ length: n }, (_, i) => {
+    const b = Math.floor(i / kolom), k = i % kolom;
+    const dalamBaris = b === baris - 1 ? n - b * kolom : kolom;
+    return [c + (k - (dalamBaris - 1) / 2) * jarak, c + 4 + (b - (baris - 1) / 2) * jarak];
+  });
+  return (
+    <svg className="pb-fig" width={ukuran} height={ukuran} viewBox="0 0 100 100" aria-hidden="true">
+      <g transform={`rotate(${f.r || 0} 50 50)`} fill={warna} stroke="currentColor" strokeWidth="4" strokeLinejoin="round">
+        {bentuk}
+      </g>
+      {titikIsi.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r="4.2" className={f.f ? "putih" : ""} fill="currentColor" />
+      ))}
+    </svg>
+  );
+}
+
+function SeriFigur({ seri }) {
+  return (
+    <div className="pb-fig-seri">
+      {seri.map((x, i) => (
+        <span key={i}>
+          <Figur data={x} ukuran={60} />
+        </span>
+      ))}
+      <span className="tanya">?</span>
+    </div>
+  );
+}
+
+function Bacaan({ teks, ringkas }) {
+  const [buka, setBuka] = useState(!ringkas);
+  if (!teks) return null;
+  return (
+    <div className="pb-tk-bacaan">
+      <button type="button" onClick={() => setBuka((x) => !x)}>
+        <BookOpen size={14} /> {t("Bacaan / data", "Passage / data")} {ringkas && (buka ? "▴" : "▾")}
+      </button>
+      {buka && <p>{teks}</p>}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Layar pembuka: tips sebelum tes dimulai                            */
+/* ------------------------------------------------------------------ */
+
+export function IntroTes({ tes, contoh, onMulai, onBatal, memulai }) {
+  return (
+    <div className="pb-panel pb-tk-intro">
+      <span className="pb-label">{contoh ? t("Contoh soal", "Sample questions") : t("Sebelum mulai", "Before you start")}</span>
+      <h3>{tes.nama}</h3>
+      <p className="pb-tk-ket">{tes.ket}</p>
+      <div className="pb-tk-info-mulai">
+        <span>
+          <Clock size={14} /> {tes.info}
+        </span>
+      </div>
+      {tes.tips?.length > 0 && (
+        <div className="pb-tk-tips">
+          <b>
+            <Lightbulb size={15} /> {t("Tips mengerjakan", "Tips")}
+          </b>
+          <ol>
+            {tes.tips.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+      {!contoh && (
+        <p className="pb-tk-peringatan">
+          <AlertTriangle size={14} />
+          {t(
+            "Tes ini hanya bisa dikerjakan SEKALI di paket Max-mu dan langsung dihitung terpakai saat dimulai, seperti tes sungguhan. Jangan menutup halaman sampai selesai.",
+            "This test can be taken ONCE on your Max plan and counts as used once started, like a real test. Don't close the page until you finish.",
+          )}
+        </p>
+      )}
+      <div className="pb-tk-nav">
+        <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={onBatal}>
+          {t("Batal", "Cancel")}
+        </button>
+        <button type="button" className="pb-btn pb-btn-primary" disabled={memulai} onClick={onMulai}>
+          {memulai ? <Loader2 size={15} className="pb-po-putar" /> : <Play size={15} />} {contoh ? t("Coba contoh", "Try sample") : t("Mulai tes sekarang", "Start the test now")}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const mmss = (d) => `${String(Math.floor(Math.max(0, d) / 60)).padStart(2, "0")}:${String(Math.max(0, d) % 60).padStart(2, "0")}`;
 
@@ -99,7 +222,11 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
             ))}
           </div>
         ) : (
-          <p className="pb-tk-tanya">{s.q}</p>
+          <>
+            <Bacaan key={s.bacaan || i} teks={s.bacaan} />
+            <p className="pb-tk-tanya">{s.q}</p>
+            {s.figural && <SeriFigur seri={s.seri} />}
+          </>
         )}
 
         {s.likert ? (
@@ -112,11 +239,11 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
             ))}
           </div>
         ) : (
-          <div className={`pb-tk-pilihan ${ketelitian ? "dua" : ""}`}>
+          <div className={`pb-tk-pilihan ${ketelitian ? "dua" : ""} ${s.figural ? "fig" : ""}`}>
             {s.o.map((o, j) => (
               <button key={o} type="button" className={jawab[i] === j ? "on" : ""} onClick={() => pilih(j)}>
                 {!ketelitian && <span>{String.fromCharCode(65 + j)}</span>}
-                {o}
+                {s.figural ? <Figur data={o} /> : o}
                 {ketelitian && <kbd>{j ? "B" : "S"}</kbd>}
               </button>
             ))}
@@ -291,12 +418,115 @@ export function TesKraepelin({ benih, kolomAwal = 0, onSelesai, onBatal, contoh 
 }
 
 /* ------------------------------------------------------------------ */
+/*  Kecermatan (simbol hilang)                                         */
+/* ------------------------------------------------------------------ */
+
+export function TesKecermatan({ benih, onSelesai, onBatal, contoh }) {
+  const jumlahKolom = contoh ? 2 : KECERMATAN.kolom;
+  const detik = contoh ? 20 : KECERMATAN.detikPerKolom;
+  const data = useMemo(() => buatKecermatan(buatAcak(benih), jumlahKolom), [benih, jumlahKolom]);
+  const [kolom, setKolom] = useState(0);
+  const [pos, setPos] = useState(0);
+  const [sisa, setSisa] = useState(detik);
+  const [kilat, setKilat] = useState("");
+  const hasil = useRef(Array.from({ length: jumlahKolom }, () => ({ dijawab: 0, benar: 0 })));
+  const kolomRef = useRef(0);
+  kolomRef.current = kolom;
+  const selesaiRef = useRef(false);
+
+  const lanjutKolom = useCallback(() => {
+    if (kolomRef.current >= jumlahKolom - 1) {
+      if (!selesaiRef.current) {
+        selesaiRef.current = true;
+        onSelesai(hasil.current);
+      }
+      return;
+    }
+    setKolom((k) => k + 1);
+    setPos(0);
+    setSisa(detik);
+  }, [jumlahKolom, detik, onSelesai]);
+
+  useEffect(() => {
+    const id = setInterval(() => setSisa((x) => x - 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  useEffect(() => {
+    if (sisa <= 0) lanjutKolom();
+  }, [sisa, lanjutKolom]);
+
+  const kol = data[kolom];
+  const soal = kol.soal[pos % kol.soal.length];
+  const jawab = (j) => {
+    const h = hasil.current[kolom];
+    h.dijawab++;
+    if (j === soal.a) h.benar++;
+    setKilat(j === soal.a ? "ok" : "");
+    setPos((p) => p + 1);
+  };
+
+  useEffect(() => {
+    const f = (e) => {
+      const j = LABEL_KECERMATAN.indexOf(e.key.toUpperCase());
+      if (j >= 0) jawab(j);
+    };
+    window.addEventListener("keydown", f);
+    return () => window.removeEventListener("keydown", f);
+  });
+
+  return (
+    <div className="pb-tk-kerja">
+      <div className="pb-tk-bar">
+        <button type="button" className="pb-tk-batal" onClick={onBatal}>
+          <X size={15} /> {contoh ? t("Tutup contoh", "Close sample") : t("Keluar", "Exit")}
+        </button>
+        <b>
+          {t("Kolom", "Column")} {kolom + 1} / {jumlahKolom}
+        </b>
+        <span className={`pb-tk-waktu ${sisa <= 5 ? "habis" : ""}`}>
+          <Clock size={14} /> {Math.max(0, sisa)}s
+        </span>
+      </div>
+      <div className="pb-tk-progres">
+        <i style={{ width: `${(Math.max(0, sisa) / detik) * 100}%`, transition: "width 1s linear" }} />
+      </div>
+      <div className="pb-panel pb-kc">
+        <div className="pb-kc-kunci">
+          {kol.kunci.map((x, j) => (
+            <div key={j}>
+              <b>{x}</b>
+              <span>{LABEL_KECERMATAN[j]}</span>
+            </div>
+          ))}
+        </div>
+        <p className="pb-tk-ket">{t("Simbol mana yang TIDAK ada di bawah ini?", "Which symbol is MISSING below?")}</p>
+        <div className={`pb-kc-soal ${kilat}`} key={pos}>
+          {soal.tampil.map((x, j) => (
+            <b key={j}>{x}</b>
+          ))}
+        </div>
+        <div className="pb-kc-pad">
+          {LABEL_KECERMATAN.map((l, j) => (
+            <button key={l} type="button" onClick={() => jawab(j)}>
+              {l}
+            </button>
+          ))}
+        </div>
+        <small className="pb-tk-ket">
+          {t(`Terjawab di kolom ini: ${pos}. Bisa juga menekan huruf A–E di keyboard.`, `Answered in this column: ${pos}. You can also press A–E on your keyboard.`)}
+        </small>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Hasil                                                              */
 /* ------------------------------------------------------------------ */
 
-function GrafikKraepelin({ perKolom }) {
+function GrafikKraepelin({ perKolom, batas = KRAEPELIN.baris - 1 }) {
   const W = 560, H = 160, P = 22;
-  const maks = Math.max(KRAEPELIN.baris - 1, ...perKolom.map((k) => k.dijawab));
+  const maks = Math.max(batas, ...perKolom.map((k) => k.dijawab));
   const x = (i) => P + (i * (W - P * 2)) / Math.max(1, perKolom.length - 1);
   const y = (v) => H - P - (v / maks) * (H - P * 2);
   const garis = perKolom.map((k, i) => `${x(i)},${y(k.dijawab)}`).join(" ");
@@ -315,7 +545,9 @@ function GrafikKraepelin({ perKolom }) {
 
 export function Hasil({ tes, sesi, soal, onKembali }) {
   const [tinjau, setTinjau] = useState(false);
+  const [hanyaSalah, setHanyaSalah] = useState(false);
   const h = sesi.hasil || {};
+  const kolomTes = tes.id === "kraepelin" || tes.id === "kecermatan";
   return (
     <div className="pb-tk-hasil">
       <button type="button" className="pb-link" onClick={onKembali} style={{ border: 0, background: "none", cursor: "pointer", padding: 0, marginBottom: 12 }}>
@@ -329,7 +561,7 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
             <div>
               <strong>{labelSkor(sesi.skor ?? 0)}</strong>
               <span>
-                {tes.id === "kraepelin"
+                {kolomTes
                   ? t(`${h.total ?? 0} jawaban, ${h.benar ?? 0} benar`, `${h.total ?? 0} answers, ${h.benar ?? 0} correct`)
                   : t(`${h.benar ?? 0} dari ${h.total ?? 0} soal benar`, `${h.benar ?? 0} of ${h.total ?? 0} correct`)}
               </span>
@@ -339,7 +571,7 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
           <h2 style={{ margin: "6px 0 14px" }}>{t("Profil kepribadian kerjamu", "Your work personality profile")}</h2>
         )}
 
-        {tes.id === "kraepelin" && h.perKolom && (
+        {kolomTes && h.perKolom && (
           <>
             <div className="pb-tk-batang">
               {[
@@ -358,7 +590,7 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
               ))}
             </div>
             <h4 className="pb-tk-sub">{t("Grafik kerjamu per kolom", "Your output per column")}</h4>
-            <GrafikKraepelin perKolom={h.perKolom} />
+            <GrafikKraepelin perKolom={h.perKolom} batas={tes.id === "kecermatan" ? 25 : KRAEPELIN.baris - 1} />
             <p className="pb-tk-ket">
               {t(
                 "Garis yang stabil dan sedikit naik di akhir menunjukkan ritme kerja yang terjaga. Garis yang turun tajam di akhir menandakan cepat lelah; garis yang naik-turun menandakan konsentrasi belum ajeg.",
@@ -407,24 +639,60 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
           </div>
         )}
 
+        {tes.tips?.length > 0 && tes.id !== "kepribadian" && (
+          <div className="pb-tk-tips">
+            <b>
+              <Lightbulb size={15} /> {t("Tips untuk tes sungguhan", "Tips for the real test")}
+            </b>
+            <ol>
+              {tes.tips.map((x) => (
+                <li key={x}>{x}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+
         {soal?.length > 0 && !soal[0].likert && (
           <>
-            <button type="button" className="pb-po-teks-tombol" onClick={() => setTinjau((x) => !x)}>
-              <Eye size={14} /> {tinjau ? t("Sembunyikan pembahasan", "Hide answers") : t("Lihat pembahasan", "See answers")}
-            </button>
+            <div className="pb-tk-bahas-atas">
+              <button type="button" className="pb-po-teks-tombol" onClick={() => setTinjau((x) => !x)}>
+                <Eye size={14} /> {tinjau ? t("Sembunyikan pembahasan", "Hide answers") : t("Lihat kunci & pembahasan", "See answers & explanations")}
+              </button>
+              {tinjau && (
+                <label>
+                  <input type="checkbox" checked={hanyaSalah} onChange={(e) => setHanyaSalah(e.target.checked)} /> {t("Hanya yang salah/kosong", "Only wrong/blank")}
+                </label>
+              )}
+            </div>
             {tinjau && (
               <ol className="pb-tk-bahas">
                 {soal.map((s, i) => {
                   const j = h.jawaban?.[i];
                   const benar = j === s.a;
+                  if (hanyaSalah && benar) return null;
+                  const tampil = (k) => (k == null ? t("(kosong)", "(blank)") : s.figural ? <Figur data={s.o[k]} ukuran={34} /> : s.o[k]);
                   return (
-                    <li key={i} className={benar ? "benar" : "salah"}>
+                    <li key={i} value={i + 1} className={benar ? "benar" : "salah"}>
+                      {s.bagian && <em className="pb-tk-bahas-bagian">{s.bagian}</em>}
+                      {s.bacaan && (i === 0 || soal[i - 1].bacaan !== s.bacaan || hanyaSalah) && <Bacaan teks={s.bacaan} ringkas />}
                       <p>{s.q}</p>
-                      <span>
-                        {benar ? <Check size={13} /> : <X size={13} />} {t("Jawabanmu", "Your answer")}: {j != null ? s.o[j] : t("(kosong)", "(blank)")}
-                        {!benar && ` · ${t("Benar", "Correct")}: ${s.o[s.a]}`}
-                      </span>
-                      {s.e && <small>{s.e}</small>}
+                      {s.figural && <SeriFigur seri={s.seri} />}
+                      <div className="pb-tk-bahas-jawab">
+                        <span className="kamu">
+                          {benar ? <Check size={13} /> : <X size={13} />} {t("Jawabanmu", "Your answer")}: {tampil(j)}
+                        </span>
+                        {!benar && (
+                          <span className="kunci">
+                            <Check size={13} /> {t("Kunci", "Answer")}: {tampil(s.a)}
+                          </span>
+                        )}
+                      </div>
+                      {s.e && (
+                        <div className="pb-tk-bahas-e">
+                          <b>{t("Pembahasan", "Explanation")}</b>
+                          {s.e}
+                        </div>
+                      )}
                     </li>
                   );
                 })}
@@ -450,6 +718,7 @@ export function TesKerjaPanel({ setActive }) {
   const [jalan, setJalan] = useState(null); // { tes, sesi?, contoh, benih }
   const [lihat, setLihat] = useState(null); // { tes, sesi, soal }
   const [memulai, setMemulai] = useState("");
+  const [intro, setIntro] = useState(null); // { tes, contoh }
 
   const muat = useCallback(async () => {
     if (!user || !supabaseConfigured) {
@@ -478,16 +747,11 @@ export function TesKerjaPanel({ setActive }) {
     return m;
   }, [sesi]);
 
-  const mulai = async (tes) => {
+  const mulai = async (tes, sudahIntro = false) => {
     const ada = perJenis[tes.id];
-    if (!ada || ada.status !== "berjalan") {
-      const ok = window.confirm(
-        t(
-          `Mulai ${tes.nama}?\n\nSetiap tes hanya bisa dikerjakan SEKALI di paket Max-mu dan langsung dihitung terpakai saat dimulai, seperti tes sungguhan. Siapkan waktu ${tes.menit ? `±${tes.menit} menit` : "yang cukup"} dan jangan menutup halaman.`,
-          `Start ${tes.nama}?\n\nEach test can be taken ONCE on your Max plan and counts as used once started, just like a real test. Set aside ${tes.menit ? `about ${tes.menit} minutes` : "enough time"} and don't close the page.`,
-        ),
-      );
-      if (!ok) return;
+    if (!sudahIntro && (!ada || ada.status !== "berjalan")) {
+      setIntro({ tes, contoh: false });
+      return;
     }
     setMemulai(tes.id);
     setGalat("");
@@ -495,13 +759,15 @@ export function TesKerjaPanel({ setActive }) {
     setMemulai("");
     if (error) {
       setGalat(error.message);
+      setIntro(null);
       return;
     }
     const s = Array.isArray(data) ? data[0] : data;
+    setIntro(null);
     setJalan({ tes, sesi: s, benih: Number(s.benih), contoh: false });
   };
 
-  const cobaContoh = (tes) => setJalan({ tes, contoh: true, benih: Date.now() % 2 ** 31 });
+  const cobaContoh = (tes) => setIntro({ tes, contoh: true });
 
   const simpan = async (tes, jalanSesi, hasil, skor, soal) => {
     if (jalan?.contoh) {
@@ -527,6 +793,19 @@ export function TesKerjaPanel({ setActive }) {
     const keluar = () => {
       if (contoh || window.confirm(t("Keluar dari tes? Tes tetap dihitung terpakai, dan jawabanmu sejauh ini tidak tersimpan.", "Leave the test? It still counts as used, and your answers so far won't be saved."))) setJalan(null);
     };
+    if (tes.id === "kecermatan") {
+      return (
+        <TesKecermatan
+          benih={benih}
+          contoh={contoh}
+          onBatal={keluar}
+          onSelesai={(perKolom) => {
+            const n = nilaiKecermatan(perKolom);
+            simpan(tes, jalan.sesi, { ...n, perKolom }, n.skor, null);
+          }}
+        />
+      );
+    }
     if (tes.id === "kraepelin") {
       return (
         <TesKraepelin
@@ -559,6 +838,24 @@ export function TesKerjaPanel({ setActive }) {
             const n = nilaiPilihan(soal, jawaban);
             simpan(tes, jalan.sesi, { ...n, jawaban }, n.skor, soal);
           }
+        }}
+      />
+    );
+  }
+
+  if (intro) {
+    const { tes, contoh } = intro;
+    return (
+      <IntroTes
+        tes={tes}
+        contoh={contoh}
+        memulai={memulai === tes.id}
+        onBatal={() => setIntro(null)}
+        onMulai={() => {
+          if (contoh) {
+            setIntro(null);
+            setJalan({ tes, contoh: true, benih: Date.now() % 2 ** 31 });
+          } else mulai(tes, true);
         }}
       />
     );
@@ -633,7 +930,7 @@ export function TesKerjaPanel({ setActive }) {
               <small>{tes.info}</small>
               <div className="bawah">
                 {s?.status === "selesai" ? (
-                  <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => setLihat({ tes, sesi: s, soal: tes.id === "kraepelin" ? null : buatSoal(tes.id, Number(s.benih)) })}>
+                  <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => setLihat({ tes, sesi: s, soal: tes.id === "kraepelin" || tes.id === "kecermatan" ? null : buatSoal(tes.id, Number(s.benih)) })}>
                     {t("Lihat hasil", "See result")}
                   </button>
                 ) : max ? (
@@ -655,8 +952,8 @@ export function TesKerjaPanel({ setActive }) {
         <AlertTriangle size={15} />
         <span>
           {t(
-            "Tes ini adalah latihan yang meniru format psikotes umum di Indonesia. Hasilnya untuk mengenali kekuatan dan kelemahanmu, bukan diagnosis psikologis resmi. Tes CPNS dan sekolah kedinasan menyusul.",
-            "These are practice tests modelled on common Indonesian psychometric formats. Results help you see strengths and weaknesses; they aren't an official psychological assessment. CPNS and civil-service school tests are coming.",
+            "Tes ini adalah latihan yang meniru format psikotes umum di Indonesia. Hasilnya untuk mengenali kekuatan dan kelemahanmu, bukan diagnosis psikologis resmi. Kunci jawaban dan pembahasan tersedia setelah tes selesai.",
+            "These are practice tests modelled on common Indonesian psychometric formats. Results help you see strengths and weaknesses; they aren't an official psychological assessment. Answer keys and explanations are available after you finish.",
           )}
         </span>
       </div>

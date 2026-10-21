@@ -8285,3 +8285,58 @@ html[data-tema="gelap"] .fgd-ruang {
     background: var(--card);
   }
 }
+
+/* Batch G: tips, bacaan, figural, kecermatan, pembahasan */
+.pb-tk-intro h3 { margin: 4px 0 6px; }
+.pb-tk-info-mulai { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; font-size: 13.5px; color: var(--ink2); }
+.pb-tk-info-mulai span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-weight: 600; }
+.pb-tk-tips { margin: 14px 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+.pb-tk-tips b { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+.pb-tk-tips ol { margin: 8px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.65; color: var(--ink2); }
+.pb-tk-tips li + li { margin-top: 4px; }
+.pb-tk-peringatan { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--danger); line-height: 1.5; margin: 0 0 12px; }
+.pb-tk-peringatan svg { flex: none; margin-top: 2px; }
+.pb-tk-bacaan { margin: 4px 0 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); overflow: hidden; }
+.pb-tk-bacaan button { display: flex; align-items: center; gap: 6px; width: 100%; padding: 8px 12px; border: 0; background: var(--brand-soft); color: var(--brand); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; text-align: left; }
+.pb-tk-bacaan p { margin: 0; padding: 10px 14px 12px; font-size: 14px; line-height: 1.7; white-space: pre-line; color: var(--ink); max-height: 300px; overflow-y: auto; }
+.pb-fig { color: var(--ink); display: block; }
+.pb-fig .putih { fill: var(--card); }
+.pb-fig-seri { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+.pb-fig-seri span { display: grid; place-items: center; width: 70px; height: 70px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.pb-fig-seri .tanya { font-size: 26px; font-weight: 800; color: var(--brand); border-style: dashed; }
+.pb-tk-pilihan.fig { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+.pb-tk-pilihan.fig button { justify-content: center; gap: 10px; }
+.pb-kc { display: grid; gap: 12px; justify-items: center; text-align: center; }
+.pb-kc-kunci { display: grid; grid-template-columns: repeat(5, minmax(48px, 64px)); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pb-kc-kunci div { display: grid; border-left: 1px solid var(--line); }
+.pb-kc-kunci div:first-child { border-left: 0; }
+.pb-kc-kunci b { padding: 10px 0; font-size: 22px; font-family: var(--mono); }
+.pb-kc-kunci span { padding: 4px 0; font-size: 12px; font-weight: 700; background: var(--brand-soft); color: var(--brand); }
+.pb-kc-soal { display: flex; gap: 14px; padding: 14px 22px; border-radius: 14px; border: 2px dashed var(--brand-line); font-family: var(--mono); font-size: 30px; animation: pbKcMasuk .15s ease-out; }
+@keyframes pbKcMasuk { from { opacity: .3; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.pb-kc-pad { display: grid; grid-template-columns: repeat(5, 56px); gap: 8px; }
+.pb-kc-pad button { height: 52px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); font: inherit; font-size: 18px; font-weight: 800; cursor: pointer; color: var(--ink); }
+.pb-kc-pad button:active { background: var(--brand-soft); }
+.pb-tk-bahas-atas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 12px; }
+.pb-tk-bahas-atas label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink2); }
+.pb-tk-bahas li { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.pb-tk-bahas-bagian { display: inline-block; margin-bottom: 4px; font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+.pb-tk-bahas-jawab { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.pb-tk-bahas li .kunci { color: var(--ok) !important; }
+.pb-tk-bahas-e { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: var(--brand-soft); font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+.pb-tk-bahas-e b { display: block; font-size: 12px; color: var(--brand); margin-bottom: 2px; }
+@media (max-width: 600px) {
+  .pb-kc-pad { grid-template-columns: repeat(5, 1fr); width: 100%; }
+  .pb-kc-kunci { grid-template-columns: repeat(5, 1fr); width: 100%; }
+  .pb-kc-soal { font-size: 24px; gap: 10px; }
+  .pb-fig-seri span { width: 58px; height: 58px; }
+}
+.pb-fig-seri { display: grid; grid-template-columns: repeat(5, minmax(0, 70px)); }
+.pb-fig-seri span { width: auto; height: auto; aspect-ratio: 1; }
+.pb-fig-seri .pb-fig { width: 80%; height: 80%; }
+.pb-tk-bahas li .pb-fig-seri span { display: grid; color: var(--ink); }
+.pb-tk-bahas li .pb-fig-seri .tanya { color: var(--brand); }
+@media (max-width: 600px) {
+  .pb-fig-seri { gap: 6px; }
+  .pb-fig-seri span { width: auto; height: auto; }
+}

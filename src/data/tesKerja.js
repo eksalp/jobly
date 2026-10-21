@@ -9,6 +9,13 @@
  * Setiap soal pilihan ganda: { q, o: [pilihan], a: indeks benar, e: penjelasan, bagian }
  */
 import { t } from "../i18n.js";
+import { BANK_VERBAL, TIPS_VERBAL } from "./tes/bankVerbal.js";
+import { BANK_LOGIKA, TIPS_LOGIKA } from "./tes/bankLogika.js";
+import { BANK_INGGRIS, TIPS_INGGRIS } from "./tes/bankInggris.js";
+import { soalNumerikHots, TIPS_NUMERIK } from "./tes/numerik.js";
+import { soalFigural, TIPS_FIGURAL } from "./tes/figural.js";
+import { TIPS_KECERMATAN } from "./tes/kecermatan.js";
+export { buatKecermatan, nilaiKecermatan, KECERMATAN, LABEL_KECERMATAN } from "./tes/kecermatan.js";
 
 /* ------------------------------------------------------------ acak */
 
@@ -40,168 +47,37 @@ function susunPilihan(acak, benar, pengecoh) {
   return { o, a: o.indexOf(String(benar)) };
 }
 
-const rp = (n) => n.toLocaleString("id-ID");
 
-/* --------------------------------------------------- bank verbal */
+/* ------------------------------------------- bank & generator HOTS */
 
-const SINONIM = [
-  ["KONKRET", "Nyata", ["Abstrak", "Semu", "Ringkas"]],
-  ["AKURAT", "Tepat", ["Cepat", "Lengkap", "Rapi"]],
-  ["EFISIEN", "Hemat", ["Mahal", "Lambat", "Boros"]],
-  ["KOMPETEN", "Cakap", ["Ramah", "Jujur", "Rajin"]],
-  ["SINERGI", "Kerja sama", ["Persaingan", "Pemisahan", "Kekuatan"]],
-  ["ESTIMASI", "Perkiraan", ["Kepastian", "Hasil", "Tujuan"]],
-  ["PRIORITAS", "Utama", ["Tambahan", "Pilihan", "Akhir"]],
-  ["FLUKTUASI", "Naik turun", ["Kenaikan", "Kestabilan", "Penurunan"]],
-  ["KONSISTEN", "Taat asas", ["Berubah-ubah", "Cepat", "Kuat"]],
-  ["VALID", "Sahih", ["Lengkap", "Baru", "Cocok"]],
-  ["ADAPTASI", "Penyesuaian", ["Penolakan", "Perubahan", "Pembelajaran"]],
-  ["INOVASI", "Pembaruan", ["Tradisi", "Peniruan", "Perbaikan"]],
-];
-const ANTONIM = [
-  ["OPTIMIS", "Pesimis", ["Realistis", "Yakin", "Bersemangat"]],
-  ["DEFISIT", "Surplus", ["Kurang", "Rugi", "Utang"]],
-  ["SPESIFIK", "Umum", ["Khusus", "Rinci", "Jelas"]],
-  ["EKSPOR", "Impor", ["Kirim", "Dagang", "Produksi"]],
-  ["PERMANEN", "Sementara", ["Tetap", "Lama", "Abadi"]],
-  ["AKTIF", "Pasif", ["Rajin", "Giat", "Sibuk"]],
-  ["MAKSIMAL", "Minimal", ["Optimal", "Terbatas", "Rata-rata"]],
-  ["SENTRALISASI", "Desentralisasi", ["Pemusatan", "Penyatuan", "Pengaturan"]],
-  ["INKLUSIF", "Eksklusif", ["Terbuka", "Umum", "Lengkap"]],
-  ["PROGRESIF", "Regresif", ["Maju", "Modern", "Agresif"]],
-];
-const ANALOGI = [
-  ["PENA : MENULIS = GUNTING : ...", "Memotong", ["Kertas", "Tajam", "Menjahit"]],
-  ["DOKTER : PASIEN = GURU : ...", "Murid", ["Sekolah", "Buku", "Kelas"]],
-  ["AIR : HAUS = MAKANAN : ...", "Lapar", ["Kenyang", "Nasi", "Piring"]],
-  ["GAJI : KARYAWAN = HONOR : ...", "Pekerja lepas", ["Direktur", "Kantor", "Bonus"]],
-  ["MOBIL : BENSIN = MANUSIA : ...", "Makanan", ["Kaki", "Jalan", "Rumah"]],
-  ["PETANI : CANGKUL = PENULIS : ...", "Pena", ["Buku", "Cerita", "Pembaca"]],
-  ["SUHU : TERMOMETER = BERAT : ...", "Timbangan", ["Kilogram", "Barang", "Meteran"]],
-  ["LAUT : IKAN = HUTAN : ...", "Harimau", ["Pohon", "Sungai", "Gunung"]],
-  ["KOMPUTER : DATA = LEMARI : ...", "Pakaian", ["Kayu", "Kamar", "Kunci"]],
-  ["MATAHARI : SIANG = BULAN : ...", "Malam", ["Bintang", "Langit", "Gelap"]],
-];
-const KELOMPOK = [
-  [["Merah", "Biru", "Kuning", "Meja"], "Meja"],
-  [["Gitar", "Biola", "Piano", "Kuas"], "Kuas"],
-  [["Jakarta", "Bandung", "Surabaya", "Kalimantan"], "Kalimantan"],
-  [["Excel", "Word", "PowerPoint", "Chrome"], "Chrome"],
-  [["Neraca", "Laba rugi", "Arus kas", "Kontrak kerja"], "Kontrak kerja"],
-  [["Mangga", "Apel", "Wortel", "Jeruk"], "Wortel"],
-  [["Senin", "Rabu", "Maret", "Jumat"], "Maret"],
-  [["Elang", "Merpati", "Kelelawar", "Pipit"], "Kelelawar"],
-];
-
-function soalVerbal(acak, n = 20) {
-  const daftar = [
-    ...SINONIM.map(([k, b, x]) => ({ q: t(`Sinonim (persamaan kata) dari ${k} adalah…`, `Synonym of ${k}:`), b, x, bagian: t("Sinonim", "Synonyms") })),
-    ...ANTONIM.map(([k, b, x]) => ({ q: t(`Antonim (lawan kata) dari ${k} adalah…`, `Antonym of ${k}:`), b, x, bagian: t("Antonim", "Antonyms") })),
-    ...ANALOGI.map(([k, b, x]) => ({ q: t(`Lengkapi analogi berikut: ${k}`, `Complete the analogy: ${k}`), b, x, bagian: t("Analogi", "Analogies") })),
-    ...KELOMPOK.map(([kata, b]) => ({ q: t(`Kata mana yang TIDAK termasuk kelompoknya? ${kata.join(", ")}`, `Which word does NOT belong? ${kata.join(", ")}`), b, x: kata.filter((k) => k !== b), bagian: t("Pengelompokan", "Odd one out") })),
-  ];
-  return acak.kocok(daftar).slice(0, n).map((s) => ({ q: s.q, ...susunPilihan(acak, s.b, s.x), bagian: s.bagian, e: t(`Jawaban: ${s.b}.`, `Answer: ${s.b}.`) }));
+/** Soal dari bank: jawaban benar ada di o[0], lalu pilihan diacak. */
+function dariBank(acak, bank, n) {
+  return acak.kocok(bank).slice(0, n).map((x) => ({
+    q: x.q,
+    bacaan: x.bacaan,
+    ...susunPilihan(acak, x.o[0], x.o.slice(1)),
+    e: x.e,
+    bagian: x.b,
+  }));
 }
 
-/* -------------------------------------------------- numerik */
-
-function deret(acak) {
-  const jenis = acak.int(0, 4);
-  let suku = [];
-  let jelas = "";
-  if (jenis === 0) {
-    const a = acak.int(2, 30), b = acak.int(3, 12);
-    suku = Array.from({ length: 6 }, (_, i) => a + b * i);
-    jelas = t(`Selalu ditambah ${b}.`, `Add ${b} each time.`);
-  } else if (jenis === 1) {
-    const a = acak.int(1, 5), r = acak.int(2, 3);
-    suku = Array.from({ length: 6 }, (_, i) => a * r ** i);
-    jelas = t(`Selalu dikali ${r}.`, `Multiply by ${r} each time.`);
-  } else if (jenis === 2) {
-    const a = acak.int(2, 10), b = acak.int(1, 4);
-    let x = a;
-    suku = [x];
-    for (let i = 1; i < 6; i++) {
-      x += b + (i - 1) * 2;
-      suku.push(x);
-    }
-    jelas = t(`Selisihnya bertambah 2: +${b}, +${b + 2}, +${b + 4}, dan seterusnya.`, `The gap grows by 2: +${b}, +${b + 2}, +${b + 4}, and so on.`);
-  } else if (jenis === 3) {
-    const a = acak.int(10, 40), b = acak.int(2, 6), c = acak.int(2, 5);
-    suku = [a];
-    for (let i = 1; i < 6; i++) suku.push(i % 2 ? suku[i - 1] + b : suku[i - 1] - c);
-    jelas = t(`Bergantian +${b} dan -${c}.`, `Alternates +${b} and -${c}.`);
-  } else {
-    const a = acak.int(1, 4);
-    suku = Array.from({ length: 6 }, (_, i) => (a + i) ** 2);
-    jelas = t("Bilangan kuadrat berurutan.", "Consecutive square numbers.");
-  }
-  const benar = suku[5];
-  return {
-    q: t(`Lanjutkan deret: ${suku.slice(0, 5).join(", ")}, …`, `Continue the series: ${suku.slice(0, 5).join(", ")}, …`),
-    ...susunPilihan(acak, benar, [benar + 1, benar - 2, benar + acak.int(3, 7), benar - acak.int(3, 6), benar + 10]),
-    e: jelas,
-    bagian: t("Deret angka", "Number series"),
-  };
-}
-
-function hitungan(acak) {
-  const jenis = acak.int(0, 3);
-  if (jenis === 0) {
-    const p = acak.pilih([10, 15, 20, 25, 30, 40]), h = acak.int(4, 30) * 10000;
-    const b = h - (h * p) / 100;
-    return { q: t(`Harga barang Rp${rp(h)} mendapat diskon ${p}%. Berapa yang harus dibayar?`, `An item costs Rp${rp(h)} with a ${p}% discount. How much do you pay?`), ...susunPilihan(acak, `Rp${rp(b)}`, [`Rp${rp(b + 5000)}`, `Rp${rp((h * p) / 100)}`, `Rp${rp(b - 10000)}`, `Rp${rp(h)}`]), e: t(`${rp(h)} - ${p}% × ${rp(h)} = ${rp(b)}.`, `${rp(h)} - ${p}% × ${rp(h)} = ${rp(b)}.`), bagian: t("Aritmetika", "Arithmetic") };
-  }
-  if (jenis === 1) {
-    const a = acak.int(3, 9), b = acak.int(2, 6), orang = a * acak.int(2, 4), hari = b * acak.int(2, 4);
-    const hasil = (orang * hari) / a;
-    return { q: t(`${orang} pekerja menyelesaikan proyek dalam ${hari} hari. Jika hanya ada ${a} pekerja, berapa hari yang dibutuhkan?`, `${orang} workers finish a project in ${hari} days. With only ${a} workers, how many days does it take?`), ...susunPilihan(acak, hasil, [hasil + a, hari, hasil - b, hasil * 2]), e: t(`Perbandingan berbalik nilai: ${orang} × ${hari} ÷ ${a} = ${hasil}.`, `Inverse proportion: ${orang} × ${hari} ÷ ${a} = ${hasil}.`), bagian: t("Soal cerita", "Word problems") };
-  }
-  if (jenis === 2) {
-    const a = acak.int(12, 98), b = acak.int(12, 98), c = acak.int(2, 9);
-    const hasil = a + b * c;
-    return { q: t(`Berapa hasil ${a} + ${b} × ${c}?`, `What is ${a} + ${b} × ${c}?`), ...susunPilihan(acak, hasil, [(a + b) * c, hasil + 10, hasil - c, a * b + c]), e: t("Kali dikerjakan lebih dulu daripada tambah.", "Multiplication comes before addition."), bagian: t("Aritmetika", "Arithmetic") };
-  }
-  const total = acak.int(6, 15) * 10, p = acak.pilih([20, 25, 30, 40, 60]);
-  const hasil = (total * p) / 100;
-  return { q: t(`Dari ${total} pelamar, ${p}% lolos tes tertulis. Berapa orang yang lolos?`, `Of ${total} applicants, ${p}% pass the written test. How many pass?`), ...susunPilihan(acak, hasil, [hasil + 5, total - hasil, hasil - 3, p]), e: t(`${p}% × ${total} = ${hasil}.`, `${p}% × ${total} = ${hasil}.`), bagian: t("Soal cerita", "Word problems") };
-}
-
-function soalNumerik(acak, n = 20) {
-  const hasil = [];
+/** Bacaan yang sama dikelompokkan berurutan supaya tidak bolak-balik. */
+function rapikanBacaan(daftar) {
+  const urut = [];
   const sudah = new Set();
-  for (let coba = 0; hasil.length < n && coba < n * 20; coba++) {
-    const soal = hasil.length % 2 ? hitungan(acak) : deret(acak);
-    if (sudah.has(soal.q)) continue;
-    sudah.add(soal.q);
-    hasil.push(soal);
-  }
-  return hasil;
+  daftar.forEach((s) => {
+    if (!s.bacaan) return urut.push(s);
+    if (sudah.has(s.bacaan)) return;
+    sudah.add(s.bacaan);
+    daftar.filter((x) => x.bacaan === s.bacaan).forEach((x) => urut.push(x));
+  });
+  return urut;
 }
 
-/* ---------------------------------------------------- logika */
-
-const LOGIKA = [
-  [t("Semua karyawan tetap mendapat asuransi. Dina adalah karyawan tetap. Kesimpulan:", "All permanent staff get insurance. Dina is permanent staff. Conclusion:"), t("Dina mendapat asuransi", "Dina gets insurance"), [t("Dina tidak mendapat asuransi", "Dina gets no insurance"), t("Semua yang punya asuransi adalah Dina", "Everyone insured is Dina"), t("Tidak dapat disimpulkan", "Cannot be concluded")]],
-  [t("Semua manajer hadir rapat. Sebagian yang hadir rapat adalah staf baru. Kesimpulan:", "All managers attend the meeting. Some attendees are new staff. Conclusion:"), t("Tidak dapat disimpulkan apakah ada manajer yang staf baru", "We can't tell whether any manager is new staff"), [t("Semua manajer adalah staf baru", "All managers are new staff"), t("Sebagian manajer adalah staf baru", "Some managers are new staff"), t("Tidak ada manajer yang staf baru", "No manager is new staff")]],
-  [t("Jika hujan, jalan macet. Hari ini jalan tidak macet. Kesimpulan:", "If it rains, traffic jams. Today there's no jam. Conclusion:"), t("Hari ini tidak hujan", "It isn't raining today"), [t("Hari ini hujan", "It's raining today"), t("Besok akan hujan", "It will rain tomorrow"), t("Tidak dapat disimpulkan", "Cannot be concluded")]],
-  [t("Tidak ada pelamar yang terlambat diterima. Budi terlambat. Kesimpulan:", "No late applicant is accepted. Budi was late. Conclusion:"), t("Budi tidak diterima", "Budi isn't accepted"), [t("Budi diterima", "Budi is accepted"), t("Budi mungkin diterima", "Budi might be accepted"), t("Semua yang tidak terlambat diterima", "Everyone on time is accepted")]],
-  [t("Jika target tercapai, tim mendapat bonus. Tim mendapat bonus. Kesimpulan yang PASTI benar:", "If the target is met, the team gets a bonus. The team got a bonus. What MUST be true?"), t("Tidak dapat dipastikan target tercapai", "We can't be sure the target was met"), [t("Target pasti tercapai", "The target was definitely met"), t("Target tidak tercapai", "The target wasn't met"), t("Bonus diberikan setiap bulan", "Bonuses are monthly")]],
-  [t("A lebih tinggi dari B. C lebih pendek dari B. D lebih tinggi dari A. Siapa yang paling pendek?", "A is taller than B. C is shorter than B. D is taller than A. Who is shortest?"), "C", ["A", "B", "D"]],
-  [t("Rapat dimulai setelah presentasi Ani, tetapi sebelum presentasi Joko. Presentasi Ani setelah sambutan. Urutan yang benar:", "The meeting starts after Ani's talk but before Joko's. Ani's talk is after the opening. Correct order:"), t("Sambutan, Ani, rapat, Joko", "Opening, Ani, meeting, Joko"), [t("Ani, sambutan, rapat, Joko", "Ani, opening, meeting, Joko"), t("Sambutan, rapat, Ani, Joko", "Opening, meeting, Ani, Joko"), t("Joko, rapat, Ani, sambutan", "Joko, meeting, Ani, opening")]],
-  [t("Lima kandidat duduk berjajar. Rina di ujung kiri. Sari tepat di sebelah kanan Rina. Tono di tengah. Siapa yang duduk di posisi kedua dari kiri?", "Five candidates sit in a row. Rina is far left. Sari is right next to Rina. Tono is in the middle. Who sits second from the left?"), "Sari", ["Rina", "Tono", t("Tidak dapat ditentukan", "Can't be determined")]],
-  [t("Semua laporan diperiksa supervisor. Laporan X belum diperiksa supervisor. Kesimpulan:", "All reports are checked by a supervisor. Report X hasn't been checked. Conclusion:"), t("Laporan X belum termasuk laporan yang diserahkan", "Report X isn't yet among the submitted reports"), [t("Supervisor lalai", "The supervisor was negligent"), t("Laporan X salah", "Report X is wrong"), t("Semua laporan belum diperiksa", "No report has been checked")]],
-  [t("Kantor buka Senin sampai Jumat. Hari ini kantor tutup dan bukan hari libur nasional. Hari ini adalah…", "The office opens Monday to Friday. It's closed today and it isn't a public holiday. Today is…"), t("Sabtu atau Minggu", "Saturday or Sunday"), [t("Jumat", "Friday"), t("Senin", "Monday"), t("Tidak dapat ditentukan", "Can't be determined")]],
-  [t("Harga P lebih mahal dari Q. Harga R lebih murah dari Q. Pernyataan yang benar:", "P costs more than Q. R costs less than Q. Which is true?"), t("P lebih mahal dari R", "P costs more than R"), [t("R lebih mahal dari P", "R costs more than P"), t("Q paling murah", "Q is cheapest"), t("P sama dengan R", "P equals R")]],
-  [t("Jika lulus tes tertulis, kandidat ikut wawancara. Jika ikut wawancara, kandidat mendapat jadwal FGD. Rudi lulus tes tertulis. Kesimpulan:", "If candidates pass the written test, they're interviewed. If interviewed, they get an FGD slot. Rudi passed the written test. Conclusion:"), t("Rudi mendapat jadwal FGD", "Rudi gets an FGD slot"), [t("Rudi tidak diwawancara", "Rudi isn't interviewed"), t("Rudi diterima kerja", "Rudi is hired"), t("Tidak dapat disimpulkan", "Cannot be concluded")]],
-  [t("Sebagian karyawan bekerja remote. Semua yang bekerja remote memakai laptop kantor. Kesimpulan:", "Some staff work remotely. Everyone remote uses a company laptop. Conclusion:"), t("Sebagian karyawan memakai laptop kantor", "Some staff use a company laptop"), [t("Semua karyawan memakai laptop kantor", "All staff use a company laptop"), t("Tidak ada karyawan yang memakai laptop kantor", "No staff use a company laptop"), t("Semua yang memakai laptop bekerja remote", "Everyone with a laptop works remotely")]],
-  [t("Tim A menyelesaikan proyek lebih cepat dari tim B. Tim C lebih lambat dari tim B. Tim D lebih cepat dari tim A. Tim yang paling lambat adalah…", "Team A finishes faster than B. C is slower than B. D is faster than A. The slowest team is…"), t("Tim C", "Team C"), [t("Tim A", "Team A"), t("Tim B", "Team B"), t("Tim D", "Team D")]],
-  [t("Semua peserta FGD wajib memberi pendapat. Mira tidak memberi pendapat. Kesimpulan:", "All FGD participants must give an opinion. Mira gave none. Conclusion:"), t("Mira bukan peserta FGD", "Mira isn't an FGD participant"), [t("Mira peserta FGD", "Mira is an FGD participant"), t("Mira gugur", "Mira is eliminated"), t("Tidak dapat disimpulkan", "Cannot be concluded")]],
-];
-
-function soalLogika(acak, n = 15) {
-  return acak.kocok(LOGIKA).slice(0, n).map(([q, b, x]) => ({ q, ...susunPilihan(acak, b, x), e: t(`Jawaban: ${b}.`, `Answer: ${b}.`), bagian: t("Penalaran", "Reasoning") }));
-}
+const soalVerbal = (acak, n = 30) => rapikanBacaan(dariBank(acak, BANK_VERBAL, n));
+const soalLogika = (acak, n = 25) => rapikanBacaan(dariBank(acak, BANK_LOGIKA, n));
+const soalInggris = (acak, n = 40) => rapikanBacaan(dariBank(acak, BANK_INGGRIS, n));
+const soalNumerik = (acak, n = 30) => soalNumerikHots(acak, n, susunPilihan);
 
 /* ------------------------------------------------- ketelitian */
 
@@ -221,7 +97,7 @@ function ubahSedikit(acak, s) {
   return s.slice(0, i) + s.slice(i + 1);
 }
 
-function soalKetelitian(acak, n = 30) {
+function soalKetelitian(acak, n = 50) {
   return Array.from({ length: n }, () => {
     const jenis = acak.int(0, 2);
     const asli =
@@ -328,7 +204,42 @@ export function nilaiKraepelin(perKolom) {
 
 /* ------------------------------------------------- katalog tes */
 
+const TIPS_KRAEPELIN = [
+  "Mulai dengan kecepatan yang bisa kamu pertahankan sampai kolom terakhir. Yang dinilai bukan hanya jumlah, tetapi juga kestabilan grafik kerjamu.",
+  "Tulis/ketik hanya digit terakhir hasil penjumlahan (7 + 8 = 15 → 5).",
+  "Jika salah, jangan berhenti untuk menyesal; langsung lanjut ke pasangan berikutnya.",
+  "Grafik yang turun tajam di akhir dibaca sebagai cepat lelah. Grafik yang naik-turun dibaca sebagai konsentrasi tidak ajeg.",
+  "Tidur cukup dan sarapan sebelum tes sungguhan sangat berpengaruh pada tes ini.",
+];
+const TIPS_KETELITIAN = [
+  "Bandingkan per bagian: angka per kelompok 4 digit, nama per suku kata, alamat per kata.",
+  "Perhatikan huruf yang mirip (m–n, rn–m, l–I) dan angka yang mirip (6–8, 1–7).",
+  "Jangan membaca untuk memahami; bacalah untuk mencocokkan.",
+  "Pakai tombol S (sama) dan B (berbeda) di keyboard supaya lebih cepat.",
+];
+const TIPS_KEPRIBADIAN = [
+  "Jawab jujur sesuai kebiasaanmu di tempat kerja, bukan sosok ideal yang kamu bayangkan.",
+  "Tes kepribadian sungguhan memuat pernyataan berulang dengan kalimat berbeda untuk mendeteksi jawaban yang tidak konsisten.",
+  "Hindari terlalu banyak memilih jawaban tengah (netral); itu bisa dibaca sebagai ragu-ragu atau menyembunyikan diri.",
+  "Tidak ada profil yang 'salah'. Yang dicari perusahaan adalah kecocokan profil dengan tuntutan posisi.",
+];
+const TIPS_TPA = [
+  "Kerjakan bagian yang paling kamu kuasai lebih dulu jika tes mengizinkan berpindah bagian.",
+  "Alokasikan waktu sekitar 1 menit per soal. Soal yang butuh lebih dari 2 menit, tandai dan lewati dulu.",
+  "Untuk soal hitungan, perkirakan dulu besaran jawabannya, lalu buang pilihan yang jauh berbeda.",
+  "Sisakan 5 menit di akhir untuk memeriksa soal yang ditandai.",
+];
+
 export const JENIS_TES = [
+  {
+    id: "tpa",
+    nama: t("TPA Lengkap (100 soal)", "Full aptitude test (100 questions)"),
+    ikon: "GraduationCap",
+    ket: t("Simulasi Tes Potensi Akademik lengkap: 35 verbal, 35 numerik, dan 30 penalaran, setara tes seleksi BUMN dan perusahaan besar.", "A full academic aptitude simulation: 35 verbal, 35 numerical, and 30 reasoning questions, like large-company selection tests."),
+    info: t("100 soal · 100 menit", "100 questions · 100 minutes"),
+    menit: 100,
+    tips: TIPS_TPA,
+  },
   {
     id: "kraepelin",
     nama: t("Tes Kraepelin (Pauli)", "Kraepelin (Pauli) test"),
@@ -336,12 +247,16 @@ export const JENIS_TES = [
     ket: t("Menjumlahkan angka berpasangan secepat dan seteliti mungkin. Mengukur kecepatan, ketelitian, keajegan, dan daya tahan kerja.", "Add pairs of digits as fast and accurately as you can. Measures speed, accuracy, consistency, and endurance."),
     info: t(`${KRAEPELIN.kolom} kolom · ${KRAEPELIN.detikPerKolom} detik per kolom`, `${KRAEPELIN.kolom} columns · ${KRAEPELIN.detikPerKolom} s per column`),
     menit: Math.ceil((KRAEPELIN.kolom * KRAEPELIN.detikPerKolom) / 60),
+    tips: TIPS_KRAEPELIN,
   },
-  { id: "verbal", nama: t("TPA Verbal", "Verbal aptitude"), ikon: "BookA", ket: t("Sinonim, antonim, analogi, dan pengelompokan kata.", "Synonyms, antonyms, analogies, and odd-one-out."), info: t("20 soal · 12 menit", "20 questions · 12 minutes"), menit: 12 },
-  { id: "numerik", nama: t("TPA Numerik", "Numerical aptitude"), ikon: "Sigma", ket: t("Deret angka, hitungan cepat, persen, dan soal cerita.", "Number series, quick maths, percentages, and word problems."), info: t("20 soal · 15 menit", "20 questions · 15 minutes"), menit: 15 },
-  { id: "logika", nama: t("Penalaran Logis", "Logical reasoning"), ikon: "Brain", ket: t("Silogisme, urutan, dan penarikan kesimpulan.", "Syllogisms, ordering, and drawing conclusions."), info: t("15 soal · 12 menit", "15 questions · 12 minutes"), menit: 12 },
-  { id: "ketelitian", nama: t("Tes Ketelitian", "Accuracy test"), ikon: "ScanSearch", ket: t("Bandingkan pasangan nama, nomor, dan alamat: sama atau berbeda. Umum untuk posisi admin dan bank.", "Compare pairs of names, numbers, and addresses: same or different. Common for admin and banking roles."), info: t("30 soal · 5 menit", "30 questions · 5 minutes"), menit: 5 },
-  { id: "kepribadian", nama: t("Tes Kepribadian Kerja", "Work personality test"), ikon: "UserRound", ket: t("25 pernyataan tentang caramu bekerja. Tidak ada jawaban benar atau salah; hasilnya profil lima dimensi kepribadian.", "25 statements about how you work. No right or wrong answers; you get a five-dimension personality profile."), info: t("25 pernyataan · tanpa batas waktu", "25 statements · no time limit"), menit: 0 },
+  { id: "verbal", nama: t("TPA Verbal", "Verbal aptitude"), ikon: "BookA", ket: t("Analogi, makna kata, pemahaman bacaan, dan penalaran argumen (HOTS).", "Analogies, word meaning, reading comprehension, and argument reasoning."), info: t("30 soal · 25 menit", "30 questions · 25 minutes"), menit: 25, tips: TIPS_VERBAL },
+  { id: "numerik", nama: t("TPA Numerik", "Numerical aptitude"), ikon: "Sigma", ket: t("Deret bertingkat, persen, perbandingan, kecepatan, peluang, dan soal cerita. Angka berbeda setiap tes.", "Multi-level series, percentages, ratios, speed, probability, and word problems. Numbers change every time."), info: t("30 soal · 35 menit", "30 questions · 35 minutes"), menit: 35, tips: TIPS_NUMERIK },
+  { id: "logika", nama: t("Penalaran Logis", "Logical reasoning"), ikon: "Brain", ket: t("Logika proposisi, penalaran analitis (penyusunan & penjadwalan), dan interpretasi data.", "Propositional logic, analytical puzzles, and data interpretation."), info: t("25 soal · 30 menit", "25 questions · 30 minutes"), menit: 30, tips: TIPS_LOGIKA },
+  { id: "inggris", nama: t("Bahasa Inggris Kerja", "Workplace English"), ikon: "Languages", ket: t("Structure, error recognition, vocabulary, reading, dan komunikasi bisnis. Setara TOEIC/TOEFL ITP.", "Structure, error recognition, vocabulary, reading, and business communication. TOEIC/TOEFL ITP style."), info: t("40 soal · 35 menit", "40 questions · 35 minutes"), menit: 35, tips: TIPS_INGGRIS },
+  { id: "figural", nama: t("Logika Gambar (Figural)", "Figural reasoning"), ikon: "Shapes", ket: t("Lanjutkan urutan gambar: rotasi, jumlah, sisi bangun, dan pola ganda.", "Continue the picture sequence: rotation, count, sides, and combined patterns."), info: t("20 soal · 15 menit", "20 questions · 15 minutes"), menit: 15, tips: TIPS_FIGURAL },
+  { id: "kecermatan", nama: t("Tes Kecermatan", "Attention test"), ikon: "Focus", ket: t("Temukan simbol yang hilang secepat mungkin. Umum di seleksi BUMN, kepolisian, dan kedinasan.", "Find the missing symbol as fast as you can. Common in state-owned and civil-service selection."), info: t("10 kolom · 45 detik per kolom", "10 columns · 45 s per column"), menit: 8, tips: TIPS_KECERMATAN },
+  { id: "ketelitian", nama: t("Tes Ketelitian", "Accuracy test"), ikon: "ScanSearch", ket: t("Bandingkan pasangan nama, nomor, dan alamat: sama atau berbeda. Umum untuk posisi admin dan bank.", "Compare pairs of names, numbers, and addresses: same or different. Common for admin and banking roles."), info: t("50 soal · 8 menit", "50 questions · 8 minutes"), menit: 8, tips: TIPS_KETELITIAN },
+  { id: "kepribadian", nama: t("Tes Kepribadian Kerja", "Work personality test"), ikon: "UserRound", ket: t("25 pernyataan tentang caramu bekerja. Hasilnya profil lima dimensi kepribadian.", "25 statements about how you work. You get a five-dimension personality profile."), info: t("25 pernyataan · tanpa batas waktu", "25 statements · no time limit"), menit: 0, tips: TIPS_KEPRIBADIAN },
 ];
 
 export const cariTes = (id) => JENIS_TES.find((x) => x.id === id) || null;
@@ -353,10 +268,16 @@ export function buatSoal(jenis, benih, contoh = false) {
     jenis === "verbal" ? soalVerbal(acak)
       : jenis === "numerik" ? soalNumerik(acak)
         : jenis === "logika" ? soalLogika(acak)
-          : jenis === "ketelitian" ? soalKetelitian(acak)
-            : jenis === "kepribadian" ? soalKepribadian(acak)
-              : [];
-  return contoh ? daftar.slice(0, jenis === "kepribadian" ? 5 : 3) : daftar;
+          : jenis === "inggris" ? soalInggris(acak)
+            : jenis === "figural" ? soalFigural(acak, 20, susunPilihan)
+              : jenis === "ketelitian" ? soalKetelitian(acak)
+                : jenis === "kepribadian" ? soalKepribadian(acak)
+                  : jenis === "tpa" ? [...soalVerbal(acak, 35), ...soalNumerik(acak, 35), ...soalLogika(acak, 30)]
+                    : [];
+  if (!contoh) return daftar;
+  // Contoh: ambil soal tanpa bacaan panjang supaya cepat dicoba
+  const ringkas = daftar.filter((s) => !s.bacaan);
+  return (ringkas.length >= 3 ? ringkas : daftar).slice(0, jenis === "kepribadian" ? 5 : 3);
 }
 
 /** Ringkasan skor tes pilihan ganda per bagian. */

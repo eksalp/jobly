@@ -146,7 +146,7 @@ export function RaporPanel({ setActive }) {
     { k: "cv", Ikon: FileText, nama: t("CV (skor ATS)", "CV (ATS score)"), nilai: K.cv, ket: r.cvTerakhir ? tanggal(r.cvTerakhir.created_at) : t("Belum direview", "Not reviewed yet"), panel: "overview" },
     { k: "linkedin", Ikon: Linkedin, nama: "LinkedIn", nilai: K.linkedin, ket: r.liTerakhir ? tanggal(r.liTerakhir.created_at) : t("Belum direview", "Not reviewed yet"), panel: "linkedinbuilder" },
     { k: "interview", Ikon: Mic, nama: t("Simulasi interview", "Mock interview"), nilai: K.interview, ket: r.iv ? `${r.iv.posisi || ""} · ${tanggal(r.iv.created_at)}` : t("Belum dicoba", "Not tried yet"), panel: "simulasi" },
-    { k: "tes", Ikon: ListChecks, nama: t("Tes persiapan (rata-rata)", "Job tests (average)"), nilai: K.tes, ket: t(`${r.tesKognitif.length} dari 5 tes kemampuan`, `${r.tesKognitif.length} of 5 aptitude tests`), panel: "tes" },
+    { k: "tes", Ikon: ListChecks, nama: t("Tes persiapan (rata-rata)", "Job tests (average)"), nilai: K.tes, ket: t(`${r.tesKognitif.length} dari ${JENIS_TES.length - 1} tes kemampuan`, `${r.tesKognitif.length} of ${JENIS_TES.length - 1} aptitude tests`), panel: "tes" },
     { k: "fgd", Ikon: Users, nama: "FGD", nilai: K.fgd, ket: r.fgd ? tanggal(r.fgd.mulai_at) : t("Belum dicoba", "Not tried yet"), panel: "fgd" },
   ];
 

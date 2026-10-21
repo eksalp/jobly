@@ -38,7 +38,7 @@ const KOSONG = {
 };
 
 /** Jumlah jenis tes persiapan kerja (lihat src/data/tesKerja.js). */
-const JUMLAH_TES = 6;
+const JUMLAH_TES = 10;
 
 /**
  * Kuota FGD dan tes tidak ada di fungsi cek_langganan, jadi dihitung
