@@ -15,6 +15,7 @@ import { SettingsPanel } from "./SettingsPanel";
 import { RencanaPanel } from "./RencanaPanel";
 import { PortofolioPanel } from "./PortofolioPanel";
 import { TesKerjaPanel } from "./TesKerjaPanel";
+import { FgdPanel } from "./FgdPanel";
 import { SiteHeader, useAnimasiMuncul } from "../../components/publik/PublicLayout";
 import { tautan } from "../../utils/navigasi";
 import { SITUS } from "../../data/situs";
@@ -100,6 +101,14 @@ export const PANEL_META = {
       "Practise the psychometric tests companies use: Kraepelin, verbal & numerical aptitude, reasoning, accuracy, and personality.",
     ),
   },
+  fgd: {
+    grup: t("Persiapan", "Prepare"),
+    title: t("Simulasi FGD", "FGD simulation"),
+    desc: t(
+      "Diskusi kelompok 20 menit lewat suara bersama 3 peserta AI dan 1 asesor, lalu dinilai seperti di hari seleksi.",
+      "A 20-minute voice group discussion with 3 AI participants and an assessor, scored like on selection day.",
+    ),
+  },
   simulasi: {
     grup: t("Persiapan", "Prepare"),
     title: t("Simulasi interview", "Mock interview"),
@@ -134,6 +143,7 @@ export const PANEL_COMPONENTS = {
   rencana: RencanaPanel,
   portofolio: PortofolioPanel,
   tes: TesKerjaPanel,
+  fgd: FgdPanel,
 };
 
 /** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */

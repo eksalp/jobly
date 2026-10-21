@@ -26,6 +26,7 @@ import {
   Landmark,
   LayoutGrid,
   ListChecks,
+  Users,
   GraduationCap,
   ShieldCheck,
   BarChart3,
@@ -80,6 +81,7 @@ const I = {
   pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
   rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
   tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("Psikotes, Kraepelin, TPA, ketelitian, kepribadian", "Psychometrics, Kraepelin, aptitude, accuracy, personality"), path: ke("tes"), Ikon: ListChecks, baru: true, max: true },
+  fgd: { t: t("Simulasi FGD", "FGD simulation"), d: t("Diskusi kelompok 20 menit dengan peserta AI", "20-minute group discussion with AI participants"), path: ke("fgd"), Ikon: Users, baru: true, max: true },
   simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
 };
 
@@ -99,7 +101,7 @@ export const MENU_APLIKASI = [
     kolom: [
       { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi, I.panduan] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
-      { judul: t("Khusus Max", "Max only"), items: [I.tes] },
+      { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes] },
     ],
   },
   { label: t("Riset", "Research"), kolom: [{ items: [I.peta, I.cek, I.kalkulator] }] },
@@ -121,7 +123,7 @@ export const MENU_PUBLIK = [
     kolom: [
       { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.rencana] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
-      { judul: t("Khusus Max", "Max only"), items: [I.tes] },
+      { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes] },
     ],
   },
   { label: t("Panduan Remote Working", "Remote Working Guide"), path: "/panduan", Ikon: BookOpen, sorot: true },
@@ -654,12 +656,12 @@ export function SiteHeader({ aktif }) {
               <React.Fragment key={m.label}>
                 <div className="pb-mm-group">{m.label}</div>
                 <div className="pb-mm-grid">
-                  {itemsDari(m).map(({ t: judul, path, Ikon, pro, baru }) => (
+                  {itemsDari(m).map(({ t: judul, path, Ikon, pro, baru, max }) => (
                     <a key={path} className="pb-mm-item" {...tautan(path)}>
                       <Ikon size={16} />
                       <span>{judul}</span>
                       {pro && <span className="pb-tag pro">Pro</span>}
-          {item.max && <span className="pb-tag pro">Max</span>}
+                      {max && <span className="pb-tag pro">Max</span>}
                       {baru && <span className="pb-tag baru">{t("Baru", "New")}</span>}
                     </a>
                   ))}

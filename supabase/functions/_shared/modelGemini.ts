@@ -41,6 +41,18 @@ export const MODEL_PENILAIAN = daftar(
   "gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite",
 );
 
+/** Simulasi FGD: mengatur giliran peserta AI dan menilai di akhir. */
+export const MODEL_FGD = daftar(
+  "GEMINI_MODELS_FGD",
+  "gemini-3.8-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite",
+);
+
+/** Simulasi FGD: suara peserta AI (text-to-speech). */
+export const MODEL_TTS = (Deno.env.get("GEMINI_MODELS_TTS") ?? "gemini-2.5-flash-preview-tts,gemini-2.5-pro-preview-tts")
+  .split(",")
+  .map((m) => m.trim())
+  .filter(Boolean);
+
 /** Model suara untuk simulasi interview (Live API). */
 export const MODEL_LIVE =
   Deno.env.get("GEMINI_MODEL_LIVE") ?? "models/gemini-3.8-live";
