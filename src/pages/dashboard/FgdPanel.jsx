@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useLangganan } from "../../context/LanggananContext";
 import { AvatarFgd } from "../../components/ui/AvatarFgd";
 import { useSuaraFgd, MAKS_DETIK_BICARA } from "../../hooks/useSuaraFgd";
-import { TOPIK_FGD, PESERTA_FGD, DURASI_FGD_MENIT } from "../../data/fgdTopik";
+import { TOPIK_FGD, KELOMPOK_FGD, PESERTA_FGD, DURASI_FGD_MENIT } from "../../data/fgdTopik";
 import { t, bahasa } from "../../i18n.js";
 
 const KURSI = ["moderator", "dimas", "ayu", "fajar", "kamu"];
@@ -148,6 +148,7 @@ export function FgdPanel({ setActive }) {
 
   const [tahap, setTahap] = useState("siap"); // siap | berjalan | menilai | hasil
   const [topik, setTopik] = useState("");
+  const [kelompok, setKelompok] = useState("");
   const [bhs, setBhs] = useState(() => (bahasa() === "en" ? "en" : "id"));
   const [sesi, setSesi] = useState(null);
   const [transkrip, setTranskrip] = useState([]);
@@ -409,18 +410,44 @@ export function FgdPanel({ setActive }) {
       ) : (
         <div className="pb-panel">
           <h3 className="pb-po-sub" style={{ marginTop: 0 }}>{t("Pilih topik", "Pick a topic")}</h3>
-          <div className="fgd-topik">
-            <button type="button" className={!topik ? "on" : ""} onClick={() => setTopik("")}>
-              <b>{t("Acak", "Random")}</b>
-              <small>{t("Seperti seleksi sungguhan", "Like a real selection")}</small>
-            </button>
-            {TOPIK_FGD.map((x) => (
-              <button key={x.id} type="button" className={topik === x.id ? "on" : ""} onClick={() => setTopik(x.id)}>
-                <b>{x.judul}</b>
-                <small>{x.jenis === "kasus" ? t("Studi kasus", "Case study") : t("Isu", "Issue")}</small>
+          <div className="pb-chips fgd-kelompok">
+            {[{ id: "", nama: t("Semua", "All") }, ...KELOMPOK_FGD].map((k) => (
+              <button
+                key={k.id || "semua"}
+                type="button"
+                className={`pb-chip ${kelompok === k.id ? "on" : ""}`}
+                onClick={() => {
+                  setKelompok(k.id);
+                  // Pilihan acak ikut kelompok yang sedang dibuka
+                  if (!topik || topik.startsWith("acak")) setTopik(k.id ? `acak:${k.id}` : "");
+                }}
+              >
+                {k.nama}
+                <small>{k.id ? TOPIK_FGD.filter((x) => x.kelompok === k.id).length : TOPIK_FGD.length}</small>
               </button>
             ))}
           </div>
+          <div className="fgd-topik">
+            <button type="button" className={!topik || topik.startsWith("acak") ? "on" : ""} onClick={() => setTopik(kelompok ? `acak:${kelompok}` : "")}>
+              <b>{t("Acak", "Random")}</b>
+              <small>{kelompok ? t("Topik acak dari kelompok ini", "A random topic from this group") : t("Seperti seleksi sungguhan", "Like a real selection")}</small>
+            </button>
+            {TOPIK_FGD.filter((x) => !kelompok || x.kelompok === kelompok).map((x) => (
+              <button key={x.id} type="button" className={topik === x.id ? "on" : ""} onClick={() => setTopik(x.id)}>
+                <b>{x.judul}</b>
+                <small>
+                  {x.jenis === "kasus" ? t("Studi kasus", "Case study") : t("Isu", "Issue")}
+                  {!kelompok && ` · ${KELOMPOK_FGD.find((k) => k.id === x.kelompok)?.nama || ""}`}
+                </small>
+              </button>
+            ))}
+          </div>
+          <p className="pb-tk-ket">
+            {t(
+              "Isu: kelompok mengambil sikap atas sebuah wacana. Studi kasus: kelompok memutuskan solusi dengan data dan batasan tertentu. Di seleksi sungguhan, topik biasanya diberikan acak.",
+              "Issue: the group takes a position on a debate. Case study: the group decides on a solution within given data and constraints. In real selections, topics are usually assigned at random.",
+            )}
+          </p>
           <h3 className="pb-po-sub">{t("Bahasa diskusi", "Discussion language")}</h3>
           <div className="pb-chips">
             {[["id", "Bahasa Indonesia"], ["en", "English"]].map(([k, l]) => (

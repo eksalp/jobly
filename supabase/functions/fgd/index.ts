@@ -16,7 +16,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { MODEL_FGD, MODEL_TTS, kuotaHabis } from "../_shared/modelGemini.ts";
-import { TOPIK_FGD, cariTopik, PERAN_FGD, pembukaModerator } from "../_shared/fgdTopik.ts";
+import { cariTopik, topikAcak, PERAN_FGD, pembukaModerator } from "../_shared/fgdTopik.ts";
 
 const URL_GEMINI = (m) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
 const DURASI_MENIT = 20;
@@ -217,7 +217,9 @@ serve(async (req) => {
 
     /* ------------------------------------------------------- mulai */
     if (aksi === "mulai") {
-      const topik = cariTopik(str(body.topik)) || TOPIK_FGD[Math.floor(Math.random() * TOPIK_FGD.length)];
+      const pilihan = str(body.topik);
+      // "acak:<kelompok>" = topik acak dari satu kelompok
+      const topik = cariTopik(pilihan) || topikAcak(pilihan.startsWith("acak:") ? pilihan.slice(5) : "");
       const bahasa = str(body.bahasa) === "en" ? "en" : "id";
 
       // Sesi yang masih berjalan dilanjutkan, tidak memotong kuota lagi
@@ -240,7 +242,7 @@ serve(async (req) => {
       const pembuka = pembukaModerator(topik, bahasa);
       const { data: sesi, error } = await admin
         .from("fgd_sesi")
-        .insert({ user_id: user.id, langganan_id: k.langganan_id, topik: { id: topik.id, judul: topik.judul, jenis: topik.jenis }, bahasa, transkrip: pembuka })
+        .insert({ user_id: user.id, langganan_id: k.langganan_id, topik: { id: topik.id, judul: topik.judul, jenis: topik.jenis, kelompok: topik.kelompok }, bahasa, transkrip: pembuka })
         .select()
         .single();
       if (error) throw new Error("Gagal membuat sesi: " + error.message);
@@ -250,7 +252,7 @@ serve(async (req) => {
     const sesiId = str(body.sesiId);
     const { data: sesi } = await admin.from("fgd_sesi").select("*").eq("id", sesiId).eq("user_id", user.id).maybeSingle();
     if (!sesi) return json({ error: "Sesi FGD tidak ditemukan." }, 404);
-    const topik = cariTopik(sesi.topik?.id) || TOPIK_FGD[0];
+    const topik = cariTopik(sesi.topik?.id) || topikAcak();
     const menit = (Date.now() - new Date(sesi.mulai_at).getTime()) / 60000;
 
     /* ------------------------------------------------------- suara */
