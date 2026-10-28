@@ -5,6 +5,8 @@ import { IkonBidang } from "../../components/publik/IkonBidang";
 import { BIDANG } from "../../data/bidang";
 import { JENJANG, JENIS, MODE, muatSertifikasi, statusDaftar, teksBiaya, skorPosisi, namaBidang } from "../../data/sertifikasi";
 import { useUserProfile } from "../../context/UserProfileContext";
+import { useAdminJobly } from "../dashboard/AdminSertifikasiPanel";
+import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
 
 const CONTOH_POSISI = ["Data analyst", "Digital marketing", "Staf pajak", "Admin", "HR", "Project manager", "IT support", "Management trainee"];
@@ -51,6 +53,7 @@ function KartuSertif({ r }) {
 
 export function SertifikasiPage() {
   const profil = useUserProfile();
+  const admin = useAdminJobly();
   const awal = new URLSearchParams(window.location.search);
   const [semua, setSemua] = useState(null);
   const [galat, setGalat] = useState("");
@@ -117,6 +120,11 @@ export function SertifikasiPage() {
           <Award size={13} /> {t("Sertifikasi & pelatihan", "Certifications & training")}
         </span>
         <h1>{t("Sertifikat apa yang perlu kamu kejar?", "Which certifications should you go for?")}</h1>
+        {admin && (
+          <a className="pb-btn pb-btn-outline pb-btn-sm" style={{ marginBottom: 8 }} {...tautan("/dashboard/admin-sertifikasi")}>
+            {t("Kelola sertifikasi (admin)", "Manage certifications (admin)")}
+          </a>
+        )}
         <p>
           {t(
             "Rekomendasi sertifikasi, pelatihan, bootcamp, dan beasiswa yang disusun per bidang dan jenjang karier. Jadwal batch diperbarui rutin, dan program yang pendaftarannya sudah tutup otomatis disembunyikan.",

@@ -8535,3 +8535,40 @@ html[data-tema="gelap"] .pb-tk-bebas { background: #14532d; color: #bbf7d0; }
 .pb-gb-kanvas { max-width: 100%; height: auto; }
 .pb-tk-kerja.lebar > * { min-width: 0; }
 .pb-gb-wartegg figcaption input { width: 0; }
+
+/* Admin sertifikasi */
+.pb-as { display: grid; gap: 14px; }
+.pb-as > * { min-width: 0; }
+.pb-as-atas { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.pb-as-atas h2 { margin: 4px 0; font-size: 20px; }
+.pb-as-atas p { max-width: 640px; margin: 0; }
+.pb-as-alat { display: grid; gap: 10px; }
+.pb-as-alat .pb-input input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; color: var(--ink); }
+.pb-as-pesan { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 12px; background: #dcfce7; color: #166534; font-size: 14px; }
+.pb-as-pesan button { margin-left: auto; border: 0; background: none; color: inherit; cursor: pointer; }
+html[data-tema="gelap"] .pb-as-pesan { background: #14532d; color: #bbf7d0; }
+.pb-as-daftar { display: grid; gap: 8px; }
+.pb-as-baris { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.pb-as-baris.arsip { opacity: .6; }
+.pb-as-baris.perlu { border-color: #f59e0b; }
+.pb-as-baris .isi { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.pb-as-baris .isi b { font-size: 14.5px; }
+.pb-as-baris .isi small { font-size: 12.5px; color: var(--muted); }
+.pb-as-baris .isi .status { display: inline-flex; align-items: center; gap: 4px; color: var(--ink2); }
+.pb-as-baris.perlu .isi .status { color: #b45309; }
+.pb-as-baris .aksi { display: flex; gap: 4px; flex: none; }
+.pb-as-baris .aksi a, .pb-as-baris .aksi button { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink2); cursor: pointer; }
+.pb-as-form { display: grid; gap: 14px; }
+.pb-as-form h2 { margin: 0; font-size: 20px; }
+.pb-as-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+.pb-as-grid .lebar { grid-column: 1 / -1; }
+.pb-as-grid label, .pb-as-grid > div { display: grid; gap: 6px; align-content: start; }
+.pb-as-grid label > span, .pb-as-grid .judul-isian { font-size: 13px; font-weight: 600; color: var(--ink2); }
+.pb-as-grid input, .pb-as-grid select, .pb-as-grid textarea { width: 100%; font: inherit; font-size: 14px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+.pb-as-grid small { font-size: 12px; color: var(--muted); }
+.pb-as-grid label.centang { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.pb-as-grid label.centang input { width: auto; }
+@media (max-width: 640px) {
+  .pb-as-grid { grid-template-columns: minmax(0, 1fr); }
+  .pb-as-baris { flex-wrap: wrap; }
+}

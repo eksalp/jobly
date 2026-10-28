@@ -38,7 +38,9 @@ export async function muatSertifikasi() {
         : error.message,
     };
   }
-  return { data: data || [], galat: "" };
+  // Admin bisa membaca semua baris (termasuk arsip/tutup); halaman publik hanya menampilkan yang berlaku
+  const kini = new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD waktu lokal
+  return { data: (data || []).filter((r) => r.aktif && (!r.tutup || r.tutup >= kini)), galat: "" };
 }
 
 const hari = (d) => {

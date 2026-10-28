@@ -17,6 +17,7 @@ import { PortofolioPanel } from "./PortofolioPanel";
 import { TesKerjaPanel } from "./TesKerjaPanel";
 import { FgdPanel } from "./FgdPanel";
 import { RaporPanel } from "./RaporPanel";
+import { AdminSertifikasiPanel } from "./AdminSertifikasiPanel";
 import { SiteHeader, useAnimasiMuncul } from "../../components/publik/PublicLayout";
 import { tautan } from "../../utils/navigasi";
 import { SITUS } from "../../data/situs";
@@ -123,6 +124,11 @@ export const PANEL_META = {
     title: t("Simulasi interview", "Mock interview"),
     desc: t("Wawancara lewat suara dengan pewawancara AI, lalu dapat penilaian dan masukan.", "A voice interview with an AI interviewer, followed by a score and feedback."),
   },
+  "admin-sertifikasi": {
+    grup: t("Akun", "Account"),
+    title: t("Kelola sertifikasi", "Manage certifications"),
+    desc: t("Khusus admin: tambah dan perbarui link sertifikasi & pelatihan.", "Admins only: add and update certification & training links."),
+  },
   paket: {
     grup: t("Akun", "Account"),
     title: t("Paket & langganan", "Plans & billing"),
@@ -154,6 +160,7 @@ export const PANEL_COMPONENTS = {
   tes: TesKerjaPanel,
   fgd: FgdPanel,
   rapor: RaporPanel,
+  "admin-sertifikasi": AdminSertifikasiPanel,
 };
 
 /** Ditampilkan kalau URL menunjuk ke menu yang tidak ada. */
