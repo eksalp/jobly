@@ -53,6 +53,12 @@ export const MODEL_TTS = (Deno.env.get("GEMINI_MODELS_TTS") ?? "gemini-2.5-flash
   .map((m) => m.trim())
   .filter(Boolean);
 
+/** Pekerjaan admin ringan (mis. membaca pengumuman sertifikasi dari Telegram). */
+export const MODEL_ADMIN = daftar(
+  "GEMINI_MODELS_ADMIN",
+  "gemini-3.1-flash-lite,gemini-3.5-flash-lite,gemini-3.8-flash",
+);
+
 /** Model suara untuk simulasi interview (Live API). */
 export const MODEL_LIVE =
   Deno.env.get("GEMINI_MODEL_LIVE") ?? "models/gemini-3.8-live";

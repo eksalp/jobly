@@ -8,6 +8,7 @@ import React, {
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "./AuthContext";
 import { PAKET } from "../data/paket";
+import { JENIS_TERCATAT } from "../data/tes/daftarJenis.js";
 
 /**
  * Status langganan dibagikan lewat context, bukan hook per komponen.
@@ -37,8 +38,8 @@ const KOSONG = {
   jumlahPaket: 0,
 };
 
-/** Jumlah jenis tes persiapan kerja (lihat src/data/tesKerja.js). */
-const JUMLAH_TES = 10;
+/** Jumlah jenis tes persiapan kerja yang dicatat (lihat src/data/tes/daftarJenis.js). */
+const JUMLAH_TES = JENIS_TERCATAT.length;
 
 /**
  * Kuota FGD dan tes tidak ada di fungsi cek_langganan, jadi dihitung

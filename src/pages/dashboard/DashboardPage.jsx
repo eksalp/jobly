@@ -98,8 +98,8 @@ export const PANEL_META = {
     grup: t("Persiapan", "Prepare"),
     title: t("Tes persiapan kerja", "Job tests practice"),
     desc: t(
-      "Latihan psikotes yang umum dipakai perusahaan dan BUMN: Kraepelin, TPA verbal & numerik, penalaran, ketelitian, dan kepribadian.",
-      "Practise the psychometric tests companies use: Kraepelin, verbal & numerical aptitude, reasoning, accuracy, and personality.",
+      "Psikotes seperti di seleksi BUMN, Pertamina, Bank Indonesia, bank, dan Astra: TPA, Kraepelin, CFIT, spasial, AKHLAK, DISC, EPPS, sampai tes gambar.",
+      "Psychometric tests like those used by state firms, Bank Indonesia, banks, and large companies: aptitude, Kraepelin, CFIT, spatial, DISC, EPPS, and drawing tests.",
     ),
   },
   fgd: {

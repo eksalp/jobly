@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   ArrowLeft, ArrowRight, Check, Clock, Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Lock,
   Loader2, Play, RotateCcw, X, AlertTriangle, Eye, Languages, Shapes, Focus, GraduationCap, Lightbulb, BookOpen,
+  Box, Puzzle, ListOrdered, HeartHandshake, Compass, Fingerprint, PenTool, Landmark, Fuel, Building2, Banknote, Factory,
+  ClipboardList, Cpu,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
@@ -9,10 +11,52 @@ import { useLangganan } from "../../context/LanggananContext";
 import {
   JENIS_TES, buatSoal, buatAcak, buatKraepelin, nilaiKraepelin, nilaiPilihan, hitungKepribadian,
   DIMENSI, KRAEPELIN, labelSkor, buatKecermatan, nilaiKecermatan, KECERMATAN, LABEL_KECERMATAN,
+  KATEGORI_TES, cariTes, hitungDisc, hitungEpps, hitungTipe16,
 } from "../../data/tesKerja";
+import { Grid, TesDisc, TesGambar, HasilProfil, PaketSeleksi } from "./tes/KomponenTesLanjut";
 import { t } from "../../i18n.js";
 
-const IKON = { Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Languages, Shapes, Focus, GraduationCap };
+const IKON = {
+  Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Languages, Shapes, Focus, GraduationCap,
+  Box, Puzzle, ListOrdered, HeartHandshake, Compass, Fingerprint, PenTool, Landmark, Fuel, Building2, Banknote, Factory, ClipboardList, Cpu,
+};
+
+/** Analogi gambar: 1 : 2 = 3 : ? */
+function AnalogiFigur({ data }) {
+  return (
+    <div className="pb-fig-seri analogi">
+      <span>
+        <Figur data={data[0]} ukuran={60} />
+      </span>
+      <em>→</em>
+      <span>
+        <Figur data={data[1]} ukuran={60} />
+      </span>
+      <em className="sama">=</em>
+      <span>
+        <Figur data={data[2]} ukuran={60} />
+      </span>
+      <em>→</em>
+      <span className="tanya">?</span>
+    </div>
+  );
+}
+
+/** Bagian visual sebuah soal (seri, analogi, atau bangun spasial). */
+function VisualSoal({ s }) {
+  if (s.grid) {
+    return (
+      <div className="pb-grid-contoh">
+        <Grid kode={s.contoh} ukuran={96} />
+      </div>
+    );
+  }
+  if (s.analogi) return <AnalogiFigur data={s.analogi} />;
+  if (s.figural && s.seri) return <SeriFigur seri={s.seri} />;
+  return null;
+}
+
+const isiPilihan = (s, o, ukuran) => (s.grid ? <Grid kode={o} ukuran={ukuran || 64} /> : s.figural ? <Figur data={o} ukuran={ukuran} /> : o);
 const LIKERT = [t("Sangat tidak sesuai", "Strongly disagree"), t("Tidak sesuai", "Disagree"), t("Netral", "Neutral"), t("Sesuai", "Agree"), t("Sangat sesuai", "Strongly agree")];
 
 /* ------------------------------------------------------------------ */
@@ -151,6 +195,7 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
   const selesaiRef = useRef(false);
   const kepribadian = tes.id === "kepribadian";
   const ketelitian = tes.id === "ketelitian";
+  const paksa = Boolean(soal[0]?.paksa);
 
   const kirim = useCallback(() => {
     if (selesaiRef.current) return;
@@ -171,7 +216,7 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
   const pilih = (j) => {
     setJawab((x) => ({ ...x, [i]: j }));
     // Ketelitian & kepribadian: langsung ke soal berikutnya supaya cepat
-    if ((ketelitian || kepribadian) && i < soal.length - 1) setTimeout(() => setI((x) => Math.min(soal.length - 1, x + 1)), 140);
+    if ((ketelitian || kepribadian || paksa) && i < soal.length - 1) setTimeout(() => setI((x) => Math.min(soal.length - 1, x + 1)), 140);
   };
 
   // Pintasan keyboard untuk ketelitian: S = sama, B/D = berbeda
@@ -225,7 +270,7 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
           <>
             <Bacaan key={s.bacaan || i} teks={s.bacaan} />
             <p className="pb-tk-tanya">{s.q}</p>
-            {s.figural && <SeriFigur seri={s.seri} />}
+            <VisualSoal s={s} />
           </>
         )}
 
@@ -239,11 +284,11 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
             ))}
           </div>
         ) : (
-          <div className={`pb-tk-pilihan ${ketelitian ? "dua" : ""} ${s.figural ? "fig" : ""}`}>
+          <div className={`pb-tk-pilihan ${ketelitian ? "dua" : ""} ${paksa ? "paksa" : ""} ${s.figural || s.grid ? "fig" : ""}`}>
             {s.o.map((o, j) => (
               <button key={o} type="button" className={jawab[i] === j ? "on" : ""} onClick={() => pilih(j)}>
                 {!ketelitian && <span>{String.fromCharCode(65 + j)}</span>}
-                {s.figural ? <Figur data={o} /> : o}
+                {isiPilihan(s, o)}
                 {ketelitian && <kbd>{j ? "B" : "S"}</kbd>}
               </button>
             ))}
@@ -274,7 +319,7 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
         </div>
       </div>
 
-      {!kepribadian && soal.length > 5 && (
+      {!kepribadian && !paksa && soal.length > 5 && (
         <div className="pb-tk-peta">
           {soal.map((_, k) => (
             <button key={k} type="button" className={`${jawab[k] != null ? "isi" : ""} ${k === i ? "kini" : ""}`} onClick={() => setI(k)}>
@@ -548,6 +593,7 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
   const [hanyaSalah, setHanyaSalah] = useState(false);
   const h = sesi.hasil || {};
   const kolomTes = tes.id === "kraepelin" || tes.id === "kecermatan";
+  const profil = Boolean(tes.profil);
   return (
     <div className="pb-tk-hasil">
       <button type="button" className="pb-link" onClick={onKembali} style={{ border: 0, background: "none", cursor: "pointer", padding: 0, marginBottom: 12 }}>
@@ -555,7 +601,9 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
       </button>
       <div className="pb-panel">
         <span className="pb-label">{tes.nama}</span>
-        {tes.id !== "kepribadian" ? (
+        {profil && tes.id !== "kepribadian" ? (
+          <HasilProfil tes={tes} h={h} />
+        ) : tes.id !== "kepribadian" ? (
           <div className="pb-tk-skor">
             <b>{sesi.skor ?? 0}</b>
             <div>
@@ -639,7 +687,7 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
           </div>
         )}
 
-        {tes.tips?.length > 0 && tes.id !== "kepribadian" && (
+        {tes.tips?.length > 0 && !profil && (
           <div className="pb-tk-tips">
             <b>
               <Lightbulb size={15} /> {t("Tips untuk tes sungguhan", "Tips for the real test")}
@@ -652,7 +700,7 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
           </div>
         )}
 
-        {soal?.length > 0 && !soal[0].likert && (
+        {soal?.length > 0 && !soal[0].likert && !soal[0].paksa && (
           <>
             <div className="pb-tk-bahas-atas">
               <button type="button" className="pb-po-teks-tombol" onClick={() => setTinjau((x) => !x)}>
@@ -670,13 +718,13 @@ export function Hasil({ tes, sesi, soal, onKembali }) {
                   const j = h.jawaban?.[i];
                   const benar = j === s.a;
                   if (hanyaSalah && benar) return null;
-                  const tampil = (k) => (k == null ? t("(kosong)", "(blank)") : s.figural ? <Figur data={s.o[k]} ukuran={34} /> : s.o[k]);
+                  const tampil = (k) => (k == null ? t("(kosong)", "(blank)") : isiPilihan(s, s.o[k], 34));
                   return (
                     <li key={i} value={i + 1} className={benar ? "benar" : "salah"}>
                       {s.bagian && <em className="pb-tk-bahas-bagian">{s.bagian}</em>}
                       {s.bacaan && (i === 0 || soal[i - 1].bacaan !== s.bacaan || hanyaSalah) && <Bacaan teks={s.bacaan} ringkas />}
                       <p>{s.q}</p>
-                      {s.figural && <SeriFigur seri={s.seri} />}
+                      <VisualSoal s={s} />
                       <div className="pb-tk-bahas-jawab">
                         <span className="kamu">
                           {benar ? <Check size={13} /> : <X size={13} />} {t("Jawabanmu", "Your answer")}: {tampil(j)}
@@ -793,6 +841,18 @@ export function TesKerjaPanel({ setActive }) {
     const keluar = () => {
       if (contoh || window.confirm(t("Keluar dari tes? Tes tetap dihitung terpakai, dan jawabanmu sejauh ini tidak tersimpan.", "Leave the test? It still counts as used, and your answers so far won't be saved."))) setJalan(null);
     };
+    if (tes.id === "gambar") return <TesGambar onBatal={() => setJalan(null)} />;
+    if (tes.id === "disc") {
+      const soalDisc = buatSoal("disc", benih, contoh);
+      return (
+        <TesDisc
+          soal={soalDisc}
+          contoh={contoh}
+          onBatal={keluar}
+          onSelesai={(jawaban) => simpan(tes, jalan.sesi, { profil: hitungDisc(soalDisc, jawaban), jawaban }, 0, null)}
+        />
+      );
+    }
     if (tes.id === "kecermatan") {
       return (
         <TesKecermatan
@@ -834,6 +894,10 @@ export function TesKerjaPanel({ setActive }) {
           if (tes.id === "kepribadian") {
             const dimensi = hitungKepribadian(soal, jawaban);
             simpan(tes, jalan.sesi, { dimensi, jawaban }, Math.round(Object.values(dimensi).reduce((a, b) => a + b, 0) / 5), soal);
+          } else if (tes.id === "epps") {
+            simpan(tes, jalan.sesi, { profil: { skor: hitungEpps(soal, jawaban) }, jawaban }, 0, null);
+          } else if (tes.id === "tipe16") {
+            simpan(tes, jalan.sesi, { profil: hitungTipe16(soal, jawaban), jawaban }, 0, null);
           } else {
             const n = nilaiPilihan(soal, jawaban);
             simpan(tes, jalan.sesi, { ...n, jawaban }, n.skor, soal);
@@ -852,7 +916,7 @@ export function TesKerjaPanel({ setActive }) {
         memulai={memulai === tes.id}
         onBatal={() => setIntro(null)}
         onMulai={() => {
-          if (contoh) {
+          if (contoh || tes.latihan) {
             setIntro(null);
             setJalan({ tes, contoh: true, benih: Date.now() % 2 ** 31 });
           } else mulai(tes, true);
@@ -871,7 +935,61 @@ export function TesKerjaPanel({ setActive }) {
     );
   }
 
-  const selesai = JENIS_TES.filter((x) => perJenis[x.id]?.status === "selesai").length;
+  const tercatat = JENIS_TES.filter((x) => !x.latihan);
+  const selesai = tercatat.filter((x) => perJenis[x.id]?.status === "selesai").length;
+
+  // Dari paket seleksi: gulir ke kartu tes dan sorot sebentar
+  const keKartu = (id) => {
+    const el = document.getElementById(`tes-${id}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("sorot");
+    setTimeout(() => el.classList.remove("sorot"), 1600);
+  };
+
+  const kartu = (tes) => {
+    const Ikon = IKON[tes.ikon] || Brain;
+    const s = perJenis[tes.id];
+    return (
+      <div key={tes.id} id={`tes-${tes.id}`} className={`pb-tk-kartu ${s?.status === "selesai" ? "beres" : ""}`}>
+        <div className="atas">
+          <span className="ikon">
+            <Ikon size={19} />
+          </span>
+          {tes.latihan && <span className="pb-tk-bebas">{t("Gratis · tanpa kuota", "Free · no quota")}</span>}
+          {s?.status === "selesai" && <span className="pb-tk-nilai">{tes.profil ? <Check size={13} /> : s.skor}</span>}
+        </div>
+        <b>{tes.nama}</b>
+        <p>{tes.ket}</p>
+        <small>{tes.info}</small>
+        <div className="bawah">
+          {tes.latihan ? (
+            <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => setIntro({ tes, contoh: true })}>
+              <Play size={13} /> {t("Mulai latihan", "Start practice")}
+            </button>
+          ) : s?.status === "selesai" ? (
+            <button
+              type="button"
+              className="pb-btn pb-btn-outline pb-btn-sm"
+              onClick={() => setLihat({ tes, sesi: s, soal: tes.id === "kraepelin" || tes.id === "kecermatan" || tes.profil ? null : buatSoal(tes.id, Number(s.benih)) })}
+            >
+              {t("Lihat hasil", "See result")}
+            </button>
+          ) : max ? (
+            <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" disabled={!!memulai} onClick={() => mulai(tes)}>
+              {memulai === tes.id ? <Loader2 size={13} className="pb-po-putar" /> : s?.status === "berjalan" ? <RotateCcw size={13} /> : <Play size={13} />}{" "}
+              {s?.status === "berjalan" ? t("Lanjutkan", "Resume") : t("Mulai tes", "Start test")}
+            </button>
+          ) : null}
+          {!tes.latihan && (
+            <button type="button" className="pb-po-teks-tombol" onClick={() => cobaContoh(tes)}>
+              {t("Coba contoh soal", "Try a sample")}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="pb-tk">
@@ -902,51 +1020,21 @@ export function TesKerjaPanel({ setActive }) {
           <div>
             <span className="pb-label">{t("Progres tes", "Test progress")}</span>
             <h2>
-              {selesai} / {JENIS_TES.length}
+              {selesai} / {tercatat.length}
             </h2>
           </div>
           <p>{t("Setiap tes bisa dikerjakan sekali di paket Max-mu. Kerjakan saat kondisi segar, di tempat tenang, seperti hari tes sungguhan.", "Each test can be taken once on your Max plan. Take it when you're fresh, somewhere quiet, like on a real test day.")}</p>
         </div>
       )}
 
-      <div className="pb-tk-grid">
-        {JENIS_TES.map((tes) => {
-          const Ikon = IKON[tes.ikon] || Brain;
-          const s = perJenis[tes.id];
-          return (
-            <div key={tes.id} className={`pb-tk-kartu ${s?.status === "selesai" ? "beres" : ""}`}>
-              <div className="atas">
-                <span className="ikon">
-                  <Ikon size={19} />
-                </span>
-                {s?.status === "selesai" && (
-                  <span className="pb-tk-nilai">
-                    {tes.id === "kepribadian" ? <Check size={13} /> : s.skor}
-                  </span>
-                )}
-              </div>
-              <b>{tes.nama}</b>
-              <p>{tes.ket}</p>
-              <small>{tes.info}</small>
-              <div className="bawah">
-                {s?.status === "selesai" ? (
-                  <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => setLihat({ tes, sesi: s, soal: tes.id === "kraepelin" || tes.id === "kecermatan" ? null : buatSoal(tes.id, Number(s.benih)) })}>
-                    {t("Lihat hasil", "See result")}
-                  </button>
-                ) : max ? (
-                  <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" disabled={!!memulai} onClick={() => mulai(tes)}>
-                    {memulai === tes.id ? <Loader2 size={13} className="pb-po-putar" /> : s?.status === "berjalan" ? <RotateCcw size={13} /> : <Play size={13} />}{" "}
-                    {s?.status === "berjalan" ? t("Lanjutkan", "Resume") : t("Mulai tes", "Start test")}
-                  </button>
-                ) : null}
-                <button type="button" className="pb-po-teks-tombol" onClick={() => cobaContoh(tes)}>
-                  {t("Coba contoh soal", "Try a sample")}
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <PaketSeleksi IKON={IKON} namaTes={(id) => cariTes(id)?.nama || id} statusTes={(id) => perJenis[id]?.status} onPilihTes={keKartu} />
+
+      {KATEGORI_TES.map((k) => (
+        <section key={k.id} className="pb-tk-kategori">
+          <h3>{k.nama}</h3>
+          <div className="pb-tk-grid">{JENIS_TES.filter((x) => x.kategori === k.id).map(kartu)}</div>
+        </section>
+      ))}
 
       <div className="pb-tk-catatan">
         <AlertTriangle size={15} />

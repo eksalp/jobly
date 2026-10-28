@@ -16,6 +16,13 @@ import { soalNumerikHots, TIPS_NUMERIK } from "./tes/numerik.js";
 import { soalFigural, TIPS_FIGURAL } from "./tes/figural.js";
 import { TIPS_KECERMATAN } from "./tes/kecermatan.js";
 export { buatKecermatan, nilaiKecermatan, KECERMATAN, LABEL_KECERMATAN } from "./tes/kecermatan.js";
+import { soalSpasial, TIPS_SPASIAL } from "./tes/spasial.js";
+import { soalCfit, TIPS_CFIT } from "./tes/cfit.js";
+import { soalArmyAlpha, TIPS_ARMY_ALPHA } from "./tes/armyAlpha.js";
+import { BANK_AKHLAK, TIPS_AKHLAK } from "./tes/bankAkhlak.js";
+import { soalDisc, soalEpps, soalTipe16, TIPS_DISC, TIPS_EPPS, TIPS_TIPE16 } from "./tes/profil.js";
+import { TIPS_GAMBAR } from "./tes/gambar.js";
+export { hitungDisc, hitungEpps, hitungTipe16, DISC_DIMENSI, EPPS_KEBUTUHAN, TIPE16 } from "./tes/profil.js";
 
 /* ------------------------------------------------------------ acak */
 
@@ -78,6 +85,7 @@ const soalVerbal = (acak, n = 30) => rapikanBacaan(dariBank(acak, BANK_VERBAL, n
 const soalLogika = (acak, n = 25) => rapikanBacaan(dariBank(acak, BANK_LOGIKA, n));
 const soalInggris = (acak, n = 40) => rapikanBacaan(dariBank(acak, BANK_INGGRIS, n));
 const soalNumerik = (acak, n = 30) => soalNumerikHots(acak, n, susunPilihan);
+const soalAkhlak = (acak, n = 25) => dariBank(acak, BANK_AKHLAK, n);
 
 /* ------------------------------------------------- ketelitian */
 
@@ -233,6 +241,7 @@ const TIPS_TPA = [
 export const JENIS_TES = [
   {
     id: "tpa",
+    kategori: "kognitif",
     nama: t("TPA Lengkap (100 soal)", "Full aptitude test (100 questions)"),
     ikon: "GraduationCap",
     ket: t("Simulasi Tes Potensi Akademik lengkap: 35 verbal, 35 numerik, dan 30 penalaran, setara tes seleksi BUMN dan perusahaan besar.", "A full academic aptitude simulation: 35 verbal, 35 numerical, and 30 reasoning questions, like large-company selection tests."),
@@ -242,6 +251,7 @@ export const JENIS_TES = [
   },
   {
     id: "kraepelin",
+    kategori: "sikap",
     nama: t("Tes Kraepelin (Pauli)", "Kraepelin (Pauli) test"),
     ikon: "Columns3",
     ket: t("Menjumlahkan angka berpasangan secepat dan seteliti mungkin. Mengukur kecepatan, ketelitian, keajegan, dan daya tahan kerja.", "Add pairs of digits as fast and accurately as you can. Measures speed, accuracy, consistency, and endurance."),
@@ -249,14 +259,29 @@ export const JENIS_TES = [
     menit: Math.ceil((KRAEPELIN.kolom * KRAEPELIN.detikPerKolom) / 60),
     tips: TIPS_KRAEPELIN,
   },
-  { id: "verbal", nama: t("TPA Verbal", "Verbal aptitude"), ikon: "BookA", ket: t("Analogi, makna kata, pemahaman bacaan, dan penalaran argumen (HOTS).", "Analogies, word meaning, reading comprehension, and argument reasoning."), info: t("30 soal · 25 menit", "30 questions · 25 minutes"), menit: 25, tips: TIPS_VERBAL },
-  { id: "numerik", nama: t("TPA Numerik", "Numerical aptitude"), ikon: "Sigma", ket: t("Deret bertingkat, persen, perbandingan, kecepatan, peluang, dan soal cerita. Angka berbeda setiap tes.", "Multi-level series, percentages, ratios, speed, probability, and word problems. Numbers change every time."), info: t("30 soal · 35 menit", "30 questions · 35 minutes"), menit: 35, tips: TIPS_NUMERIK },
-  { id: "logika", nama: t("Penalaran Logis", "Logical reasoning"), ikon: "Brain", ket: t("Logika proposisi, penalaran analitis (penyusunan & penjadwalan), dan interpretasi data.", "Propositional logic, analytical puzzles, and data interpretation."), info: t("25 soal · 30 menit", "25 questions · 30 minutes"), menit: 30, tips: TIPS_LOGIKA },
-  { id: "inggris", nama: t("Bahasa Inggris Kerja", "Workplace English"), ikon: "Languages", ket: t("Structure, error recognition, vocabulary, reading, dan komunikasi bisnis. Setara TOEIC/TOEFL ITP.", "Structure, error recognition, vocabulary, reading, and business communication. TOEIC/TOEFL ITP style."), info: t("40 soal · 35 menit", "40 questions · 35 minutes"), menit: 35, tips: TIPS_INGGRIS },
-  { id: "figural", nama: t("Logika Gambar (Figural)", "Figural reasoning"), ikon: "Shapes", ket: t("Lanjutkan urutan gambar: rotasi, jumlah, sisi bangun, dan pola ganda.", "Continue the picture sequence: rotation, count, sides, and combined patterns."), info: t("20 soal · 15 menit", "20 questions · 15 minutes"), menit: 15, tips: TIPS_FIGURAL },
-  { id: "kecermatan", nama: t("Tes Kecermatan", "Attention test"), ikon: "Focus", ket: t("Temukan simbol yang hilang secepat mungkin. Umum di seleksi BUMN, kepolisian, dan kedinasan.", "Find the missing symbol as fast as you can. Common in state-owned and civil-service selection."), info: t("10 kolom · 45 detik per kolom", "10 columns · 45 s per column"), menit: 8, tips: TIPS_KECERMATAN },
-  { id: "ketelitian", nama: t("Tes Ketelitian", "Accuracy test"), ikon: "ScanSearch", ket: t("Bandingkan pasangan nama, nomor, dan alamat: sama atau berbeda. Umum untuk posisi admin dan bank.", "Compare pairs of names, numbers, and addresses: same or different. Common for admin and banking roles."), info: t("50 soal · 8 menit", "50 questions · 8 minutes"), menit: 8, tips: TIPS_KETELITIAN },
-  { id: "kepribadian", nama: t("Tes Kepribadian Kerja", "Work personality test"), ikon: "UserRound", ket: t("25 pernyataan tentang caramu bekerja. Hasilnya profil lima dimensi kepribadian.", "25 statements about how you work. You get a five-dimension personality profile."), info: t("25 pernyataan · tanpa batas waktu", "25 statements · no time limit"), menit: 0, tips: TIPS_KEPRIBADIAN },
+  { id: "verbal", kategori: "kognitif", nama: t("TPA Verbal", "Verbal aptitude"), ikon: "BookA", ket: t("Analogi, makna kata, pemahaman bacaan, dan penalaran argumen (HOTS).", "Analogies, word meaning, reading comprehension, and argument reasoning."), info: t("30 soal · 25 menit", "30 questions · 25 minutes"), menit: 25, tips: TIPS_VERBAL },
+  { id: "numerik", kategori: "kognitif", nama: t("TPA Numerik", "Numerical aptitude"), ikon: "Sigma", ket: t("Deret bertingkat, persen, perbandingan, kecepatan, peluang, dan soal cerita. Angka berbeda setiap tes.", "Multi-level series, percentages, ratios, speed, probability, and word problems. Numbers change every time."), info: t("30 soal · 35 menit", "30 questions · 35 minutes"), menit: 35, tips: TIPS_NUMERIK },
+  { id: "logika", kategori: "kognitif", nama: t("Penalaran Logis", "Logical reasoning"), ikon: "Brain", ket: t("Logika proposisi, penalaran analitis (penyusunan & penjadwalan), dan interpretasi data.", "Propositional logic, analytical puzzles, and data interpretation."), info: t("25 soal · 30 menit", "25 questions · 30 minutes"), menit: 30, tips: TIPS_LOGIKA },
+  { id: "inggris", kategori: "kognitif", nama: t("Bahasa Inggris Kerja", "Workplace English"), ikon: "Languages", ket: t("Structure, error recognition, vocabulary, reading, dan komunikasi bisnis. Setara TOEIC/TOEFL ITP.", "Structure, error recognition, vocabulary, reading, and business communication. TOEIC/TOEFL ITP style."), info: t("40 soal · 35 menit", "40 questions · 35 minutes"), menit: 35, tips: TIPS_INGGRIS },
+  { id: "figural", kategori: "kognitif", nama: t("Logika Gambar (Figural)", "Figural reasoning"), ikon: "Shapes", ket: t("Lanjutkan urutan gambar: rotasi, jumlah, sisi bangun, dan pola ganda.", "Continue the picture sequence: rotation, count, sides, and combined patterns."), info: t("20 soal · 15 menit", "20 questions · 15 minutes"), menit: 15, tips: TIPS_FIGURAL },
+  { id: "kecermatan", kategori: "sikap", nama: t("Tes Kecermatan", "Attention test"), ikon: "Focus", ket: t("Temukan simbol yang hilang secepat mungkin. Umum di seleksi BUMN, kepolisian, dan kedinasan.", "Find the missing symbol as fast as you can. Common in state-owned and civil-service selection."), info: t("10 kolom · 45 detik per kolom", "10 columns · 45 s per column"), menit: 8, tips: TIPS_KECERMATAN },
+  { id: "ketelitian", kategori: "sikap", nama: t("Tes Ketelitian", "Accuracy test"), ikon: "ScanSearch", ket: t("Bandingkan pasangan nama, nomor, dan alamat: sama atau berbeda. Umum untuk posisi admin dan bank.", "Compare pairs of names, numbers, and addresses: same or different. Common for admin and banking roles."), info: t("50 soal · 8 menit", "50 questions · 8 minutes"), menit: 8, tips: TIPS_KETELITIAN },
+  { id: "kepribadian", kategori: "kepribadian", nama: t("Tes Kepribadian Kerja", "Work personality test"), ikon: "UserRound", ket: t("25 pernyataan tentang caramu bekerja. Hasilnya profil lima dimensi kepribadian.", "25 statements about how you work. You get a five-dimension personality profile."), info: t("25 pernyataan · tanpa batas waktu", "25 statements · no time limit"), menit: 0, tips: TIPS_KEPRIBADIAN, profil: true },
+  { id: "spasial", kategori: "kognitif", nama: t("Tes Spasial", "Spatial reasoning"), ikon: "Box", ket: t("Bedakan bangun yang diputar dan yang dicerminkan. Sering dipakai untuk posisi teknik, desain, dan IT.", "Tell rotated shapes from mirrored ones. Common for engineering, design, and IT roles."), info: t("20 soal · 12 menit", "20 questions · 12 minutes"), menit: 12, tips: TIPS_SPASIAL },
+  { id: "cfit", kategori: "kognitif", nama: t("Inteligensi Non-verbal (gaya CFIT)", "Non-verbal intelligence (CFIT style)"), ikon: "Puzzle", ket: t("Seri, klasifikasi, dan matriks gambar tanpa bahasa dan angka, seperti tes IQ Culture Fair.", "Picture series, classification, and matrices with no words or numbers, like a culture-fair IQ test."), info: t("30 soal · 15 menit", "30 questions · 15 minutes"), menit: 15, tips: TIPS_CFIT },
+  { id: "armyalpha", kategori: "kognitif", nama: t("Ikuti Instruksi (gaya Army Alpha)", "Follow instructions (Army Alpha style)"), ikon: "ListOrdered", ket: t("Menguji daya tangkap dan kecepatan mengikuti instruksi tertulis yang bersyarat.", "Tests how quickly and accurately you follow conditional written instructions."), info: t("30 soal · 12 menit", "30 questions · 12 minutes"), menit: 12, tips: TIPS_ARMY_ALPHA },
+  { id: "akhlak", kategori: "sikap", nama: t("Tes Sikap Kerja AKHLAK", "AKHLAK work-attitude test"), ikon: "HeartHandshake", ket: t("Situasi kerja berbasis core values BUMN: Amanah, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif.", "Workplace scenarios based on Indonesia's state-enterprise values: integrity, competence, harmony, loyalty, adaptability, collaboration."), info: t("25 situasi · 20 menit", "25 scenarios · 20 minutes"), menit: 20, tips: TIPS_AKHLAK },
+  { id: "disc", kategori: "kepribadian", nama: t("Profil DISC", "DISC profile"), ikon: "Compass", ket: t("Pilih kata yang paling dan paling tidak menggambarkanmu. Hasilnya gaya kerja Dominance, Influence, Steadiness, Conscientiousness.", "Pick the words most and least like you. You get a Dominance, Influence, Steadiness, Conscientiousness work style."), info: t("24 kelompok kata · tanpa batas waktu", "24 word groups · no time limit"), menit: 0, tips: TIPS_DISC, profil: true },
+  { id: "epps", kategori: "kepribadian", nama: t("Preferensi Kebutuhan (gaya EPPS)", "Need preferences (EPPS style)"), ikon: "Fingerprint", ket: t("Pilih satu dari dua pernyataan. Memetakan 10 kebutuhan kerja seperti prestasi, keteraturan, dan kemandirian.", "Choose one of two statements. Maps 10 work needs such as achievement, order, and autonomy."), info: t("45 pasang · tanpa batas waktu", "45 pairs · no time limit"), menit: 0, tips: TIPS_EPPS, profil: true },
+  { id: "tipe16", kategori: "kepribadian", nama: t("16 Tipe Kepribadian (gaya MBTI)", "16 personality types (MBTI style)"), ikon: "UserRound", ket: t("Empat dimensi preferensi: E/I, S/N, T/F, J/P. Hasilnya satu dari 16 tipe beserta posisi yang cocok.", "Four preference dimensions: E/I, S/N, T/F, J/P. You get one of 16 types and fitting roles."), info: t("28 pasang · tanpa batas waktu", "28 pairs · no time limit"), menit: 0, tips: TIPS_TIPE16, profil: true },
+  { id: "gambar", kategori: "gambar", nama: t("Latihan Tes Gambar", "Drawing test practice"), ikon: "PenTool", ket: t("Wartegg 8 kotak, menggambar orang, rumah-pohon-orang, dan pohon. Latihan bebas tanpa kuota.", "Wartegg 8 boxes, draw a person, house-tree-person, and tree. Free practice, no quota."), info: t("4 latihan · berwaktu", "4 exercises · timed"), menit: 0, tips: TIPS_GAMBAR, latihan: true },
+];
+
+export const KATEGORI_TES = [
+  { id: "kognitif", nama: t("Kemampuan kognitif & inteligensi", "Cognitive ability & intelligence") },
+  { id: "sikap", nama: t("Sikap kerja & konsentrasi", "Work attitude & concentration") },
+  { id: "kepribadian", nama: t("Kepribadian", "Personality") },
+  { id: "gambar", nama: t("Tes gambar", "Drawing tests") },
 ];
 
 export const cariTes = (id) => JENIS_TES.find((x) => x.id === id) || null;
@@ -273,8 +298,18 @@ export function buatSoal(jenis, benih, contoh = false) {
               : jenis === "ketelitian" ? soalKetelitian(acak)
                 : jenis === "kepribadian" ? soalKepribadian(acak)
                   : jenis === "tpa" ? [...soalVerbal(acak, 35), ...soalNumerik(acak, 35), ...soalLogika(acak, 30)]
-                    : [];
+                    : jenis === "spasial" ? soalSpasial(acak, 20, susunPilihan)
+                      : jenis === "cfit" ? soalCfit(acak, susunPilihan)
+                        : jenis === "armyalpha" ? soalArmyAlpha(acak, 30, susunPilihan)
+                          : jenis === "akhlak" ? soalAkhlak(acak)
+                            : jenis === "disc" ? soalDisc(acak)
+                              : jenis === "epps" ? soalEpps(acak)
+                                : jenis === "tipe16" ? soalTipe16(acak)
+                                  : [];
   if (!contoh) return daftar;
+  if (jenis === "disc") return daftar.slice(0, 4);
+  if (jenis === "epps" || jenis === "tipe16") return daftar.slice(0, 6);
+  if (jenis === "cfit") return [daftar.find((s) => s.bagian === "Seri"), daftar.find((s) => s.bagian === "Klasifikasi"), daftar.find((s) => s.bagian === "Matriks")].filter(Boolean);
   // Contoh: ambil soal tanpa bacaan panjang supaya cepat dicoba
   const ringkas = daftar.filter((s) => !s.bacaan);
   return (ringkas.length >= 3 ? ringkas : daftar).slice(0, jenis === "kepribadian" ? 5 : 3);

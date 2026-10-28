@@ -25,7 +25,7 @@ create table if not exists public.tes_sesi (
   skor          int,
   hasil         jsonb,
   unique (user_id, jenis, langganan_id),
-  constraint tes_jenis_sah check (jenis in ('kraepelin', 'verbal', 'numerik', 'logika', 'ketelitian', 'kepribadian', 'inggris', 'figural', 'kecermatan', 'tpa')),
+  constraint tes_jenis_sah check (jenis in ('kraepelin', 'verbal', 'numerik', 'logika', 'ketelitian', 'kepribadian', 'inggris', 'figural', 'kecermatan', 'tpa', 'spasial', 'cfit', 'armyalpha', 'akhlak', 'disc', 'epps', 'tipe16')),
   constraint tes_hasil_kecil check (hasil is null or pg_column_size(hasil) <= 100000)
 );
 

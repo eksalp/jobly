@@ -6,6 +6,9 @@ import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
 import { useLangganan } from "../../context/LanggananContext";
 import { JENIS_TES } from "../../data/tesKerja";
+
+// Tes yang punya skor benar/salah (tes profil & latihan gambar tidak dihitung)
+const TES_DINILAI = new Set(JENIS_TES.filter((x) => !x.profil && !x.latihan).map((x) => x.id));
 import { t, lokal } from "../../i18n.js";
 
 /**
@@ -72,7 +75,7 @@ export function RaporPanel({ setActive }) {
     const liTerakhir = data.analisis.find((a) => typeof a?.linkedin_audit?.skor === "number");
     const iv = data.interview.find((x) => typeof x.skor === "number");
     const fgd = data.fgd.find((x) => typeof x.skor === "number");
-    const tesKognitif = data.tes.filter((x) => x.jenis !== "kepribadian" && typeof x.skor === "number");
+    const tesKognitif = data.tes.filter((x) => TES_DINILAI.has(x.jenis) && typeof x.skor === "number");
     const tesSkor = tesKognitif.length ? Math.round(tesKognitif.reduce((a, x) => a + x.skor, 0) / tesKognitif.length) : null;
     const portoSelesai = data.porto.filter((p) => p.dikirim && (p.jawaban || "").length >= 40).length;
 
@@ -146,7 +149,7 @@ export function RaporPanel({ setActive }) {
     { k: "cv", Ikon: FileText, nama: t("CV (skor ATS)", "CV (ATS score)"), nilai: K.cv, ket: r.cvTerakhir ? tanggal(r.cvTerakhir.created_at) : t("Belum direview", "Not reviewed yet"), panel: "overview" },
     { k: "linkedin", Ikon: Linkedin, nama: "LinkedIn", nilai: K.linkedin, ket: r.liTerakhir ? tanggal(r.liTerakhir.created_at) : t("Belum direview", "Not reviewed yet"), panel: "linkedinbuilder" },
     { k: "interview", Ikon: Mic, nama: t("Simulasi interview", "Mock interview"), nilai: K.interview, ket: r.iv ? `${r.iv.posisi || ""} · ${tanggal(r.iv.created_at)}` : t("Belum dicoba", "Not tried yet"), panel: "simulasi" },
-    { k: "tes", Ikon: ListChecks, nama: t("Tes persiapan (rata-rata)", "Job tests (average)"), nilai: K.tes, ket: t(`${r.tesKognitif.length} dari ${JENIS_TES.length - 1} tes kemampuan`, `${r.tesKognitif.length} of ${JENIS_TES.length - 1} aptitude tests`), panel: "tes" },
+    { k: "tes", Ikon: ListChecks, nama: t("Tes persiapan (rata-rata)", "Job tests (average)"), nilai: K.tes, ket: t(`${r.tesKognitif.length} dari ${TES_DINILAI.size} tes kemampuan`, `${r.tesKognitif.length} of ${TES_DINILAI.size} aptitude tests`), panel: "tes" },
     { k: "fgd", Ikon: Users, nama: "FGD", nilai: K.fgd, ket: r.fgd ? tanggal(r.fgd.mulai_at) : t("Belum dicoba", "Not tried yet"), panel: "fgd" },
   ];
 
@@ -202,7 +205,7 @@ export function RaporPanel({ setActive }) {
         <div className="pb-panel">
           <h3 className="pb-po-sub" style={{ marginTop: 0 }}>{t("Rincian tes persiapan", "Job test breakdown")}</h3>
           <div className="pb-tk-batang">
-            {JENIS_TES.filter((x) => x.id !== "kepribadian").map((x) => {
+            {JENIS_TES.filter((x) => TES_DINILAI.has(x.id)).map((x) => {
               const s = r.tes.find((y) => y.jenis === x.id);
               return (
                 <div key={x.id}>

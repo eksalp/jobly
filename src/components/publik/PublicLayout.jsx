@@ -38,6 +38,7 @@ import {
   ArrowUp,
   ArrowRight,
   HelpCircle,
+  Award,
 } from "lucide-react";
 import "../../styles/publik.css";
 import { useAuth } from "../../context/AuthContext";
@@ -80,8 +81,9 @@ const I = {
   latihan: { t: t("Latihan interview", "Interview practice"), d: t("140+ pertanyaan, dari yang mudah sampai yang paling sulit", "140+ questions, from easy to the hardest"), path: ke("interview"), Ikon: MessageSquareQuote },
   review: { t: t("Review CV & LinkedIn", "CV & LinkedIn review"), d: t("Skor ATS, saran perbaikan, dan draft baru untuk CV atau profil LinkedIn", "ATS score, fixes, and a new draft for your CV or LinkedIn profile"), path: ke("overview"), Ikon: FileSearch, pro: true },
   pindah: { t: t("Pindah karier", "Career switch"), d: t("Skill apa yang perlu ditambah untuk bidang baru", "Skills you need for a new field"), path: ke("pindahkarier"), Ikon: Route, pro: true },
+  sertifikasi: { t: t("Sertifikasi & pelatihan", "Certifications & training"), d: t("Per bidang dan jenjang karier, batch selalu diperbarui", "By field and career stage, batches kept up to date"), path: "/sertifikasi", Ikon: Award, baru: true },
   rekomendasi: { t: t("Rekomendasi karier", "Career suggestions"), d: t("Posisi yang cocok untuk kamu incar", "Roles worth aiming for"), path: ke("recommendations"), Ikon: TrendingUp },
-  tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("Psikotes, Kraepelin, TPA, ketelitian, kepribadian", "Psychometrics, Kraepelin, aptitude, accuracy, personality"), path: ke("tes"), Ikon: ListChecks, max: true },
+  tes: { t: t("Tes persiapan kerja", "Job tests practice"), d: t("TPA, Kraepelin, CFIT, AKHLAK, DISC, EPPS, tes gambar", "Aptitude, Kraepelin, CFIT, DISC, EPPS, drawing tests"), path: ke("tes"), Ikon: ListChecks, max: true },
   fgd: { t: t("Simulasi FGD", "FGD simulation"), d: t("Diskusi kelompok 20 menit dengan peserta AI", "20-minute group discussion with AI participants"), path: ke("fgd"), Ikon: Users, max: true },
   rapor: { t: t("Rapor kesiapan kerja", "Job-readiness report"), d: t("Skor CV, interview, tes, sampai FGD", "CV, interview, tests, and FGD scores"), path: ke("rapor"), Ikon: Gauge, max: true },
   simulasi: { t: t("Simulasi interview", "Mock interview"), d: t("Latihan interview pakai suara", "Practice interviews by voice"), path: ke("simulasi"), Ikon: Mic, pro: true },
@@ -101,7 +103,7 @@ export const MENU_APLIKASI = [
   {
     label: t("Persiapan", "Prepare"),
     kolom: [
-      { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi, I.panduan] },
+      { judul: t("Gratis", "Free"), items: [I.latihan, I.rekomendasi, I.sertifikasi, I.panduan] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
       { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes, I.rapor] },
     ],
@@ -123,7 +125,7 @@ export const MENU_PUBLIK = [
   {
     label: "Tools",
     kolom: [
-      { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.rencana] },
+      { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.sertifikasi, I.rencana] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
       { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes, I.rapor] },
     ],
@@ -751,6 +753,7 @@ export function SiteFooter() {
         [t("Loker freelance", "Freelance jobs"), "/freelance"],
         [t("Loker BUMN", "State-owned firms"), "/bumn"],
         [t("Loker per bidang", "Jobs by field"), "/bidang"],
+        [t("Sertifikasi & pelatihan", "Certifications & training"), "/sertifikasi"],
         [t("Panduan Remote Working", "Remote Working Guide"), "/panduan"],
         [t("Magang", "Internships"), "/loker?tipe=magang"],
         ["Fresh graduate", "/loker?q=fresh%20graduate"],
