@@ -3,7 +3,7 @@ import {
   ArrowLeft, ArrowRight, Check, Clock, Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Lock,
   Loader2, Play, RotateCcw, X, AlertTriangle, Eye, Languages, Shapes, Focus, GraduationCap, Lightbulb, BookOpen,
   Box, Puzzle, ListOrdered, HeartHandshake, Compass, Fingerprint, PenTool, Landmark, Fuel, Building2, Banknote, Factory,
-  ClipboardList, Cpu,
+  ClipboardList, Cpu, ListChecks, Flag, TrendingUp,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
@@ -13,12 +13,13 @@ import {
   DIMENSI, KRAEPELIN, labelSkor, buatKecermatan, nilaiKecermatan, KECERMATAN, LABEL_KECERMATAN,
   KATEGORI_TES, cariTes, hitungDisc, hitungEpps, hitungTipe16,
 } from "../../data/tesKerja";
-import { Grid, TesDisc, TesGambar, HasilProfil, PaketSeleksi } from "./tes/KomponenTesLanjut";
+import { Grid, Venn, TesDisc, TesGambar, HasilProfil, PaketSeleksi } from "./tes/KomponenTesLanjut";
 import { t } from "../../i18n.js";
 
 const IKON = {
   Columns3, BookA, Sigma, Brain, ScanSearch, UserRound, Languages, Shapes, Focus, GraduationCap,
   Box, Puzzle, ListOrdered, HeartHandshake, Compass, Fingerprint, PenTool, Landmark, Fuel, Building2, Banknote, Factory, ClipboardList, Cpu,
+  ListChecks, Flag, TrendingUp,
 };
 
 /** Analogi gambar: 1 : 2 = 3 : ? */
@@ -56,7 +57,7 @@ function VisualSoal({ s }) {
   return null;
 }
 
-const isiPilihan = (s, o, ukuran) => (s.grid ? <Grid kode={o} ukuran={ukuran || 64} /> : s.figural ? <Figur data={o} ukuran={ukuran} /> : o);
+const isiPilihan = (s, o, ukuran) => (s.diagram ? <Venn tipe={o} ukuran={ukuran ? ukuran * 2 : 96} /> : s.grid ? <Grid kode={o} ukuran={ukuran || 64} /> : s.figural ? <Figur data={o} ukuran={ukuran} /> : o);
 const LIKERT = [t("Sangat tidak sesuai", "Strongly disagree"), t("Tidak sesuai", "Disagree"), t("Netral", "Neutral"), t("Sesuai", "Agree"), t("Sangat sesuai", "Strongly agree")];
 
 /* ------------------------------------------------------------------ */
@@ -284,7 +285,7 @@ export function TesPilihan({ tes, soal, batasDetik, onSelesai, onBatal, contoh }
             ))}
           </div>
         ) : (
-          <div className={`pb-tk-pilihan ${ketelitian ? "dua" : ""} ${paksa ? "paksa" : ""} ${s.figural || s.grid ? "fig" : ""}`}>
+          <div className={`pb-tk-pilihan ${ketelitian ? "dua" : ""} ${paksa ? "paksa" : ""} ${s.figural || s.grid || s.diagram ? "fig" : ""}`}>
             {s.o.map((o, j) => (
               <button key={o} type="button" className={jawab[i] === j ? "on" : ""} onClick={() => pilih(j)}>
                 {!ketelitian && <span>{String.fromCharCode(65 + j)}</span>}

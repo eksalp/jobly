@@ -30,6 +30,31 @@ export function Grid({ kode, ukuran = 64 }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Diagram himpunan (tes diagram reasoning)                            */
+/* ------------------------------------------------------------------ */
+
+const LINGKARAN = {
+  terpisah: [[20, 35, 13], [50, 35, 13], [80, 35, 13]],
+  bersarang: [[50, 35, 30], [50, 35, 19], [50, 35, 9]],
+  dua_dalam: [[50, 35, 31], [37, 35, 11], [63, 35, 11]],
+  dua_iris: [[50, 35, 31], [41, 35, 13], [59, 35, 13]],
+  iris_satu: [[24, 35, 15], [42, 35, 15], [80, 35, 13]],
+  iris_tiga: [[40, 28, 17], [60, 28, 17], [50, 45, 17]],
+  dalam_satu: [[34, 35, 25], [34, 35, 11], [80, 35, 13]],
+};
+
+export function Venn({ tipe, ukuran = 96 }) {
+  const c = LINGKARAN[tipe] || LINGKARAN.terpisah;
+  return (
+    <svg className="pb-venn" width={ukuran} height={(ukuran * 70) / 100} viewBox="0 0 100 70" aria-hidden="true">
+      {c.map(([x, y, r], i) => (
+        <circle key={i} cx={x} cy={y} r={r} />
+      ))}
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  DISC: pilih paling & paling tidak                                   */
 /* ------------------------------------------------------------------ */
 

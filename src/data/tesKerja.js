@@ -22,6 +22,8 @@ import { soalArmyAlpha, TIPS_ARMY_ALPHA } from "./tes/armyAlpha.js";
 import { BANK_AKHLAK, TIPS_AKHLAK } from "./tes/bankAkhlak.js";
 import { soalDisc, soalEpps, soalTipe16, TIPS_DISC, TIPS_EPPS, TIPS_TIPE16 } from "./tes/profil.js";
 import { TIPS_GAMBAR } from "./tes/gambar.js";
+import { BANK_KATA, BANK_TWK, BANK_LA, soalDiagram, TIPS_RBB, TIPS_TWK, TIPS_LA } from "./tes/bankBumn.js";
+import { BANK_BI, TIPS_BI } from "./tes/bankBi.js";
 export { hitungDisc, hitungEpps, hitungTipe16, DISC_DIMENSI, EPPS_KEBUTUHAN, TIPE16 } from "./tes/profil.js";
 
 /* ------------------------------------------------------------ acak */
@@ -86,6 +88,22 @@ const soalLogika = (acak, n = 25) => rapikanBacaan(dariBank(acak, BANK_LOGIKA, n
 const soalInggris = (acak, n = 40) => rapikanBacaan(dariBank(acak, BANK_INGGRIS, n));
 const soalNumerik = (acak, n = 30) => soalNumerikHots(acak, n, susunPilihan);
 const soalAkhlak = (acak, n = 25) => dariBank(acak, BANK_AKHLAK, n);
+const soalTwk = (acak, n = 30) => dariBank(acak, BANK_TWK, n);
+const soalLa = (acak, n = 20) => dariBank(acak, BANK_LA, n);
+const soalBi = (acak, n = 40) => dariBank(acak, BANK_BI, n);
+
+/** TKD gaya RBB BUMN: 4 subtes sama banyak. */
+function soalTkd(acak, per = 15) {
+  const vlr = dariBank(acak, BANK_LOGIKA.filter((x) => !x.bacaan), per).map((s) => ({ ...s, bagian: "Verbal logical reasoning" }));
+  const deret = soalNumerikHots(acak, per * 6, susunPilihan).filter((s) => s.bagian === "Deret angka").slice(0, per).map((s) => ({ ...s, bagian: "Number sequence" }));
+  // Klasifikasi kata: tampilkan kelima kata supaya kelompoknya jelas
+  const kata = acak.kocok(BANK_KATA).slice(0, per).map((x) => {
+    const o = acak.kocok(x.o);
+    return { q: x.q, o, a: o.indexOf(x.o[0]), e: x.e, bagian: "Word classification" };
+  });
+  const diagram = soalDiagram(acak, per).map((s) => ({ ...s, bagian: "Diagram reasoning" }));
+  return [...vlr, ...deret, ...kata, ...diagram];
+}
 
 /* ------------------------------------------------- ketelitian */
 
@@ -274,10 +292,16 @@ export const JENIS_TES = [
   { id: "disc", kategori: "kepribadian", nama: t("Profil DISC", "DISC profile"), ikon: "Compass", ket: t("Pilih kata yang paling dan paling tidak menggambarkanmu. Hasilnya gaya kerja Dominance, Influence, Steadiness, Conscientiousness.", "Pick the words most and least like you. You get a Dominance, Influence, Steadiness, Conscientiousness work style."), info: t("24 kelompok kata · tanpa batas waktu", "24 word groups · no time limit"), menit: 0, tips: TIPS_DISC, profil: true },
   { id: "epps", kategori: "kepribadian", nama: t("Preferensi Kebutuhan (gaya EPPS)", "Need preferences (EPPS style)"), ikon: "Fingerprint", ket: t("Pilih satu dari dua pernyataan. Memetakan 10 kebutuhan kerja seperti prestasi, keteraturan, dan kemandirian.", "Choose one of two statements. Maps 10 work needs such as achievement, order, and autonomy."), info: t("45 pasang · tanpa batas waktu", "45 pairs · no time limit"), menit: 0, tips: TIPS_EPPS, profil: true },
   { id: "tipe16", kategori: "kepribadian", nama: t("16 Tipe Kepribadian (gaya MBTI)", "16 personality types (MBTI style)"), ikon: "UserRound", ket: t("Empat dimensi preferensi: E/I, S/N, T/F, J/P. Hasilnya satu dari 16 tipe beserta posisi yang cocok.", "Four preference dimensions: E/I, S/N, T/F, J/P. You get one of 16 types and fitting roles."), info: t("28 pasang · tanpa batas waktu", "28 pairs · no time limit"), menit: 0, tips: TIPS_TIPE16, profil: true },
+  { id: "rbb", kategori: "simulasi", nama: t("Simulasi Tes Online RBB BUMN", "State-enterprise (RBB) online test simulation"), ikon: "Landmark", ket: t("Format Rekrutmen Bersama BUMN: TKD (verbal logical reasoning, number sequence, word classification, diagram reasoning), AKHLAK, Wawasan Kebangsaan, dan Learning Agility.", "Indonesia's joint state-enterprise recruitment format: basic ability, AKHLAK values, civics, and learning agility."), info: t("120 soal · 100 menit", "120 questions · 100 minutes"), menit: 100, tips: TIPS_RBB },
+  { id: "tkd", kategori: "kognitif", nama: t("TKD BUMN", "BUMN basic ability test"), ikon: "ListChecks", ket: t("Empat subtes TKD RBB: verbal logical reasoning, number sequence, word classification, dan diagram reasoning.", "The four RBB basic-ability subtests: verbal logic, number sequence, word classification, and diagram reasoning."), info: t("60 soal · 45 menit", "60 questions · 45 minutes"), menit: 45, tips: TIPS_RBB },
+  { id: "twk", kategori: "sikap", nama: t("Tes Wawasan Kebangsaan", "Civics & nationalism test"), ikon: "Flag", ket: t("Nasionalisme, integritas, bela negara, dan pilar negara (Pancasila, UUD 1945, NKRI, Bhinneka Tunggal Ika).", "Nationalism, integrity, national defence, and the four state pillars."), info: t("30 soal · 25 menit", "30 questions · 25 minutes"), menit: 25, tips: TIPS_TWK },
+  { id: "learning", kategori: "sikap", nama: t("Tes Learning Agility", "Learning agility test"), ikon: "TrendingUp", ket: t("Situasi kerja yang menguji kemauan dan kemampuan belajar dari pengalaman baru. Dipakai di RBB BUMN.", "Workplace scenarios testing how you learn from new experiences. Used in Indonesia's state-enterprise recruitment."), info: t("20 situasi · 15 menit", "20 scenarios · 15 minutes"), menit: 15, tips: TIPS_LA },
+  { id: "bi", kategori: "kognitif", nama: t("Pengetahuan Umum & Kebanksentralan", "Economics & central banking"), ikon: "Building2", ket: t("Persiapan PCPM Bank Indonesia dan bank BUMN: kelembagaan BI, moneter, makroprudensial, sistem pembayaran, rupiah, dan ekonomi umum.", "For Bank Indonesia and state-bank selection: BI institutions, monetary policy, macroprudential, payments, rupiah, and economics."), info: t("40 soal · 30 menit", "40 questions · 30 minutes"), menit: 30, tips: TIPS_BI },
   { id: "gambar", kategori: "gambar", nama: t("Latihan Tes Gambar", "Drawing test practice"), ikon: "PenTool", ket: t("Wartegg 8 kotak, menggambar orang, rumah-pohon-orang, dan pohon. Latihan bebas tanpa kuota.", "Wartegg 8 boxes, draw a person, house-tree-person, and tree. Free practice, no quota."), info: t("4 latihan · berwaktu", "4 exercises · timed"), menit: 0, tips: TIPS_GAMBAR, latihan: true },
 ];
 
 export const KATEGORI_TES = [
+  { id: "simulasi", nama: t("Simulasi seleksi lengkap", "Full selection simulations") },
   { id: "kognitif", nama: t("Kemampuan kognitif & inteligensi", "Cognitive ability & intelligence") },
   { id: "sikap", nama: t("Sikap kerja & konsentrasi", "Work attitude & concentration") },
   { id: "kepribadian", nama: t("Kepribadian", "Personality") },
@@ -305,9 +329,19 @@ export function buatSoal(jenis, benih, contoh = false) {
                             : jenis === "disc" ? soalDisc(acak)
                               : jenis === "epps" ? soalEpps(acak)
                                 : jenis === "tipe16" ? soalTipe16(acak)
-                                  : [];
+                                  : jenis === "tkd" ? soalTkd(acak)
+                                    : jenis === "twk" ? soalTwk(acak)
+                                      : jenis === "learning" ? soalLa(acak)
+                                        : jenis === "bi" ? soalBi(acak)
+                                          : jenis === "rbb" ? [...soalTkd(acak), ...soalAkhlak(acak, 25).map((s) => ({ ...s, bagian: "AKHLAK" })), ...soalTwk(acak, 25).map((s) => ({ ...s, bagian: "Wawasan Kebangsaan" })), ...soalLa(acak, 10).map((s) => ({ ...s, bagian: "Learning Agility" }))]
+                                            : [];
   if (!contoh) return daftar;
   if (jenis === "disc") return daftar.slice(0, 4);
+  if (jenis === "rbb" || jenis === "tkd") {
+    // Contoh: satu soal dari setiap bagian
+    const sudah = new Set();
+    return daftar.filter((x) => !x.bacaan && !sudah.has(x.bagian) && sudah.add(x.bagian));
+  }
   if (jenis === "epps" || jenis === "tipe16") return daftar.slice(0, 6);
   if (jenis === "cfit") return [daftar.find((s) => s.bagian === "Seri"), daftar.find((s) => s.bagian === "Klasifikasi"), daftar.find((s) => s.bagian === "Matriks")].filter(Boolean);
   // Contoh: ambil soal tanpa bacaan panjang supaya cepat dicoba

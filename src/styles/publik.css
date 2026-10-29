@@ -8572,3 +8572,28 @@ html[data-tema="gelap"] .pb-as-pesan { background: #14532d; color: #bbf7d0; }
   .pb-as-grid { grid-template-columns: minmax(0, 1fr); }
   .pb-as-baris { flex-wrap: wrap; }
 }
+
+/* Jarak isi halaman akun: panel-panel baru tidak menempel ke tepi dan ke header */
+.pb-app-body > :is(.pb-tk, .pb-po, .pb-po-kerja, .rp, .pb-as, .fgd-siap, .fgd, .pb-tk-kerja, .pb-tk-hasil, .pb-po-muat) {
+  padding: 28px 28px 0;
+}
+.pb-app-body > .pb-panel {
+  margin: 28px 28px 0;
+}
+.pb-app-body > :is(.pb-tk-kerja, .pb-tk-hasil, .fgd) {
+  box-sizing: content-box;
+}
+@media (max-width: 600px) {
+  .pb-app-body > :is(.pb-tk, .pb-po, .pb-po-kerja, .rp, .pb-as, .fgd-siap, .fgd, .pb-tk-kerja, .pb-tk-hasil, .pb-po-muat) {
+    padding: 20px 16px 0;
+  }
+  .pb-app-body > .pb-panel {
+    margin: 20px 16px 0;
+  }
+}
+.pb-venn { display: block; }
+.pb-venn circle { fill: color-mix(in srgb, var(--brand) 10%, transparent); stroke: var(--ink); stroke-width: 1.6; }
+.pb-tk-pilihan button svg.pb-venn, .pb-tk-bahas svg.pb-venn { width: 110px; height: 77px; flex: none; }
+.pb-tk-bahas svg.pb-venn { width: 70px; height: 49px; }
+.pb-tk-pilihan.fig:has(.pb-venn) { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+@media (max-width: 600px) { .pb-tk-pilihan.fig:has(.pb-venn) { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pb-tk-pilihan button svg.pb-venn { width: 96px; height: 67px; } }
