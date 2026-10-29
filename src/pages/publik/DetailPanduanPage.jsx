@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ArrowRight, ChevronRight, ExternalLink, AlertTriangle, Globe, Calculator, ShieldCheck, Dumbbell, CircleCheckBig } from "lucide-react";
+import { ArrowRight, ChevronRight, ExternalLink, AlertTriangle, Globe, Calculator, ShieldCheck, Dumbbell, CircleCheckBig, GraduationCap } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { SEMUA_PANDUAN, PROFESI, KATEGORI_PANDUAN, cariPanduan } from "../../data/panduan";
 import { cocokkanKursus } from "../../data/kursus";
@@ -7,6 +7,7 @@ import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
 import { IkonPanduan } from "./PanduanPage";
 import { sudahSelesai } from "../../utils/latihanProgres";
+import { adaKelas } from "../../data/kelas/index.js";
 
 const idBagian = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -262,6 +263,31 @@ function bagianInsight(p) {
 
 /* ------------------------------------------------------------------ */
 
+function AjakanKelas({ p }) {
+  return (
+    <a className="pb-lt-ajak kelas" {...tautan(`/panduan/${p.slug}/kelas`)}>
+      <span className="pb-lt-ajak-ikon">
+        <GraduationCap size={20} />
+      </span>
+      <span className="pb-lt-ajak-isi">
+        <b>
+          {t("Kelas Dasar", "Starter Course")} <span className="pb-tag gratis">{t("Gratis", "Free")}</span>
+        </b>
+        <span>
+          {t(
+            "Belum pernah sama sekali? Mulai dari sini: apa pekerjaannya, istilah penting, contoh sebelum dan sesudah, latihan, dan kuis per bab.",
+            "Completely new to this? Start here: what the job is, key terms, before-and-after examples, exercises, and a quiz per chapter (in Indonesian).",
+          )}
+        </span>
+      </span>
+      <span className="pb-lt-ajak-aksi">
+        {t("Mulai kelas", "Start course")}
+        <ArrowRight size={15} />
+      </span>
+    </a>
+  );
+}
+
 function AjakanLatihan({ p }) {
   const selesai = sudahSelesai(p.slug);
   return (
@@ -375,6 +401,7 @@ export function DetailPanduanPage({ slug }) {
             </span>
           </div>
         )}
+        {p.jenis === "profesi" && adaKelas(p.slug) && <AjakanKelas p={p} />}
         {p.jenis === "profesi" && <AjakanLatihan p={p} />}
       </div>
 

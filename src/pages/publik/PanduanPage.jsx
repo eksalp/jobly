@@ -12,6 +12,7 @@ import { PROFESI, INSIGHT, KATEGORI_PANDUAN } from "../../data/panduan";
 import { tautan } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
 import { sudahSelesai } from "../../utils/latihanProgres";
+import { adaKelas, SLUG_KELAS } from "../../data/kelas/index.js";
 
 // Ikon diimpor satu per satu supaya tidak seluruh pustaka ikon ikut terbundel
 const IKON = {
@@ -38,6 +39,12 @@ function KartuProfesi({ p }) {
         <span className="pb-pd-ringkas">{p.ringkas}</span>
         <span className="pb-pd-meta">
           <span className={`pb-pd-level ${p.levelKode === "mudah" ? "mudah" : ""}`}>{p.level}</span>
+          {adaKelas(p.slug) && (
+            <span className="pb-pd-kelas">
+              <GraduationCap size={12} />
+              {t("Ada kelas gratis", "Free course")}
+            </span>
+          )}
           {sudahSelesai(p.slug) && (
             <span className="pb-pd-selesai">
               <CircleCheckBig size={12} />
@@ -85,7 +92,33 @@ export function PanduanPage() {
             )}
           </span>
         </div>
-        <section aria-labelledby="pd-profesi">
+        <section aria-labelledby="pd-kelas" className="pb-pd-kelas-sek">
+          <div className="pb-pd-headrow">
+            <h2 id="pd-kelas" className="pb-h2">{t("Kelas Dasar gratis", "Free starter courses")}</h2>
+            <span className="pb-pd-jumlah">{SLUG_KELAS.length} {t("kelas", "courses")}</span>
+          </div>
+          <p className="pb-pd-kelas-intro">
+            {t(
+              "Masih awam? Misalnya belum tahu copywriting itu apa dan apa saja yang dikerjakan. Kelas ini mengupas dari nol: istilah, cara kerja sehari-hari, contoh sebelum dan sesudah, latihan, sampai cara mendapat klien pertama.",
+              "New to all this? These courses start from zero: key terms, the day-to-day work, before-and-after examples, exercises, and how to land your first client. Currently in Indonesian.",
+            )}
+          </p>
+          <div className="pb-pd-kelas-grid">
+            {SLUG_KELAS.map((s) => PROFESI.find((x) => x.slug === s))
+              .filter(Boolean)
+              .map((p) => (
+                <a key={p.slug} className="pb-pd-kelas-item" {...tautan(`/panduan/${p.slug}/kelas`)}>
+                  <span className="pb-pd-ikon kecil">
+                    <IkonPanduan nama={p.ikon} size={17} />
+                  </span>
+                  <span>{p.judul}</span>
+                  <ArrowRight size={14} />
+                </a>
+              ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="pd-profesi" style={{ marginTop: 48 }}>
           <div className="pb-pd-headrow">
             <h2 id="pd-profesi" className="pb-h2">{t("Pilih jenis pekerjaan", "Pick a role")}</h2>
             <span className="pb-pd-jumlah">{PROFESI.length} {t("panduan", "guides")}</span>

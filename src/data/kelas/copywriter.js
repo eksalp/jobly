@@ -1,0 +1,231 @@
+import { P, POIN, ISTILAH, CONTOH, KOTAK, LANGKAH, LATIHAN, K } from "./_blok.js";
+
+export default {
+  slug: "copywriter",
+  judul: "Kelas Dasar Copywriting",
+  ringkas: "Dari nol: apa itu copywriting, bedanya dengan menulis biasa, cara riset pembeli, formula AIDA dan PAS, sampai menyusun portofolio pertama.",
+  untuk: "Pemula yang belum pernah bekerja sebagai penulis iklan atau pemasaran.",
+  durasi: "± 1,5 jam",
+  hasil: [
+    "Paham apa yang dikerjakan copywriter setiap hari dan bagaimana ia dinilai",
+    "Bisa menulis headline, teks iklan, dan caption yang mendorong tindakan",
+    "Bisa memakai formula AIDA, PAS, dan FAB dengan tepat",
+    "Punya 3 karya pertama untuk portofolio",
+  ],
+  bab: [
+    {
+      id: "apa-itu",
+      judul: "Apa itu copywriting?",
+      menit: 12,
+      isi: [
+        P("Copywriting adalah menulis teks yang tujuannya membuat pembaca melakukan sesuatu: membeli, mendaftar, mengklik, menelepon, atau membalas pesan. Teksnya disebut copy. Orang yang menulisnya disebut copywriter."),
+        P("Kata kuncinya adalah tindakan. Artikel blog dianggap berhasil kalau dibaca sampai habis dan pembaca merasa terbantu. Copy dianggap berhasil kalau pembaca bertindak. Karena itu, copywriting selalu dekat dengan penjualan dan pemasaran."),
+        POIN("Contoh copy yang kamu lihat setiap hari", [
+          "Judul dan teks iklan di Instagram, TikTok, Google, dan YouTube",
+          "Halaman produk di Shopee atau Tokopedia",
+          "Halaman penjualan (landing page) kursus, aplikasi, atau jasa",
+          "Email promosi dan notifikasi aplikasi ('Keranjangmu menunggu, diskon berakhir malam ini')",
+          "Tulisan di tombol: 'Coba gratis 7 hari', 'Pesan sekarang'",
+          "Naskah iklan video pendek dan caption media sosial",
+        ]),
+        KOTAK("fakta", "Copywriter berbeda dengan content writer", "Content writer menulis artikel, panduan, dan tulisan informatif yang membangun kepercayaan dalam jangka panjang. Copywriter menulis teks pendek yang mendorong keputusan sekarang. Banyak perusahaan kecil meminta satu orang mengerjakan keduanya, tetapi cara berpikirnya berbeda."),
+        P("Copywriter bekerja untuk agensi iklan, tim pemasaran perusahaan, toko online, startup, atau sebagai freelancer untuk banyak klien. Karena hasilnya bisa diukur (berapa yang klik, berapa yang beli), copywriter yang bagus sangat dicari dan bisa bekerja dari mana saja."),
+        ISTILAH([
+          ["Copy", "Teks yang ditulis untuk pemasaran atau penjualan."],
+          ["Headline", "Judul atau kalimat pertama yang paling menentukan apakah orang lanjut membaca."],
+          ["CTA (call to action)", "Ajakan bertindak, misalnya 'Daftar sekarang' atau 'Chat admin'."],
+          ["Konversi", "Saat pembaca melakukan tindakan yang diinginkan (membeli, mendaftar, dan sebagainya)."],
+          ["Brief", "Instruksi dari klien: produk, target pembaca, tujuan, nada, dan tenggat."],
+        ]),
+      ],
+      kuis: [
+        K("Ukuran utama keberhasilan sebuah copy adalah …", "Pembaca melakukan tindakan yang diinginkan", ["Tulisannya panjang dan lengkap", "Memakai banyak kata indah", "Muncul di halaman pertama Google"], "Copy dinilai dari konversi: berapa banyak pembaca yang membeli, mendaftar, atau mengklik."),
+        K("Mana yang paling tepat disebut copy?", "Teks tombol 'Coba gratis 14 hari' di halaman aplikasi", ["Artikel 'Sejarah Kopi di Nusantara'", "Laporan keuangan tahunan", "Notulen rapat tim"], "Teks tombol mengajak orang bertindak. Itu bentuk copy paling sederhana."),
+        K("CTA adalah …", "Ajakan bertindak yang jelas kepada pembaca", ["Nama produk", "Harga coret", "Logo merek"], "CTA (call to action) memberi tahu pembaca langkah berikutnya, misalnya 'Pesan sekarang'."),
+      ],
+    },
+    {
+      id: "pekerjaan",
+      judul: "Seperti apa pekerjaan sehari-harinya?",
+      menit: 10,
+      isi: [
+        P("Banyak orang membayangkan copywriter hanya duduk dan menulis kalimat keren. Kenyataannya, sebagian besar waktunya dipakai untuk memahami pembeli dan produk. Menulisnya justru bagian yang paling cepat kalau risetnya sudah benar."),
+        LANGKAH([
+          ["Membaca brief", "Klien menjelaskan produk, siapa pembelinya, tujuan kampanye, tempat copy akan dipasang, dan tenggatnya. Kalau ada yang kurang jelas, copywriter bertanya sebelum mulai."],
+          ["Riset", "Membaca ulasan produk, komentar di media sosial, pertanyaan di chat admin, dan iklan pesaing. Tujuannya menemukan bahasa yang dipakai pembeli sungguhan."],
+          ["Menulis banyak versi", "Bukan satu headline, tetapi 10 sampai 20, lalu dipilih 3 sampai 5 terbaik. Copywriter terbiasa membuang tulisannya sendiri."],
+          ["Bekerja dengan desainer", "Teks dan gambar harus saling mendukung. Copy iklan sering ditulis menyesuaikan ruang di gambar."],
+          ["Membaca hasil", "Setelah iklan tayang, copywriter melihat data: versi mana yang paling banyak diklik. Pelajarannya dipakai untuk kampanye berikutnya."],
+        ]),
+        KOTAK("tips", "Yang membedakan copywriter pemula dan berpengalaman", "Pemula menulis apa yang ingin dikatakan penjual. Copywriter berpengalaman menulis apa yang ingin didengar pembeli. Penjual ingin bilang 'produk kami berkualitas', pembeli ingin tahu 'masalahku selesai atau tidak'."),
+        POIN("Alat yang biasa dipakai", [
+          "Google Docs untuk menulis dan menerima komentar klien",
+          "Meta Ad Library (gratis) untuk melihat iklan yang sedang tayang dari brand mana pun",
+          "Ulasan di marketplace sebagai sumber bahasa pembeli",
+          "Alat keterbacaan seperti Hemingway Editor",
+          "AI seperti ChatGPT untuk memancing variasi ide, bukan untuk hasil akhir",
+        ]),
+      ],
+      kuis: [
+        K("Bagian pekerjaan copywriter yang paling banyak memakan waktu biasanya adalah …", "Riset tentang pembeli dan produk", ["Memilih jenis huruf", "Mendesain gambar iklan", "Mengatur jadwal tayang iklan"], "Copy yang kuat lahir dari pemahaman pembeli. Karena itu riset adalah bagian terpenting."),
+        K("Mengapa copywriter menulis banyak versi headline?", "Supaya bisa memilih yang terbaik dan menguji beberapa versi", ["Supaya dibayar lebih mahal", "Karena klien selalu meminta 20 headline", "Supaya tulisan terlihat panjang"], "Headline pertama jarang menjadi yang terbaik. Banyak versi membuka peluang menemukan sudut yang paling kuat."),
+        K("Meta Ad Library berguna untuk …", "Melihat iklan yang sedang tayang dari berbagai brand sebagai bahan riset", ["Membuat desain iklan otomatis", "Membeli iklan dengan harga lebih murah", "Menghitung pajak iklan"], "Ad Library gratis dan memperlihatkan iklan aktif, sangat berguna untuk riset dan inspirasi."),
+      ],
+    },
+    {
+      id: "pembeli",
+      judul: "Memahami pembeli: kunci semua copy",
+      menit: 18,
+      isi: [
+        P("Sebelum menulis satu kata pun, copywriter perlu menjawab empat pertanyaan: siapa pembelinya, masalah apa yang ia rasakan, apa yang membuatnya ragu, dan apa yang membuatnya akhirnya membeli."),
+        POIN("Empat pertanyaan riset", [
+          "Siapa dia? Usia, pekerjaan, kebiasaan, tempat ia melihat iklan",
+          "Apa masalahnya? Dalam kata-katanya sendiri, bukan kata-kata penjual",
+          "Apa keberatannya? Mahal, ragu kualitas, takut tertipu, tidak sempat",
+          "Apa pemicu belinya? Promo, testimoni teman, bukti hasil, garansi",
+        ]),
+        P("Sumber jawaban terbaik adalah pembeli itu sendiri. Buka ulasan bintang 3 dan 4 di marketplace: ulasan bintang 5 sering terlalu umum, ulasan bintang 1 sering marah karena pengiriman. Ulasan bintang 3 dan 4 biasanya berisi alasan nyata orang ragu dan alasan ia tetap membeli."),
+        CONTOH(
+          "Fitur atau manfaat?",
+          "Botol minum stainless 750 ml dengan lapisan vakum ganda.",
+          "Es kopimu masih dingin sampai jam pulang kantor.",
+          "Kalimat pertama berisi fitur (apa produknya). Kalimat kedua berisi manfaat (apa yang dirasakan pembeli). Pembeli membeli manfaat, fitur berfungsi sebagai bukti.",
+        ),
+        KOTAK("tips", "Trik 'Jadi apa?'", "Setiap kali menulis fitur, tanyakan 'jadi apa?' sampai menemukan manfaat yang dirasakan. Lapisan vakum ganda. Jadi apa? Suhu terjaga 12 jam. Jadi apa? Es kopi tetap dingin sampai jam pulang kantor."),
+        ISTILAH([
+          ["Persona", "Gambaran satu pembeli ideal, lengkap dengan kebiasaan dan masalahnya."],
+          ["Pain point", "Masalah atau rasa tidak nyaman yang dialami pembeli."],
+          ["Keberatan (objection)", "Alasan pembeli ragu membeli, misalnya harga atau kepercayaan."],
+          ["USP (unique selling proposition)", "Hal yang membuat produk berbeda dari pesaingnya."],
+        ]),
+        LATIHAN(
+          "Ubah tiga fitur ini menjadi manfaat: (1) tas laptop tahan air, (2) aplikasi kasir bisa dipakai tanpa internet, (3) kursus bahasa Inggris dengan kelas jam 8 malam.",
+          "(1) Laptopmu tetap aman walau kamu kehujanan di jalan pulang. (2) Transaksi tetap jalan walau sinyal di toko sedang hilang. (3) Bisa belajar sepulang kerja tanpa harus izin kantor.",
+        ),
+      ],
+      kuis: [
+        K("Manakah yang termasuk manfaat, bukan fitur?", "Kulit wajah terasa lembap seharian tanpa lengket", ["Mengandung hyaluronic acid 2%", "Kemasan botol 50 ml", "Tekstur gel"], "Manfaat menjelaskan apa yang dirasakan pembeli. Kandungan dan ukuran adalah fitur."),
+        K("Ulasan mana yang biasanya paling berguna untuk riset keberatan pembeli?", "Ulasan bintang 3 dan 4", ["Ulasan bintang 5 saja", "Ulasan tanpa teks", "Ulasan dari penjual"], "Ulasan menengah biasanya menjelaskan alasan ragu sekaligus alasan tetap membeli."),
+        K("Keberatan (objection) pembeli adalah …", "Alasan yang membuat calon pembeli ragu membeli", ["Keluhan setelah barang diterima", "Diskon yang diminta pembeli", "Kompetitor utama"], "Copy yang baik menjawab keberatan sebelum pembeli menanyakannya."),
+      ],
+    },
+    {
+      id: "formula",
+      judul: "Formula copywriting: AIDA, PAS, dan FAB",
+      menit: 20,
+      isi: [
+        P("Formula adalah kerangka urutan pesan. Formula bukan resep wajib, tetapi sangat membantu pemula agar copy tidak melompat-lompat."),
+        POIN("AIDA: Attention, Interest, Desire, Action", [
+          "Attention: tarik perhatian dengan headline atau kalimat pembuka",
+          "Interest: buat ia penasaran dengan informasi yang relevan untuknya",
+          "Desire: bangkitkan keinginan dengan manfaat, bukti, atau bayangan hasil",
+          "Action: tutup dengan ajakan yang jelas",
+        ]),
+        CONTOH(
+          "Contoh AIDA untuk kursus Excel online",
+          "Kursus Excel lengkap dari dasar sampai mahir. Materi lengkap, mentor berpengalaman. Daftar sekarang!",
+          "Masih copy-paste data satu per satu sampai lembur? (A)\nDi kelas 4 minggu ini kamu belajar VLOOKUP, pivot table, dan dashboard dari kasus kerja sungguhan. (I)\nAlumni kami rata-rata memangkas waktu laporan mingguan dari 3 jam menjadi 30 menit. (D)\nKelas berikutnya mulai Senin. Amankan kursimu sebelum kuota habis. (A)",
+          "Versi pertama hanya klaim umum. Versi kedua dibuka dengan masalah, menunjukkan isi yang konkret, memberi bukti hasil, dan menutup dengan ajakan serta alasan untuk segera.",
+        ),
+        POIN("PAS: Problem, Agitate, Solution", [
+          "Problem: sebutkan masalah yang dialami pembeli",
+          "Agitate: perjelas dampaknya kalau dibiarkan (tanpa menakut-nakuti berlebihan)",
+          "Solution: tawarkan produk sebagai jalan keluar",
+        ]),
+        CONTOH(
+          "Contoh PAS untuk jasa pembukuan UMKM",
+          "Kami menyediakan jasa pembukuan profesional untuk UMKM.",
+          "Omzet naik, tapi uangnya entah ke mana? (P)\nTanpa catatan rapi, kamu sulit tahu produk mana yang untung, apalagi saat mengajukan pinjaman ke bank. (A)\nKami rapikan pembukuan tokomu setiap bulan, kamu cukup kirim foto nota lewat WhatsApp. (S)",
+          "Pembaca langsung merasa 'ini aku banget', mengerti risikonya, lalu melihat solusi yang mudah.",
+        ),
+        POIN("FAB: Feature, Advantage, Benefit", [
+          "Feature: apa produknya (baterai 5.000 mAh)",
+          "Advantage: kelebihannya (tahan dua hari pemakaian normal)",
+          "Benefit: dampaknya bagi pembeli (tidak perlu membawa power bank saat dinas luar kota)",
+        ]),
+        KOTAK("awas", "Kesalahan pemula", "Memakai formula secara kaku sampai terasa seperti template, dan bagian Agitate yang terlalu menakut-nakuti. Pembaca Indonesia cepat curiga pada copy yang lebay. Tetap jujur dan wajar."),
+        LATIHAN(
+          "Tulis copy PAS (3 sampai 4 kalimat) untuk aplikasi pengingat minum obat bagi orang tua.",
+          "Orang tua sering lupa minum obat, padahal kamu tidak selalu bisa mengingatkan. (P) Satu dosis terlewat bisa membuat tekanan darah naik dan kamu baru tahu saat sudah terlambat. (A) Aplikasi ini mengingatkan beliau tepat waktu dan mengirim notifikasi ke ponselmu kalau obat belum diminum. (S) Coba gratis 14 hari. (CTA)",
+        ),
+      ],
+      kuis: [
+        K("Urutan AIDA yang benar adalah …", "Attention, Interest, Desire, Action", ["Action, Interest, Desire, Attention", "Attention, Idea, Detail, Action", "Awareness, Interest, Decision, Advocacy"], "AIDA: tarik perhatian, buat tertarik, bangkitkan keinginan, ajak bertindak."),
+        K("Pada formula PAS, bagian 'Agitate' bertujuan …", "Memperjelas dampak masalah agar pembaca merasa perlu solusi", ["Menyebutkan harga produk", "Menyerang kompetitor", "Memberi diskon"], "Agitate memperdalam rasa butuh, tetapi harus tetap jujur dan tidak berlebihan."),
+        K("'Tidak perlu membawa power bank saat dinas luar kota' termasuk bagian … dalam FAB.", "Benefit", ["Feature", "Advantage", "Action"], "Benefit adalah dampak langsung bagi kehidupan pembeli."),
+      ],
+    },
+    {
+      id: "headline-cta",
+      judul: "Menulis headline dan CTA yang diklik",
+      menit: 15,
+      isi: [
+        P("Sebagian besar orang hanya membaca headline. Kalau headline gagal, isi copy sebaik apa pun tidak terbaca. Itulah sebabnya copywriter menghabiskan banyak waktu di sini."),
+        POIN("8 pola headline yang bisa langsung dicoba", [
+          "Angka spesifik: '3 cara memangkas tagihan listrik tanpa mematikan AC'",
+          "Pertanyaan masalah: 'Masih lembur karena rekap data manual?'",
+          "Hasil + waktu: 'Lancar presentasi bahasa Inggris dalam 30 hari'",
+          "Tanpa rasa sakit: 'Kulit cerah tanpa harus skincare 10 langkah'",
+          "Untuk siapa: 'Khusus pemilik warung: catat stok dari HP'",
+          "Rasa penasaran (secukupnya): 'Kesalahan kecil yang bikin lamaranmu tidak dibaca'",
+          "Bukti sosial: 'Dipakai 12.000 UMKM untuk mencatat penjualan'",
+          "Perbandingan: 'Lebih murah dari segelas kopi per hari'",
+        ]),
+        CONTOH(
+          "Headline yang terlalu umum vs spesifik",
+          "Solusi terbaik untuk kebutuhan Anda!",
+          "Pesan katering kantor hari ini, sampai sebelum jam makan siang besok",
+          "Headline umum bisa dipakai untuk produk apa saja, jadi tidak berarti apa-apa. Headline spesifik langsung menjawab 'apa untungnya bagiku'.",
+        ),
+        POIN("CTA yang baik", [
+          "Memakai kata kerja: 'Coba', 'Pesan', 'Unduh', 'Chat'",
+          "Menyebut hasil: 'Ambil template gratis' lebih kuat dari 'Submit'",
+          "Mengurangi risiko: 'Coba gratis, batalkan kapan saja'",
+          "Satu halaman, satu ajakan utama supaya pembaca tidak bingung",
+        ]),
+        KOTAK("awas", "Batas yang tidak boleh dilanggar", "Jangan menulis klaim yang tidak bisa dibuktikan (dijamin 100%, terbaik di Indonesia, sembuh total). Selain melanggar aturan iklan platform seperti Meta, klaim berlebihan untuk produk kesehatan dan keuangan bisa melanggar ketentuan BPOM atau OJK."),
+        LATIHAN(
+          "Tulis 5 headline berbeda untuk jasa laundry kiloan antar-jemput di sekitar kampus, masing-masing memakai pola yang berbeda.",
+          "1) Cucian beres tanpa keluar kos: kami jemput, kamu tinggal kuliah. 2) Masih nyuci sendiri tiap Minggu? 3) Rp7.000 per kilo, wangi dan rapi dalam 24 jam. 4) Khusus anak kos sekitar kampus: antar-jemput gratis. 5) Dipercaya 800 mahasiswa setiap bulan.",
+        ),
+      ],
+      kuis: [
+        K("Headline mana yang paling kuat?", "Atur jadwal posting sebulan dalam 20 menit", ["Aplikasi terbaik untuk Anda", "Solusi media sosial modern", "Kami hadir untuk Anda"], "Headline yang menyebut hasil konkret dan waktu jauh lebih meyakinkan daripada klaim umum."),
+        K("CTA mana yang paling baik untuk halaman unduhan e-book?", "Unduh panduan gratis sekarang", ["Submit", "Klik di sini", "Lanjut"], "CTA yang baik memakai kata kerja dan menyebut apa yang didapat."),
+        K("Mengapa klaim 'dijamin sembuh 100%' sebaiknya dihindari?", "Tidak bisa dibuktikan dan melanggar aturan iklan", ["Terlalu pendek", "Kurang menarik", "Tidak memakai angka"], "Klaim berlebihan merusak kepercayaan dan bisa membuat iklan ditolak atau melanggar regulasi."),
+      ],
+    },
+    {
+      id: "portofolio",
+      judul: "Portofolio pertama dan cara mendapat klien",
+      menit: 15,
+      isi: [
+        P("Klien copywriting jarang menanyakan ijazah. Mereka ingin melihat contoh tulisanmu dan, kalau ada, hasilnya. Kabar baiknya: kamu bisa membuat portofolio tanpa pernah punya klien."),
+        LANGKAH([
+          ["Rewrite iklan sungguhan", "Ambil 3 iklan lemah dari Meta Ad Library, tulis ulang versi yang lebih kuat, lalu jelaskan alasannya dalam 3 sampai 4 kalimat. Ini menunjukkan cara berpikirmu, bukan hanya hasil tulisan."],
+          ["Buat proyek fiktif yang realistis", "Misalnya landing page untuk kedai kopi lokal atau email promosi untuk toko online. Tulis brief-nya, copy-nya, dan alasan setiap pilihan."],
+          ["Bantu UMKM di sekitarmu", "Tawarkan menulis ulang caption atau deskripsi produk secara gratis atau murah, dengan syarat boleh dipakai di portofolio dan kamu bisa mencatat hasilnya."],
+          ["Kumpulkan di satu tempat", "Google Drive yang rapi, Notion, atau halaman sederhana. Satu karya per halaman: konteks, copy, alasan, dan hasil bila ada."],
+        ]),
+        POIN("Tempat mencari klien pertama", [
+          "Grup Facebook atau Telegram pemilik UMKM dan toko online",
+          "LinkedIn: unggah analisis singkat iklan brand terkenal secara rutin",
+          "Upwork, Fiverr, Sribulancer, dan Projects.co.id untuk proyek freelance",
+          "Agensi digital lokal yang sering membutuhkan freelancer",
+        ]),
+        KOTAK("awas", "Waspadai tes gratis yang dipakai sungguhan", "Sebagian calon klien meminta 'tes' berupa copy lengkap untuk produk mereka tanpa bayaran, lalu memakainya. Tes yang wajar biasanya pendek (2 sampai 3 headline) atau dibayar."),
+        KOTAK("tips", "Langkah berikutnya", "Kerjakan latihan praktik Copywriter di Jobly untuk merasakan brief dan revisi klien sungguhan, lalu jadikan salah satunya proyek portofolio."),
+      ],
+      kuis: [
+        K("Yang paling dilihat klien saat memilih copywriter adalah …", "Contoh tulisan dan alasan di baliknya", ["Ijazah sarjana sastra", "Jumlah pengikut Instagram", "Kecepatan mengetik"], "Klien ingin melihat kemampuanmu langsung dari contoh karya."),
+        K("Cara membuat portofolio tanpa klien yang paling efektif adalah …", "Menulis ulang iklan sungguhan dan menjelaskan alasan perubahannya", ["Menyalin copy brand terkenal", "Menunggu ada klien pertama", "Membuat CV yang panjang"], "Rewrite dengan alasan menunjukkan keterampilan dan cara berpikir, dan sah dilakukan."),
+        K("Permintaan tes yang perlu diwaspadai adalah …", "Copy lengkap untuk produk klien tanpa bayaran", ["Menulis 2 headline singkat", "Menjelaskan proses kerja", "Mengirim contoh portofolio"], "Tes panjang tanpa bayaran berisiko dipakai tanpa izin."),
+      ],
+    },
+  ],
+  tugasAkhir: {
+    judul: "Tugas akhir: copy untuk satu produk",
+    brief: "Pilih satu produk UMKM di sekitarmu. Tulis 5 headline, 1 teks iklan Instagram dengan formula AIDA, dan 1 CTA. Tambahkan 3 kalimat penjelasan tentang siapa pembelinya dan keberatan apa yang kamu jawab.",
+    kriteria: ["Headline memakai minimal 3 pola berbeda", "Ada manfaat, bukan hanya fitur", "Keberatan pembeli dijawab", "CTA jelas dan memakai kata kerja", "Tidak ada klaim yang berlebihan"],
+  },
+};

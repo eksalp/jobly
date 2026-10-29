@@ -28,6 +28,7 @@ import { PetaGajiPage } from "./publik/PetaGajiPage";
 import { PanduanPage } from "./publik/PanduanPage";
 import { DetailPanduanPage } from "./publik/DetailPanduanPage";
 import { LatihanPage } from "./publik/LatihanPage";
+import { KelasPage } from "./publik/KelasPage";
 import {
   adaProsesBerjalan,
   keteranganProses,
@@ -44,12 +45,13 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /kalkulator-gaji  Kalkulator gaji mata uang asing → rupiah
  *   /panduan          Panduan Remote Working untuk pemula
  *   /panduan/<slug>   Satu panduan (profesi atau topik umum)
+ *   /panduan/<slug>/kelas  Kelas Dasar gratis untuk satu profesi
  *   /latihan/<slug>   Latihan praktik untuk satu profesi (Pro)
  *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "latihan"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 
@@ -75,6 +77,10 @@ function parsePath(pathname) {
   if (path === "/loker") return { page: "loker" };
   if (path === "/kalkulator-gaji") return { page: "kalkulator" };
   if (path === "/panduan") return { page: "panduan" };
+  {
+    const m = path.match(/^\/panduan\/([^/]+)\/kelas\/?$/);
+    if (m) return { page: "kelas", slug: m[1] };
+  }
   if (path.startsWith("/panduan/")) return { page: "panduanDetail", slug: path.slice("/panduan/".length) };
   if (path.startsWith("/latihan/")) return { page: "latihan", slug: path.slice("/latihan/".length) };
   if (path === "/remote") return { page: "remote" };
@@ -270,6 +276,9 @@ function JobFinderApp() {
       break;
     case "panduanDetail":
       isi = <DetailPanduanPage key={rute.slug} slug={rute.slug} />;
+      break;
+    case "kelas":
+      isi = <KelasPage key={rute.slug} slug={rute.slug} />;
       break;
     case "latihan":
       isi = <LatihanPage key={rute.slug} slug={rute.slug} />;
