@@ -14,6 +14,7 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { jalankanAnalisis } from "./penyedia.ts";
 import { rapikanTensaDraft } from "../_shared/tensaVerb.js";
+import { lengkapiBullet, petaUntukPrompt } from "./lengkapiBullet.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -279,6 +280,7 @@ function normalisasiAudit(a, kunciSkor) {
 /* ---------- Handler ---------- */
 
 serve(async (req) => {
+  const mulaiPermintaan = Date.now();
   if (req.method === "OPTIONS")
     return new Response("ok", { headers: corsHeaders });
 
@@ -353,6 +355,7 @@ serve(async (req) => {
     // bagian yang terpotong biasanya justru pengalaman lama dan pendidikan.
     const inputUser = str(cvText).slice(0, 12000);
     const asal = isLinkedIn ? "salinan profil LinkedIn" : "CV";
+    const petaBullet = petaUntukPrompt(inputUser);
 
     /* ===== Satu panggilan: audit + draft =====
        Pencocokan loker TIDAK lagi lewat AI. Dikerjakan algoritma lokal
@@ -425,6 +428,9 @@ ATURAN:
 - languages[].proficiency HARUS persis salah satu dari: ${TINGKAT_BAHASA.id.map((x) => `"${x}"`).join(", ")}.
 - cover_saran & photo_saran: spesifik untuk bidang kerja user ini, bukan nasihat umum.
 
+${petaBullet ? `JUMLAH BULLET PER POSISI DI INPUT (dihitung otomatis; bullet di cv_draft untuk posisi itu TIDAK BOLEH lebih sedikit):
+${petaBullet}
+` : ""}
 ${STANDAR_DRAFT.id}
 
 ${INSTRUKSI_BAHASA.id}`;
@@ -475,6 +481,9 @@ RULES:
 - Keep every point in organizations, volunteers, and education.desc from the input.
 - cover_saran & photo_saran: specific to this candidate's field, not generic advice.
 
+${petaBullet ? `BULLET COUNT PER ROLE IN THE INPUT (counted automatically; cv_draft bullets for that role MUST NOT be fewer):
+${petaBullet}
+` : ""}
 ${STANDAR_DRAFT.en}
 
 ${INSTRUKSI_BAHASA.en}`;
@@ -602,6 +611,25 @@ ${INSTRUKSI_BAHASA.en}`;
       organizations: normalisasiDaftar(le.organizations, BENTUK.organizations),
     };
 
+    /* Pengaman: kalau AI tetap memangkas bullet, posisi itu ditulis ulang
+       sekali lagi dengan jumlah minimal yang dipaksa lewat skema. */
+    let cvLengkap = cvDraft;
+    let cvLengkapEn = cvDraftEn;
+    if (!isLinkedIn) {
+      try {
+        const l = await lengkapiBullet({
+          cv: cvDraft,
+          cvEn: cvDraftEn,
+          input: inputUser,
+          batasMs: Math.min(35000, 140000 - (Date.now() - mulaiPermintaan)),
+        });
+        cvLengkap = l.cv;
+        cvLengkapEn = l.cvEn;
+      } catch (e) {
+        console.warn("lengkapiBullet dilewati:", e?.message);
+      }
+    }
+
     const hasil = {
       arah_karier: str(hasilAi.arah_karier),
       arah_karier_alasan: str(hasilAi.arah_karier_alasan),
@@ -615,10 +643,10 @@ ${INSTRUKSI_BAHASA.en}`;
       saran_perbaikan: arrStr(hasilAi.saran_perbaikan),
       cv_audit: normalisasiAudit(hasilAi.cv_audit, "skor_ats"),
       linkedin_audit: normalisasiAudit(hasilAi.linkedin_audit, "skor"),
-      cv_draft: cvDraft,
+      cv_draft: cvLengkap,
       linkedin_draft: linkedinDraft,
       // Tense diperbaiki secara pasti: posisi yang sudah selesai → past tense
-      cv_draft_en: rapikanTensaDraft(cvDraftEn),
+      cv_draft_en: rapikanTensaDraft(cvLengkapEn),
       linkedin_draft_en: rapikanTensaDraft(linkedinDraftEn),
     };
 
