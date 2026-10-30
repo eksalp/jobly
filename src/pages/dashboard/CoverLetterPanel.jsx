@@ -430,6 +430,7 @@ function BagianAi({ d, cvTeks, setD, setActive }) {
       setHasil(data);
       setCadangan(null);
       if (typeof data?.sisa === "number" && kuota) setKuota({ ...kuota, terpakai: kuota.jatah - data.sisa });
+      langganan.refresh?.();
     } catch (e) {
       setGalat(e.message || "Analisis gagal.");
     } finally {

@@ -35,6 +35,8 @@ const KOSONG = {
   sisaFgd: 0,
   kuotaTes: 0,
   sisaTes: 0,
+  kuotaCl: 0,
+  sisaCl: 0,
   jumlahPaket: 0,
 };
 
@@ -73,6 +75,19 @@ async function muatKuotaMax(userId) {
   }
 }
 
+/** Jatah analisis AI cover letter (SQL 14). Kalau fungsinya belum ada, hasilnya kosong. */
+async function muatKuotaCl() {
+  try {
+    const { data, error } = await supabase.rpc("kuota_cl_saya");
+    if (error) return {};
+    const r = Array.isArray(data) ? data[0] : data;
+    if (!r) return {};
+    return { kuotaCl: r.jatah || 0, sisaCl: Math.max(0, (r.jatah || 0) - (r.terpakai || 0)) };
+  } catch {
+    return {};
+  }
+}
+
 export function LanggananProvider({ children }) {
   const { user } = useAuth();
   const [status, setStatus] = useState(KOSONG);
@@ -94,7 +109,7 @@ export function LanggananProvider({ children }) {
     }
 
     const b = Array.isArray(data) ? data[0] : data;
-    const tambahan = b?.aktif ? await muatKuotaMax(user.id) : {};
+    const tambahan = b?.aktif ? { ...(await muatKuotaMax(user.id)), ...(await muatKuotaCl()) } : {};
     setStatus({
       ...KOSONG,
       ...tambahan,

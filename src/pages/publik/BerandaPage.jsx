@@ -654,6 +654,9 @@ export function BerandaPage() {
           </div>
 
           <div className="pb-bento-kecil" data-muncul="">
+            <a {...tautan(fitur("coverletter"))}>
+              <FilePlus2 size={16} /> Cover Letter
+            </a>
             <a {...tautan(fitur("linkedinbuilder"))}>
               <FilePlus2 size={16} /> LinkedIn Builder
             </a>

@@ -210,7 +210,7 @@ export function PaketPanel() {
             lineHeight: 1.65,
           }}
         >
-          {t("Semua loker, CV Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka latihan praktik untuk 40 pekerjaan remote dan menambah kuota analisis AI, Pindah Karier, dan simulasi interview.", "Every job, the CV Builder, and the LinkedIn Builder are free forever. Paid plans unlock hands-on practice for 40 remote roles and add credits for AI analysis, Career Switch, and mock interviews.")}
+          {t("Semua loker, CV Builder, Cover Letter Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka latihan praktik untuk 40 pekerjaan remote dan menambah kuota analisis AI, analisis cover letter, Pindah Karier, dan simulasi interview.", "Every job, the CV Builder, the Cover Letter Builder, and the LinkedIn Builder are free forever. Paid plans unlock hands-on practice for 40 remote roles and add credits for AI analysis, cover letter review, Career Switch, and mock interviews.")}
         </div>
       </div>
 
@@ -247,6 +247,7 @@ export function PaketPanel() {
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
               {[
                 [t("Review CV & LinkedIn", "CV & LinkedIn review"), langganan.sisaAnalisis, langganan.kuotaAnalisis],
+                [t("Cover letter", "Cover letter"), langganan.sisaCl, langganan.kuotaCl],
                 [t("Pindah Karier", "Career switch"), langganan.sisaPindah, langganan.kuotaPindah],
                 [t("Simulasi interview", "Mock interview"), langganan.sisaInterview, langganan.kuotaInterview],
               ].map(([label, sisa, total]) => (

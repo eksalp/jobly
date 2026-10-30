@@ -35,7 +35,7 @@ const DOKUMEN_ID = {
           {
             daftar: [
               "Data akun: nama, alamat email, dan kata sandi yang tersimpan dalam bentuk terenkripsi oleh penyedia autentikasi kami. Jika masuk dengan Google, kami menerima nama dan email dari akun Google-mu.",
-              "Data yang kamu isi: profil karier, keahlian, pengalaman, isi CV Builder dan LinkedIn Builder, teks CV atau profil LinkedIn yang kamu unggah, loker yang kamu simpan, serta catatan lamaran.",
+              "Data yang kamu isi: profil karier, keahlian, pengalaman, isi CV Builder, Cover Letter Builder, dan LinkedIn Builder, teks CV atau profil LinkedIn yang kamu unggah, loker yang kamu simpan, serta catatan lamaran.",
               "Hasil fitur AI: hasil review CV, rencana pindah karier, serta transkrip teks dan penilaian simulasi interview.",
               "Data transaksi: paket yang dibeli, nominal, status pembayaran, dan nomor pesanan. Data kartu atau rekeningmu diproses oleh Midtrans dan tidak kami terima.",
               "Data di perangkatmu: browser menyimpan sesi masuk dan data pendukung seperti kurs mata uang terakhir agar halaman lebih cepat. Jobly tidak memasang pelacak iklan atau analitik pihak ketiga.",
@@ -64,7 +64,7 @@ const DOKUMEN_ID = {
         id: "ai",
         judul: "Pemrosesan oleh AI",
         isi: [
-          "Saat kamu memakai Review CV, Pindah Karier, atau Simulasi Interview, teks yang diperlukan (misalnya isi CV, posisi yang kamu incar, atau jawabanmu) dikirim ke Google melalui Gemini API untuk diproses. Pada simulasi interview, suaramu dialirkan langsung ke layanan suara Google selama sesi berlangsung. Jobly tidak menyimpan rekaman suara; yang kami simpan hanya transkrip teks dan penilaiannya.",
+          "Saat kamu memakai Review CV, analisis cover letter, Pindah Karier, atau Simulasi Interview, teks yang diperlukan (misalnya isi CV, isi cover letter, teks lowongan, posisi yang kamu incar, atau jawabanmu) dikirim ke Google melalui Gemini API untuk diproses. Pada simulasi interview, suaramu dialirkan langsung ke layanan suara Google selama sesi berlangsung. Jobly tidak menyimpan rekaman suara; yang kami simpan hanya transkrip teks dan penilaiannya.",
           "Pemrosesan oleh Google tunduk pada ketentuan layanan Google. Tergantung jenis layanan yang digunakan, Google dapat menyimpan sementara atau memakai data tersebut sesuai ketentuannya. Karena itu, jangan mencantumkan data yang tidak dibutuhkan untuk melamar (misalnya NIK, nomor rekening, atau foto KTP) di CV yang kamu analisis.",
         ],
       },
@@ -212,7 +212,7 @@ const DOKUMEN_ID = {
         id: "ai",
         judul: "Hasil fitur AI",
         isi: [
-          "Hasil Review CV, Pindah Karier, rekomendasi, dan penilaian simulasi dihasilkan secara otomatis dan bisa keliru atau tidak lengkap. Hasil tersebut adalah saran, bukan nasihat profesional. Periksa kembali setiap isinya sebelum dipakai, dan jangan mencantumkan pengalaman atau kualifikasi yang tidak kamu miliki.",
+          "Hasil Review CV, analisis cover letter, Pindah Karier, rekomendasi, dan penilaian simulasi dihasilkan secara otomatis dan bisa keliru atau tidak lengkap. Hasil tersebut adalah saran, bukan nasihat profesional. Periksa kembali setiap isinya sebelum dipakai, dan jangan mencantumkan pengalaman atau kualifikasi yang tidak kamu miliki.",
         ],
       },
       {
@@ -360,7 +360,7 @@ const DOKUMEN_EN = {
           {
             daftar: [
               "Account data: your name, email address, and password, which our authentication provider stores in encrypted form. If you sign in with Google, we receive the name and email from your Google account.",
-              "Data you enter: your career profile, skills, experience, CV Builder and LinkedIn Builder content, CV or LinkedIn text you upload, saved jobs, and application notes.",
+              "Data you enter: your career profile, skills, experience, CV Builder, Cover Letter Builder, and LinkedIn Builder content, CV or LinkedIn text you upload, saved jobs, and application notes.",
               "AI feature results: CV review results, career switch plans, and mock interview transcripts and scores.",
               "Transaction data: the plan purchased, amount, payment status, and order number. Card or bank details are processed by Midtrans and never reach us.",
               "Data on your device: your browser stores your sign-in session and supporting data such as the latest exchange rate so pages load faster. Jobly doesn't use third-party advertising trackers or analytics.",
@@ -389,7 +389,7 @@ const DOKUMEN_EN = {
         id: "ai",
         judul: "AI processing",
         isi: [
-          "When you use CV Review, Career Switch, or Mock Interview, the text needed (for example your CV, target role, or answers) is sent to Google through the Gemini API for processing. During a mock interview, your voice is streamed directly to Google's voice service for the length of the session. Jobly doesn't store voice recordings; we only keep the text transcript and the score.",
+          "When you use CV Review, cover letter review, Career Switch, or Mock Interview, the text needed (for example your CV, cover letter, job post, target role, or answers) is sent to Google through the Gemini API for processing. During a mock interview, your voice is streamed directly to Google's voice service for the length of the session. Jobly doesn't store voice recordings; we only keep the text transcript and the score.",
           "Processing by Google is subject to Google's terms of service. Depending on the service used, Google may temporarily store or use that data under its terms. So don't include data you don't need for applying (for example your national ID number, bank account number, or ID card photo) in a CV you analyse.",
         ],
       },
@@ -534,7 +534,7 @@ const DOKUMEN_EN = {
         id: "ai",
         judul: "AI feature results",
         isi: [
-          "CV Review, Career Switch, suggestions, and mock interview scores are generated automatically and may be wrong or incomplete. They are suggestions, not professional advice. Check everything before using it, and never list experience or qualifications you don't have.",
+          "CV Review, cover letter review, Career Switch, suggestions, and mock interview scores are generated automatically and may be wrong or incomplete. They are suggestions, not professional advice. Check everything before using it, and never list experience or qualifications you don't have.",
         ],
       },
       {

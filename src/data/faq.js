@@ -37,12 +37,12 @@ export const FAQ = [
         beranda: true,
         a: [
           t(
-            "Ya. Semua lowongan di Jobly bisa dicari dan dibuka gratis, bahkan tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
-            "Yes. Every job on Jobly can be searched and opened for free, even without signing up. A free account also includes the CV Builder, LinkedIn Builder, a bank of 140+ interview questions, the Fake Job Checker, Salary Map, Application Plan, saved jobs, and an application tracker.",
+            "Ya. Semua lowongan di Jobly bisa dicari dan dibuka gratis, bahkan tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, Cover Letter Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
+            "Yes. Every job on Jobly can be searched and opened for free, even without signing up. A free account also includes the CV Builder, Cover Letter Builder, LinkedIn Builder, a bank of 140+ interview questions, the Fake Job Checker, Salary Map, Application Plan, saved jobs, and an application tracker.",
           ),
           t(
-            "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka latihan praktik untuk 40 pekerjaan remote serta fitur yang memakai AI: Review CV, Pindah Karier, dan Simulasi Interview.",
-            "Paid plans (from Rp 9,000, one-time) unlock hands-on practice for 40 remote roles plus the AI features: CV Review, Career Switch, and Mock Interview.",
+            "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka latihan praktik untuk 40 pekerjaan remote serta fitur yang memakai AI: Review CV, analisis cover letter, Pindah Karier, dan Simulasi Interview.",
+            "Paid plans (from Rp 9,000, one-time) unlock hands-on practice for 40 remote roles plus the AI features: CV Review, cover letter review, Career Switch, and Mock Interview.",
           ),
         ],
       },
@@ -137,8 +137,8 @@ export const FAQ = [
         beranda: true,
         a: [
           t(
-            `Tersedia tiga paket: ${hargaRingkas}. Setiap paket membuka latihan praktik dan berisi kuota Review CV dan Pindah Karier, sedangkan paket Pro serta Max juga berisi kuota Simulasi Interview.`,
-            `There are three plans: ${hargaRingkas}. Every plan unlocks hands-on practice and includes CV Review and Career Switch credits, while Pro and Max also include Mock Interview credits.`,
+            `Tersedia tiga paket: ${hargaRingkas}. Setiap paket membuka latihan praktik dan berisi kuota Review CV, analisis cover letter, dan Pindah Karier, sedangkan paket Pro serta Max juga berisi kuota Simulasi Interview.`,
+            `There are three plans: ${hargaRingkas}. Every plan unlocks hands-on practice and includes CV Review, cover letter review, and Career Switch credits, while Pro and Max also include Mock Interview credits.`,
           ),
           t(
             "Pembayaran dilakukan sekali untuk setiap pembelian. Tidak ada tagihan berulang dan tidak ada perpanjangan otomatis.",
@@ -159,12 +159,12 @@ export const FAQ = [
         q: t("Apa yang terjadi saat masa berlaku paket habis?", "What happens when my plan expires?"),
         a: [
           t(
-            "Sisa kuota Review CV tetap bisa kamu pakai. Fitur Pindah Karier dan Simulasi Interview membutuhkan paket yang masih berlaku, jadi sisa kuota keduanya baru bisa dipakai lagi setelah kamu membeli paket baru.",
-            "You can still use any remaining CV Review credits. Career Switch and Mock Interview need an active plan, so their remaining credits work again once you buy a new plan.",
+            "Sisa kuota Review CV tetap bisa kamu pakai. Analisis cover letter, Pindah Karier, dan Simulasi Interview membutuhkan paket yang masih berlaku, jadi sisa kuotanya baru bisa dipakai lagi setelah kamu membeli paket baru.",
+            "You can still use any remaining CV Review credits. Cover letter review, Career Switch, and Mock Interview need an active plan, so their remaining credits work again once you buy a new plan.",
           ),
           t(
-            "Semua fitur gratis tetap bisa kamu pakai, termasuk semua loker, CV Builder, dan riwayat analisis. Latihan praktik kembali terkunci sampai kamu membeli paket baru.",
-            "All free features keep working, including every job, the CV Builder, and your analysis history. Hands-on practice locks again until you buy a new plan.",
+            "Semua fitur gratis tetap bisa kamu pakai, termasuk semua loker, CV Builder, Cover Letter Builder, dan riwayat analisis. Latihan praktik kembali terkunci sampai kamu membeli paket baru.",
+            "All free features keep working, including every job, the CV Builder, the Cover Letter Builder, and your analysis history. Hands-on practice locks again until you buy a new plan.",
           ),
         ],
       },
