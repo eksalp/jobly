@@ -3,6 +3,7 @@ import { AnalyzerPanel } from "./AnalyzerPanel";
 import { ProfilKarierPanel } from "./ProfilKarierPanel";
 import { CVBuilderPanel } from "./CVBuilderPanel";
 import { LinkedInBuilderPanel } from "./LinkedInBuilderPanel";
+import { CoverLetterPanel } from "./CoverLetterPanel";
 import { PaketPanel } from "./PaketPanel";
 import { JobFinderPanel } from "./JobFinderPanel";
 import { SavedJobsPanel } from "./SavedJobsPanel";
@@ -46,6 +47,14 @@ export const PANEL_META = {
     grup: t("Profil & CV", "Profile & CV"),
     title: "CV Builder",
     desc: t("Susun CV yang mudah dibaca sistem penyaringan, lalu unduh dalam PDF.", "Build a CV that screening systems can read, then download it as a PDF."),
+  },
+  coverletter: {
+    grup: t("Profil & CV", "Profile & CV"),
+    title: "Cover Letter",
+    desc: t(
+      "Susun surat lamaran dari kerangka sesuai situasimu, lihat pratinjaunya, lalu unduh PDF. Analisis AI tersedia mulai paket Starter.",
+      "Write a cover letter from a template that fits your situation, preview it, and download a PDF. AI analysis is available from the Starter plan.",
+    ),
   },
   portofolio: {
     grup: t("Profil & CV", "Profile & CV"),
@@ -146,6 +155,7 @@ export const PANEL_COMPONENTS = {
   profile: ProfilKarierPanel,
   cvbuilder: CVBuilderPanel,
   linkedinbuilder: LinkedInBuilderPanel,
+  coverletter: CoverLetterPanel,
   jobfinder: JobFinderPanel,
   saved: SavedJobsPanel,
   applications: ApplicationsPanel,

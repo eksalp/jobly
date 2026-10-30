@@ -18,6 +18,7 @@ import { lokal, t } from "../i18n.js";
 const FITUR_DASAR = [
   t("Semua loker, bisa dicari dan disaring per kota", "Every job, searchable and filterable by city"),
   t("CV Builder: buat dan unduh PDF, gratis selamanya", "CV Builder: create and download a PDF, free forever"),
+  t("Cover Letter Builder: kerangka, pratinjau, dan PDF, gratis selamanya", "Cover Letter Builder: templates, preview, and PDF, free forever"),
   t("LinkedIn Builder: susun profil, gratis selamanya", "LinkedIn Builder: write your profile, free forever"),
   t("140+ pertanyaan interview, termasuk level neraka", "140+ interview questions, including the hardest ones"),
   t("Pelacak lamaran untuk memantau progres", "Application tracker to follow your progress"),
@@ -39,7 +40,7 @@ export const PAKET = {
     fitur: [...FITUR_DASAR],
     tanpa: [
       t("Latihan praktik untuk 40 pekerjaan remote", "Hands-on practice for 40 remote roles"),
-      t("Analisis AI (CV & LinkedIn)", "AI analysis (CV & LinkedIn)"),
+      t("Analisis AI (CV, LinkedIn, cover letter)", "AI analysis (CV, LinkedIn, cover letter)"),
       t("Rencana Pindah Karier", "Career Switch plan"),
       t("Simulasi interview dengan AI", "AI mock interview"),
       t("Portofolio proyek (PDF & Excel)", "Project portfolio (PDF & Excel)"),
@@ -64,6 +65,7 @@ export const PAKET = {
       t("Masa aktif 3 bulan", "Active for 3 months"),
       t("2x analisis AI (CV atau LinkedIn)", "2 AI analyses (CV or LinkedIn)"),
       t("1x Rencana Pindah Karier", "1 Career Switch plan"),
+      t("5x analisis AI cover letter", "5 AI cover letter reviews"),
       t("Draft CV & LinkedIn dalam dua bahasa", "CV & LinkedIn drafts in two languages"),
     ],
     tanpa: [
@@ -89,6 +91,7 @@ export const PAKET = {
       t("Masa aktif 6 bulan", "Active for 6 months"),
       t("5x analisis AI, cukup untuk cek ulang setelah revisi CV", "5 AI analyses, enough to recheck after revising your CV"),
       t("2x Rencana Pindah Karier", "2 Career Switch plans"),
+      t("15x analisis AI cover letter", "15 AI cover letter reviews"),
       t("1x simulasi interview AI bersuara (10 menit)", "1 AI voice mock interview (10 minutes)"),
       t("Portofolio: 2 proyek studi kasus, unduh PDF & Excel", "Portfolio: 2 case-study projects, download PDF & Excel"),
       t("Riwayat analisis tersimpan, bisa dibandingkan", "Saved analysis history you can compare"),
@@ -111,6 +114,7 @@ export const PAKET = {
       t("Masa aktif 1 tahun", "Active for 1 year"),
       t("10x analisis AI", "10 AI analyses"),
       t("4x Rencana Pindah Karier", "4 Career Switch plans"),
+      t("30x analisis AI cover letter", "30 AI cover letter reviews"),
       t("2x simulasi interview AI bersuara (@10 menit)", "2 AI voice mock interviews (10 minutes each)"),
       t("1x simulasi FGD dengan AI (20 menit)", "1 AI group discussion (FGD) simulation (20 minutes)"),
       t("Tes persiapan kerja: Kraepelin, TPA, penalaran, ketelitian, kepribadian (1x tiap tes)", "Job tests: Kraepelin, aptitude, reasoning, accuracy, personality (once each)"),

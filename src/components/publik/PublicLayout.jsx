@@ -10,6 +10,7 @@ import {
   Send,
   User,
   FilePlus2,
+  Mail,
   Linkedin,
   FileSearch,
   Route,
@@ -76,6 +77,7 @@ const I = {
   kalkulator: { t: t("Kalkulator gaji", "Salary calculator"), d: t("Ubah gaji dolar ke rupiah", "Convert dollar pay to rupiah"), path: "/kalkulator-gaji", Ikon: Calculator },
   profil: { t: t("Profil karier", "Career profile"), d: t("Data diri, skill, dan pengalaman", "Personal details, skills, and experience"), path: ke("profile"), Ikon: User },
   cv: { t: "CV Builder", d: t("Buat CV yang rapi, unduh dalam PDF", "Build a clean CV, download as PDF"), path: ke("cvbuilder"), Ikon: FilePlus2 },
+  coverletter: { t: "Cover Letter", d: t("Surat lamaran dengan pratinjau & PDF, analisis AI", "Cover letters with preview & PDF, AI analysis"), path: ke("coverletter"), Ikon: Mail, baru: true },
   linkedin: { t: "LinkedIn Builder", d: t("Buat profil LinkedIn yang lebih menarik", "Make your LinkedIn profile stand out"), path: ke("linkedinbuilder"), Ikon: Linkedin },
   portofolio: { t: t("Portofolio", "Portfolio"), d: t("2 proyek studi kasus, unduh PDF & Excel", "2 case-study projects, download PDF & Excel"), path: ke("portofolio"), Ikon: Briefcase, baru: true, pro: true },
   latihan: { t: t("Latihan interview", "Interview practice"), d: t("140+ pertanyaan, dari yang mudah sampai yang paling sulit", "140+ questions, from easy to the hardest"), path: ke("interview"), Ikon: MessageSquareQuote },
@@ -99,7 +101,7 @@ export const MENU_APLIKASI = [
       { judul: t("Punyaku", "Mine"), items: [I.simpan, I.lamaran, I.rencana] },
     ],
   },
-  { label: t("Profil & CV", "Profile & CV"), kolom: [{ items: [I.profil, I.cv, I.linkedin, I.portofolio] }] },
+  { label: t("Profil & CV", "Profile & CV"), kolom: [{ items: [I.profil, I.cv, I.coverletter, I.linkedin, I.portofolio] }] },
   {
     label: t("Persiapan", "Prepare"),
     kolom: [
@@ -125,7 +127,7 @@ export const MENU_PUBLIK = [
   {
     label: "Tools",
     kolom: [
-      { judul: t("Gratis", "Free"), items: [I.cv, I.linkedin, I.latihan, I.sertifikasi, I.rencana] },
+      { judul: t("Gratis", "Free"), items: [I.cv, I.coverletter, I.linkedin, I.latihan, I.sertifikasi, I.rencana] },
       { judul: t("Dengan AI", "With AI"), items: [I.review, I.pindah, I.simulasi] },
       { judul: t("Khusus Max", "Max only"), items: [I.fgd, I.tes, I.rapor] },
     ],
@@ -765,6 +767,7 @@ export function SiteFooter() {
       judul: "Tools",
       tautan: [
         ["CV Builder", ke("cvbuilder")],
+        ["Cover Letter", ke("coverletter")],
         ["LinkedIn Builder", ke("linkedinbuilder")],
         [t("Latihan interview", "Interview practice"), ke("interview")],
         [t("Rencana lamar", "Application plan"), ke("rencana")],

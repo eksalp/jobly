@@ -9290,3 +9290,745 @@ html[data-tema="gelap"] .kl-btn:not(.garis) {
     flex: 1;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Cover Letter Builder (/dashboard/coverletter)                      */
+/* ------------------------------------------------------------------ */
+.pb-app-body > .cl {
+  padding: 28px 28px 48px;
+}
+.cl-muat {
+  display: grid;
+  place-items: center;
+  padding: 80px 0;
+  color: var(--muted);
+}
+.cl-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 28px;
+  align-items: start;
+}
+.cl-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.cl-kanan {
+  position: sticky;
+  top: calc(var(--head) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.cl-tab {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  background: var(--surface2);
+  position: sticky;
+  top: calc(var(--head) + 6px);
+  z-index: 5;
+}
+.cl-tab button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cl-tab button.aktif {
+  background: var(--card);
+  color: var(--brand);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* kartu editor */
+.cl-kartu {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+}
+.cl-kartu-kepala {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.cl-kartu-kepala > svg:first-child {
+  color: var(--brand);
+  flex-shrink: 0;
+}
+.cl-kartu-kepala > span:nth-child(2) {
+  flex: 1;
+}
+.cl-chev {
+  color: var(--muted);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.cl-kartu.buka .cl-chev,
+.cl-chev.putar {
+  transform: rotate(180deg);
+}
+.cl-kartu-isi {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+.cl-hitung {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.cl-dua {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.cl-isian {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.cl-isian > span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.cl-isian small {
+  margin-left: 6px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.cl-isian input,
+.cl-isian textarea,
+.cl-select,
+.cl-lowongan {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.cl-isian textarea,
+.cl-lowongan {
+  resize: vertical;
+}
+.cl-isian input:focus,
+.cl-isian textarea:focus,
+.cl-select:focus,
+.cl-lowongan:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+html[data-tema="gelap"] .cl-isian input[type="date"] {
+  color-scheme: dark;
+}
+.cl-isi-baris {
+  position: relative;
+}
+.cl-hapus {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.cl-hapus:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.cl-btn-kecil {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.cl-btn-kecil:hover {
+  border-color: var(--brand-line);
+  color: var(--brand);
+}
+.cl-label-kecil {
+  margin: 2px 0 -4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink2);
+}
+.cl-redup {
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+p.cl-redup {
+  margin: 0;
+}
+.cl-bahasa {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--surface2);
+}
+.cl-bahasa button {
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cl-bahasa button.aktif {
+  background: var(--card);
+  color: var(--brand);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.cl-situasi,
+.cl-pilih {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 8px;
+}
+.cl-situasi button,
+.cl-pilih button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cl-situasi b,
+.cl-pilih b {
+  font-size: 13.5px;
+}
+.cl-situasi small,
+.cl-pilih small {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.cl-situasi button.aktif,
+.cl-pilih button.aktif {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.cl-aksen {
+  display: flex;
+  gap: 8px;
+}
+.cl-aksen button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  border-radius: 99px;
+  color: #fff;
+  cursor: pointer;
+}
+.cl-aksen button.aktif {
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--brand);
+}
+.cl-tips {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  color: var(--ink2);
+}
+.cl-tips li + li {
+  margin-top: 6px;
+}
+
+/* aksi dan pemeriksaan */
+.cl-aksi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.cl-aksi .cl-btn-kecil {
+  height: 38px;
+}
+.cl-status {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.cl-status.gagal {
+  color: var(--danger);
+}
+.cl-status.tersimpan {
+  color: var(--ok);
+}
+.cl-cek {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+.cl-cek-kepala {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cl-cek-kepala > svg:first-child {
+  color: var(--brand);
+}
+.cl-cek-kepala > span {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.cl-cek-kepala b {
+  font-size: 14px;
+}
+.cl-cek-kepala small {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.cl-cek ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.cl-cek li {
+  display: flex;
+  gap: 9px;
+  font-size: 13.5px;
+}
+.cl-cek li > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.cl-cek li span {
+  display: flex;
+  flex-direction: column;
+}
+.cl-cek li small {
+  color: var(--ink2);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.cl-cek li.ok > svg {
+  color: var(--ok);
+}
+.cl-cek li.warn > svg {
+  color: var(--amber);
+}
+.cl-cek li.bad > svg {
+  color: var(--danger);
+}
+
+/* pratinjau kertas: ukuran asli A4 lalu diskalakan */
+.cl-pratinjau {
+  min-width: 0;
+}
+.cl-kertas-bingkai {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 12px 30px -16px rgba(17, 27, 41, 0.35);
+  background: #fff;
+}
+.cl-kertas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  transform-origin: top left;
+  background: #fff;
+  color: #191919;
+  overflow-wrap: break-word;
+}
+.cl-kertas hr {
+  margin: 0;
+  border: 0;
+  border-top: 0.5mm solid var(--aksen);
+}
+.cl-k-judul {
+  font-weight: 700;
+  color: var(--aksen);
+  line-height: 1.25;
+  margin-bottom: 1.5mm;
+}
+.cl-k-kecil {
+  color: #555;
+  line-height: 4.4mm;
+}
+.cl-k-baris {
+  white-space: pre-wrap;
+}
+.cl-k-baris.tebal {
+  font-weight: 700;
+}
+.cl-k-baris.kanan {
+  text-align: right;
+}
+.cl-k-label {
+  display: flex;
+}
+.cl-k-label > span:first-child {
+  flex-shrink: 0;
+}
+.cl-k-par {
+  margin: 0;
+  text-align: justify;
+  white-space: pre-wrap;
+}
+.cl-k-batas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed #e0a43a;
+}
+.cl-peringatan {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--amber);
+}
+
+/* AI */
+.cl-ai {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--brand-line);
+  border-radius: 14px;
+  background: var(--tint);
+}
+.cl-ai-kepala {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--ink);
+}
+.cl-ai-kepala > svg {
+  color: var(--brand);
+}
+.cl-jatah {
+  margin-left: auto;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+}
+.cl-ai-kunci {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  border-style: dashed;
+}
+.cl-ai-kunci p {
+  margin: 4px 0 12px;
+  font-size: 13.5px;
+  color: var(--ink2);
+}
+.cl-ai-ikon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.cl-ai-aksi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.cl-galat {
+  margin: 0;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 13.5px;
+}
+.cl-ai-hasil {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+.cl-ai-skor {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.cl-cincin {
+  flex-shrink: 0;
+}
+.cl-ai-skor b {
+  font-size: 15px;
+}
+.cl-ai-skor p {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+.cl-aspek {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+}
+.cl-aspek > div {
+  min-width: 0;
+}
+.cl-aspek-atas {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--ink2);
+}
+.cl-aspek-atas b {
+  color: var(--ink);
+}
+.cl-bar {
+  display: block;
+  height: 6px;
+  margin: 5px 0 4px;
+  border-radius: 99px;
+  background: var(--bar-bg);
+  overflow: hidden;
+}
+.cl-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brand);
+}
+.cl-aspek small {
+  display: block;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.cl-ai-blok h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.cl-ai-kuat {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13.5px;
+}
+.cl-ai-kuat li {
+  display: flex;
+  gap: 8px;
+}
+.cl-ai-kuat svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--ok);
+}
+.cl-ai-masalah {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cl-ai-masalah li {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  font-size: 13.5px;
+}
+.cl-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--amber-bg);
+  color: var(--amber);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.cl-ai-masalah q {
+  display: block;
+  margin-top: 8px;
+  padding-left: 10px;
+  border-left: 3px solid var(--line);
+  color: var(--muted);
+  font-style: italic;
+}
+.cl-ai-masalah p {
+  margin: 8px 0;
+}
+.cl-ai-ganti {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: var(--ok-bg);
+}
+.cl-ai-ganti b {
+  font-size: 12px;
+  color: var(--ok);
+}
+.cl-chip-baris {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.cl-chip {
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--brand-line);
+  background: var(--card);
+  font-size: 12.5px;
+}
+.cl-ai-teks {
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: 13.5px;
+  line-height: 1.65;
+  max-height: 340px;
+  overflow: auto;
+}
+.cl-ai-teks p {
+  margin: 0;
+}
+.cl-ai-teks p + p {
+  margin-top: 10px;
+}
+.cl-ai-versi .cl-redup {
+  display: block;
+  margin-top: 8px;
+}
+.cl-subjek {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.cl-subjek code {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 999px) {
+  .cl-kanan {
+    position: static;
+  }
+}
+@media (max-width: 600px) {
+  .pb-app-body > .cl {
+    padding: 20px 16px 40px;
+  }
+  .cl-dua,
+  .cl-aspek {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cl-ai-kunci {
+    flex-direction: column;
+  }
+  .cl-status {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+.cl-kartu-isi > .pb-btn,
+.cl-ai-aksi .pb-btn {
+  align-self: flex-start;
+}
