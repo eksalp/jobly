@@ -14,7 +14,7 @@
  */
 
 // Bentuk dasar kata kerja yang lazim membuka bullet CV.
-const DASAR = `achieve acquire adapt address administer advise advocate align allocate analyze analyse
+const DASAR = `act achieve acquire adapt address administer advise advocate align allocate analyze analyse
 answer apply appraise approve arrange assemble assess assign assist attain audit author automate
 balance boost brief budget build calculate campaign catalog categorize chair champion clarify classify
 close coach code collaborate collect communicate compile complete compose compute conceptualize conduct
@@ -134,7 +134,7 @@ export function rapikanBullet(teks, status) {
   if ((info.jenis === "s" || info.jenis === "ing") && NOMINA.has(kata.toLowerCase())) return teks;
   let baru = null;
   if (status === "lampau" && info.jenis !== "lampau") baru = bentukLampau(info.dasar);
-  if (status === "sekarang" && info.jenis === "lampau") baru = info.dasar;
+  if (status === "sekarang" && info.jenis !== "dasar") baru = info.dasar;
   if (!baru || baru === kata.toLowerCase()) return teks;
   return awal + samakanHuruf(kata, baru) + sisa;
 }

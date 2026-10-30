@@ -174,7 +174,9 @@ const TINGKAT_BAHASA = {
 
 const uid = () => Math.random().toString(36).slice(2, 9);
 
-const str = (v) => (typeof v === "string" ? v : "");
+// Isian kosong yang ditulis AI sebagai "N/A", "-", dan sejenisnya dianggap kosong
+const KOSONG_PALSU = /^(?:n\/?a|none|null|undefined|tidak ada|belum ada|-+|–|—)$/i;
+const str = (v) => (typeof v === "string" && !KOSONG_PALSU.test(v.trim()) ? v : "");
 const arr = (v) => (Array.isArray(v) ? v : []);
 const arrStr = (v) => arr(v).filter((x) => typeof x === "string" && x.trim());
 const num = (v, fb = 0) => (typeof v === "number" && isFinite(v) ? v : fb);
@@ -419,7 +421,7 @@ ATURAN:
   jangan menyimpulkan tanpa dasar.
 - cv_audit.masalah: 3-4 bagian. linkedin_audit.masalah: 4-5 bagian (Headline, Tentang, Pengalaman, Keahlian, Sampul).
 - EKSTRAK fakta dari input apa adanya. JANGAN mengarang nama, tanggal, perusahaan, atau angka yang tidak ada.
-- Field yang tidak ada di input: isi "" atau []. Array boleh kosong.
+- Field yang tidak ada di input: isi "" atau []. Array boleh kosong. JANGAN menulis "N/A", "-", atau "Tidak ada".
 - cv_draft bergaya CV: bullet pendek, kata kerja aktif, sertakan angka bila ada di input.
 - Poin di organizations, volunteers, dan education.desc juga dipertahankan semua dari input.
 - linkedin_draft bergaya LinkedIn: naratif, orang pertama ("Saya..."), lebih panjang.
@@ -475,7 +477,7 @@ Return ONLY a JSON object with this structure:
 
 RULES:
 - Extract facts from the input as-is. Do NOT invent names, dates, companies, or numbers.
-- Fields absent from the input: use "" or []. Empty arrays are fine.
+- Fields absent from the input: use "" or []. Empty arrays are fine. NEVER write "N/A", "-", or "None".
 - languages[].proficiency MUST be exactly one of: ${TINGKAT_BAHASA.en.map((x) => `"${x}"`).join(", ")}.
 - linkedin_draft.experiences[].skills: max 5 per role.
 - Keep every point in organizations, volunteers, and education.desc from the input.

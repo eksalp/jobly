@@ -1,16 +1,7 @@
 import { jsPDF } from "jspdf";
 import { bacaGaya, hexKeRgb, pasangFontPdf } from "../data/cvGaya";
-import { susunSurat } from "../data/coverLetter";
+import { susunSurat, UKURAN_CL } from "../data/coverLetter";
 
-/** Ukuran halaman dan huruf, dipakai juga oleh pratinjau (dalam mm/pt). */
-export const UKURAN_CL = {
-  margin: 22,
-  isi: 10.5, // pt
-  kecil: 9,
-  judul: 20,
-  baris: 5.3, // mm per baris teks isi
-  label: 20, // lebar label "Perihal", "Lampiran"
-};
 
 /** Buat PDF cover letter dan unduh. */
 export async function unduhCoverLetter(d) {

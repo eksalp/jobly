@@ -12,9 +12,8 @@ import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { FONT_CV, AKSEN_CV, bacaGaya } from "../../data/cvGaya";
 import {
   SITUASI, TEMA_CL, KOSONG, TIPS_CL, isiKerangka, salamAwal, salamAkhir, hariIni, susunSurat, periksaSurat,
-  suratKeTeks, badanSurat, hitungKata,
+  suratKeTeks, badanSurat, hitungKata, UKURAN_CL,
 } from "../../data/coverLetter";
-import { UKURAN_CL } from "../../utils/pdfCoverLetter";
 import { cvKeTeks } from "../../utils/kirimKeReview";
 
 const MAKS_PARAGRAF = 4;

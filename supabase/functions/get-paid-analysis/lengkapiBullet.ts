@@ -10,6 +10,7 @@
 
 import { petakanBullet, cariKekurangan } from "../_shared/petaBullet.js";
 import { MODEL_TERJEMAH } from "../_shared/modelGemini.ts";
+import { rapikanBullet, statusPosisi } from "../_shared/tensaVerb.js";
 
 const GEMINI_URL = (m) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
 
@@ -57,6 +58,43 @@ Use PAST tense for a role that has ended and PRESENT tense for a current role
 ("Present"). NEVER use the em dash (—).`,
 };
 
+/* ---------- Cadangan tanpa AI ----------
+   Dipakai kalau panggilan AI tambahan gagal. Bullet asli yang belum
+   tercakup di draft ditambahkan apa adanya, hanya untuk draft yang
+   bahasanya sama dengan CV asli (supaya tidak tercampur dua bahasa). */
+
+const KATA_EN = /\b(the|and|of|with|for|in|to|on|including)\b/gi;
+const KATA_ID = /\b(dan|yang|di|untuk|dengan|dalam|serta|pada|ke)\b/gi;
+export function bahasaTeks(t) {
+  const en = (String(t).match(KATA_EN) || []).length;
+  const id = (String(t).match(KATA_ID) || []).length;
+  return en > id * 1.3 ? "en" : id > en * 1.3 ? "id" : null;
+}
+
+const kata = (s) => new Set(String(s).toLowerCase().replace(/[^a-z0-9 ]+/g, " ").split(/\s+/).filter((w) => w.length > 3));
+function tercakup(asli, draft) {
+  const a = kata(asli);
+  if (!a.size) return true;
+  return draft.some((d) => {
+    const b = kata(d);
+    let sama = 0;
+    a.forEach((w) => b.has(w) && sama++);
+    return sama / a.size >= 0.5;
+  });
+}
+
+function tambahkanAsli(entri, asli) {
+  const desc = Array.isArray(entri.desc) ? [...entri.desc] : [];
+  const status = statusPosisi(entri.end);
+  for (const b of asli) {
+    if (tercakup(b, desc)) continue;
+    let baru = b.replace(/[.;]\s*$/, "").trim();
+    if (status) baru = rapikanBullet(baru, status);
+    desc.push(baru);
+  }
+  return desc;
+}
+
 /**
  * Lengkapi draft yang bullet-nya berkurang. Mengembalikan { cv, cvEn } baru.
  * Kalau gagal atau waktunya tidak cukup, draft dikembalikan apa adanya.
@@ -69,7 +107,7 @@ export async function lengkapiBullet({ cv, cvEn, input, batasMs }) {
     ...cariKekurangan(cv, blok).map((k) => ({ ...k, bahasa: "id", draft: "cv" })),
     ...cariKekurangan(cvEn, blok).map((k) => ({ ...k, bahasa: "en", draft: "cvEn" })),
   ];
-  if (!tugas.length || batasMs < 12000) return { cv, cvEn };
+  if (!tugas.length) return { cv, cvEn };
 
   const skema = { type: "OBJECT", properties: {}, required: [] };
   const daftar = tugas
@@ -107,7 +145,7 @@ ${daftar}`;
 
   let hasil = null;
   const mulai = Date.now();
-  for (const model of MODEL_TERJEMAH) {
+  for (const model of batasMs >= 12000 ? MODEL_TERJEMAH : []) {
     const sisa = batasMs - (Date.now() - mulai);
     if (sisa < 8000) break;
     try {
@@ -117,23 +155,28 @@ ${daftar}`;
       console.warn(`lengkapiBullet gagal (${model}): ${e.message}`);
     }
   }
-  if (!hasil) return { cv, cvEn };
-
   const salin = (d) => (d ? JSON.parse(JSON.stringify(d)) : d);
   const out = { cv: salin(cv), cvEn: salin(cvEn) };
-  let diperbaiki = 0;
+  const bahasaAsli = bahasaTeks(input);
+  let lewatAi = 0;
+  let lewatCadangan = 0;
   tugas.forEach((k, i) => {
-    const baru = (Array.isArray(hasil[`k${i}`]) ? hasil[`k${i}`] : [])
+    const target = out[k.draft]?.[k.bagian]?.[k.indeks];
+    if (!target) return;
+    const baru = (Array.isArray(hasil?.[`k${i}`]) ? hasil[`k${i}`] : [])
       .map((b) => (typeof b === "string" ? b.replace(/\s*—\s*/g, ", ").trim() : ""))
       .filter(Boolean);
-    if (baru.length < k.asli.length) return;
-    const target = out[k.draft]?.[k.bagian]?.[k.indeks];
-    if (target) {
+    if (baru.length >= k.asli.length) {
       target.desc = baru;
-      diperbaiki++;
+      lewatAi++;
+    } else if (bahasaAsli === k.bahasa) {
+      target.desc = tambahkanAsli(target, k.asli);
+      lewatCadangan++;
     }
   });
-  console.log(`lengkapiBullet: ${diperbaiki}/${tugas.length} posisi dilengkapi dalam ${Date.now() - mulai} ms`);
+  console.log(
+    `lengkapiBullet: ${tugas.length} posisi kurang, ${lewatAi} dilengkapi AI, ${lewatCadangan} lewat cadangan, ${Date.now() - mulai} ms`,
+  );
   return out;
 }
 

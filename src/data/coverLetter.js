@@ -363,3 +363,13 @@ export function susunSurat(d) {
   add("kecil", kontak.join("  |  "));
   return B;
 }
+
+/** Ukuran halaman dan huruf, dipakai juga oleh pratinjau (dalam mm/pt). */
+export const UKURAN_CL = {
+  margin: 22,
+  isi: 10.5, // pt
+  kecil: 9,
+  judul: 20,
+  baris: 5.3, // mm per baris teks isi
+  label: 20, // lebar label "Perihal", "Lampiran"
+};
