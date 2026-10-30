@@ -6,6 +6,7 @@ import { Button } from "./ui/Button";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { lokal, t } from "../i18n.js";
+import { rapikanTensaDraft } from "../../supabase/functions/_shared/tensaVerb.js";
 
 const tglIndo = (s) =>
   s
@@ -126,11 +127,14 @@ export function PilihDraftAi({
       .limit(20)
       .then(({ data, error }) => {
         if (error) console.error("Gagal memuat draft AI:", error.message);
-        const bersih = (data || []).filter(
-          (d) =>
-            (d[kolom] && Object.keys(d[kolom]).length > 0) ||
-            (d[`${kolom}_en`] && Object.keys(d[`${kolom}_en`]).length > 0),
-        );
+        const bersih = (data || [])
+          .filter(
+            (d) =>
+              (d[kolom] && Object.keys(d[kolom]).length > 0) ||
+              (d[`${kolom}_en`] && Object.keys(d[`${kolom}_en`]).length > 0),
+          )
+          // Draft lama juga ikut dirapikan: posisi yang sudah selesai → past tense
+          .map((d) => (d[`${kolom}_en`] ? { ...d, [`${kolom}_en`]: rapikanTensaDraft(d[`${kolom}_en`]) } : d));
         setDaftar(bersih);
         setTerpilih(bersih[0] ?? null);
         setLoading(false);

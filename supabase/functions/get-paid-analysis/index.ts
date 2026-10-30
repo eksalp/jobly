@@ -13,6 +13,7 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { jalankanAnalisis } from "./penyedia.ts";
+import { rapikanTensaDraft } from "../_shared/tensaVerb.js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -69,7 +70,10 @@ STANDAR AUDIT (cv_audit dan linkedin_audit):
   dipakai, bukan nasihat umum.
 - skor_ats dihitung dengan bobot: kata kunci sesuai posisi_target 30,
   pencapaian terukur 25, struktur dan format 20, kelengkapan bagian 15,
-  kejelasan bahasa 10. Jangan memberi skor tinggi pada CV yang tipis.`,
+  kejelasan bahasa 10. Jangan memberi skor tinggi pada CV yang tipis.
+- Kalau CV input berbahasa Inggris, periksa tense: posisi yang sudah berakhir wajib
+  past tense ("Managed"), posisi yang masih berjalan present tense ("Manage"). Kalau
+  tidak konsisten, jadikan salah satu masalah di cv_audit dengan contoh perbaikannya.`,
 
   en: `CV DRAFT QUALITY STANDARD (cv_draft):
 - headline: target role + 2-3 core skills, max 70 characters.
@@ -120,6 +124,11 @@ certification names stay in their original form (e.g. "PT Integrasi Logistik
 Cipta Solusi", "Universitas Sebelas Maret", "Brevet Pajak AB"). Do not
 translate them. Dates may be written in English format (e.g. "Oct 2024").
 For the LinkedIn About section, use first person ("I have...").
+VERB TENSE (strict, recruiters notice this immediately): decide per role from its end
+date. A role that has ended (end date is a past month or year, e.g. "Dec 2023") uses PAST
+tense in every bullet ("Managed", "Led", "Reconciled"). Only the role whose end is
+"Present" uses present tense ("Manage", "Lead"). This applies to experiences,
+organizations, and volunteering in both cv_draft and linkedin_draft.
 Style: plain, natural wording a real person would write. NEVER use the em dash
 character (—); use commas, periods, colons, or parentheses instead. Avoid
 buzzwords such as "dynamic", "passionate", "results-driven", "synergy",
@@ -405,7 +414,8 @@ ${INSTRUKSI_BAHASA.id}`;
     // Panggilan kedua: draft versi Inggris.
     // Dipisah supaya tiap panggilan punya ruang token sendiri — satu panggilan
     // berisi empat draft sekaligus hampir pasti terpotong.
-    const promptEn = `You are an AI career coach and ATS specialist.
+    const hariIni = new Date().toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
+    const promptEn = `You are an AI career coach and ATS specialist. Today is ${hariIni}.
 
 Candidate input (${asal}):
 """${inputUser}"""
@@ -588,8 +598,9 @@ ${INSTRUKSI_BAHASA.en}`;
       linkedin_audit: normalisasiAudit(hasilAi.linkedin_audit, "skor"),
       cv_draft: cvDraft,
       linkedin_draft: linkedinDraft,
-      cv_draft_en: cvDraftEn,
-      linkedin_draft_en: linkedinDraftEn,
+      // Tense diperbaiki secara pasti: posisi yang sudah selesai → past tense
+      cv_draft_en: rapikanTensaDraft(cvDraftEn),
+      linkedin_draft_en: rapikanTensaDraft(linkedinDraftEn),
     };
 
     /* ----- Simpan ----- */
