@@ -15,6 +15,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { jalankanAnalisis } from "./penyedia.ts";
 import { rapikanTensaDraft } from "../_shared/tensaVerb.js";
 import { lengkapiBullet, petaUntukPrompt } from "./lengkapiBullet.ts";
+import { petakanBullet, tandaiTambahan } from "../_shared/petaBullet.js";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -44,7 +45,11 @@ const STANDAR_DRAFT = {
   skill, sertifikasi, proyek) menunjukkan tugas atau keahlian yang jelas
   dipakai di posisi itu tetapi belum tertulis, tambahkan 1-3 bullet baru
   (input 12 → draft 13 tidak masalah). Bullet tambahan tetap harus berdasar
-  fakta input, tanpa mengarang angka, alat, atau tanggung jawab baru. Setiap bullet:
+  fakta input, tanpa mengarang angka, alat, atau tanggung jawab baru.
+  MINIMAL 3 BULLET per pengalaman kerja (standar CV). Kalau input hanya punya
+  1-2 bullet untuk posisi itu, lengkapi dengan tugas yang lazim dikerjakan di
+  jabatan dan bidang tersebut, ditulis wajar tanpa angka, nama sistem, atau
+  pencapaian yang tidak ada di input. Setiap bullet:
   * diawali kata kerja aktif yang berbeda-beda (Menyusun, Mengelola,
     Merekonsiliasi, Menangani, Meningkatkan, Mengoordinasikan, dst.),
   * pola: apa yang dikerjakan + bagaimana/alat yang dipakai + hasil atau
@@ -99,6 +104,10 @@ STANDAR AUDIT (cv_audit dan linkedin_audit):
   certifications, projects) clearly show a task or skill used in that role
   that is not written yet, add 1-3 new bullets (12 → 13 is fine), still
   grounded in the input with no invented numbers, tools, or duties.
+  AT LEAST 3 BULLETS per work experience (CV standard). If the input has only
+  1-2 bullets for a role, complete it with duties typical for that job title and
+  field, written plainly, without numbers, system names, or achievements that
+  are not in the input.
   Each bullet starts with a different strong action verb, follows "what +
   how/tools + result or scope", max 25 words, no trailing period. Numbers
   ONLY when present in the input; otherwise describe scope or impact
@@ -625,8 +634,9 @@ ${INSTRUKSI_BAHASA.en}`;
           input: inputUser,
           batasMs: Math.min(35000, 140000 - (Date.now() - mulaiPermintaan)),
         });
-        cvLengkap = l.cv;
-        cvLengkapEn = l.cvEn;
+        const blok = petakanBullet(inputUser);
+        cvLengkap = tandaiTambahan(l.cv, blok);
+        cvLengkapEn = tandaiTambahan(l.cvEn, blok);
       } catch (e) {
         console.warn("lengkapiBullet dilewati:", e?.message);
       }

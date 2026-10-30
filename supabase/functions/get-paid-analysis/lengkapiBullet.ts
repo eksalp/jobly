@@ -101,7 +101,6 @@ function tambahkanAsli(entri, asli) {
  */
 export async function lengkapiBullet({ cv, cvEn, input, batasMs }) {
   const blok = petakanBullet(input);
-  if (!blok.length) return { cv, cvEn };
 
   const tugas = [
     ...cariKekurangan(cv, blok).map((k) => ({ ...k, bahasa: "id", draft: "cv" })),
@@ -113,15 +112,16 @@ export async function lengkapiBullet({ cv, cvEn, input, batasMs }) {
   const daftar = tugas
     .map((k, i) => {
       const kunci = `k${i}`;
-      const n = k.asli.length;
+      const n = k.target;
       skema.properties[kunci] = { type: "ARRAY", items: { type: "STRING" }, minItems: n, maxItems: n + 3 };
       skema.required.push(kunci);
       const akhir = (k.bahasa === "id" ? cv : cvEn)?.[k.bagian]?.[k.indeks]?.end || "";
       return `### ${kunci}
 Bahasa: ${k.bahasa === "id" ? "Indonesia" : "English"}
 Posisi: ${k.judul} (berakhir: ${akhir || "tidak disebut"})
-Bullet ASLI (${n} buah, semuanya WAJIB tercakup, masing-masing jadi bullet sendiri):
-${k.asli.map((b, j) => `${j + 1}. ${b}`).join("\n")}
+Jumlah bullet yang diminta: MINIMAL ${n}.
+Bullet ASLI dari CV (${k.asli.length} buah, semuanya WAJIB tercakup, masing-masing jadi bullet sendiri):
+${k.asli.map((b, j) => `${j + 1}. ${b}`).join("\n") || "(tidak terbaca terpisah, pakai draft di bawah dan isi CV)"}
 Draft sebelumnya (contoh gaya, tetapi terlalu sedikit):
 ${k.sekarang.map((b) => `- ${b}`).join("\n") || "-"}`;
     })
@@ -131,8 +131,14 @@ ${k.sekarang.map((b) => `- ${b}`).join("\n") || "-"}`;
 kembalikan array bullet yang jumlahnya MINIMAL sama dengan jumlah bullet asli:
 setiap bullet asli ditulis ulang menjadi satu bullet yang lebih kuat, urutkan dari yang
 paling berdampak. Boleh menambah paling banyak 3 bullet bila jelas didukung isi CV di
-bawah (misalnya skill atau sistem yang dipakai), tanpa mengarang angka, alat, atau
-tanggung jawab baru. Setiap bullet maksimal 25 kata, tanpa titik di akhir, angka hanya
+bawah (misalnya skill atau sistem yang dipakai).
+
+KALAU BULLET ASLI KURANG DARI JUMLAH YANG DIMINTA (standar CV minimal 3 bullet per
+pekerjaan): lengkapi dengan tugas yang LAZIM dikerjakan orang di jabatan dan bidang
+itu, ditulis wajar dan umum. Gunakan skill dan sistem yang tertulis di CV bila cocok.
+JANGAN menambah angka, nama klien, nama sistem, atau pencapaian yang tidak ada di CV.
+
+Setiap bullet maksimal 25 kata, tanpa titik di akhir, angka hanya
 bila ada di input.
 
 Aturan bahasa Indonesia: ${ATURAN.id}
@@ -166,7 +172,7 @@ ${daftar}`;
     const baru = (Array.isArray(hasil?.[`k${i}`]) ? hasil[`k${i}`] : [])
       .map((b) => (typeof b === "string" ? b.replace(/\s*—\s*/g, ", ").trim() : ""))
       .filter(Boolean);
-    if (baru.length >= k.asli.length) {
+    if (baru.length >= k.target) {
       target.desc = baru;
       lewatAi++;
     } else if (bahasaAsli === k.bahasa) {

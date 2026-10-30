@@ -88,18 +88,45 @@ export function cariBlok(entri, blok) {
   return skor >= 1 ? terbaik : null;
 }
 
+/** Standar minimal bullet untuk setiap pengalaman kerja di CV. */
+export const MIN_BULLET_KERJA = 3;
+
 /**
- * Daftar entri draft yang bullet-nya lebih sedikit dari input.
- * Hasil: [{ bagian, indeks, asli: [bullet input], sekarang: [bullet draft] }]
+ * Daftar entri draft yang bullet-nya kurang: lebih sedikit dari input,
+ * atau (khusus pengalaman kerja) kurang dari standar minimal 3 bullet.
+ * Hasil: [{ bagian, indeks, asli, sekarang, target, judul }]
  */
 export function cariKekurangan(draft, blok) {
   const kurang = [];
   for (const bagian of ["experiences", "organizations", "volunteers"]) {
     (draft?.[bagian] || []).forEach((e, indeks) => {
       const b = cariBlok(e, blok);
+      const asli = b ? b.bullets : [];
       const desc = Array.isArray(e.desc) ? e.desc : [];
-      if (b && desc.length < b.bullets.length) kurang.push({ bagian, indeks, asli: b.bullets, sekarang: desc, judul: `${e.role || ""} · ${e.company || e.org || ""}` });
+      const minimal = bagian === "experiences" && (e.role || e.company) ? MIN_BULLET_KERJA : 0;
+      const target = Math.max(asli.length, minimal);
+      if (desc.length < target)
+        kurang.push({ bagian, indeks, asli, sekarang: desc, target, judul: `${e.role || ""} · ${e.company || e.org || ""}` });
     });
   }
   return kurang;
+}
+
+/**
+ * Tandai pengalaman kerja yang bullet-nya ditambah AI melebihi isi CV asli
+ * (karena CV asli kurang dari 3 bullet). Jumlahnya disimpan di
+ * `tambahan_ai` supaya pengguna diingatkan untuk memeriksanya.
+ */
+export function tandaiTambahan(draft, blok) {
+  if (!draft || !Array.isArray(draft.experiences) || !blok.length) return draft;
+  return {
+    ...draft,
+    experiences: draft.experiences.map((e) => {
+      const b = cariBlok(e, blok);
+      if (!b) return e;
+      const n = b.bullets.length;
+      const desc = Array.isArray(e.desc) ? e.desc : [];
+      return n < MIN_BULLET_KERJA && desc.length > n ? { ...e, tambahan_ai: desc.length - n } : e;
+    }),
+  };
 }

@@ -35,6 +35,42 @@ const jamIndo = (s) =>
  * @param kolom  "cv_draft" | "linkedin_draft"
  * @param onTerapkan  dipanggil dengan objek draft yang dipilih
  */
+/**
+ * Pengingat untuk pengalaman kerja yang bullet-nya dilengkapi AI karena CV
+ * asli kurang dari 3 bullet. Isinya tugas yang lazim untuk jabatan itu,
+ * jadi pengguna perlu memastikan memang benar-benar mengerjakannya.
+ */
+function CatatanTambahan({ draft }) {
+  const daftar = (draft?.experiences || []).filter((e) => e?.tambahan_ai > 0);
+  if (!daftar.length) return null;
+  return (
+    <div
+      style={{
+        margin: "0 0 10px",
+        padding: "9px 11px",
+        borderRadius: 9,
+        background: "var(--t-warn-bg, rgba(217,119,6,0.08))",
+        border: "1px solid rgba(217,119,6,0.3)",
+        fontSize: 11.5,
+        lineHeight: 1.55,
+        color: T.ink,
+      }}
+    >
+      <b>{t("Bullet tambahan dari AI. ", "AI-added bullets. ")}</b>
+      {t(
+        "CV aslimu kurang dari 3 poin untuk posisi berikut, jadi AI melengkapinya dengan tugas yang lazim di jabatan itu: ",
+        "Your CV had fewer than 3 points for these roles, so AI added duties typical for the job: ",
+      )}
+      {daftar.map((e) => `${e.role}${e.company ? ` (${e.company})` : ""}: ${e.tambahan_ai} ${t("poin", "points")}`).join("; ")}
+      {". "}
+      {t(
+        "Hapus atau ubah poin yang tidak benar-benar kamu kerjakan sebelum CV dikirim.",
+        "Remove or edit any point you didn't actually do before sending your CV.",
+      )}
+    </div>
+  );
+}
+
 /** Cuplikan isi draft — memberi konfirmasi visual saat bahasa diganti. */
 function Cuplikan({ draft, bahasa, ringkas = false }) {
   if (!draft) return null;
@@ -209,6 +245,7 @@ export function PilihDraftAi({
             {t("Draft", "The")}{" "}{bahasa === "en" ? t("versi Inggris", "English draft") : t("versi Indonesia", "Indonesian draft")}{" "}{t("sudah diterapkan. Periksa tiap bagian, lalu klik Simpan.", "has been applied. Review each section, then click Save.")}
           </div>
         </div>
+        <CatatanTambahan draft={draftAktif(terpilih)} />
 
         {/* Toggle tetap ada supaya bisa berpindah bahasa kapan saja
             tanpa harus membuka ulang banner. */}
