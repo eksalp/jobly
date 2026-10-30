@@ -34,8 +34,16 @@ const STANDAR_DRAFT = {
   jabatan dan lama pengalaman (hitung dari tanggal di input bila jelas),
   2-4 keahlian inti yang sesuai posisi_target, 1-2 pencapaian terbaik dari
   input, lalu jenis peran yang dicari.
-- experiences: urutkan dari yang terbaru. Posisi terbaru 4-5 bullet, posisi
-  lama 2-3 bullet. Setiap bullet:
+- experiences: urutkan dari yang terbaru. JUMLAH BULLET TIDAK BOLEH BERKURANG:
+  setiap tugas atau pencapaian yang ada di input untuk posisi itu WAJIB muncul
+  sebagai bullet sendiri (input 12 bullet → draft 12 bullet). Tugasmu menulis
+  ulang agar lebih kuat, bukan meringkas. Penggabungan hanya boleh untuk dua
+  bullet yang isinya benar-benar sama. Urutkan bullet dari yang paling
+  berdampak. Jumlah boleh BERTAMBAH: kalau bagian lain input (ringkasan,
+  skill, sertifikasi, proyek) menunjukkan tugas atau keahlian yang jelas
+  dipakai di posisi itu tetapi belum tertulis, tambahkan 1-3 bullet baru
+  (input 12 → draft 13 tidak masalah). Bullet tambahan tetap harus berdasar
+  fakta input, tanpa mengarang angka, alat, atau tanggung jawab baru. Setiap bullet:
   * diawali kata kerja aktif yang berbeda-beda (Menyusun, Mengelola,
     Merekonsiliasi, Menangani, Meningkatkan, Mengoordinasikan, dst.),
   * pola: apa yang dikerjakan + bagaimana/alat yang dipakai + hasil atau
@@ -59,8 +67,9 @@ STANDAR KUALITAS DRAFT LINKEDIN (linkedin_draft):
   2) pengalaman dan cara kerja dengan bukti dari input,
   3) 3-4 pencapaian atau keahlian berupa daftar berawalan "• ",
   4) ajakan: jenis peluang yang dicari dan cara menghubungi.
-- experiences.desc: 2-4 poin per posisi, boleh sedikit lebih bercerita
-  daripada CV, tetap berbasis fakta input.
+- experiences.desc: semua tugas penting dari input tetap tercakup; boleh
+  menggabungkan tugas yang sejenis menjadi satu poin agar lebih bercerita,
+  minimal 3 poin bila input punya 3 tugas atau lebih. Tetap berbasis fakta input.
 - skills: 10-20 keahlian, diurutkan dari yang paling relevan untuk
   posisi_target (LinkedIn menampilkan beberapa teratas lebih menonjol).
 
@@ -81,7 +90,14 @@ STANDAR AUDIT (cv_audit dan linkedin_audit):
   experience (computed from input dates when clear), 2-4 core skills that fit
   the target roles, 1-2 best achievements from the input, then the kind of
   role sought.
-- experiences: most recent first. Latest role 4-5 bullets, older roles 2-3.
+- experiences: most recent first. NEVER drop bullets: every task or achievement
+  in the input for a role MUST appear as its own bullet (12 input bullets → 12
+  draft bullets). Rewrite to make them stronger; do not summarize. Merge two
+  bullets only when they say exactly the same thing. Order bullets by impact.
+  The count MAY GROW: if other parts of the input (summary, skills,
+  certifications, projects) clearly show a task or skill used in that role
+  that is not written yet, add 1-3 new bullets (12 → 13 is fine), still
+  grounded in the input with no invented numbers, tools, or duties.
   Each bullet starts with a different strong action verb, follows "what +
   how/tools + result or scope", max 25 words, no trailing period. Numbers
   ONLY when present in the input; otherwise describe scope or impact
@@ -99,8 +115,9 @@ LINKEDIN DRAFT QUALITY STANDARD (linkedin_draft):
   of working with evidence from the input, 3) 3-4 achievements or skills as a
   list starting with "• ", 4) a call to action: opportunities sought and how
   to get in touch.
-- experiences.desc: 2-4 points per role, slightly more narrative than the CV,
-  still grounded in the input.
+- experiences.desc: cover every important task from the input; similar tasks
+  may be combined into one more narrative point, at least 3 points when the
+  input has 3 or more tasks. Still grounded in the input.
 - skills: 10-20 items ordered by relevance to the target roles.`,
 };
 
@@ -401,6 +418,7 @@ ATURAN:
 - EKSTRAK fakta dari input apa adanya. JANGAN mengarang nama, tanggal, perusahaan, atau angka yang tidak ada.
 - Field yang tidak ada di input: isi "" atau []. Array boleh kosong.
 - cv_draft bergaya CV: bullet pendek, kata kerja aktif, sertakan angka bila ada di input.
+- Poin di organizations, volunteers, dan education.desc juga dipertahankan semua dari input.
 - linkedin_draft bergaya LinkedIn: naratif, orang pertama ("Saya..."), lebih panjang.
 - linkedin_draft.about: 270 karakter pertama harus paling kuat, itu yang terlihat sebelum "lihat selengkapnya".
 - linkedin_draft.experiences[].skills: maksimal 5 per posisi.
@@ -454,6 +472,7 @@ RULES:
 - Fields absent from the input: use "" or []. Empty arrays are fine.
 - languages[].proficiency MUST be exactly one of: ${TINGKAT_BAHASA.en.map((x) => `"${x}"`).join(", ")}.
 - linkedin_draft.experiences[].skills: max 5 per role.
+- Keep every point in organizations, volunteers, and education.desc from the input.
 - cover_saran & photo_saran: specific to this candidate's field, not generic advice.
 
 ${STANDAR_DRAFT.en}
@@ -463,8 +482,8 @@ ${INSTRUKSI_BAHASA.en}`;
     let utama, versiEn;
     try {
       [utama, versiEn] = await Promise.all([
-        jalankanAnalisis(prompt, 8000, "id", false),
-        jalankanAnalisis(promptEn, 8000, "en", true),
+        jalankanAnalisis(prompt, 12000, "id", false),
+        jalankanAnalisis(promptEn, 12000, "en", true),
       ]);
     } catch (e) {
       /* Analisis gagal — kuota dikembalikan seketika di server.
