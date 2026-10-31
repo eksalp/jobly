@@ -10,9 +10,7 @@ import { lokal, t } from "../../i18n.js";
 
 const SARING = [
   ["semua", t("Semua freelance", "All freelance")],
-  ["remote", "Remote"],
   ["asing", t("Bayaran mata uang asing", "Paid in foreign currency")],
-  ["onsite", t("Di lokasi", "On-site")],
 ];
 
 // Bidang yang sering dicari freelancer — sekali klik mengisi pencarian
@@ -51,7 +49,6 @@ export function FreelancePage() {
     db: "db2",
     q: kata.trim(),
     tipe: "freelance",
-    lokasi: saring === "remote" || saring === "onsite" ? saring : "",
     asing: saring === "asing",
   };
   const { jobs: hasil, total, terkunci, loading, adaLagi, memuatLagi, muatLagi } = useDaftarLoker(filter);
@@ -59,11 +56,11 @@ export function FreelancePage() {
   // Angka di hero tetap jumlah semua loker freelance, tidak ikut filter
   // (ditambah yang terkunci untuk pengunjung gratis, agar angkanya utuh)
   const semua = useDaftarLoker({ db: "db2", tipe: "freelance" }, { n: 1 });
-  const remote = useDaftarLoker({ db: "db2", tipe: "freelance", lokasi: "remote" }, { n: 1 });
   const totalSemua = (semua.total ?? 0) + (semua.terkunci ?? 0);
-  const totalRemote = (remote.total ?? 0) + (remote.terkunci ?? 0);
+  // Semua freelance di sini dikerjakan online, jadi angkanya sama dengan total
+  const totalRemote = totalSemua;
   const memuatSemua = semua.loading;
-  const memuatRemote = remote.loading;
+  const memuatRemote = semua.loading;
 
   return (
     <PublicLayout aktif="/freelance">
@@ -127,7 +124,7 @@ export function FreelancePage() {
             </div>
             <div>
               <Angka nilai={totalRemote} loading={memuatRemote} />
-              <span>{t("bisa dikerjakan remote", "can be done remotely")}</span>
+              <span>{t("bisa dikerjakan dari rumah", "can be done from home")}</span>
             </div>
           </div>
         </div>

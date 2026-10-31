@@ -235,7 +235,21 @@ export function susunFilter(sk, f, agregator) {
 
   if (f.kota && sk.lok) p.push([sk.lok, `ilike.*${bersih(f.kota)}*`]);
 
-  if (f.lokasi) {
+  // Mode longgar (project freelance): kerja freelance di project ini pada
+  // dasarnya dikerjakan online, jadi dianggap remote KECUALI ditandai jelas
+  // harus datang ke lokasi (work_arrangement/tipe "onsite", is_remote false).
+  if (f.lokasi && f.lokasiLonggar) {
+    const onsite = [];
+    if (sk.ada.has("work_arrangement")) onsite.push("work_arrangement.in.(onsite,hybrid)");
+    if (sk.ada.has("tipe")) onsite.push("tipe.ilike.*onsite*");
+    if (sk.ada.has("is_remote")) onsite.push("is_remote.is.false");
+    if (f.lokasi === "remote") {
+      if (sk.ada.has("work_arrangement")) dan.push("or(work_arrangement.is.null,work_arrangement.not.in.(onsite,hybrid))");
+      if (sk.ada.has("tipe")) dan.push("or(tipe.is.null,tipe.not.ilike.*onsite*)");
+      if (sk.ada.has("is_remote")) dan.push("or(is_remote.is.null,is_remote.is.true)");
+    } else if (onsite.length) dan.push(`or(${onsite.join(",")})`);
+    else p.push(["id", "eq.-1"]);
+  } else if (f.lokasi) {
     if (sk.ada.has("work_arrangement")) p.push(["work_arrangement", `eq.${bersih(f.lokasi)}`]);
     else if (f.lokasi === "remote" && sk.ada.has("is_remote")) p.push(["is_remote", "is.true"]);
     else p.push(["id", "eq.-1"]); // kolomnya tidak ada → tidak ada yang cocok

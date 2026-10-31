@@ -15,6 +15,9 @@ function readLokasiKerja(row) {
   // Fallback: tabel papan-loker simpan lokasi di kolom `tipe`
   const tipe = (row.tipe || "").toString().toLowerCase().trim();
   if (tipe === "onsite" || tipe === "remote") return tipe;
+  // Kerja online (mis. dari tabel freelance) sering hanya menulis lokasinya
+  const lok = `${row.location || row.lokasi || ""} ${tipe}`.toLowerCase();
+  if (/\b(remote|online|wfh|work from home|dari rumah|anywhere|daring)\b/.test(lok)) return "remote";
   return null; // null = tidak diketahui, tidak akan match filter apapun
 }
 
@@ -71,8 +74,10 @@ const SINGKATAN =
 // dari beberapa project Supabase sekaligus (dua tabel beda project bisa
 // aja punya id mentah yang sama persis padahal itu loker yang berbeda).
 export function mapSupabaseJob(row, source = "db1") {
-  const lokasiKerja = readLokasiKerja(row); // null | "onsite" | "remote" | "hybrid"
-  const tipeKerja = readTipeKerja(row); // null | "full-time" | "kontrak" | "freelance" | "magang"
+  const tipeKerja = readTipeKerja(row);
+  // Freelance dari project kedua dikerjakan online kecuali ditandai lain
+  const lokasiKerja =
+    readLokasiKerja(row) ?? (source === "db2" && String(tipeKerja || "").includes("freelance") ? "remote" : null); // null | "full-time" | "kontrak" | "freelance" | "magang"
   // Kolom `category` di database kamu udah berupa slug terklasifikasi
   // (mis. "finance-accounting") \u2014 pecah jadi kata biasa buat dipakai
   // di matching & ditampilkan ke user.

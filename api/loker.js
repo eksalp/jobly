@@ -84,6 +84,7 @@ async function aksiDaftar(p, penuh) {
     remoteHybrid: bool(p.get("rh")),
     magang: bool(p.get("magang")),
     kecuali: p.get("kecuali"),
+    lokasiLonggar: p.get("db") === DB_FREELANCE,
   };
   const terbatas = Boolean(potong.aktif);
 
