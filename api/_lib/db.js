@@ -52,6 +52,24 @@ export function daftarDb() {
   ].filter((d) => d.url && d.kunci);
 }
 
+/**
+ * Project kedua berisi campuran loker dan kerja freelance/sampingan
+ * (sebagian dengan tautan afiliasi). Isinya hanya ditampilkan di halaman
+ * Freelance, tidak ikut daftar loker umum, pencarian, maupun statistik.
+ */
+export const DB_FREELANCE = "db2";
+
+/** Project untuk daftar loker umum (tanpa project freelance). */
+export function dbUmum() {
+  return daftarDb().filter((d) => d.id !== DB_FREELANCE);
+}
+
+/** Pilih project: "db2" → hanya itu; kosong → project umum. */
+export function pilihDb(id) {
+  if (id) return daftarDb().filter((d) => d.id === id);
+  return dbUmum();
+}
+
 /* ------------------------------------------------------------ REST */
 
 export function qs(params) {
@@ -225,8 +243,31 @@ export function susunFilter(sk, f, agregator) {
   if (f.remoteHybrid && sk.ada.has("work_arrangement")) p.push(["work_arrangement", "in.(remote,hybrid)"]);
 
   if (f.tipe) {
-    if (sk.ada.has("employment_type")) p.push(["employment_type", `eq.${bersih(f.tipe)}`]);
+    // Tabel papan-loker menyimpan tipe kerja di kolom `tipe`; nilainya bisa
+    // berhuruf besar ("Freelance"), jadi dicocokkan tanpa peka huruf.
+    const t = bersih(f.tipe);
+    const kol = [sk.ada.has("employment_type") && "employment_type", sk.ada.has("tipe") && "tipe"].filter(Boolean);
+    if (kol.length) dan.push(`or(${kol.map((k) => `${k}.ilike.${kutip(`*${t}*`)}`).join(",")})`);
     else p.push(["id", "eq.-1"]);
+  }
+
+  // Magang: tipe kerja magang, atau judulnya menyebut magang/intern
+  if (f.magang) {
+    const isi = [];
+    if (sk.ada.has("employment_type")) isi.push("employment_type.ilike.*magang*", "employment_type.ilike.*intern*");
+    if (sk.ada.has("tipe")) isi.push("tipe.ilike.*magang*", "tipe.ilike.*intern*");
+    // "intern" harus berdiri sendiri supaya "international"/"internal" tidak ikut
+    if (sk.judul)
+      isi.push(
+        `${sk.judul}.ilike.*magang*`,
+        `${sk.judul}.ilike.*internship*`,
+        ...["intern", "intern *", "* intern", "* intern *", "*(intern)*", "*intern)*", "*intern -*", "*intern/*"].map((x) => `${sk.judul}.ilike.${kutip(x)}`),
+      );
+    if (sk.ada.has("site")) isi.push("site.eq.maganghub");
+    dan.push(`or(${isi.join(",")})`);
+  }
+  if (f.kecuali && sk.ada.has("site")) {
+    dan.push(`or(site.is.null,site.neq.${bersih(f.kecuali).replace(/ /g, "_")})`);
   }
 
   if (f.sumber && sk.ada.has("site")) {

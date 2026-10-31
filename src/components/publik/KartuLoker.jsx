@@ -99,7 +99,7 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
       <a className="pb-card-hit" {...tautan(url)} aria-label={`${job.posisi} di ${job.perusahaan}`} />
 
       <div className="pb-card-head">
-        <LogoKotak src={logo} nama={job.perusahaan} ikon={!logo} ukuran={40} />
+        <LogoKotak src={logo} nama={job.perusahaan} ukuran={40} />
         <div className="pb-card-who">
           <div className="pb-card-co">{job.perusahaan}</div>
           <div className="pb-card-src">

@@ -15,6 +15,9 @@
  */
 import {
   daftarDb,
+  pilihDb,
+  dbUmum,
+  DB_FREELANCE,
   rest,
   qs,
   skema,
@@ -59,7 +62,7 @@ function kunciUrut(sk, row, urut) {
 /* ---------------------------------------------------------------- daftar */
 
 async function aksiDaftar(p, penuh) {
-  const dbs = daftarDb();
+  const dbs = pilihDb(p.get("db") === DB_FREELANCE ? DB_FREELANCE : "");
   const n = Math.min(MAKS_HALAMAN, Math.max(1, Number(p.get("n")) || 24));
   const urut = p.get("urut") === "gaji" ? "gaji" : "terbaru";
   const kursor = (p.get("c") || "").split(",").map((x) => Math.max(0, Number(x) || 0));
@@ -79,6 +82,8 @@ async function aksiDaftar(p, penuh) {
     gaji: bool(p.get("gaji")),
     asing: bool(p.get("asing")),
     remoteHybrid: bool(p.get("rh")),
+    magang: bool(p.get("magang")),
+    kecuali: p.get("kecuali"),
   };
   const terbatas = Boolean(potong.aktif);
 
@@ -146,14 +151,15 @@ async function aksiDaftar(p, penuh) {
 /* ------------------------------------------------------------- statistik */
 
 async function aksiStatistik() {
-  const dbs = daftarDb();
+  const dbs = dbUmum();
+  const dbFreelance = pilihDb(DB_FREELANCE);
   const potong = await titikPotong();
   const kini = Date.now();
   const iso = (hari) => new Date(kini - hari * 86400000).toISOString();
 
-  const hitung = (fBuat) =>
+  const hitung = (fBuat, daftar = dbs) =>
     paralel(
-      dbs.map((db) => async () => {
+      daftar.map((db) => async () => {
         const sk = await skema(db);
         const { total } = await rest(
           db,
@@ -164,9 +170,9 @@ async function aksiStatistik() {
       }),
     ).then((r) => r.reduce((t, x) => t + (typeof x === "number" ? x : 0), 0));
 
-  const ambil = async (f, n) => {
+  const ambil = async (f, n, daftar = dbs) => {
     const per = await Promise.all(
-      dbs.map(async (db) => {
+      daftar.map(async (db) => {
         const sk = await skema(db);
         const { data } = await rest(
           db,
@@ -190,8 +196,8 @@ async function aksiStatistik() {
     hitung(() => ({ lokasi: "remote", asing: true })),
     ambil({}, 8),
     ambil({ lokasi: "remote" }, 4),
-    hitung(() => ({ tipe: "freelance" })),
-    ambil({ tipe: "freelance" }, 4),
+    hitung(() => ({ tipe: "freelance" }), dbFreelance),
+    ambil({ tipe: "freelance" }, 4, dbFreelance),
     hitung(() => ({ bumn: true })),
     ambil({ bumn: true }, 4),
   ]);
@@ -292,7 +298,7 @@ let gajiCache = null;
 async function barisGaji() {
   if (gajiCache && Date.now() - gajiCache.waktu < 60 * 60 * 1000) return gajiCache.jobs;
   const jobs = [];
-  for (const db of daftarDb()) {
+  for (const db of dbUmum()) {
     const sk = await skema(db);
     if (!sk.gmin && !sk.gmax) continue;
     const kolom = KOLOM_GAJI.filter((k) => sk.ada.has(k)).join(",");
@@ -347,7 +353,7 @@ async function aksiKandidat(p, penuh) {
   const n = Math.min(300, Math.max(20, Number(p.get("n")) || 200));
   const potong = penuh ? { aktif: false } : await titikPotong();
   const per = await Promise.all(
-    daftarDb().map(async (db) => {
+    dbUmum().map(async (db) => {
       const sk = await skema(db);
       const { data } = await rest(
         db,

@@ -35,7 +35,7 @@ import { useLayarKecil } from "../../hooks/useLayarKecil";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { Button } from "../../components/ui/Button";
 import { PilihDraftAi } from "../../components/PilihDraftAi";
-import { GerbangFitur } from "../../components/GerbangFitur";
+import { AjakanAnalisisAi } from "../../components/AjakanAnalisisAi";
 import { useLangganan } from "../../hooks/useLangganan";
 import { LI_SPECS, LI_FIELDS } from "../../data/linkedinSpecs";
 import {
@@ -1020,7 +1020,20 @@ export function LinkedInBuilderPanel({ setActive }) {
 
       {/* Pemilih draft AI. Menyetel aiDraft juga membuat panel review kanan
           ikut menampilkan saran dari versi yang dipilih. */}
-      {langganan.aktif ? (
+      <AjakanAnalisisAi
+        jenis="linkedin"
+        bisa={linkedinKeTeks(p).length >= 120}
+        aktif={langganan.aktif}
+        onAnalisis={() => {
+          const teks = linkedinKeTeks(p);
+          if (teks.length < 120) return;
+          setCvText?.(teks);
+          tandaiKirimanReview("linkedin", "LinkedIn Builder");
+          setActive?.("overview");
+        }}
+        onPaket={() => setActive?.("paket")}
+      />
+      {langganan.aktif && (
         <PilihDraftAi
           kolom="linkedin_draft"
           judul={t("AI sudah menyiapkan draft LinkedIn kamu", "AI has prepared your LinkedIn draft")}
@@ -1029,15 +1042,6 @@ export function LinkedInBuilderPanel({ setActive }) {
             setAiDraft(draft);
             terapkanSemuaDariDraft(draft);
           }}
-        />
-      ) : (
-        /* Mockup dan editor tetap terbuka — yang dikunci hanya arahan AI. */
-        <GerbangFitur
-          terbuka={false}
-          tinggiMinimal={160}
-          judul={t("LinkedIn Builder dengan arahan AI", "AI-guided LinkedIn Builder")}
-          keterangan={t("AI menulis ulang headline, bagian Tentang, dan keahlianmu supaya lebih mudah ditemukan recruiter. Tersedia dalam bahasa Indonesia dan Inggris.", "AI rewrites your headline, About section, and skills so recruiters find you more easily. Available in Indonesian and English.")}
-          onLangganan={() => setActive?.("paket")}
         />
       )}
 

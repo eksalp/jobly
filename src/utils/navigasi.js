@@ -32,11 +32,16 @@ export function pathFitur(panelId, sudahMasuk) {
 }
 
 /** Bagikan tautan: pakai menu bagikan bawaan HP, atau salin ke clipboard. */
-export async function bagikan({ judul, teks, url }) {
+export async function bagikan({ judul, url }) {
   const lengkap = url.startsWith("http") ? url : window.location.origin + url;
+  // Menu bagikan bawaan hanya di HP. Di laptop (mis. menu bagikan Windows)
+  // tautan dan judul sering tergabung jadi satu teks yang tidak bisa dibuka,
+  // jadi cukup salin tautannya saja. Judul juga tidak dikirim sebagai teks
+  // terpisah karena beberapa aplikasi menempelkannya tepat setelah URL.
+  const sentuh = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
   try {
-    if (navigator.share) {
-      await navigator.share({ title: judul, text: teks, url: lengkap });
+    if (navigator.share && sentuh) {
+      await navigator.share({ title: judul, url: lengkap });
       return "dibagikan";
     }
   } catch {

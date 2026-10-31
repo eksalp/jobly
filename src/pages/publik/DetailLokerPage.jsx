@@ -13,12 +13,18 @@ import {
   ChevronRight,
   FileText,
   MessageSquareQuote,
-  Bot,
   Laptop,
   Briefcase,
   GraduationCap,
   Wallet,
   Lock,
+  FilePlus2,
+  Mail,
+  Linkedin,
+  Award,
+  ListChecks,
+  FolderOpen,
+  Mic,
 } from "lucide-react";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker } from "../../components/publik/KartuLoker";
@@ -101,6 +107,61 @@ function Kerangka() {
       </div>
       {[92, 100, 96, 70, 88, 60].map((w, i) => (
         <div key={i} className="pb-skel" style={{ width: `${w}%`, height: 13, marginTop: i === 0 ? 48 : 14 }} />
+      ))}
+    </div>
+  );
+}
+
+/* Daftar persiapan lamaran, dikelompokkan dari dokumen sampai tes.
+   Label paket mengikuti PAKET: Starter membuka analisis AI, Pro membuka
+   simulasi interview dan portofolio, Max membuka psikotes dan FGD. */
+function SiapkanLamaran({ job }) {
+  const kunci = (job.posisi || "").split(/[\s(,/-]+/).slice(0, 2).join(" ");
+  const KELOMPOK = [
+    {
+      judul: t("Dokumen lamaran", "Application documents"),
+      item: [
+        { label: "CV Builder", tier: "gratis", path: "/dashboard/cvbuilder", Ikon: FilePlus2 },
+        { label: "Cover letter", tier: "gratis", path: "/dashboard/coverletter", Ikon: Mail },
+        { label: "LinkedIn Builder", tier: "gratis", path: "/dashboard/linkedinbuilder", Ikon: Linkedin },
+        { label: t("Review CV & LinkedIn dengan AI", "AI CV & LinkedIn review"), tier: "starter", path: "/dashboard/overview", Ikon: FileText },
+        { label: t("Portofolio proyek", "Project portfolio"), tier: "pro", path: "/dashboard/portofolio", Ikon: FolderOpen },
+      ],
+    },
+    {
+      judul: t("Tambah nilai jual", "Stand out"),
+      item: [
+        { label: t("Sertifikasi & pelatihan yang relevan", "Relevant certifications & training"), tier: "gratis", path: `/sertifikasi?q=${encodeURIComponent(kunci)}`, Ikon: Award },
+        { label: t("Bandingkan di Peta gaji", "Compare on the salary map"), tier: "gratis", path: `/peta-gaji?posisi=${encodeURIComponent(kunci)}`, Ikon: Wallet },
+      ],
+    },
+    {
+      judul: t("Latihan seleksi", "Selection practice"),
+      item: [
+        { label: t("Latihan 140+ pertanyaan interview", "Practise 140+ interview questions"), tier: "gratis", path: "/dashboard/interview", Ikon: MessageSquareQuote },
+        { label: t("Simulasi interview AI bersuara", "AI voice mock interview"), tier: "pro", path: "/dashboard/simulasi", Ikon: Mic },
+        { label: t("Psikotes: TPA, Kraepelin, DISC, dan lainnya", "Psychometric tests: aptitude, Kraepelin, DISC, more"), tier: "max", path: "/dashboard/tes", Ikon: ListChecks },
+        { label: t("Simulasi FGD dengan AI", "AI group discussion (FGD)"), tier: "max", path: "/dashboard/fgd", Ikon: Users },
+      ],
+    },
+  ];
+  const LABEL = { gratis: t("Gratis", "Free"), starter: "Starter", pro: "Pro", max: "Max" };
+  return (
+    <div className="pb-box tint pb-siap">
+      <h3>{t("Siapkan lamaranmu", "Prepare your application")}</h3>
+      <p>{t("Lengkapi dari dokumen sampai latihan tes, supaya peluang dipanggil interview makin besar.", "From documents to test practice, everything that raises your chance of an interview.")}</p>
+      {KELOMPOK.map((k) => (
+        <div key={k.judul} className="pb-siap-grup">
+          <span className="pb-siap-judul">{k.judul}</span>
+          {k.item.map(({ label, tier, path, Ikon }) => (
+            <a key={path} className="pb-box-row" style={{ alignItems: "center" }} {...tautan(path)}>
+              <span style={{ display: "inline-flex", gap: 9, alignItems: "center", fontWeight: 500 }}>
+                <Ikon size={16} color="var(--brand)" /> {label}
+              </span>
+              <span className={`pb-tag ${tier === "gratis" ? "" : "pro"}`}>{LABEL[tier]}</span>
+            </a>
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -219,7 +280,7 @@ export function DetailLokerPage({ slug }) {
       <PublicLayout aktif="/loker">
         <div className="pb-wrap" style={{ paddingBlock: "48px 90px", maxWidth: 860 }}>
           <div className="pb-d-head">
-            <LogoKotak src={logoK} nama={job.perusahaan} ikon={!logoK} ukuran={72} radius={18} />
+            <LogoKotak src={logoK} nama={job.perusahaan} ukuran={72} radius={18} />
             <div style={{ minWidth: 0 }}>
               <h1>{job.posisi}</h1>
               <div className="pb-d-company">{job.perusahaan}</div>
@@ -331,7 +392,7 @@ export function DetailLokerPage({ slug }) {
           {/* ===================================================== isi */}
           <article style={{ minWidth: 0 }}>
             <div className="pb-d-head">
-              <LogoKotak src={logo} nama={job.perusahaan} ikon={!logo} ukuran={72} radius={18} />
+              <LogoKotak src={logo} nama={job.perusahaan} ukuran={72} radius={18} />
               <div style={{ minWidth: 0 }}>
                 <h1>{job.posisi}</h1>
                 <div className="pb-d-company">{job.perusahaan}</div>
@@ -410,7 +471,7 @@ export function DetailLokerPage({ slug }) {
             <section className="pb-d-sec">
               <h2>{t("Tentang perusahaan", "About the company")}</h2>
               <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-                <LogoKotak src={logo} nama={job.perusahaan} ikon={!logo} ukuran={56} />
+                <LogoKotak src={logo} nama={job.perusahaan} ukuran={56} />
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: 16.5 }}>{job.perusahaan}</div>
                   <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4, fontSize: 13.5, color: "var(--ink2)" }}>
@@ -514,30 +575,7 @@ export function DetailLokerPage({ slug }) {
               </div>
             )}
 
-            <div className="pb-box tint">
-              <h3>{t("Siapkan lamaranmu", "Prepare your application")}</h3>
-              <p style={{ fontSize: 13.5, color: "var(--ink2)", margin: "6px 0 10px", lineHeight: 1.55 }}>
-                {t("Supaya peluang dipanggil interview makin besar.", "Improve your chances of getting an interview.")}
-              </p>
-              {[
-                { label: t("Review CV & LinkedIn dengan AI", "AI CV & LinkedIn review"), pro: true, panel: "overview", Ikon: FileText },
-                { label: t("Latihan 140+ pertanyaan", "Practise 140+ questions"), pro: false, panel: "interview", Ikon: MessageSquareQuote },
-                { label: t("Bandingkan di Peta gaji", "Compare on the salary map"), pro: false, path: `/peta-gaji?posisi=${encodeURIComponent((job.posisi || "").split(/[\s(,/-]+/).slice(0, 2).join(" "))}`, panel: "peta", Ikon: Wallet },
-                { label: t("Simulasi interview AI", "AI mock interview"), pro: true, panel: "simulasi", Ikon: Bot },
-              ].map(({ label, pro, panel, path, Ikon }) => (
-                <a
-                  key={panel}
-                  className="pb-box-row"
-                  style={{ alignItems: "center" }}
-                  {...tautan(path || `/dashboard/${panel}`)}
-                >
-                  <span style={{ display: "inline-flex", gap: 9, alignItems: "center", fontWeight: 500 }}>
-                    <Ikon size={16} color="var(--brand)" /> {label}
-                  </span>
-                  <span className={`pb-tag ${pro ? "pro" : ""}`}>{pro ? "Pro" : t("Gratis", "Free")}</span>
-                </a>
-              ))}
-            </div>
+            <SiapkanLamaran job={job} />
           </aside>
         </div>
       </div>

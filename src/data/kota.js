@@ -47,6 +47,7 @@ export const SUMBER_DIKENAL = [
   "web3career",
   "lokerbumn",
   "talentics",
+  "maganghub",
   "bca",
   "pertamina_ptc",
   "shopee",
@@ -74,4 +75,5 @@ export const SUMBER_AGREGATOR = [
   "web3career",
   "lokerbumn",
   "talentics",
+  "maganghub",
 ];

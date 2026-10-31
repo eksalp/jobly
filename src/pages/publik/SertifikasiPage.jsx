@@ -59,8 +59,6 @@ export function SertifikasiPage() {
   const [galat, setGalat] = useState("");
   const [posisi, setPosisi] = useState(awal.get("q") || "");
   const [bidang, setBidang] = useState(awal.get("bidang") || "");
-  const [gratis, setGratis] = useState(false);
-  const [berbatas, setBerbatas] = useState(false);
 
   useEffect(() => {
     document.title = t("Sertifikasi & pelatihan · Jobly", "Certifications & training · Jobly");
@@ -83,13 +81,8 @@ export function SertifikasiPage() {
 
   const tersaring = useMemo(
     () =>
-      (semua || []).filter(
-        (r) =>
-          (!bidang || (r.bidang || []).includes(bidang)) &&
-          (!gratis || r.biaya === 0) &&
-          (!berbatas || r.tutup || r.buka),
-      ),
-    [semua, bidang, gratis, berbatas],
+      (semua || []).filter((r) => !bidang || (r.bidang || []).includes(bidang)),
+    [semua, bidang],
   );
 
   const relevan = useMemo(() => {
@@ -110,8 +103,6 @@ export function SertifikasiPage() {
       .filter((r) => r.jenjang === j.id)
       .sort((a, b) => urutan[statusDaftar(a).kode] - urutan[statusDaftar(b).kode] || (a.tutup || "9").localeCompare(b.tutup || "9")),
   }));
-
-  const segeraTutup = (semua || []).filter((r) => statusDaftar(r).kode === "tutupSegera").length;
 
   return (
     <PublicLayout aktif="/sertifikasi">
@@ -169,15 +160,6 @@ export function SertifikasiPage() {
                 <IkonBidang nama={b.ikon} size={13} /> {b.nama}
               </button>
             ))}
-          </div>
-          <div className="pb-sf-saklar">
-            <label>
-              <input type="checkbox" checked={gratis} onChange={(e) => setGratis(e.target.checked)} /> {t("Gratis saja", "Free only")}
-            </label>
-            <label>
-              <input type="checkbox" checked={berbatas} onChange={(e) => setBerbatas(e.target.checked)} /> {t("Yang ada batch/tenggat", "With batch dates")}
-              {segeraTutup > 0 && <b> · {t(`${segeraTutup} segera tutup`, `${segeraTutup} closing soon`)}</b>}
-            </label>
           </div>
         </div>
 

@@ -20,6 +20,7 @@ import { FaqPage } from "./publik/FaqPage";
 import { DokumenPage } from "./publik/DokumenPage";
 import { RemotePage } from "./publik/RemotePage";
 import { FreelancePage } from "./publik/FreelancePage";
+import { MagangPage } from "./publik/MagangPage";
 import { BumnPage } from "./publik/BumnPage";
 import { SertifikasiPage } from "./publik/SertifikasiPage";
 import { BidangPage } from "./publik/BidangPage";
@@ -46,12 +47,13 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /panduan          Panduan Remote Working untuk pemula
  *   /panduan/<slug>   Satu panduan (profesi atau topik umum)
  *   /panduan/<slug>/kelas  Kelas Dasar gratis untuk satu profesi
+ *   /magang           Loker magang: MagangHub dulu, lalu magang lainnya
  *   /latihan/<slug>   Latihan praktik untuk satu profesi (Pro)
  *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "magang", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 
@@ -85,6 +87,7 @@ function parsePath(pathname) {
   if (path.startsWith("/latihan/")) return { page: "latihan", slug: path.slice("/latihan/".length) };
   if (path === "/remote") return { page: "remote" };
   if (path === "/freelance") return { page: "freelance" };
+  if (path === "/magang") return { page: "magang" };
   if (path === "/bumn") return { page: "bumn" };
   if (path === "/bidang") return { page: "bidang" };
   if (path === "/sertifikasi") return { page: "sertifikasi" };
@@ -255,6 +258,9 @@ function JobFinderApp() {
       break;
     case "freelance":
       isi = <FreelancePage />;
+      break;
+    case "magang":
+      isi = <MagangPage />;
       break;
     case "bumn":
       isi = <BumnPage />;

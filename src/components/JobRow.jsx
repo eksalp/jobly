@@ -45,7 +45,6 @@ export function JobRow({
       <LogoKotak
         src={logoPerusahaan(job)}
         nama={job.perusahaan}
-        ikon={!logoPerusahaan(job)}
         ukuran={40}
         radius={11}
       />

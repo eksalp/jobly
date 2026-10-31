@@ -28,6 +28,7 @@ export const AGREGATOR = {
   web3career: { nama: "web3.career", domain: "web3.career", warna: "#6D28D9", huruf: "w3" },
   lokerbumn: { nama: "Loker BUMN", domain: "rekrutmenbersama.fhcibumn.id", warna: "#1E3A8A", huruf: "B" },
   talentics: { nama: "Talentics", domain: "talentics.id", warna: "#0F766E", huruf: "T" },
+  maganghub: { nama: "MagangHub Kemnaker", domain: "maganghub.kemnaker.go.id", warna: "#0B5394", huruf: "MH" },
 };
 
 // Domain platform — dipakai supaya halaman perusahaan di LinkedIn dkk.
@@ -215,7 +216,16 @@ export function urlDetail(job) {
 
 /** Kebalikan urlDetail: "db1-123" → "db1:123". */
 export function idDariSlug(slug) {
-  const s = decodeURIComponent(slug || "");
+  let s = String(slug || "");
+  try {
+    s = decodeURIComponent(s);
+  } catch {
+    /* slug rusak, pakai apa adanya */
+  }
+  // Tahan terhadap teks yang ikut tertempel setelah tautan
+  // ("db1-35400 Accounting Manager di …" atau "db1-35400%0A…")
+  const m = s.trim().match(/^([a-z]+\d*)-([A-Za-z0-9_]+)/);
+  if (m) return `${m[1]}:${m[2]}`;
   const i = s.indexOf("-");
   return i > 0 ? `${s.slice(0, i)}:${s.slice(i + 1)}` : s;
 }

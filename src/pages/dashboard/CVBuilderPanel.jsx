@@ -33,7 +33,7 @@ import { useAuth } from "../../context/AuthContext";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { Glass } from "../../components/ui/Glass";
 import { PilihDraftAi } from "../../components/PilihDraftAi";
-import { GerbangFitur } from "../../components/GerbangFitur";
+import { AjakanAnalisisAi } from "../../components/AjakanAnalisisAi";
 import { useLangganan } from "../../hooks/useLangganan";
 import { Button } from "../../components/ui/Button";
 import { FONT_CV, TEMA_CV, AKSEN_CV, GAYA_AWAL, bacaGaya, hexKeRgb, pasangFontPdf } from "../../data/cvGaya";
@@ -2775,7 +2775,14 @@ export function CVBuilderPanel({ setActive }) {
         >
           {/* Pemilih draft AI — menampilkan semua riwayat yang punya draft,
               bukan hanya yang terakhir. */}
-          {langganan.aktif ? (
+          <AjakanAnalisisAi
+            jenis="cv"
+            bisa={cukupUntukReview}
+            aktif={langganan.aktif}
+            onAnalisis={kirimKeReview}
+            onPaket={() => setActive?.("paket")}
+          />
+          {langganan.aktif && (
             <PilihDraftAi
               kolom="cv_draft"
               judul={
@@ -2790,23 +2797,6 @@ export function CVBuilderPanel({ setActive }) {
               }
               onTerapkan={applyAiDraft}
               onGantiBahasa={setLang}
-            />
-          ) : (
-            /* Form CV tetap bisa dipakai gratis — hanya arahan AI yang dikunci. */
-            <GerbangFitur
-              terbuka={false}
-              tinggiMinimal={160}
-              judul={
-                lang === "ID"
-                  ? "CV Builder dengan arahan AI"
-                  : "AI-guided CV Builder"
-              }
-              keterangan={
-                lang === "ID"
-                  ? "AI menulis ulang ringkasan, poin pengalaman, dan skill kamu supaya lolos penyaringan ATS. Tersedia dalam bahasa Indonesia dan Inggris."
-                  : "AI rewrites your summary, experience bullets, and skills to pass ATS screening. Available in Indonesian and English."
-              }
-              onLangganan={() => setActive?.("paket")}
             />
           )}
 

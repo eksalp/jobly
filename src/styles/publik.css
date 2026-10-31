@@ -1109,8 +1109,14 @@ button.pb-quota {
   object-fit: contain;
 }
 .pb-logo.fallback {
-  background: var(--brand-soft);
+  background: var(--lb, var(--brand-soft));
+  color: var(--lt, var(--brand));
   border-color: transparent;
+  letter-spacing: -0.01em;
+}
+html[data-tema="gelap"] .pb-logo.fallback {
+  background: color-mix(in srgb, var(--lt, #7fb2ee) 28%, #111a2a);
+  color: color-mix(in srgb, var(--lt, #7fb2ee) 40%, #ffffff);
 }
 .pb-merek {
   flex-shrink: 0;
@@ -10031,4 +10037,128 @@ p.cl-redup {
 .cl-kartu-isi > .pb-btn,
 .cl-ai-aksi .pb-btn {
   align-self: flex-start;
+}
+
+/* Magang & freelance */
+.pb-fl-afiliasi {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.pb-mg-hero h1 span {
+  color: var(--brand);
+}
+.pb-mg-hero p {
+  max-width: 640px;
+}
+.pb-mg-head {
+  margin-bottom: 16px;
+}
+.pb-mg-head p {
+  max-width: 680px;
+  margin: 6px 0 0;
+  color: var(--ink2);
+  font-size: 14.5px;
+}
+.pb-siap > p {
+  font-size: 13.5px;
+  color: var(--ink2);
+  margin: 6px 0 4px;
+  line-height: 1.55;
+}
+.pb-siap-grup {
+  margin-top: 12px;
+}
+.pb-siap-judul {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Ajakan analisis AI di CV & LinkedIn Builder */
+.pb-ajak-ai {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 14px;
+  margin-bottom: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--brand-line);
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--brand-soft), var(--card) 70%);
+}
+.pb-ajak-ai-ikon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--brand-deep);
+  color: #fff;
+}
+.pb-ajak-ai-isi {
+  flex: 1;
+  min-width: 0;
+}
+.pb-ajak-ai-isi b {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--ink);
+}
+.pb-ajak-ai-isi ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--ink2);
+}
+.pb-ajak-ai-isi li {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+.pb-ajak-ai-isi li svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--ok);
+}
+.pb-ajak-ai-isi small,
+.pb-ajak-ai-aksi small {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pb-ajak-ai-aksi {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-left: 52px;
+}
+.pb-ajak-ai-aksi small {
+  margin-top: 0;
+}
+@media (max-width: 640px) {
+  .pb-ajak-ai-aksi {
+    padding-left: 0;
+  }
+}
+.pb-ajak-ai .pb-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.pb-mg-head h2 {
+  max-width: none;
 }

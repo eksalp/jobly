@@ -46,7 +46,9 @@ export function FreelancePage() {
   }, []);
 
   const kata = useTunda(q, 350);
+  // Sumber khusus: project data kedua (DB2), hanya yang bertipe freelance
   const filter = {
+    db: "db2",
     q: kata.trim(),
     tipe: "freelance",
     lokasi: saring === "remote" || saring === "onsite" ? saring : "",
@@ -56,8 +58,8 @@ export function FreelancePage() {
 
   // Angka di hero tetap jumlah semua loker freelance, tidak ikut filter
   // (ditambah yang terkunci untuk pengunjung gratis, agar angkanya utuh)
-  const semua = useDaftarLoker({ tipe: "freelance" }, { n: 1 });
-  const remote = useDaftarLoker({ tipe: "freelance", lokasi: "remote" }, { n: 1 });
+  const semua = useDaftarLoker({ db: "db2", tipe: "freelance" }, { n: 1 });
+  const remote = useDaftarLoker({ db: "db2", tipe: "freelance", lokasi: "remote" }, { n: 1 });
   const totalSemua = (semua.total ?? 0) + (semua.terkunci ?? 0);
   const totalRemote = (remote.total ?? 0) + (remote.terkunci ?? 0);
   const memuatSemua = semua.loading;
@@ -75,8 +77,8 @@ export function FreelancePage() {
               </h1>
               <p>
                 {t(
-                  "Proyek lepas dan kerja paruh waktu dari perusahaan Indonesia dan luar negeri, diperbarui setiap hari. Cocok untuk tambahan penghasilan atau membangun portofolio.",
-                  "Freelance projects and flexible work from Indonesian and overseas companies, updated every day. Good for extra income or building a portfolio.",
+                  "Proyek lepas, tugas online, dan kerja sampingan yang bisa dikerjakan dari mana saja. Cocok untuk tambahan penghasilan atau membangun portofolio.",
+                  "Freelance projects, online tasks, and side gigs you can do from anywhere. Good for extra income or building a portfolio.",
                 )}
               </p>
               <label className="pb-input" style={{ maxWidth: 520, marginTop: 22 }}>
@@ -161,6 +163,12 @@ export function FreelancePage() {
             </button>
           </div>
         )}
+        <p className="pb-fl-afiliasi">
+          {t(
+            "Sebagian tautan di halaman ini adalah tautan afiliasi. Jobly bisa mendapat komisi saat kamu mendaftar, tanpa biaya tambahan untukmu.",
+            "Some links on this page are affiliate links. Jobly may earn a commission when you sign up, at no extra cost to you.",
+          )}
+        </p>
         {!loading && !adaLagi && terkunci > 0 && (
           <div className="pb-grid" style={{ marginTop: 18 }}>
             <KartuKunci jumlah={terkunci} />

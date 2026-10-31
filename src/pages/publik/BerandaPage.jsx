@@ -44,7 +44,7 @@ import { lokal, t } from "../../i18n.js";
 
 const POPULER = [
   ["Remote", "/loker?lokasi=remote"],
-  [t("Magang", "Internship"), "/loker?tipe=magang"],
+  [t("Magang", "Internship"), "/magang"],
   ["Fresh graduate", "/loker?q=fresh%20graduate"],
   ["Admin", "/loker?q=admin"],
   ["Finance", "/loker?q=finance"],
@@ -303,11 +303,6 @@ export function BerandaPage() {
     year: "numeric",
   });
 
-  // Daftar sumber untuk pita berjalan. Cadangan dipakai sebelum data siap.
-  const sumberPita = data.daftarSumber.length
-    ? data.daftarSumber
-    : ["LinkedIn", "Indeed", "BCA", "Pertamina", "Shopee", "Astra", "Loker BUMN", "Traveloka", "Unilever", "Danone"];
-
   return (
     <PublicLayout aktif="/">
       {/* ======================================================= hero */}
@@ -398,7 +393,7 @@ export function BerandaPage() {
                   return (
                     <li key={j.id} className="masuk" style={{ "--i": i }}>
                       <a {...tautan(urlDetail(j))}>
-                        <LogoKotak src={logo} nama={j.perusahaan} ikon={!logo} ukuran={34} />
+                        <LogoKotak src={logo} nama={j.perusahaan} ukuran={34} />
                         <span style={{ minWidth: 0 }}>
                           <span className="t" style={{ display: "block" }}>
                             {j.posisi}
@@ -421,20 +416,6 @@ export function BerandaPage() {
           </div>
         </aside>
       </section>
-
-      {/* ============================================ pita sumber */}
-      <div className="pb-pita" aria-label={t("Sumber lowongan", "Job sources")}>
-        <span className="pb-pita-label">{t("Dikumpulkan dari", "Collected from")}</span>
-        <div className="pb-pita-trek">
-          <div className="pb-pita-isi">
-            {[...sumberPita, ...sumberPita].map((n, i) => (
-              <span key={i} aria-hidden={i >= sumberPita.length}>
-                {n}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* ============================================ terakhir dilihat */}
       {dilihat.length > 0 && (
@@ -739,7 +720,7 @@ export function BerandaPage() {
             </li>
             <li>
               <h3>{t("Siapkan lamaranmu", "Get your application ready")}</h3>
-              <p>{t("Pastikan lokernya asli, bandingkan gajinya, rapikan CV, lalu latihan menjawab pertanyaan yang paling sulit.", "Make sure the post is real, compare the pay, polish your CV, then practise the toughest questions.")}</p>
+              <p>{t("Pastikan lokernya asli, rapikan CV dan cover letter, tambah sertifikasi yang relevan, lalu latihan interview dan psikotes.", "Make sure the post is real, polish your CV and cover letter, add relevant certifications, then practise interviews and aptitude tests.")}</p>
             </li>
             <li>
               <h3>{t("Lamar di sumbernya", "Apply at the source")}</h3>
