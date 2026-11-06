@@ -62,7 +62,9 @@ function kunciUrut(sk, row, urut) {
 /* ---------------------------------------------------------------- daftar */
 
 async function aksiDaftar(p, penuh) {
-  const dbs = pilihDb(p.get("db") === DB_FREELANCE ? DB_FREELANCE : "");
+  // semua=1 (halaman Remote): ikut sertakan DB2, tetapi hanya baris yang
+  // memang ditandai remote (lihat susunFilter: kolom tipe "remote").
+  const dbs = bool(p.get("semua")) ? daftarDb() : pilihDb(p.get("db") === DB_FREELANCE ? DB_FREELANCE : "");
   const n = Math.min(MAKS_HALAMAN, Math.max(1, Number(p.get("n")) || 24));
   const urut = p.get("urut") === "gaji" ? "gaji" : "terbaru";
   const kursor = (p.get("c") || "").split(",").map((x) => Math.max(0, Number(x) || 0));
@@ -193,8 +195,8 @@ async function aksiStatistik() {
     hitung(() => ({})),
     hitung(() => ({ mulai: iso(7) })),
     hitung(() => ({ mulai: iso(2) })),
-    hitung(() => ({ lokasi: "remote" })),
-    hitung(() => ({ lokasi: "remote", asing: true })),
+    hitung(() => ({ lokasi: "remote" }), daftarDb()),
+    hitung(() => ({ lokasi: "remote", asing: true }), daftarDb()),
     ambil({}, 8),
     ambil({ lokasi: "remote" }, 4),
     hitung(() => ({ tipe: "freelance" }), dbFreelance),
@@ -395,6 +397,64 @@ async function aksiId(p, penuh) {
   return { rows: per.flat() };
 }
 
+/* ---------------------------------------------------------------- penjaga
+ * Lapisan anti-scraping. Tidak ada yang 100% bisa mencegah orang yang niat,
+ * tetapi lapisan ini membuat pengambilan massal jauh lebih mahal:
+ *  1. Klien skrip yang jujur menyebut dirinya (curl, python-requests, …)
+ *     ditolak langsung.
+ *  2. Permintaan harus datang dari halaman Jobly sendiri: browser selalu
+ *     mengirim Sec-Fetch-Site / Origin / Referer untuk fetch dari situs ini.
+ *  3. Batas jumlah permintaan per IP per menit. Hanya berlaku saat jawaban
+ *     tidak diambil dari cache CDN, yaitu tepat saat skrip memvariasikan
+ *     parameter untuk menyedot data.
+ * Penjagaan dimatikan di mode pengembangan lokal.
+ */
+const UA_SKRIP =
+  /(curl|wget|python-requests|python-urllib|aiohttp|httpx|scrapy|go-http-client|okhttp|java\/|libwww|node-fetch|axios|got\/|undici|postmanruntime|insomnia|headlesschrome|phantomjs|puppeteer|playwright|selenium|httpclient|guzzle|ruby|perl|powershell|dataforseo|ahrefs|semrush|mj12bot|petalbot|bytespider|ccbot|gptbot)/i;
+
+const BATAS_PER_MENIT = { daftar: 40, detail: 30, id: 20, kandidat: 20, statistik: 20, gaji: 20 };
+const jejak = new Map(); // ip|aksi → { mulai, n }
+
+function ipDari(req) {
+  const xff = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+  return xff || String(req.headers["x-real-ip"] || "") || req.socket?.remoteAddress || "?";
+}
+
+function hostDari(nilai) {
+  try {
+    return new URL(nilai).host;
+  } catch {
+    return "";
+  }
+}
+
+/** null = boleh; selain itu { status, error, retry } */
+export function jagaAkses(req, aksi) {
+  if (process.env.JOBLY_TANPA_PENJAGA === "1") return null;
+  const h = req.headers;
+  // Layanan Jobly sendiri (mis. bot Telegram) memakai kunci rahasia bersama
+  const kunciServer = process.env.JOBLY_API_KUNCI;
+  if (kunciServer && h["x-jobly-kunci"] === kunciServer) return null;
+  const ua = String(h["user-agent"] || "");
+  if (!ua || UA_SKRIP.test(ua)) return { status: 403, error: "Akses otomatis tidak diizinkan." };
+
+  const host = String(h["x-forwarded-host"] || h.host || "");
+  const situs = String(h["sec-fetch-site"] || "");
+  const asal = hostDari(h.origin) || hostDari(h.referer);
+  const dariJobly = situs === "same-origin" || (asal && asal === host);
+  if (!dariJobly) return { status: 403, error: "Data loker hanya bisa diakses dari jobly.my.id." };
+
+  const batas = BATAS_PER_MENIT[aksi] || 20;
+  const kunci = `${ipDari(req)}|${aksi}`;
+  const kini = Date.now();
+  const j = jejak.get(kunci);
+  if (!j || kini - j.mulai > 60000) jejak.set(kunci, { mulai: kini, n: 1 });
+  else if (++j.n > batas) return { status: 429, error: "Terlalu banyak permintaan. Coba lagi sebentar.", retry: Math.ceil((60000 - (kini - j.mulai)) / 1000) };
+  // Bersihkan jejak lama sesekali supaya memori tidak membengkak
+  if (jejak.size > 5000) for (const [k, v] of jejak) if (kini - v.mulai > 60000) jejak.delete(k);
+  return null;
+}
+
 /* ---------------------------------------------------------------- handler */
 
 export default async function handler(req, res) {
@@ -404,6 +464,13 @@ export default async function handler(req, res) {
 
   if (!daftarDb().length) {
     return kirim(res, 503, { error: "Supabase belum dikonfigurasi di server." });
+  }
+
+  res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  const tolak = jagaAkses(req, aksi);
+  if (tolak) {
+    if (tolak.retry) res.setHeader("Retry-After", String(tolak.retry));
+    return kirim(res, tolak.status, { error: tolak.error }, "no-store");
   }
 
   try {

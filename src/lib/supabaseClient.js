@@ -17,29 +17,8 @@ export const supabase = createClient(
   { auth: { persistSession: true, autoRefreshToken: true } },
 );
 
-// ----------------------------------------------------------------------
-// SUPABASE PROJECT KEDUA \u2014 khusus buat narik daftar loker tambahan dari
-// project Supabase yang berbeda. Auth/profiles/saved_jobs TETAP pakai
-// client pertama di atas; client ini cuma dipakai buat baca tabel jobs
-// project kedua. Isi 3 env var ini di .env kalau mau pakai:
-//
-//   VITE_SUPABASE_URL_2=https://yyyy.supabase.co
-//   VITE_SUPABASE_ANON_KEY_2=eyJ....
-//   VITE_SUPABASE_JOBS_TABLE_2=jobs
-// ----------------------------------------------------------------------
-const SUPABASE_URL_2 = import.meta.env.VITE_SUPABASE_URL_2;
-const SUPABASE_ANON_KEY_2 = import.meta.env.VITE_SUPABASE_ANON_KEY_2;
-export const SUPABASE_TABLE_2 =
-  import.meta.env.VITE_SUPABASE_JOBS_TABLE_2 || "jobs";
-
-export const supabase2Configured = Boolean(
-  SUPABASE_URL_2 && SUPABASE_ANON_KEY_2,
-);
-
-export const supabase2 = createClient(
-  SUPABASE_URL_2 || "https://placeholder.supabase.co",
-  SUPABASE_ANON_KEY_2 || "placeholder-key",
-  { auth: { persistSession: false } }, // client kedua nggak dipakai buat auth
-);
+// Project Supabase kedua (DB2) TIDAK lagi dibuat di browser: URL dan
+// kuncinya hanya dipakai server (/api/loker) supaya tidak ikut terkirim
+// ke pengunjung dan tidak bisa dipakai untuk menyedot tabel langsung.
 
 if (import.meta.env.DEV) window.supabase = supabase;

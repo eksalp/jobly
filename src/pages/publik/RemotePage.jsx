@@ -52,7 +52,9 @@ export function RemotePage() {
   }, []);
 
   const kata = useTunda(q, 350);
+  // semua: ikut sertakan loker remote dari DB2 (papan-loker)
   const filter = {
+    semua: true,
     q: kata.trim(),
     lokasi: saring === "hybrid" ? "hybrid" : "remote",
     asing: saring === "asing",

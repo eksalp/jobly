@@ -36,7 +36,7 @@
   --shadow-lg: 0 18px 40px -18px rgba(17, 27, 41, 0.25);
   --sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --maxw: 1360px;
+  --maxw: 1520px;
   --head: 68px;
 
   background: var(--bg);
@@ -84,7 +84,8 @@
 .pb-wrap {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding-inline: 24px;
+  /* Di laptop lebar (MacBook) sisi kiri-kanan tidak terlalu kosong */
+  padding-inline: clamp(24px, 2.6vw, 40px);
 }
 @media (max-width: 560px) {
   .pb-wrap {
@@ -680,7 +681,7 @@ button.pb-quota {
   box-shadow: 0 6px 24px rgba(17, 27, 41, 0.06);
   padding: 6px;
   gap: 6px;
-  max-width: 700px;
+  max-width: 760px;
 }
 .pb-searchbar label {
   display: flex;
@@ -10161,4 +10162,232 @@ p.cl-redup {
 }
 .pb-mg-head h2 {
   max-width: none;
+}
+
+/* ======================================================= slider beranda */
+.pb-slider {
+  margin-block: 8px 12px;
+}
+.pb-slider-trek {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: 20px;
+}
+.pb-slider-trek::-webkit-scrollbar {
+  display: none;
+}
+.pb-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 200px;
+  padding: 36px 44px;
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+}
+.pb-slide.hijau {
+  background: linear-gradient(120deg, #0f6b4a, #16a06a 60%, #3fc28a);
+}
+.pb-slide.biru {
+  background: linear-gradient(120deg, #123f7a, #1f63c0 60%, #4b8be0);
+}
+.pb-slide.ungu {
+  background: linear-gradient(120deg, #4a2483, #6c3cc0 60%, #9467e0);
+}
+.pb-slide.jingga {
+  background: linear-gradient(120deg, #8a3b0b, #c9631a 60%, #e88d3e);
+}
+.pb-slide.gelap {
+  background: linear-gradient(120deg, #111b2c, #22324d 60%, #33507a);
+}
+.pb-slide::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  top: -80px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+.pb-slide-isi {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 640px;
+}
+.pb-slide-label {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.pb-slide b {
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.pb-slide-teks {
+  font-size: 15px;
+  line-height: 1.55;
+  opacity: 0.92;
+}
+.pb-slide-aksi {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #fff;
+  color: #111b2c;
+  font-weight: 600;
+  font-size: 14.5px;
+}
+.pb-slide:hover .pb-slide-aksi {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.pb-slide-ikon {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 140px;
+  height: 140px;
+  margin-right: 12px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.pb-slider-kendali {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+.pb-slider-kendali > button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--card);
+  color: var(--ink2);
+  cursor: pointer;
+}
+.pb-slider-titik {
+  display: flex;
+  gap: 6px;
+}
+.pb-slider-titik button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: var(--line);
+  cursor: pointer;
+  transition: width 0.2s, background 0.2s;
+}
+.pb-slider-titik button.aktif {
+  width: 24px;
+  background: var(--brand);
+}
+@media (max-width: 720px) {
+  .pb-slide {
+    padding: 26px 22px;
+    min-height: 0;
+  }
+  .pb-slide-ikon {
+    display: none;
+  }
+  .pb-slide-teks {
+    font-size: 14px;
+  }
+}
+
+/* Portofolio: pengaturan unduhan */
+.pb-po-atur {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.pb-po-atur small {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pb-po-bahasa {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--surface2);
+}
+.pb-po-bahasa button {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pb-po-bahasa button.aktif {
+  background: var(--card);
+  color: var(--brand);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.pb-po-cek-diri {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink2);
+  cursor: pointer;
+}
+.pb-po-ringkas-unduh {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.pb-po-ringkas-unduh .pb-po-atur {
+  justify-content: flex-end;
+}
+.pb-po-ringkas-unduh .pb-po-atur small {
+  text-align: right;
+  max-width: 340px;
+  margin-left: auto;
+}
+@media (max-width: 720px) {
+  .pb-po-ringkas-unduh {
+    align-items: stretch;
+  }
+  .pb-po-ringkas-unduh .pb-po-atur {
+    justify-content: flex-start;
+  }
+  .pb-po-ringkas-unduh .pb-po-atur small {
+    text-align: left;
+    margin-left: 0;
+  }
 }

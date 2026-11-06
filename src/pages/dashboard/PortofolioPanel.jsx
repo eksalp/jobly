@@ -143,22 +143,73 @@ function EditorTabel({ nilai, onUbah }) {
 /*  Unduhan                                                            */
 /* ------------------------------------------------------------------ */
 
-function profilPdf(profil, user) {
+/** Data diri untuk sampul PDF: profil akun + isi CV Builder (kontak, ringkasan, keahlian). */
+function profilPdf(profil, user, cv = {}) {
+  const keahlian = [...(Array.isArray(cv.skills) ? cv.skills : []), ...(Array.isArray(profil.skills) ? profil.skills : [])]
+    .map((x) => (typeof x === "string" ? x : x?.name || ""))
+    .filter(Boolean);
   return {
-    nama: profil.fullName || user?.user_metadata?.full_name || "",
-    headline: profil.headline,
-    lokasi: profil.location,
-    email: user?.email,
+    nama: cv.fullName || profil.fullName || user?.user_metadata?.full_name || "",
+    headline: cv.headline || profil.headline,
+    lokasi: cv.location || profil.location,
+    email: cv.email || user?.email,
+    telepon: cv.phone || "",
+    linkedin: cv.linkedin || "",
+    ringkasan: cv.summary || profil.summary || "",
+    keahlian: [...new Set(keahlian)].slice(0, 14),
   };
 }
 
-async function unduhPdf(item, profil, namaPendek) {
+/**
+ * Buat dan unduh PDF portofolio.
+ * bahasa "en": isi portofolio diterjemahkan dulu (disimpan, tidak berulang).
+ */
+async function unduhPdf(item, profil, namaPendek, { bahasa = "id", cekDiri = false } = {}) {
   const { buatPdfPortofolio } = await import("../../utils/portofolioPdf");
+  let daftar = item;
+  let prof = profil;
+  if (bahasa === "en") {
+    const { siapkanInggris } = await import("../../utils/terjemahPortofolio");
+    const r = await siapkanInggris(item, profil);
+    daftar = r.items;
+    prof = r.profil;
+  }
   // Gambar lampiran diunduh dulu dari penyimpanan privat
   const lengkap = [];
-  for (const x of item) lengkap.push({ ...x, data: { ...x.data, gambar: await gambarUntukPdf(x.data.lampiran) } });
-  const blob = await buatPdfPortofolio({ profil, proyek: lengkap });
-  unduhBlob(blob, `${namaBerkas("portofolio", namaPendek, profil.nama) || "portofolio"}.pdf`);
+  for (const x of daftar) lengkap.push({ ...x, data: { ...x.data, gambar: await gambarUntukPdf(x.data.lampiran) } });
+  const blob = await buatPdfPortofolio({ profil: prof, proyek: lengkap, bahasa, opsi: { cekDiri } });
+  const dasar = namaBerkas(bahasa === "en" ? "portfolio" : "portofolio", namaPendek, profil.nama) || "portofolio";
+  unduhBlob(blob, `${dasar}${bahasa === "en" ? "_EN" : ""}.pdf`);
+}
+
+/** Pilihan bahasa PDF dan isi tambahan. */
+function PengaturanUnduh({ bahasa, setBahasa, cekDiri, setCekDiri }) {
+  return (
+    <div className="pb-po-atur">
+      <div className="pb-po-bahasa" role="group" aria-label={t("Bahasa PDF", "PDF language")}>
+        {[
+          ["id", "Indonesia"],
+          ["en", "English"],
+        ].map(([k, nama]) => (
+          <button key={k} type="button" className={bahasa === k ? "aktif" : ""} onClick={() => setBahasa(k)}>
+            {nama}
+          </button>
+        ))}
+      </div>
+      <label className="pb-po-cek-diri">
+        <input type="checkbox" checked={cekDiri} onChange={(e) => setCekDiri(e.target.checked)} />
+        {t("Sertakan daftar periksa", "Include the checklist")}
+      </label>
+      {bahasa === "en" && (
+        <small>
+          {t(
+            "Isi portofolio diterjemahkan otomatis ke bahasa Inggris profesional. Periksa lagi sebelum dikirim.",
+            "Your content is translated into professional English automatically. Review it before sending.",
+          )}
+        </small>
+      )}
+    </div>
+  );
 }
 
 function unduhExcel(proyek, data, profil) {
@@ -346,6 +397,8 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
   const [pakaiTabel, setPakaiTabel] = useState(Boolean(baris.tabel) || proyek.tabelAwal);
   const [lihatContoh, setLihatContoh] = useState(false);
   const [unduh, setUnduh] = useState("");
+  const [bahasaPdf, setBahasaPdf] = useState("id");
+  const [cekDiri, setCekDiri] = useState(false);
   const tunda = useRef(null);
   const tertunda = useRef(null);
 
@@ -389,7 +442,11 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
   const jalankanUnduh = async (jenis) => {
     setUnduh(jenis);
     try {
-      if (jenis === "pdf") await unduhPdf([{ proyek, data }], profil, proyek.profesi);
+      if (jenis === "pdf")
+        await unduhPdf([{ proyek, data: { ...data, id: baris.id, terjemahan: baris.terjemahan } }], profil, proyek.profesi, {
+          bahasa: bahasaPdf,
+          cekDiri,
+        });
       else unduhExcel(proyek, data, profil);
     } catch (e) {
       alert(e?.message || t("Gagal membuat berkas.", "Couldn't create the file."));
@@ -671,9 +728,11 @@ export function RuangKerja({ proyek, baris, onSimpan, onKembali, onLepas, profil
                 : t("Unduhan terbuka setelah kelima langkah selesai.", "Downloads unlock once all five steps are done.")}
             </span>
           </div>
+          {st.selesai && <PengaturanUnduh bahasa={bahasaPdf} setBahasa={setBahasaPdf} cekDiri={cekDiri} setCekDiri={setCekDiri} />}
           <div className="pb-po-unduh-tombol">
             <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" disabled={!st.selesai || !!unduh} onClick={() => jalankanUnduh("pdf")}>
-              {unduh === "pdf" ? <Loader2 size={14} className="pb-po-putar" /> : <FileText size={14} />} PDF
+              {unduh === "pdf" ? <Loader2 size={14} className="pb-po-putar" /> : <FileText size={14} />}{" "}
+              {unduh === "pdf" && bahasaPdf === "en" ? t("Menerjemahkan…", "Translating…") : `PDF${bahasaPdf === "en" ? " (EN)" : ""}`}
             </button>
             {tabelTerisi(data.tabel) && (
               <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" disabled={!st.selesai || !!unduh} onClick={() => jalankanUnduh("xlsx")}>
@@ -711,10 +770,24 @@ export function PortofolioPanel({ setActive }) {
   const [cari, setCari] = useState("");
   const [memilih, setMemilih] = useState("");
   const [unduh, setUnduh] = useState(false);
+  const [bahasaPdf, setBahasaPdf] = useState("id");
+  const [cekDiri, setCekDiri] = useState(false);
+  const [cv, setCv] = useState({});
 
   useEffect(() => {
     muatKatalog().then(setKatalog);
   }, []);
+
+  // Isi CV Builder dipakai untuk sampul PDF (kontak, ringkasan, keahlian)
+  useEffect(() => {
+    if (!user || !supabaseConfigured) return;
+    supabase
+      .from("profiles")
+      .select("cv_json")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => data?.cv_json && setCv(data.cv_json));
+  }, [user]);
 
   const muatBaris = useCallback(async () => {
     if (!user || !supabaseConfigured) {
@@ -796,13 +869,13 @@ export function PortofolioPanel({ setActive }) {
     setBuka(null);
   };
 
-  const profilCetak = profilPdf(profil, user);
+  const profilCetak = profilPdf(profil, user, cv);
   const siapUnduh = dipilih.filter(({ proyek, baris: b }) => statusProyek(proyek, b).selesai);
 
   const unduhSemua = async () => {
     setUnduh(true);
     try {
-      await unduhPdf(siapUnduh.map(({ proyek, baris: b }) => ({ proyek, data: b })), profilCetak, "lengkap");
+      await unduhPdf(siapUnduh.map(({ proyek, baris: b }) => ({ proyek, data: b })), profilCetak, "lengkap", { bahasa: bahasaPdf, cekDiri });
     } catch (e) {
       alert(e?.message || t("Gagal membuat PDF.", "Couldn't create the PDF."));
     } finally {
@@ -893,9 +966,17 @@ export function PortofolioPanel({ setActive }) {
               )}
             </p>
           </div>
-          <button type="button" className="pb-btn pb-btn-primary" disabled={!siapUnduh.length || unduh} onClick={unduhSemua}>
-            {unduh ? <Loader2 size={15} className="pb-po-putar" /> : <Download size={15} />} {t("Unduh portofolio (PDF)", "Download portfolio (PDF)")}
-          </button>
+          <div className="pb-po-ringkas-unduh">
+            {siapUnduh.length > 0 && <PengaturanUnduh bahasa={bahasaPdf} setBahasa={setBahasaPdf} cekDiri={cekDiri} setCekDiri={setCekDiri} />}
+            <button type="button" className="pb-btn pb-btn-primary" disabled={!siapUnduh.length || unduh} onClick={unduhSemua}>
+              {unduh ? <Loader2 size={15} className="pb-po-putar" /> : <Download size={15} />}{" "}
+              {unduh && bahasaPdf === "en"
+                ? t("Menerjemahkan…", "Translating…")
+                : bahasaPdf === "en"
+                  ? t("Unduh portofolio (PDF, English)", "Download portfolio (PDF, English)")
+                  : t("Unduh portofolio (PDF)", "Download portfolio (PDF)")}
+            </button>
+          </div>
         </div>
         {!siapUnduh.length && dipilih.length > 0 && (
           <p className="pb-po-ket">{t("PDF portofolio bisa diunduh setelah minimal satu proyek selesai.", "The portfolio PDF unlocks once at least one project is complete.")}</p>

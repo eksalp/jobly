@@ -23,6 +23,7 @@ import {
   useToast,
   useGulirKeHash,
 } from "../../components/publik/PublicLayout";
+import { SliderBanner } from "../../components/publik/SliderBanner";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { LogoKotak } from "../../components/publik/LogoKotak";
 import { DaftarFaq } from "../../components/publik/DaftarFaq";
@@ -433,6 +434,11 @@ export function BerandaPage() {
           </div>
         </section>
       )}
+
+      {/* ============================================ slider sorotan */}
+      <div className="pb-wrap">
+        <SliderBanner jumlahFreelance={st.freelance || 0} />
+      </div>
 
       {/* ============================================ lowongan terbaru */}
       <section className="pb-section" style={{ paddingTop: 36 }}>

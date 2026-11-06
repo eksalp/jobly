@@ -50,6 +50,7 @@ import {
   labelTipe,
   labelLokasiKerja,
   idDariSlug,
+  urlDetail,
   konversiGaji,
 } from "../../utils/sumberLoker";
 import { useKurs, idrPer, rupiahRingkas } from "../../utils/kurs";
@@ -207,6 +208,13 @@ export function DetailLokerPage({ slug }) {
         });
         setTerkunciIni(Boolean(d.terkunci));
         setStatus("siap");
+        // Tautan lama (/loker/db1-…) diganti diam-diam ke nomor unik yang baru
+        try {
+          const kanonik = urlDetail(keJob(row));
+          if (kanonik !== window.location.pathname) window.history.replaceState(window.history.state, "", kanonik);
+        } catch {
+          /* abaikan */
+        }
       })
       .catch(() => !batal && setStatus("galat"));
     window.scrollTo(0, 0);

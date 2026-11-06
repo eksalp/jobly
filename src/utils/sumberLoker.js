@@ -209,12 +209,65 @@ export function labelLokasiKerja(job) {
   return LABEL_LOKASI_KERJA[job?.lokasiKerja] || null;
 }
 
-/** URL halaman detail. "db1:123" → "/loker/db1-123". */
-export function urlDetail(job) {
-  return `/loker/${String(job.id).replace(":", "-")}`;
+/* ------------------------------------------------- kode loker di URL
+ * URL loker memakai satu nomor unik, misalnya
+ *   /loker/1758392041-accounting-manager-modinity-group
+ * Nomor = (id diacak) × 10 + nomor database. Pengacakan memakai jaringan
+ * Feistel 32-bit 4 putaran (bisa dibalik), jadi loker yang id-nya berurutan
+ * mendapat nomor yang jauh berbeda dan daftar loker tidak bisa ditebak
+ * dengan menaikkan angka satu per satu. Tautan lama (/loker/db1-35607)
+ * tetap bisa dibuka.
+ */
+const KUNCI_ACAK = [0x5bd1, 0xe995, 0x2c1b, 0x9e37];
+const BATAS_ID = 4294967296; // 2^32
+const putaran = (r, k) => (Math.imul(r ^ k, 0x45d9f3b) >>> 7) & 0xffff;
+
+function acakId(n) {
+  let l = (n >>> 16) & 0xffff;
+  let r = n & 0xffff;
+  for (const k of KUNCI_ACAK) [l, r] = [r, l ^ putaran(r, k)];
+  return ((l << 16) | r) >>> 0;
+}
+function balikId(x) {
+  let l = (x >>> 16) & 0xffff;
+  let r = x & 0xffff;
+  for (const k of [...KUNCI_ACAK].reverse()) [l, r] = [r ^ putaran(l, k), l];
+  return ((l << 16) | r) >>> 0;
 }
 
-/** Kebalikan urlDetail: "db1-123" → "db1:123". */
+/** Bagian teks URL dari judul dan perusahaan (huruf kecil, tanpa simbol). */
+function slugTeks(job) {
+  return [job?.posisi, job?.perusahaan]
+    .filter((x) => x && !/^tidak disebutkan$/i.test(x))
+    .join(" ")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70)
+    .replace(/-+$/, "");
+}
+
+/** Nomor unik loker, atau null bila id-nya bukan angka (pakai format lama). */
+export function kodeLoker(id) {
+  const [db, raw] = String(id || "").split(":");
+  const k = Number(String(db).replace(/^db/, ""));
+  if (!/^\d+$/.test(raw || "") || !(k >= 1 && k <= 9)) return null;
+  const n = Number(raw);
+  if (!n || n >= BATAS_ID) return null;
+  return String(acakId(n) * 10 + k);
+}
+
+/** URL halaman detail. "db1:35607" → "/loker/1758392041-judul-perusahaan". */
+export function urlDetail(job) {
+  const kode = kodeLoker(job?.id);
+  if (!kode) return `/loker/${String(job.id).replace(":", "-")}`;
+  const teks = slugTeks(job);
+  return `/loker/${kode}${teks ? `-${teks}` : ""}`;
+}
+
+/** Kebalikan urlDetail: nomor unik atau format lama "db1-123" → "db1:123". */
 export function idDariSlug(slug) {
   let s = String(slug || "");
   try {
@@ -222,9 +275,21 @@ export function idDariSlug(slug) {
   } catch {
     /* slug rusak, pakai apa adanya */
   }
-  // Tahan terhadap teks yang ikut tertempel setelah tautan
+  s = s.trim();
+  // Format baru: diawali angka (teks judul sesudahnya diabaikan)
+  const angka = s.match(/^(\d{2,})(?:\b|-|$)/);
+  if (angka) {
+    const kode = Number(angka[1]);
+    const k = kode % 10;
+    const acak = Math.floor(kode / 10);
+    if (k >= 1 && acak < BATAS_ID) {
+      const id = balikId(acak);
+      if (id > 0) return `db${k}:${id}`;
+    }
+  }
+  // Format lama, tahan terhadap teks yang ikut tertempel setelah tautan
   // ("db1-35400 Accounting Manager di …" atau "db1-35400%0A…")
-  const m = s.trim().match(/^([a-z]+\d*)-([A-Za-z0-9_]+)/);
+  const m = s.match(/^([a-z]+\d*)-([A-Za-z0-9_]+)/);
   if (m) return `${m[1]}:${m[2]}`;
   const i = s.indexOf("-");
   return i > 0 ? `${s.slice(0, i)}:${s.slice(i + 1)}` : s;

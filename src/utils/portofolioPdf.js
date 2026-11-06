@@ -15,7 +15,6 @@
 import { jsPDF } from "jspdf";
 import { pasangFontPdf } from "../data/cvGaya.js";
 import { tabelTerisi } from "../data/portofolio.js";
-import { t, lokal } from "../i18n.js";
 
 const AKSEN = [20, 84, 154];
 const TINTA = [26, 32, 44];
@@ -37,7 +36,8 @@ const aman = (s) =>
     .replace(/[✓✔]/g, "v")
     .replace(/[^\x00-\xFF–—‘’“”•…€]/g, "");
 
-export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
+export async function buatPdfPortofolio({ profil = {}, proyek = [], bahasa = "id", opsi = {} }) {
+  const L = (id, en) => (bahasa === "en" ? en : id);
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   let F = "helvetica";
   try {
@@ -47,8 +47,8 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
   }
   const tulisAman = F === "helvetica" ? (s) => aman(s).replace(/[^\x00-\x7F•]/g, "") : aman;
 
-  const nama = profil.nama || t("Nama Lengkap", "Full Name");
-  doc.setProperties({ title: `${t("Portofolio", "Portfolio")} ${nama}`, creator: "Jobly", subject: t("Portofolio proyek latihan", "Practice project portfolio") });
+  const nama = profil.nama || L("Nama Lengkap", "Full Name");
+  doc.setProperties({ title: `${L("Portofolio", "Portfolio")} ${nama}`, creator: "Jobly", subject: L("Portofolio proyek latihan", "Practice project portfolio") });
 
   let y = M;
   let halamanProyek = "";
@@ -67,7 +67,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
       doc.setLineWidth(0.2);
       doc.line(M, 287, LEBAR - M, 287);
       huruf(7.5, false, ABU);
-      doc.text(tulisAman(t("Proyek latihan berbasis studi kasus di Jobly · jobly.my.id", "Case-study practice project on Jobly · jobly.my.id")), M, 291.5);
+      doc.text(tulisAman(`${nama}  ·  ${L("Studi kasus berbasis brief simulasi (Jobly)", "Case study based on a simulated brief (Jobly)")}`), M, 291.5);
       doc.text(`${i} / ${n}`, LEBAR - M, 291.5, { align: "right" });
     }
   };
@@ -329,7 +329,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
   doc.setFillColor(...AKSEN);
   doc.rect(0, 0, LEBAR, 92, "F");
   huruf(10, true, [255, 255, 255]);
-  doc.text(tulisAman(t("PORTOFOLIO PROYEK", "PROJECT PORTFOLIO")), M, 34, { charSpace: 1 });
+  doc.text(tulisAman(L("PORTOFOLIO PROYEK", "PROJECT PORTFOLIO")), M, 34, { charSpace: 1 });
   huruf(28, true, [255, 255, 255]);
   const barisNama = doc.splitTextToSize(tulisAman(nama), ISI);
   barisNama.slice(0, 2).forEach((l, i) => doc.text(l, M, 50 + i * 11));
@@ -341,15 +341,48 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
       yS += 6;
     });
   }
-  const kontak = [profil.lokasi, profil.email].filter(Boolean).join("  ·  ");
+  const kontak = [profil.lokasi, profil.email, profil.telepon, profil.linkedin].filter(Boolean).join("  ·  ");
   if (kontak) {
     huruf(9.5, false, [214, 228, 245]);
-    doc.text(tulisAman(kontak), M, Math.min(86, yS + 2));
+    doc.splitTextToSize(tulisAman(kontak), ISI).slice(0, 2).forEach((l, i) => doc.text(l, M, Math.min(84, yS + 2) + i * 4.6));
   }
 
-  y = 108;
+  y = 104;
+  if (String(profil.ringkasan || "").trim()) {
+    huruf(8.5, true, AKSEN);
+    doc.text(tulisAman(L("TENTANG SAYA", "ABOUT ME")), M, y, { charSpace: 0.4 });
+    y += 6;
+    huruf(10, false, TINTA);
+    doc.splitTextToSize(tulisAman(profil.ringkasan), ISI).slice(0, 6).forEach((l) => {
+      doc.text(l, M, y);
+      y += 4.9;
+    });
+    y += 3;
+  }
+  const keahlian = (profil.keahlian || []).filter(Boolean).slice(0, 14);
+  if (keahlian.length) {
+    huruf(8.5, true, AKSEN);
+    doc.text(tulisAman(L("KEAHLIAN", "SKILLS")), M, y, { charSpace: 0.4 });
+    y += 4;
+    // Keahlian sebagai "chip" berbingkai, membungkus ke baris berikutnya
+    huruf(8.5, false, TINTA);
+    let x = M;
+    keahlian.forEach((k) => {
+      const teks = tulisAman(k);
+      const w = doc.getTextWidth(teks) + 6;
+      if (x + w > LEBAR - M) {
+        x = M;
+        y += 7;
+      }
+      doc.setFillColor(...LATAR);
+      doc.roundedRect(x, y, w, 5.4, 1.4, 1.4, "F");
+      doc.text(teks, x + 3, y + 3.8);
+      x += w + 2.5;
+    });
+    y += 12;
+  }
   huruf(8.5, true, AKSEN);
-  doc.text(tulisAman(t("ISI PORTOFOLIO", "CONTENTS")), M, y, { charSpace: 0.4 });
+  doc.text(tulisAman(L("ISI PORTOFOLIO", "CONTENTS")), M, y, { charSpace: 0.4 });
   y += 8;
   proyek.forEach(({ proyek: p }, i) => {
     huruf(12, true);
@@ -360,7 +393,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
       y += 5.6;
     });
     huruf(9.5, false, ABU);
-    doc.text(tulisAman(`${p.namaProfesi}${p.dari?.peran ? `  ·  ${t("Klien", "Client")}: ${p.dari.peran}` : ""}`), M + 8, y);
+    doc.text(tulisAman(`${p.namaProfesi}${p.dari?.peran ? `  ·  ${L("Klien", "Client")}: ${p.dari.peran}` : ""}`), M + 8, y);
     y += 5;
     const ringkas = String(proyek[i].data?.studi?.ringkasan || "").trim();
     if (ringkas) {
@@ -379,7 +412,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
   doc.line(M, y, LEBAR - M, y);
   y += 7;
   paragraf(
-    t(
+    L(
       "Portofolio ini berisi proyek latihan berbasis studi kasus yang saya kerjakan di Jobly. Brief, klien, dan data di dalamnya adalah simulasi yang disusun menyerupai pekerjaan nyata. Setiap proyek disajikan sebagai studi kasus: tantangan klien, peran dan proses saya, hasil kerja beserta buktinya, tanggapan atas revisi, dan pelajaran yang saya ambil.",
       "This portfolio contains case-study practice projects I completed on Jobly. The briefs, clients, and data are simulations modelled on real work. Each project is presented as a case study: the client's challenge, my role and process, the work and its evidence, my response to a revision, and lessons learned.",
     ),
@@ -387,7 +420,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
   );
   huruf(8.5, false, ABU);
   doc.text(
-    tulisAman(`${t("Disusun", "Compiled")}: ${new Date().toLocaleDateString(lokal(), { day: "numeric", month: "long", year: "numeric" })}`),
+    tulisAman(`${L("Disusun", "Compiled")}: ${new Date().toLocaleDateString(bahasa === "en" ? "en-GB" : "id-ID", { day: "numeric", month: "long", year: "numeric" })}`),
     M,
     y + 2,
   );
@@ -397,10 +430,10 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
     halamanProyek = "";
     doc.addPage();
     y = M;
-    halamanProyek = `${t("Proyek", "Project")} ${i + 1} · ${p.namaProfesi} · ${p.judul}`;
+    halamanProyek = `${L("Proyek", "Project")} ${i + 1} · ${p.namaProfesi} · ${p.judul}`;
 
     huruf(9, true, AKSEN);
-    doc.text(tulisAman(`${t("PROYEK", "PROJECT")} ${i + 1}  ·  ${p.namaProfesi.toUpperCase()}`), M, y + 2, { charSpace: 0.3 });
+    doc.text(tulisAman(`${L("PROYEK", "PROJECT")} ${i + 1}  ·  ${p.namaProfesi.toUpperCase()}`), M, y + 2, { charSpace: 0.3 });
     y += 10;
     huruf(18, true);
     doc.splitTextToSize(tulisAman(p.judul), ISI).forEach((l) => {
@@ -408,11 +441,41 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
       y += 8;
     });
     const meta = [
-      p.dari?.nama && `${t("Klien", "Client")}: ${p.dari.nama}${p.dari.peran ? ` (${p.dari.peran})` : ""}`,
-      p.kanal && `${t("Kanal", "Channel")}: ${p.kanal}`,
-      p.tenggat && `${t("Tenggat", "Due")}: ${p.tenggat}`,
+      p.dari?.nama && `${L("Klien", "Client")}: ${p.dari.nama}${p.dari.peran ? ` (${p.dari.peran})` : ""}`,
+      p.kanal && `${L("Kanal", "Channel")}: ${p.kanal}`,
+      p.tenggat && `${L("Tenggat", "Due")}: ${p.tenggat}`,
     ].filter(Boolean);
     if (meta.length) paragraf(meta.join("   ·   "), { ukuran: 9, warna: ABU, sesudah: 3 });
+
+    // Sekilas proyek: empat kotak kecil yang mudah dipindai recruiter
+    {
+      const hasilKerja = [
+        tabelTerisi(data.tabel) && L("Tabel/spreadsheet", "Spreadsheet"),
+        String(data.jawaban || "").trim() && L("Dokumen", "Document"),
+        (data.gambar || []).length && L(`${data.gambar.length} gambar`, `${data.gambar.length} image${data.gambar.length > 1 ? "s" : ""}`),
+        data.tautan && L("Tautan karya", "Live link"),
+      ].filter(Boolean).join(", ");
+      const sel = [
+        [L("Peran", "Role"), p.namaProfesi],
+        [L("Klien", "Client"), p.dari?.peran || p.dari?.nama || "-"],
+        [L("Hasil kerja", "Deliverables"), hasilKerja || "-"],
+        [L("Revisi klien", "Client revision"), p.revisi && String(data.revisi || "").trim() ? L("Ditangani", "Handled") : "-"],
+      ];
+      const w = (ISI - 3 * 3) / 4;
+      huruf(9);
+      const tinggi = Math.max(...sel.map(([, v]) => doc.splitTextToSize(tulisAman(v), w - 6).slice(0, 3).length)) * 4.2 + 11;
+      pastikan(tinggi + 4);
+      sel.forEach(([k, v], i) => {
+        const x = M + i * (w + 3);
+        doc.setFillColor(...LATAR);
+        doc.roundedRect(x, y, w, tinggi, 2, 2, "F");
+        huruf(7.5, true, ABU);
+        doc.text(tulisAman(k.toUpperCase()), x + 3, y + 5.5, { charSpace: 0.3 });
+        huruf(9, true, TINTA);
+        doc.splitTextToSize(tulisAman(v), w - 6).slice(0, 3).forEach((l, j) => doc.text(l, x + 3, y + 10.5 + j * 4.2));
+      });
+      y += tinggi + 6;
+    }
 
     const studi = data.studi || {};
     const ada = (k) => String(studi[k] || "").trim();
@@ -421,37 +484,37 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
     if (ada("ringkasan")) kotakRingkasan(studi.ringkasan);
     if (gambar.length) gambarBesar(gambar[0]);
 
-    judulBagian(t("Tantangan klien", "The challenge"));
+    judulBagian(L("Tantangan klien", "The challenge"));
     if (ada("tantangan")) paragraf(studi.tantangan, { ukuran: 10 });
-    kotakPesan(p.dari?.nama ? `${t("Brief", "Brief")} · ${p.dari.nama}${p.kanal ? ` · ${p.kanal}` : ""}` : t("Brief", "Brief"), p.brief);
+    kotakPesan(p.dari?.nama ? `${L("Brief", "Brief")} · ${p.dari.nama}${p.kanal ? ` · ${p.kanal}` : ""}` : L("Brief", "Brief"), p.brief);
 
     if (ada("peran")) {
-      judulBagian(t("Peran saya & alat", "My role & tools"));
+      judulBagian(L("Peran saya & alat", "My role & tools"));
       paragraf(studi.peran, { ukuran: 10 });
     }
 
-    judulBagian(t("Pendekatan & proses", "Approach & process"));
+    judulBagian(L("Pendekatan & proses", "Approach & process"));
     if (ada("proses")) paragraf(studi.proses, { ukuran: 10 });
     else if (p.langkah?.length) daftarButir(p.langkah, { nomor: true });
 
     if (ada("hasil")) {
-      judulBagian(t("Hasil & dampak", "Results & impact"));
+      judulBagian(L("Hasil & dampak", "Results & impact"));
       paragraf(studi.hasil, { ukuran: 10 });
     }
 
     if (gambar.length > 1) {
-      judulBagian(t("Galeri hasil", "Gallery"));
+      judulBagian(L("Galeri hasil", "Gallery"));
       galeri(gambar.slice(1));
     }
 
-    judulBagian(t("Hasil kerja lengkap", "The full deliverable"));
+    judulBagian(L("Hasil kerja lengkap", "The full deliverable"));
     if (tabelTerisi(data.tabel)) tabel(data.tabel);
     if (String(data.jawaban || "").trim()) paragraf(data.jawaban, { ukuran: 10 });
 
     if (data.tautan) {
       huruf(9.5, true, AKSEN);
       pastikan(8);
-      const label = `${t("Lihat hasil kerja", "View the work")}: `;
+      const label = `${L("Lihat hasil kerja", "View the work")}: `;
       doc.text(tulisAman(label), M, y);
       const lebarLabel = doc.getTextWidth(tulisAman(label));
       huruf(9.5, false, AKSEN);
@@ -461,19 +524,19 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [] }) {
     }
 
     if (p.revisi && String(data.revisi || "").trim()) {
-      judulBagian(t("Revisi dari klien", "Client revision"));
+      judulBagian(L("Revisi dari klien", "Client revision"));
       kotakPesan(p.dari?.nama || "", p.revisi.pesan);
-      judulBagian(t("Tanggapan saya", "My response"));
+      judulBagian(L("Tanggapan saya", "My response"));
       paragraf(data.revisi, { ukuran: 10 });
     }
 
     if (ada("pelajaran")) {
-      judulBagian(t("Pelajaran & langkah berikutnya", "Lessons & next steps"));
+      judulBagian(L("Pelajaran & langkah berikutnya", "Lessons & next steps"));
       paragraf(studi.pelajaran, { ukuran: 10 });
     }
 
-    if (p.rubrik?.length) {
-      judulBagian(t("Daftar periksa (dinilai sendiri)", "Checklist (self-assessed)"));
+    if (opsi.cekDiri && p.rubrik?.length) {
+      judulBagian(L("Daftar periksa (dinilai sendiri)", "Checklist (self-assessed)"));
       kotakCentang(p.rubrik, Array.isArray(data.cek) ? data.cek : []);
     }
   });

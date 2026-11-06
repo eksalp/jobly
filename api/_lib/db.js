@@ -251,6 +251,8 @@ export function susunFilter(sk, f, agregator) {
     else p.push(["id", "eq.-1"]);
   } else if (f.lokasi) {
     if (sk.ada.has("work_arrangement")) p.push(["work_arrangement", `eq.${bersih(f.lokasi)}`]);
+    // Tabel papan-loker (DB2) menyimpan cara kerja di kolom `tipe`
+    else if (sk.ada.has("tipe")) p.push(["tipe", `ilike.${kutip(`*${bersih(f.lokasi)}*`)}`]);
     else if (f.lokasi === "remote" && sk.ada.has("is_remote")) p.push(["is_remote", "is.true"]);
     else p.push(["id", "eq.-1"]); // kolomnya tidak ada → tidak ada yang cocok
   }

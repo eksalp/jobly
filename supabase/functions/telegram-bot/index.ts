@@ -67,7 +67,9 @@ async function cariLoker(f, kursor) {
   const p = new URLSearchParams({ aksi: "daftar", n: String(PER_HALAMAN) });
   Object.entries(f).forEach(([k, v]) => v && p.set(k, v));
   if (kursor) p.set("c", kursor);
-  const res = await fetch(`${SITUS}/api/loker?${p}`);
+  // Kunci bersama supaya lolos penjaga anti-scraping di /api/loker
+  const kunci = Deno.env.get("JOBLY_API_KUNCI");
+  const res = await fetch(`${SITUS}/api/loker?${p}`, { headers: kunci ? { "x-jobly-kunci": kunci } : {} });
   if (!res.ok) throw new Error(`API Jobly ${res.status}`);
   return res.json();
 }
