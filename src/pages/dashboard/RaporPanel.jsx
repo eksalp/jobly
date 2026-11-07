@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  FileText, Linkedin, Mic, Users, ListChecks, Briefcase, ArrowRight, Lock, Loader2, Sparkles, CircleDashed, CheckCircle2,
+  FileText, Linkedin, Mic, Users, ListChecks, ArrowRight, Lock, Loader2, Sparkles, CircleDashed, CheckCircle2,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
 import { useLangganan } from "../../context/LanggananContext";

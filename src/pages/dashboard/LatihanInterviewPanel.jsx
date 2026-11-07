@@ -19,7 +19,6 @@ import {
   Zap,
   Calculator,
   Languages,
-  Briefcase,
   Timer,
   Play,
   SkipForward,
@@ -27,6 +26,7 @@ import {
   Shuffle,
   Trophy,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { T } from "../../theme";
 import { Glass } from "../../components/ui/Glass";
 import { useLayarKecil } from "../../hooks/useLayarKecil";

@@ -7,10 +7,10 @@ import {
   Pencil,
   Plus,
   X,
-  Briefcase,
   Loader2,
   Trash2,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { T } from "../../theme";
 import { useUserProfile } from "../../context/UserProfileContext";
 import { useAuth } from "../../context/AuthContext";

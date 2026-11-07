@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft, ArrowRight, Briefcase, Check, Clock, Download, FileSpreadsheet, FileText, Lock,
+  ArrowLeft, ArrowRight, Check, Clock, Download, FileSpreadsheet, FileText, Lock,
   Loader2, Plus, Search, Send, Sparkles, Table2, Trash2, X, Link2, Eye, EyeOff, ImagePlus, Image as IkonGambar,
   Lightbulb, Wand2, Target, Video, Code2,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
 import { useLangganan } from "../../context/LanggananContext";

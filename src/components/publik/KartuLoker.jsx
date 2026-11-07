@@ -1,7 +1,6 @@
 import React from "react";
 import {
   MapPin,
-  Briefcase,
   Laptop,
   ArrowRight,
   Share2,
@@ -10,6 +9,7 @@ import {
   ListPlus,
   ListChecks,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../IkonKerja";
 import { LogoKotak, LogoSumber } from "./LogoKotak";
 import {
   infoSumber,

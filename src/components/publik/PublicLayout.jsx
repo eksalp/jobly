@@ -23,7 +23,6 @@ import {
   LogOut,
   Globe,
   Handshake,
-  Briefcase,
   Landmark,
   LayoutGrid,
   ListChecks,
@@ -41,6 +40,7 @@ import {
   HelpCircle,
   Award,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../IkonKerja";
 import "../../styles/publik.css";
 import { useAuth } from "../../context/AuthContext";
 import { useUserProfile } from "../../context/UserProfileContext";

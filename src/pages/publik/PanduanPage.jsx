@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import {
   ArrowRight, Globe, ShieldCheck, Calculator, BookOpen, Headset, MessageCircle, Instagram, PenLine,
   Palette, Keyboard, Clapperboard, BrainCircuit, GraduationCap, Compass, FolderOpen, Handshake,
-  Wallet, Receipt, ShieldAlert, AudioLines, BarChart3, BookText, Briefcase, Brush, CalendarClock,
+  Wallet, Receipt, ShieldAlert, AudioLines, BarChart3, BookText, Brush, CalendarClock,
   ClipboardCheck, Code2, Feather, FileText, Film, Languages, ListChecks, Mail, Megaphone, Mic,
   Presentation, ScanSearch, Search, Shapes, Sigma, Smartphone, Sparkles, Table, Target, TrendingUp,
   UserCheck, Workflow, Wrench, Dumbbell, CircleCheckBig,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { PROFESI, INSIGHT, KATEGORI_PANDUAN } from "../../data/panduan";
 import { tautan } from "../../utils/navigasi";

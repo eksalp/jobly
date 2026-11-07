@@ -14,7 +14,6 @@ import {
   FileText,
   MessageSquareQuote,
   Laptop,
-  Briefcase,
   GraduationCap,
   Wallet,
   Lock,
@@ -26,6 +25,7 @@ import {
   FolderOpen,
   Mic,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker } from "../../components/publik/KartuLoker";
 import { LogoKotak, LogoSumber } from "../../components/publik/LogoKotak";

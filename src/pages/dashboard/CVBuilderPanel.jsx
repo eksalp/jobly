@@ -11,7 +11,6 @@ import {
   ChevronDown,
   ChevronUp,
   User,
-  Briefcase,
   GraduationCap,
   Star,
   Users,
@@ -25,6 +24,7 @@ import {
   ChevronRight,
   FileSearch,
 } from "lucide-react";
+import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { cvKeTeks, tandaiKirimanReview } from "../../utils/kirimKeReview";
 import { T } from "../../theme";
 import { useUserProfile } from "../../context/UserProfileContext";

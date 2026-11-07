@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Building2 } from "lucide-react";
+import { IkonKerja } from "../IkonKerja";
 import { inisial } from "../../utils/sumberLoker";
 
 // Warna monogram: dipilih tetap dari nama perusahaan, jadi perusahaan yang
@@ -21,7 +21,7 @@ function warnaDari(nama) {
 
 /**
  * Kotak logo dengan cadangan berlapis:
- *   gambar (logo/favicon) → monogram inisial berwarna → ikon gedung.
+ *   gambar (logo/favicon) → monogram inisial berwarna → ikon koper kerja.
  *
  * Favicon yang gagal dimuat tidak meninggalkan gambar rusak; komponen
  * otomatis turun ke cadangan berikutnya.
@@ -61,7 +61,7 @@ export function LogoKotak({ src, nama, ukuran = 44, radius }) {
           }}
         />
       ) : !adaNama ? (
-        <Building2 size={Math.round(ukuran * 0.46)} strokeWidth={1.8} />
+        <IkonKerja size={Math.round(ukuran * 0.5)} strokeWidth={1.8} />
       ) : (
         inisial(nama)
       )}
