@@ -467,6 +467,27 @@ export default async function handler(req, res) {
   }
 
   res.setHeader("X-Robots-Tag", "noindex, nofollow");
+
+  // Diagnosis koneksi: buka /api/loker?aksi=cek di browser. Tidak memuat
+  // data loker maupun kunci, hanya status tiap database.
+  if (aksi === "cek") {
+    const hasil = {};
+    for (const db of daftarDb()) {
+      let baca = "ok";
+      try {
+        await rest(db, `${db.tabel}?select=id&limit=1`);
+      } catch (e) {
+        baca = `gagal (${e.status || "?"})`;
+      }
+      const k = String(db.kunci);
+      hasil[db.id] = {
+        kunci: db.pakaiServis ? (k.startsWith("sb_secret_") ? "secret key (baru)" : "service_role") : "anon (SERVICE_ROLE_KEY belum terbaca)",
+        baca,
+      };
+    }
+    return kirim(res, 200, hasil, "no-store");
+  }
+
   const tolak = jagaAkses(req, aksi);
   if (tolak) {
     if (tolak.retry) res.setHeader("Retry-After", String(tolak.retry));

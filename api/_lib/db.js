@@ -40,6 +40,7 @@ export function daftarDb() {
       // jobs ditutup dari akses publik. Tanpa itu dipakai anon key.
       kunci: e.SUPABASE_SERVICE_ROLE_KEY || anon1,
       anon: anon1,
+      pakaiServis: Boolean(e.SUPABASE_SERVICE_ROLE_KEY),
       tabel: e.VITE_SUPABASE_JOBS_TABLE || "jobs",
     },
     {
@@ -47,6 +48,7 @@ export function daftarDb() {
       url: (e.SUPABASE_URL_2 || e.VITE_SUPABASE_URL_2 || "").replace(/\/+$/, ""),
       kunci: e.SUPABASE_SERVICE_ROLE_KEY_2 || anon2,
       anon: anon2,
+      pakaiServis: Boolean(e.SUPABASE_SERVICE_ROLE_KEY_2),
       tabel: e.VITE_SUPABASE_JOBS_TABLE_2 || "jobs",
     },
   ].filter((d) => d.url && d.kunci);
@@ -81,7 +83,10 @@ export function qs(params) {
 
 export async function rest(db, path, { hitung = false, hanyaHitung = false, kunci, metode, body } = {}) {
   const k = kunci || db.kunci;
-  const headers = { apikey: db.anon || k, Authorization: `Bearer ${k}` };
+  // Kunci format baru Supabase (sb_secret_…/sb_publishable_…) bukan JWT:
+  // cukup dikirim di header apikey, tidak boleh sebagai Bearer. Kunci lama
+  // (JWT eyJ…) dikirim di keduanya supaya peran service_role terbaca.
+  const headers = String(k).startsWith("sb_") ? { apikey: k } : { apikey: k, Authorization: `Bearer ${k}` };
   if (hitung || hanyaHitung) headers.Prefer = "count=exact";
   if (body) headers["Content-Type"] = "application/json";
   const res = await fetch(`${db.url}/rest/v1/${path}`, {
