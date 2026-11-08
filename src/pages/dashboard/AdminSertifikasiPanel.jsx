@@ -311,8 +311,8 @@ export function AdminSertifikasiPanel() {
         <h2>{t("Khusus admin Jobly", "Jobly admins only")}</h2>
         <p>
           {t(
-            "Akunmu belum terdaftar sebagai admin. Jalankan supabase/sql/12_admin_sertifikasi.sql dengan email login Jobly-mu, lalu muat ulang halaman ini.",
-            "Your account isn't an admin yet. Run supabase/sql/12_admin_sertifikasi.sql with your Jobly login email, then reload this page.",
+            "Halaman ini hanya bisa dibuka oleh admin Jobly.",
+            "This page is only available to Jobly admins.",
           )}
         </p>
       </div>
