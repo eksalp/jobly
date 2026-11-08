@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ArrowRight, ArrowUpRight, Award, Clock, Loader2, Search, X, Sparkles, Send } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Award, Clock, Loader2, Search, X, Sparkles } from "lucide-react";
 import { PublicLayout } from "../../components/publik/PublicLayout";
 import { IkonBidang } from "../../components/publik/IkonBidang";
 import { BIDANG } from "../../data/bidang";
@@ -224,15 +224,6 @@ export function SertifikasiPage() {
           </>
         )}
 
-        <div className="pb-sf-catatan">
-          <Send size={15} />
-          <span>
-            {t(
-              "Jadwal batch dan biaya bisa berubah sewaktu-waktu. Selalu cek situs resmi penyelenggara sebelum mendaftar. Cari lewat Telegram juga bisa: ketik /sertifikasi di bot Jobly.",
-              "Batch dates and fees can change at any time. Always check the organiser's official site before applying. You can also search via the Jobly Telegram bot with /sertifikasi.",
-            )}
-          </span>
-        </div>
       </div>
     </PublicLayout>
   );
