@@ -160,12 +160,6 @@ export function FreelancePage() {
             </button>
           </div>
         )}
-        <p className="pb-fl-afiliasi">
-          {t(
-            "Sebagian tautan di halaman ini adalah tautan afiliasi. Jobly bisa mendapat komisi saat kamu mendaftar, tanpa biaya tambahan untukmu.",
-            "Some links on this page are affiliate links. Jobly may earn a commission when you sign up, at no extra cost to you.",
-          )}
-        </p>
         {!loading && !adaLagi && terkunci > 0 && (
           <div className="pb-grid" style={{ marginTop: 18 }}>
             <KartuKunci jumlah={terkunci} />
