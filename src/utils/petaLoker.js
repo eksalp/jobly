@@ -89,6 +89,8 @@ export function mapSupabaseJob(row, source = "db1") {
     id: `${source}:${row.id}`, // id gabungan, aman dipakai sebagai React key & buat saved_jobs
     rawId: row.id, // id asli dari tabel, kalau-kalau dibutuhkan
     source,
+    // Kolom status (open/closed) dari scraper: loker yang sudah ditutup
+    ditutup: String(row.status || "").trim().toLowerCase() === "closed",
     posisi: rapikanJudul(row.title || row.posisi) || "Tanpa judul",
     perusahaan: row.company || row.perusahaan || "Tidak disebutkan",
     lokasiKerja, // "onsite" | "remote" | "hybrid"

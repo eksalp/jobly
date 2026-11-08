@@ -373,7 +373,11 @@ export function DetailLokerPage({ slug }) {
     [t("Diposting", "Posted"), formatTanggal(job.tanggal)],
   ].filter(([, v]) => v);
 
-  const tombolLamar = (
+  const tombolLamar = job.ditutup ? (
+    <span className="pb-btn pb-btn-outline" aria-disabled="true" style={{ cursor: "default", opacity: 0.7 }}>
+      {t("Lowongan sudah ditutup", "This job is closed")}
+    </span>
+  ) : (
     <a className="pb-btn pb-btn-primary" href={job.link} target="_blank" rel="noreferrer">
       {t(`Lamar di ${namaSumber}`, `Apply on ${namaSumber}`)} <ArrowUpRight size={16} />
     </a>
@@ -432,6 +436,16 @@ export function DetailLokerPage({ slug }) {
                 </span>
               )}
             </div>
+
+            {job.ditutup && (
+              <div className="pb-d-tutup" role="status">
+                <b>{t("Lowongan ini sudah ditutup.", "This job is closed.")}</b>{" "}
+                {t("Perusahaan tidak lagi menerima lamaran. Cari posisi serupa yang masih buka:", "The company is no longer accepting applications. Find similar open roles:")}{" "}
+                <a className="pb-link" {...tautan(`/loker?q=${encodeURIComponent(job.posisi || "")}`)}>
+                  {t("lihat loker serupa", "see similar jobs")}
+                </a>
+              </div>
+            )}
 
             <div className="pb-d-actions">
               {tombolLamar}

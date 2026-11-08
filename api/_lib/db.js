@@ -18,7 +18,7 @@ import { cariBidang } from "../../src/data/bidang.js";
 import { SITUS_BUMN } from "../../src/data/bumn.js";
 
 const KOLOM_DIINGINKAN = [
-  "id", "title", "posisi", "company", "perusahaan", "location", "lokasi",
+  "id", "title", "posisi", "company", "perusahaan", "location", "lokasi", "status",
   "category", "kategori", "job_url", "job_url_direct", "link", "url",
   "employment_type", "work_arrangement", "tipe", "is_remote",
   "min_amount", "max_amount", "salary_min", "salary_max", "currency",
@@ -184,6 +184,11 @@ const ilikeSemua = (kolom, istilah) =>
 export function susunFilter(sk, f, agregator) {
   const p = [];
   const dan = []; // kelompok or(...) yang semuanya wajib terpenuhi
+
+  // Loker berstatus "closed" disembunyikan dari semua daftar, pencarian,
+  // dan hitungan. Pengecualian: pengambilan per id (loker tersimpan), supaya
+  // pengguna tetap bisa melihat bahwa loker yang disimpannya sudah ditutup.
+  if (sk.ada.has("status") && !f.ids) dan.push("or(status.is.null,status.not.ilike.closed)");
 
   const fungsi = sk.ada.has("job_function") && "job_function";
   const kolomCari = [sk.judul, sk.pt, sk.lok, sk.kat, sk.ada.has("job_level") && "job_level", fungsi].filter(Boolean);

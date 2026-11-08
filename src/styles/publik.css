@@ -10391,3 +10391,17 @@ p.cl-redup {
     margin-left: 0;
   }
 }
+
+/* Loker berstatus closed */
+.pb-d-tutup {
+  margin: 14px 0 0;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: var(--amber-bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.pb-d-tutup b {
+  color: var(--amber);
+}

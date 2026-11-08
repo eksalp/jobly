@@ -164,7 +164,12 @@ export function JobRow({
           )}
         </button>
       )}
-      {!locked && (
+      {!locked && job.ditutup && (
+        <span style={{ flexShrink: 0, fontSize: 11.5, fontWeight: 600, color: "#B45309", padding: "6px 10px", borderRadius: 8, background: "rgba(217,119,6,0.1)" }}>
+          {t("Sudah ditutup", "Closed")}
+        </span>
+      )}
+      {!locked && !job.ditutup && (
         <a
           href={job.link}
           target="_blank"
