@@ -110,7 +110,11 @@ export function mapSupabaseJob(row, source = "db1") {
     industri: row.company_industry || null,
     jenjang: row.job_level || row.experience_range || null,
     fungsi: row.job_function || null,
-    tanggal: row.date_posted || row.posted_at || row.created_at || null,
+    // Freelance dari DB2 bersifat terbuka sepanjang waktu (all time), jadi
+    // tanggal tayang tidak ditampilkan di kartu maupun halaman detail.
+    tanggal: source === "db2" && String(tipeKerja || "").includes("freelance")
+      ? null
+      : row.date_posted || row.posted_at || row.created_at || null,
     gajiMin: row.min_amount ?? row.salary_min ?? null,
     gajiMax: row.max_amount ?? row.salary_max ?? null,
     mataUang: row.currency || row.salary_currency || null,
