@@ -7,6 +7,7 @@
  *   gaji      Peta Gaji yang sudah dihitung (per bidang/kota/cara kerja)
  *   kandidat  loker yang mengandung kata kunci profil (untuk "Cocok untukku")
  *   id        beberapa loker berdasarkan id (loker tersimpan)
+ *   tren      bidang freelance yang paling ramai dan sedang naik (DB2)
  *
  * Jawaban untuk pengunjung & akun gratis di-cache di CDN Vercel, jadi
  * Supabase hanya ditanya sekali per URL per beberapa menit, berapa pun
@@ -36,6 +37,7 @@ import { KOTA_POPULER, SUMBER_DIKENAL, SUMBER_AGREGATOR } from "../src/data/kota
 import { mapSupabaseJob } from "../src/utils/petaLoker.js";
 import { DAFTAR_NEGARA } from "../src/data/negara.js";
 import { BIDANG } from "../src/data/bidang.js";
+import { BIDANG_FREELANCE } from "../src/data/bidangFreelance.js";
 import { hitungPetaGaji, gajiPosisi } from "../src/utils/petaGaji.js";
 
 const MAKS_HALAMAN = 48;
@@ -149,6 +151,44 @@ async function aksiDaftar(p, penuh) {
       : 0;
   }
   return hasil;
+}
+
+/* ------------------------------------------------------------- tren */
+
+/**
+ * Bidang freelance yang sedang ramai. Untuk tiap bidang dihitung jumlah
+ * proyek yang masih dibuka, yang tayang 7 hari terakhir, dan 7 hari
+ * sebelumnya. Urutan: aktivitas 14 hari terakhir, lalu jumlah total.
+ */
+async function aksiTren() {
+  const [db] = pilihDb(DB_FREELANCE);
+  if (!db) return { bidang: [] };
+  const sk = await skema(db);
+  const kini = Date.now();
+  const iso = (hari) => new Date(kini - hari * 86400000).toISOString();
+  const hitung = async (f) => {
+    const { total } = await rest(
+      db,
+      `${db.tabel}?${qs([["select", "id"], ...susunFilter(sk, { tipe: "freelance", ...f }, SUMBER_AGREGATOR)])}`,
+      { hanyaHitung: true },
+    );
+    return total || 0;
+  };
+  const tugas = BIDANG_FREELANCE.flatMap((b) => [
+    () => hitung({ bidang: b.slug }),
+    () => (sk.tgl ? hitung({ bidang: b.slug, mulai: iso(7) }) : 0),
+    () => (sk.tgl ? hitung({ bidang: b.slug, mulai: iso(14) }) : 0),
+  ]);
+  const r = (await paralel(tugas, 6)).map((x) => (typeof x === "number" ? x : 0));
+  const bidang = BIDANG_FREELANCE.map((b, i) => {
+    const total = r[i * 3];
+    const minggu = r[i * 3 + 1];
+    const duaMinggu = r[i * 3 + 2];
+    return { slug: b.slug, total, minggu, mingguLalu: Math.max(0, duaMinggu - minggu) };
+  })
+    .filter((b) => b.total > 0)
+    .sort((a, b) => b.minggu + b.mingguLalu - (a.minggu + a.mingguLalu) || b.total - a.total);
+  return { bidang };
 }
 
 /* ------------------------------------------------------------- statistik */
@@ -514,6 +554,8 @@ export default async function handler(req, res) {
         return kirim(res, 200, await aksiGaji(p), publik(3600, 6 * 3600));
       case "kandidat":
         return kirim(res, 200, await aksiKandidat(p, penuh), cache(300));
+      case "tren":
+        return kirim(res, 200, await aksiTren(), publik(3600, 6 * 3600));
       case "id":
         return kirim(res, 200, await aksiId(p, penuh), "private, no-store");
       default:

@@ -6,6 +6,7 @@
  * mengandung salah satu `kata` — loker lama sering belum berkategori.
  */
 import { t } from "../i18n.js";
+import { BIDANG_FREELANCE } from "./bidangFreelance.js";
 
 export const BIDANG = [
   { slug: "data", ikon: "BarChart3", warna: "#7C3AED", nama: t("Data & AI", "Data & AI"), ket: t("Data analyst, data scientist, ML engineer", "Data analyst, data scientist, ML engineer"),
@@ -43,4 +44,5 @@ export const BIDANG = [
     kategori: ["management-trainee"], kata: ["management trainee", "fresh graduate", "graduate program", "officer development"] },
 ];
 
-export const cariBidang = (slug) => BIDANG.find((b) => b.slug === slug) || null;
+export const cariBidang = (slug) =>
+  BIDANG.find((b) => b.slug === slug) || BIDANG_FREELANCE.find((b) => b.slug === slug) || null;

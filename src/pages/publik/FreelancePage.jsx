@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Search, Wallet, FileSignature, ShieldCheck, ArrowRight, X, PenTool, Code2, Video, Megaphone } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Search, Wallet, FileSignature, ShieldCheck, ArrowRight, X, PenTool, Code2, Video, Megaphone,
+  Feather, ClipboardList, Languages, BarChart3, GraduationCap, Camera, TrendingUp, Flame,
+} from "lucide-react";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker, KartuLokerSkeleton } from "../../components/publik/KartuLoker";
 import { KartuKunci, InfoKuotaLoker } from "../../components/publik/LokerTerkunci";
@@ -7,6 +10,11 @@ import { useDaftarLoker, useTunda } from "../../hooks/useLoker";
 import { tautan } from "../../utils/navigasi";
 import { useHitungNaik, usePintasanCari } from "../../utils/interaksi";
 import { lokal, t } from "../../i18n.js";
+import { panggilApi } from "../../utils/apiLoker";
+import { BIDANG_FREELANCE } from "../../data/bidangFreelance.js";
+
+const IKON_BIDANG = { PenTool, Feather, Video, Code2, Megaphone, ClipboardList, Languages, BarChart3, GraduationCap, Camera };
+const infoBidang = (slug) => BIDANG_FREELANCE.find((b) => b.slug === slug);
 
 const SARING = [
   ["semua", t("Semua freelance", "All freelance")],
@@ -28,6 +36,79 @@ const KARTU_HIAS = [
   [Video, t("Edit video", "Video editing"), t("per video", "per video")],
 ];
 
+/** Bidang freelance yang paling ramai (dihitung server, cache 1 jam). */
+function useTrenFreelance() {
+  const [state, setState] = useState({ bidang: [], loading: true });
+  useEffect(() => {
+    let batal = false;
+    panggilApi("tren")
+      .then((d) => !batal && setState({ bidang: d?.bidang || [], loading: false }))
+      .catch(() => !batal && setState({ bidang: [], loading: false }));
+    return () => {
+      batal = true;
+    };
+  }, []);
+  return state;
+}
+
+function BidangTren({ aktif, onPilih }) {
+  const { bidang, loading } = useTrenFreelance();
+  if (!loading && !bidang.length) return null;
+  const teratas = bidang.slice(0, 6);
+  return (
+    <section className="pb-fl-tren" aria-labelledby="judul-tren">
+      <div className="pb-fl-tren-head">
+        <span className="pb-label">
+          <Flame size={13} /> {t("Lagi ramai", "Trending")}
+        </span>
+        <h2 id="judul-tren">{t("Bidang freelance yang paling banyak dicari klien", "Freelance fields clients are hiring for most")}</h2>
+        <p>{t("Dihitung dari proyek yang masih dibuka di Jobly. Klik salah satu untuk melihat proyeknya.", "Based on open projects on Jobly. Click one to see its projects.")}</p>
+      </div>
+      <div className="pb-fl-tren-grid">
+        {loading &&
+          Array.from({ length: 6 }, (_, i) => <div key={i} className="pb-fl-tren-kartu muat" aria-hidden="true" />)}
+        {!loading &&
+          teratas.map((b, i) => {
+            const info = infoBidang(b.slug);
+            if (!info) return null;
+            const Ikon = IKON_BIDANG[info.ikon] || PenTool;
+            const naik = b.minggu > b.mingguLalu && b.minggu > 0;
+            return (
+              <button
+                key={b.slug}
+                type="button"
+                className={`pb-fl-tren-kartu ${aktif === b.slug ? "on" : ""}`}
+                onClick={() => onPilih(aktif === b.slug ? "" : b.slug)}
+                aria-pressed={aktif === b.slug}
+              >
+                <span className="urut">{i + 1}</span>
+                <span className="ikon">
+                  <Ikon size={18} />
+                </span>
+                <span className="isi">
+                  <b>{info.nama}</b>
+                  <small>
+                    {b.total.toLocaleString(lokal())} {t("proyek dibuka", "open projects")}
+                    {b.minggu > 0 && (
+                      <>
+                        {" · "}+{b.minggu.toLocaleString(lokal())} {t("minggu ini", "this week")}
+                      </>
+                    )}
+                  </small>
+                </span>
+                {naik && (
+                  <span className="naik">
+                    <TrendingUp size={13} /> {t("Naik", "Rising")}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+      </div>
+    </section>
+  );
+}
+
 function Angka({ nilai, loading }) {
   const ref = useHitungNaik(loading ? NaN : nilai);
   return <b ref={ref}>{loading ? "…" : "0"}</b>;
@@ -37,6 +118,12 @@ export function FreelancePage() {
   const [toast, elemenToast] = useToast();
   const [saring, setSaring] = useState("semua");
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get("q") || "");
+  const [bidang, setBidang] = useState("");
+  const daftarRef = useRef(null);
+  const pilihBidang = (slug) => {
+    setBidang(slug);
+    if (slug) daftarRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   usePintasanCari("cari-freelance");
 
   useEffect(() => {
@@ -49,6 +136,7 @@ export function FreelancePage() {
     db: "db2",
     q: kata.trim(),
     tipe: "freelance",
+    bidang,
     asing: saring === "asing",
   };
   const { jobs: hasil, total, terkunci, loading, adaLagi, memuatLagi, muatLagi } = useDaftarLoker(filter);
@@ -131,6 +219,10 @@ export function FreelancePage() {
       </section>
 
       <div className="pb-wrap" style={{ paddingTop: 28 }}>
+        <BidangTren aktif={bidang} onPilih={pilihBidang} />
+      </div>
+
+      <div className="pb-wrap" ref={daftarRef} style={{ paddingTop: 8, scrollMarginTop: 80 }}>
         {!loading && <InfoKuotaLoker />}
         <div className="pb-chips" style={{ marginBottom: 16 }}>
           {SARING.map(([id, l]) => (
@@ -138,6 +230,11 @@ export function FreelancePage() {
               {l}
             </button>
           ))}
+          {bidang && (
+            <button type="button" className="pb-chip on" onClick={() => setBidang("")} aria-label={t("Hapus filter bidang", "Clear field filter")}>
+              {infoBidang(bidang)?.nama} <X size={13} style={{ verticalAlign: "-2px" }} />
+            </button>
+          )}
         </div>
         <div className="pb-result">
           <span>{loading ? t("Memuat lowongan…", "Loading jobs…") : <><b>{(total ?? 0).toLocaleString(lokal())}</b> {t("lowongan", "jobs")}</>}</span>
