@@ -95,7 +95,7 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
   };
 
   return (
-    <article className="pb-card">
+    <article className={`pb-card${job.prioritas ? " pb-card-prioritas" : ""}`}>
       <a className="pb-card-hit" {...tautan(url)} aria-label={`${job.posisi} di ${job.perusahaan}`} />
 
       <div className="pb-card-head">
@@ -110,7 +110,15 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
             </span>
           </div>
         </div>
-        {lokerBaru(job.tanggal) && <span className="pb-badge-new">{t("Baru", "New")}</span>}
+        {job.prioritas && !job.ditutup ? (
+          <span className="pb-badge-prioritas">{t("Prioritas", "Featured")}</span>
+        ) : job.urgent && !job.ditutup ? (
+          <span className="pb-badge-urgent">
+            Urgent
+          </span>
+        ) : (
+          lokerBaru(job.tanggal) && <span className="pb-badge-new">{t("Baru", "New")}</span>
+        )}
       </div>
 
       <h3>{job.posisi}</h3>

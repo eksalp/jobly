@@ -34,7 +34,7 @@ import { useHitungNaik, usePintasanCari, bacaDilihat } from "../../utils/interak
 import { jt } from "../../utils/petaGaji";
 import { labelTampil } from "../../data/taxonomy";
 import { infoSumber, urlDetail } from "../../utils/sumberLoker";
-import { usePetaGaji } from "../../hooks/useLoker";
+import { usePetaGaji, useDaftarLoker } from "../../hooks/useLoker";
 import { SEMUA_TIER, rupiah, labelDurasi } from "../../data/paket";
 import { FAQ_BERANDA } from "../../data/faq";
 import { keHalaman, tautan } from "../../utils/navigasi";
@@ -255,6 +255,14 @@ export function BerandaPage() {
   const [kota, setKota] = useState("");
   const [toast, elemenToast] = useToast();
   const dilihat = useMemo(() => bacaDilihat().slice(0, 4), []);
+  // Urgently hiring: hanya tampil bila admin sudah menandai loker
+  const urgent = useDaftarLoker({ urgent: true }, { n: 4 });
+  // Loker prioritas dari pemberi kerja; diacak supaya semua mendapat giliran
+  const prioritasMentah = useDaftarLoker({ prioritas: true }, { n: 24 });
+  const prioritas = useMemo(
+    () => [...prioritasMentah.jobs].sort(() => Math.random() - 0.5).slice(0, 4),
+    [prioritasMentah.jobs],
+  );
   useGulirKeHash(!loading);
   usePintasanCari("cari-beranda");
 
@@ -439,6 +447,51 @@ export function BerandaPage() {
       <div className="pb-wrap">
         <SliderBanner jumlahFreelance={st.freelance || 0} />
       </div>
+
+      {/* ============================================ loker prioritas */}
+      {prioritas.length > 0 && (
+        <section className="pb-section" style={{ paddingTop: 36, paddingBottom: 0 }}>
+          <div className="pb-wrap">
+            <div className="pb-head" data-muncul="">
+              <div>
+                <span className="pb-label">{t("Loker prioritas", "Featured jobs")}</span>
+                <h2>{t("Dipasang langsung oleh perusahaan", "Posted directly by employers")}</h2>
+              </div>
+              <a className="pb-link" {...tautan("/pemberi-kerja")}>
+                {t("Pasang lokermu", "Post your job")} <ArrowRight size={15} />
+              </a>
+            </div>
+            <div className="pb-grid pb-grid-ringkas">
+              {prioritas.map((j) => (
+                <KartuLoker key={j.id} job={j} onToast={toast} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============================================ urgently hiring */}
+      {(urgent.loading || urgent.jobs.length > 0) && (
+        <section className="pb-section" style={{ paddingTop: 36, paddingBottom: 0 }}>
+          <div className="pb-wrap">
+            <div className="pb-head" data-muncul="">
+              <div>
+                <span className="pb-label">Urgently hiring</span>
+                <h2>{t("Dibutuhkan segera", "Hiring now")}</h2>
+              </div>
+              <a className="pb-link" {...tautan("/loker?urgent=1")}>
+                {t("Lihat semua", "See all")}
+                {urgent.total > 4 ? ` (${angka(urgent.total)})` : ""} <ArrowRight size={15} />
+              </a>
+            </div>
+            <div className="pb-grid pb-grid-ringkas">
+              {urgent.loading
+                ? Array.from({ length: 4 }, (_, i) => <KartuLokerSkeleton key={i} />)
+                : urgent.jobs.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ============================================ lowongan terbaru */}
       <section className="pb-section" style={{ paddingTop: 36 }}>

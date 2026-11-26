@@ -39,6 +39,8 @@ import {
   ArrowRight,
   HelpCircle,
   Award,
+  Clock,
+  Megaphone,
 } from "lucide-react";
 import { IkonKerja as Briefcase } from "../IkonKerja";
 import "../../styles/publik.css";
@@ -67,6 +69,8 @@ const I = {
   bidang: { t: t("Per bidang", "By field"), d: t("Data, marketing, teknik, keuangan, dan lainnya", "Data, marketing, engineering, finance, and more"), path: "/bidang", Ikon: LayoutGrid, baru: true },
   freelance: { t: t("Loker freelance", "Freelance jobs"), d: t("Kerja per proyek, atur waktumu sendiri", "Project-based work on your own schedule"), path: "/freelance", Ikon: Handshake, baru: true },
   magang: { t: t("Loker magang / internship", "Internships"), d: t("MagangHub Kemnaker dan program magang perusahaan", "MagangHub and company internship programmes"), path: "/magang", Ikon: GraduationCap, baru: true },
+  urgent: { t: "Urgently hiring", d: t("Perusahaan yang ingin segera merekrut", "Companies hiring as soon as possible"), path: "/loker?urgent=1", Ikon: Clock, baru: true },
+  pasang: { t: t("Pasang loker", "Post a job"), d: t("Untuk perusahaan: loker prioritas mulai Rp49rb", "For employers: featured jobs from Rp49k"), path: "/pemberi-kerja", Ikon: Megaphone },
   cocok: { t: t("Cocok untukku", "Matched for me"), d: t("Loker yang paling sesuai dengan CV-mu", "Jobs that best fit your CV"), path: ke("jobfinder"), Ikon: Sparkles },
   simpan: { t: t("Tersimpan", "Saved"), d: t("Loker yang sudah kamu simpan", "Jobs you have saved"), path: ke("saved"), Ikon: Bookmark },
   lamaran: { t: t("Lamaran saya", "My applications"), d: t("Pantau status setiap lamaran", "Track the status of each application"), path: ke("applications"), Ikon: Send },
@@ -97,7 +101,7 @@ export const MENU_APLIKASI = [
     label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: t("Cari", "Search"), items: [I.semua, I.bidang, I.remote, I.freelance, I.bumn, I.magang, I.cocok] },
+      { judul: t("Cari", "Search"), items: [I.semua, I.urgent, I.bidang, I.remote, I.freelance, I.bumn, I.magang, I.cocok, I.pasang] },
       { judul: t("Punyaku", "Mine"), items: [I.simpan, I.lamaran, I.rencana] },
     ],
   },
@@ -120,7 +124,7 @@ export const MENU_PUBLIK = [
     label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.bidang, I.remote, I.freelance, I.bumn, I.magang] },
+      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.urgent, I.bidang, I.remote, I.freelance, I.bumn, I.magang, I.pasang] },
       { judul: t("Riset sebelum melamar", "Research before applying"), items: [I.peta, I.cek, I.kalkulator] },
     ],
   },
@@ -758,6 +762,7 @@ export function SiteFooter() {
         [t("Sertifikasi & pelatihan", "Certifications & training"), "/sertifikasi"],
         [t("Panduan Remote Working", "Remote Working Guide"), "/panduan"],
         [t("Magang / internship", "Internships"), "/magang"],
+        ["Urgently hiring", "/loker?urgent=1"],
         ["Fresh graduate", "/loker?q=fresh%20graduate"],
         [t("Peta gaji", "Salary map"), "/peta-gaji"],
         [t("Cek loker palsu", "Fake job checker"), "/cek-loker"],
@@ -779,6 +784,8 @@ export function SiteFooter() {
       judul: "Jobly",
       tautan: [
         [t("Harga", "Pricing"), "/#harga"],
+        [t("Pasang loker (perusahaan)", "Post a job (employers)"), "/pemberi-kerja"],
+        [t("Dasbor pemberi kerja", "Employer dashboard"), "/pemberi-kerja/dasbor"],
         ["FAQ", "/faq"],
         [t("Syarat & ketentuan", "Terms of service"), "/syarat-ketentuan"],
         [t("Kebijakan privasi", "Privacy policy"), "/kebijakan-privasi"],
@@ -831,8 +838,8 @@ export function SiteFooter() {
           </span>
           <p>
             {t(
-              "Jobly bukan agen penyalur kerja dan tidak terhubung dengan perusahaan yang lowongannya ditampilkan. Kamu selalu melamar langsung di situs aslinya, dan Jobly tidak memungut biaya apa pun.",
-              "Jobly is not a recruitment agency and is not affiliated with the companies whose jobs are listed. You always apply directly on the original site, and Jobly never charges you anything.",
+              "Jobly bukan agen penyalur kerja. Selain loker prioritas yang dipasang langsung oleh perusahaan, Jobly tidak terhubung dengan perusahaan yang lowongannya ditampilkan. Kamu selalu melamar langsung ke perusahaan, dan Jobly tidak memungut biaya apa pun dari pelamar.",
+              "Jobly is not a recruitment agency. Apart from featured jobs posted directly by employers, Jobly is not affiliated with the companies whose jobs are listed. You always apply directly to the company, and Jobly never charges applicants anything.",
             )}
           </p>
         </div>

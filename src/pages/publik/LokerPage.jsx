@@ -42,6 +42,7 @@ function bacaUrl() {
     tipe: p.get("tipe") || "",
     sumber: p.get("sumber") || "",
     gaji: p.get("gaji") === "1",
+    urgent: p.get("urgent") === "1",
     urut: p.get("urut") || "terbaru",
   };
 }
@@ -58,6 +59,7 @@ function tulisUrl(f) {
   if (f.tipe) p.set("tipe", f.tipe);
   if (f.sumber) p.set("sumber", f.sumber);
   if (f.gaji) p.set("gaji", "1");
+  if (f.urgent) p.set("urgent", "1");
   if (f.urut !== "terbaru") p.set("urut", f.urut);
   const s = p.toString();
   // replaceState: mengetik di kolom cari tidak menumpuk riwayat "Kembali"
@@ -80,7 +82,7 @@ export function LokerPage() {
   // Kata kunci dikirim ke server setelah berhenti mengetik sebentar
   const q = useTunda(f.q, 350);
   const pt = useTunda(f.pt, 350);
-  const { jobs: hasil, total, terkunci, loading, error, adaLagi, memuatLagi, muatLagi } = useDaftarLoker({
+  const { jobs: semuaHasil, prioritas, total, terkunci, loading, error, adaLagi, memuatLagi, muatLagi } = useDaftarLoker({
     q: q.trim(),
     pt: pt.trim(),
     negara: f.negara,
@@ -91,8 +93,12 @@ export function LokerPage() {
     tipe: f.tipe,
     sumber: f.sumber,
     gaji: f.gaji,
+    urgent: f.urgent,
     urut: f.urut,
   });
+  // Loker prioritas tampil paling atas; jangan diulang di daftar biasa
+  const idPrioritas = new Set(prioritas.map((j) => j.id));
+  const hasil = semuaHasil.filter((j) => !idPrioritas.has(j.id));
 
   // Daftar sumber dari statistik server, untuk pilihan filter
   const daftarSumber = useMemo(
@@ -116,11 +122,11 @@ export function LokerPage() {
 
   // Di HP, filter lanjutan dilipat supaya daftar loker tidak tertutup
   const [filterBuka, setFilterBuka] = useState(false);
-  const jumlahFilter = [f.pt, f.negara, f.kota, f.sumber, f.urut !== "terbaru", f.bidang, f.lokasi, f.tipe, f.gaji, f.bumn].filter(Boolean).length;
+  const jumlahFilter = [f.pt, f.negara, f.kota, f.sumber, f.urut !== "terbaru", f.bidang, f.lokasi, f.tipe, f.gaji, f.bumn, f.urgent].filter(Boolean).length;
 
-  const adaFilter = f.q || f.pt || f.negara || f.bidang || f.bumn || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji;
+  const adaFilter = f.q || f.pt || f.negara || f.bidang || f.bumn || f.kota || f.lokasi || f.tipe || f.sumber || f.gaji || f.urgent;
   const reset = () =>
-    setF({ q: "", pt: "", negara: "", bidang: "", bumn: false, kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urut: "terbaru" });
+    setF({ q: "", pt: "", negara: "", bidang: "", bumn: false, kota: "", lokasi: "", tipe: "", sumber: "", gaji: false, urgent: false, urut: "terbaru" });
 
   // Negara yang punya loker, diurutkan dari yang terbanyak
   const daftarNegara = useMemo(() => {
@@ -137,7 +143,9 @@ export function LokerPage() {
   // Judul halaman mengikuti filter, mis. "Loker di Bandung"
   const negaraDipilih = cariNegara(f.negara);
   const bidangDipilih = cariBidang(f.bidang);
-  const judul = bidangDipilih
+  const judul = f.urgent && !bidangDipilih && !f.kota && !f.q
+    ? t("Loker urgently hiring", "Urgently hiring jobs")
+    : bidangDipilih
     ? t(`Loker ${bidangDipilih.nama}`, `${bidangDipilih.nama} jobs`)
     : f.bumn
       ? t("Loker BUMN", "State-owned enterprise jobs")
@@ -347,6 +355,9 @@ export function LokerPage() {
             <button type="button" className={`pb-chip ${f.bumn ? "on" : ""}`} onClick={() => ubah({ bumn: !f.bumn })}>
               {t("Hanya BUMN", "State-owned only")}
             </button>
+            <button type="button" className={`pb-chip pb-chip-urgent ${f.urgent ? "on" : ""}`} onClick={() => ubah({ urgent: !f.urgent })}>
+              Urgently hiring
+            </button>
           </div>
           </div>
         </div>
@@ -380,11 +391,12 @@ export function LokerPage() {
           {loading &&
             Array.from({ length: 8 }, (_, i) => <KartuLokerSkeleton key={i} />)}
 
+          {!loading && prioritas.map((j) => <KartuLoker key={`p-${j.id}`} job={j} onToast={toast} />)}
           {!loading &&
             hasil.map((j) => <KartuLoker key={j.id} job={j} onToast={toast} />)}
           {memuatLagi && Array.from({ length: 4 }, (_, i) => <KartuLokerSkeleton key={`m${i}`} />)}
 
-          {!loading && hasil.length === 0 && (
+          {!loading && hasil.length === 0 && prioritas.length === 0 && (
             <div className="pb-empty">
               <h3>{t("Belum ada loker yang cocok", "No matching jobs yet")}</h3>
               <p style={{ margin: "0 0 18px" }}>
@@ -407,8 +419,8 @@ export function LokerPage() {
               {memuatLagi ? t("Memuat…", "Loading…") : t("Lihat lebih banyak", "Show more")}
             </button>
             {t(
-              `Menampilkan ${hasil.length.toLocaleString(lokal())} dari ${(total ?? 0).toLocaleString(lokal())} lowongan`,
-              `Showing ${hasil.length.toLocaleString(lokal())} of ${(total ?? 0).toLocaleString(lokal())} jobs`,
+              `Menampilkan ${semuaHasil.length.toLocaleString(lokal())} dari ${(total ?? 0).toLocaleString(lokal())} lowongan`,
+              `Showing ${semuaHasil.length.toLocaleString(lokal())} of ${(total ?? 0).toLocaleString(lokal())} jobs`,
             )}
           </div>
         )}

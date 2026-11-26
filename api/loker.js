@@ -84,6 +84,8 @@ async function aksiDaftar(p, penuh) {
     tipe: p.get("tipe"),
     sumber: p.get("sumber"),
     gaji: bool(p.get("gaji")),
+    urgent: bool(p.get("urgent")),
+    prioritas: bool(p.get("prioritas")),
     asing: bool(p.get("asing")),
     remoteHybrid: bool(p.get("rh")),
     magang: bool(p.get("magang")),
@@ -145,12 +147,40 @@ async function aksiDaftar(p, penuh) {
     penuh,
   };
   if (halamanPertama) {
+    // Loker prioritas yang cocok dengan pencarian ditampilkan paling atas.
+    // Bila lebih dari 3, dipilih acak supaya semua mendapat giliran.
+    if (!f.prioritas) hasil.prioritas = await lokerPrioritas(perDb, f);
     hasil.total = perDb.reduce((t, x) => t + (x.total || 0), 0);
     hasil.terkunci = terbatas
       ? Math.max(0, perDb.reduce((t, x) => t + (x.tanpaBatas || 0), 0) - hasil.total)
       : 0;
   }
   return hasil;
+}
+
+const MAKS_PRIORITAS = 3;
+let rapikanTerakhir = 0;
+
+/** Loker prioritas (pemberi kerja) yang cocok dengan filter, maks. 3. */
+async function lokerPrioritas(perDb, f) {
+  const x = perDb.find((d) => d.sk.ada?.has?.("prioritas"));
+  if (!x) return [];
+  try {
+    // Masa tayang yang habis dirapikan paling sering sekali per 10 menit
+    if (Date.now() - rapikanTerakhir > 10 * 60 * 1000) {
+      rapikanTerakhir = Date.now();
+      rest(x.db, "rpc/rapikan_loker_mitra", { metode: "POST", body: {} }).catch(() => {});
+    }
+    const { data } = await rest(
+      x.db,
+      `${x.db.tabel}?${qs([["select", x.sk.kolom], ...susunFilter(x.sk, { ...f, prioritas: true }, SUMBER_AGREGATOR), ["limit", "30"]])}`,
+    );
+    const acak = (data || []).sort(() => Math.random() - 0.5).slice(0, MAKS_PRIORITAS);
+    return acak.map((row) => ({ ...row, _s: x.db.id }));
+  } catch (e) {
+    console.warn("[api/loker] prioritas", e.message);
+    return [];
+  }
 }
 
 /* ------------------------------------------------------------- tren */

@@ -30,6 +30,9 @@ import { PanduanPage } from "./publik/PanduanPage";
 import { DetailPanduanPage } from "./publik/DetailPanduanPage";
 import { LatihanPage } from "./publik/LatihanPage";
 import { KelasPage } from "./publik/KelasPage";
+import { PemberiKerjaPage } from "./mitra/PemberiKerjaPage";
+import { DasborMitraPage } from "./mitra/DasborMitraPage";
+import { AdminMitraPage } from "./mitra/AdminMitraPage";
 import {
   adaProsesBerjalan,
   keteranganProses,
@@ -52,10 +55,15 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /faq, /kebijakan-privasi, /syarat-ketentuan, /disclaimer
  *   /login /register /forgot
  *   /dashboard/<menu> Area akun (wajib masuk)
+ *   /pemberi-kerja            Info & harga pasang loker untuk perusahaan
+ *   /pemberi-kerja/dasbor     Dasbor pemberi kerja (wajib masuk)
+ *   /pemberi-kerja/admin      Moderasi loker pemberi kerja (admin)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "magang", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "magang", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan", "mitra"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
+// Halaman pemberi kerja yang wajib masuk (bukan bagian dari dashboard pencari kerja)
+const HALAMAN_MITRA = ["mitraDasbor", "mitraAdmin"];
 
 function pathFor(page, dashActive) {
   if (page === "dashboard") return `/dashboard/${dashActive}`;
@@ -77,6 +85,9 @@ function parsePath(pathname) {
     return { page: "detail", slug: path.slice("/loker/".length) };
   }
   if (path === "/loker") return { page: "loker" };
+  if (path === "/pemberi-kerja") return { page: "mitra" };
+  if (path === "/pemberi-kerja/dasbor") return { page: "mitraDasbor" };
+  if (path === "/pemberi-kerja/admin") return { page: "mitraAdmin" };
   if (path === "/kalkulator-gaji") return { page: "kalkulator" };
   if (path === "/panduan") return { page: "panduan" };
   {
@@ -177,7 +188,7 @@ function JobFinderApp() {
   // kalau sudah masuk.
   React.useEffect(() => {
     if (authLoading || !supabaseConfigured) return;
-    if (!session && page === "dashboard") {
+    if (!session && (page === "dashboard" || HALAMAN_MITRA.includes(page))) {
       // Ingat tujuan, supaya setelah masuk langsung kembali ke sana
       try {
         sessionStorage.setItem("jobly:tujuan", window.location.pathname + window.location.search);
@@ -193,7 +204,7 @@ function JobFinderApp() {
       } catch {
         /* abaikan */
       }
-      if (tujuan && (tujuan.startsWith("/dashboard/") || tujuan.startsWith("/latihan/"))) {
+      if (tujuan && (tujuan.startsWith("/dashboard/") || tujuan.startsWith("/latihan/") || tujuan.startsWith("/pemberi-kerja/"))) {
         window.history.pushState({}, "", tujuan);
         terapkan(parsePath(window.location.pathname));
         window.scrollTo(0, 0);
@@ -291,6 +302,15 @@ function JobFinderApp() {
       break;
     case "dokumen":
       isi = <DokumenPage jenis={rute.jenis} />;
+      break;
+    case "mitra":
+      isi = <PemberiKerjaPage />;
+      break;
+    case "mitraDasbor":
+      isi = <DasborMitraPage />;
+      break;
+    case "mitraAdmin":
+      isi = <AdminMitraPage />;
       break;
     case "login":
       isi = <LoginPage go={go} />;

@@ -31,6 +31,7 @@ import { KartuLoker } from "../../components/publik/KartuLoker";
 import { LogoKotak, LogoSumber } from "../../components/publik/LogoKotak";
 import { useJobs } from "../../context/JobsContext";
 import { catatDilihat } from "../../utils/interaksi";
+import { catatMitra } from "../../utils/mitra";
 import { cekLoker } from "../../utils/cekLoker";
 import { HasilCek } from "./CekLokerPage";
 import { useTujuanBuka } from "../../components/publik/LokerTerkunci";
@@ -231,7 +232,10 @@ export function DetailLokerPage({ slug }) {
   }, [job]);
 
   useEffect(() => {
-    if (job && !terkunciIni) catatDilihat(job);
+    if (job && !terkunciIni) {
+      catatDilihat(job);
+      catatMitra(job, "lihat");
+    }
   }, [job?.id, terkunciIni]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const keamanan = useMemo(
@@ -378,8 +382,11 @@ export function DetailLokerPage({ slug }) {
       {t("Lowongan sudah ditutup", "This job is closed")}
     </span>
   ) : (
-    <a className="pb-btn pb-btn-primary" href={job.link} target="_blank" rel="noreferrer">
-      {t(`Lamar di ${namaSumber}`, `Apply on ${namaSumber}`)} <ArrowUpRight size={16} />
+    <a className="pb-btn pb-btn-primary" href={job.link} target="_blank" rel="noreferrer" onClick={() => catatMitra(job, "klik")}>
+      {String(job.link).startsWith("mailto:")
+        ? t("Lamar lewat email", "Apply by email")
+        : t(`Lamar di ${namaSumber}`, `Apply on ${namaSumber}`)}{" "}
+      <ArrowUpRight size={16} />
     </a>
   );
 
@@ -406,6 +413,14 @@ export function DetailLokerPage({ slug }) {
             <div className="pb-d-head">
               <LogoKotak src={logo} nama={job.perusahaan} ukuran={72} radius={18} />
               <div style={{ minWidth: 0 }}>
+                {job.prioritas && !job.ditutup && (
+                  <span className="pb-badge-prioritas besar">{t("Loker prioritas", "Featured job")}</span>
+                )}{" "}
+                {job.urgent && !job.ditutup && (
+                  <span className="pb-badge-urgent besar">
+                    Urgently hiring
+                  </span>
+                )}
                 <h1>{job.posisi}</h1>
                 <div className="pb-d-company">{job.perusahaan}</div>
               </div>

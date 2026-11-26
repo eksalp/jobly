@@ -76,6 +76,16 @@ export function infoSumber(job) {
     };
   }
 
+  // Diposting langsung oleh perusahaan (loker manual / pemberi kerja)
+  if (site === "jobly") {
+    return {
+      nama: t("Diposting di Jobly", "Posted on Jobly"),
+      logo: "/logo-jobly-j.svg",
+      domain: "jobly.my.id",
+      langsung: true,
+    };
+  }
+
   // Sumber langsung dari situs karier perusahaan
   const domain = domainDari(job?.situsPerusahaan) || domainDari(job?.link);
   return {

@@ -10,7 +10,7 @@ const kunciDari = (o) => JSON.stringify(o, Object.keys(o || {}).sort());
  */
 export function useDaftarLoker(filter, { n = 24, aktif = true } = {}) {
   const { penuh, siap } = useJobs();
-  const [state, setState] = useState({ jobs: [], total: null, terkunci: 0, kursor: null, loading: true, memuatLagi: false, error: null });
+  const [state, setState] = useState({ jobs: [], prioritas: [], total: null, terkunci: 0, kursor: null, loading: true, memuatLagi: false, error: null });
   const kunci = kunciDari(filter);
   const versi = useRef(0);
 
@@ -23,6 +23,8 @@ export function useDaftarLoker(filter, { n = 24, aktif = true } = {}) {
         if (v !== versi.current) return;
         setState({
           jobs: (d.rows || []).map(keJob),
+          // Loker prioritas pemberi kerja yang cocok (hanya halaman pertama)
+          prioritas: (d.prioritas || []).map(keJob),
           total: d.total ?? 0,
           terkunci: d.terkunci ?? 0,
           kursor: d.kursor,

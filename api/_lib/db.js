@@ -25,7 +25,7 @@ const KOLOM_DIINGINKAN = [
   "salary_currency", "interval", "gaji", "salary", "skills",
   "created_at", "date_posted", "posted_at", "site", "company_logo",
   "company_url", "company_url_direct", "company_industry", "job_level",
-  "job_function", "experience_range",
+  "job_function", "experience_range", "urgent", "urgent_sampai", "prioritas",
 ];
 
 export function daftarDb() {
@@ -301,6 +301,19 @@ export function susunFilter(sk, f, agregator) {
     else p.push(["site", `eq.${bersih(f.sumber).replace(/ /g, "_")}`]);
   }
 
+  // Loker prioritas (dipasang pemberi kerja, lihat SQL 19)
+  if (f.prioritas) {
+    if (sk.ada.has("prioritas")) p.push(["prioritas", "is.true"]);
+    else p.push(["id", "eq.-1"]);
+  }
+  // Urgently hiring: ditandai admin (Telegram atau Table Editor). Tanda
+  // berakhir sendiri setelah urgent_sampai lewat; kosong = tanpa batas.
+  if (f.urgent) {
+    if (sk.ada.has("urgent")) {
+      p.push(["urgent", "is.true"]);
+      if (sk.ada.has("urgent_sampai")) dan.push(`or(urgent_sampai.is.null,urgent_sampai.gt.\"${new Date().toISOString()}\")`);
+    } else p.push(["id", "eq.-1"]);
+  }
   if (f.gaji && sk.gmin && sk.gmax) dan.push(`or(${sk.gmin}.not.is.null,${sk.gmax}.not.is.null)`);
   if (f.asing && sk.uang) {
     p.push([sk.uang, "not.is.null"]);

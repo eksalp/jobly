@@ -91,6 +91,13 @@ export function mapSupabaseJob(row, source = "db1") {
     source,
     // Kolom status (open/closed) dari scraper: loker yang sudah ditutup
     ditutup: String(row.status || "").trim().toLowerCase() === "closed",
+    // Loker prioritas dari pemberi kerja (SQL 19); id tabel = 800000000 + nomor
+    prioritas: row.prioritas === true,
+    mitraId: source === "db1" && row.id > 800000000 && row.id < 900000000 ? row.id - 800000000 : null,
+    // Urgently hiring (ditandai admin); berakhir sendiri setelah urgent_sampai
+    urgent:
+      (row.urgent === true || row.urgent === "true") &&
+      (!row.urgent_sampai || new Date(row.urgent_sampai).getTime() > Date.now()),
     posisi: rapikanJudul(row.title || row.posisi) || "Tanpa judul",
     perusahaan: row.company || row.perusahaan || "Tidak disebutkan",
     lokasiKerja, // "onsite" | "remote" | "hybrid"

@@ -23,10 +23,21 @@
 // Rekomendasi sertifikasi & pelatihan:
 //   /sertifikasi [posisi]     semua orang
 //   /sadmin                   daftar perintah admin (lihat sertifikasi.ts)
+//
+// Urgently hiring:
+//   /urgent                   semua orang: daftar loker urgent
+//   /urgent <link|kata>       admin: tandai urgent (lihat urgent.ts)
+//   /lepasurgent <link>       admin: hapus tanda urgent
+//
+// Loker manual (admin, lihat manual.ts):
+//   /lokerbaru /lokermanual /lokerubah /lokertutup /lokerbuka
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { bacaPermintaan } from "./parser.ts";
 import * as S from "./sertifikasi.ts";
+import * as U from "./urgent.ts";
+import * as M from "./manual.ts";
+import * as P from "./mitra.ts";
 
 const TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
 const RAHASIA = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") ?? "";
@@ -51,6 +62,7 @@ function judulFilter(f) {
   if (f.lokasi) bagian.push(f.lokasi);
   if (f.bumn) bagian.push("BUMN");
   if (f.kota) bagian.push(`di ${f.kota}`);
+  if (f.urgent) bagian.push("urgently hiring");
   return bagian.join(" · ") || "terbaru";
 }
 
@@ -76,10 +88,10 @@ async function cariLoker(f, kursor) {
 
 // callback_data maks 64 byte: "m|<kursor>|<filter ringkas>"
 const kodeFilter = (f) =>
-  [f.q || "", f.kota || "", f.lokasi || "", f.tipe || "", f.bumn ? "1" : ""].join("~").slice(0, 44);
+  [f.q || "", f.kota || "", f.lokasi || "", f.tipe || "", f.bumn ? "1" : "", f.urgent ? "1" : ""].join("~").slice(0, 44);
 const bacaKode = (s) => {
-  const [q, kota, lokasi, tipe, bumn] = String(s || "").split("~");
-  return Object.fromEntries(Object.entries({ q, kota, lokasi, tipe, bumn }).filter(([, v]) => v));
+  const [q, kota, lokasi, tipe, bumn, urgent] = String(s || "").split("~");
+  return Object.fromEntries(Object.entries({ q, kota, lokasi, tipe, bumn, urgent }).filter(([, v]) => v));
 };
 
 async function kirimHasil(chatId, f, kursor = "", total = null) {
@@ -107,9 +119,10 @@ async function kirimHasil(chatId, f, kursor = "", total = null) {
       const posisi = r.title || r.posisi || "Lowongan";
       const pt = r.company || r.perusahaan || "";
       const lokasi = r.location || r.lokasi || "";
-      const url = `${SITUS}/loker/${r._s || "db1"}-${r.id}`;
+      const url = `${SITUS}/loker/${U.kodeLoker(r._s || "db1", r.id)}`;
       const tgl = waktu(r.date_posted || r.created_at || r.posted_at);
-      return `<b>${esc(posisi)}</b>\n🏢 ${esc(pt)}${lokasi ? ` · 📍 ${esc(lokasi)}` : ""}${tgl ? ` · 🕒 ${tgl}` : ""}\n<a href="${url}">Lihat & lamar →</a>`;
+      const urgent = r.urgent === true && (!r.urgent_sampai || new Date(r.urgent_sampai).getTime() > Date.now());
+      return `<b>${esc(posisi)}</b>${urgent ? " · <i>Urgently hiring</i>" : ""}\n🏢 ${esc(pt)}${lokasi ? ` · 📍 ${esc(lokasi)}` : ""}${tgl ? ` · 🕒 ${tgl}` : ""}\n<a href="${url}">Lihat & lamar →</a>`;
     })
     .join("\n\n");
 
@@ -141,7 +154,7 @@ Ketik saja loker yang kamu cari, contohnya:
 • <code>magang bandung</code>
 
 Perintah cepat:
-/remote · /freelance · /bumn · /magang · /terbaru
+/remote · /freelance · /bumn · /magang · /terbaru · /urgent
 
 Cari sertifikasi & pelatihan yang cocok:
 <code>/sertifikasi data analyst</code>
@@ -176,7 +189,7 @@ async function perintahAdmin(chatId, userId, perintah, teks) {
 
   switch (perintah) {
     case "/sadmin":
-      await kirim(chatId, S.BANTUAN_ADMIN);
+      await kirim(chatId, `${S.BANTUAN_ADMIN}\n\n${U.BANTUAN_URGENT}\n\n${M.BANTUAN_MANUAL}\n\n${P.BANTUAN_MITRA}`);
       return true;
     case "/sformat":
       await kirim(chatId, S.FORMAT);
@@ -262,6 +275,82 @@ async function perintahAdmin(chatId, userId, perintah, teks) {
   return false;
 }
 
+const judulBaris = (r) => `${esc(r.title || "Lowongan")}${r.company ? ` · ${esc(r.company)}` : ""}`;
+const linkLoker = (r) => `${SITUS}/loker/${U.kodeLoker(r.db, r.id)}`;
+
+/** /urgent dan /lepasurgent untuk admin. */
+async function perintahUrgent(chatId, perintah, teks) {
+  const argumen = teks.replace(/^\S+/, "").trim();
+  if (perintah === "/lepasurgent") {
+    const ruj = U.bacaRujukan(argumen);
+    if (!ruj) return kirim(chatId, "Tempel link lokernya, misalnya <code>/lepasurgent https://jobly.my.id/loker/1758392041-admin</code>");
+    const r = await U.lepas(ruj);
+    return kirim(chatId, r ? `Tanda urgent dihapus: <a href="${linkLoker(r)}">${judulBaris(r)}</a>` : "Loker tidak ditemukan.");
+  }
+  if (!argumen) {
+    const d = await U.daftarUrgent();
+    const ok = d.filter((r) => !r.galat);
+    const galat = d.filter((r) => r.galat).map((r) => `⚠️ ${esc(r.galat)}`);
+    const isi = ok.length
+      ? ok.map((r, i) => `${i + 1}. <a href="${linkLoker(r)}">${judulBaris(r)}</a>\n   ${U.sisaTeks(r)}`).join("\n")
+      : "Belum ada loker yang ditandai urgent.";
+    const tombol = ok.slice(0, 20).map((r, i) => [{ text: `Lepas ${i + 1}`, callback_data: `u|-|${r.db}|${r.id}` }]);
+    return kirim(chatId, `<b>Urgently hiring (${ok.length})</b>\n\n${isi}${galat.length ? `\n\n${galat.join("\n")}` : ""}\n\n${U.BANTUAN_URGENT}`, tombol.length ? { reply_markup: { inline_keyboard: tombol } } : {});
+  }
+  // Link/nomor loker, boleh diakhiri jumlah hari
+  const mHari = argumen.match(/^(\S+)\s+(\d{1,3})$/);
+  const ruj = U.bacaRujukan(mHari ? mHari[1] : argumen);
+  if (ruj) {
+    const r = await U.tandai(ruj, mHari ? Number(mHari[2]) : undefined);
+    return kirim(chatId, r ? `Ditandai urgent ${U.sisaTeks(r)}:\n<a href="${linkLoker(r)}">${judulBaris(r)}</a>` : "Loker tidak ditemukan.", r ? { reply_markup: { inline_keyboard: [[{ text: "Batalkan", callback_data: `u|-|${r.db}|${r.id}` }]] } } : {});
+  }
+  // Kata kunci: tampilkan hasil pencarian untuk dipilih
+  const d = await cariLoker({ q: argumen }, "");
+  const rows = (d.rows || []).map((r) => ({ ...r, db: r._s || "db1" }));
+  if (!rows.length) return kirim(chatId, `Tidak ada loker untuk <b>${esc(argumen)}</b>. Coba kata lain atau tempel link lokernya.`);
+  const isi = rows.map((r, i) => `${i + 1}. <a href="${linkLoker(r)}">${judulBaris(r)}</a>${r.urgent ? " (urgent)" : ""}`).join("\n");
+  const tombol = rows.map((r, i) => ({ text: r.urgent ? `Lepas ${i + 1}` : `Tandai ${i + 1}`, callback_data: `u|${r.urgent ? "-" : "+"}|${r.db}|${r.id}` }));
+  return kirim(chatId, `Pilih loker yang ingin ditandai urgent (${U.sisaTeks({ urgent_sampai: new Date(Date.now() + 14 * 86400000).toISOString() })}):\n\n${isi}`, {
+    reply_markup: { inline_keyboard: [tombol] },
+  });
+}
+
+/** Perintah loker manual (admin). */
+async function perintahManual(chatId, userId, perintah, teks) {
+  const barisPertama = teks.split("\n")[0];
+  const argumen = barisPertama.replace(/^\S+/, "").trim();
+  const isi = teks.split("\n").slice(1).join("\n");
+  const nomor = Number(argumen.match(/\d+/)?.[0] || 0);
+  const tombolTutup = (r) => ({ inline_keyboard: [[{ text: "Lihat di Jobly", url: M.linkManual(SITUS, r) }, { text: "Tutup loker", callback_data: `l|t|${r.id}` }]] });
+
+  if (perintah === "/lokerbaru") {
+    if (!isi.trim() && !argumen) return kirim(chatId, M.TEMPLATE);
+    const h = await M.simpanBaru(`${argumen}\n${isi}`, userId);
+    if (h.kurang) {
+      return kirim(chatId, `Belum lengkap: <b>${h.kurang.join(", ")}</b> wajib diisi.${h.galat.length ? `\n⚠️ ${esc(h.galat.join("; "))}` : ""}\n\nKetik /lokerbaru untuk melihat template.`);
+    }
+    return kirim(
+      chatId,
+      `✅ Loker tersimpan dan sudah tampil di Jobly.\n\n${M.ringkas(h.r, esc)}${h.urgent ? `\nUrgently hiring ${U.sisaTeks({ urgent_sampai: h.sampai })}` : ""}${h.galat.length ? `\n\n⚠️ Dilewati: ${esc(h.galat.join("; "))}` : ""}`,
+      { reply_markup: tombolTutup(h.r) },
+    );
+  }
+  if (perintah === "/lokermanual") {
+    const d = await M.daftar();
+    if (!d.length) return kirim(chatId, "Belum ada loker manual yang aktif. Tambah dengan /lokerbaru.");
+    return kirim(chatId, `<b>Loker manual aktif (${d.length})</b>\n\n${d.map((r) => `${M.ringkas(r, esc)}\n<a href="${M.linkManual(SITUS, r)}">Lihat</a>`).join("\n\n")}\n\nUbah: /lokerubah &lt;nomor&gt; · Tutup: /lokertutup &lt;nomor&gt;`);
+  }
+  if (!nomor) return kirim(chatId, `Tulis nomornya, misalnya <code>${perintah} 3</code>. Nomor ada di /lokermanual.`);
+  if (perintah === "/lokerubah") {
+    const h = await M.ubah(nomor, isi);
+    if (h.kosong) return kirim(chatId, `Tidak ada yang diubah. Contoh:\n<code>/lokerubah ${nomor}\ngaji: 7-9 jt\nurgent: ya 30</code>`);
+    if (!h.r) return kirim(chatId, "Nomor tidak ditemukan.");
+    return kirim(chatId, `✏️ Diperbarui.\n\n${M.ringkas(h.r, esc)}${h.urgent ? `\nUrgently hiring ${U.sisaTeks({ urgent_sampai: h.sampai })}` : ""}${h.galat.length ? `\n\n⚠️ Dilewati: ${esc(h.galat.join("; "))}` : ""}`, { reply_markup: tombolTutup(h.r) });
+  }
+  const r = await M.setAktif(nomor, perintah === "/lokerbuka");
+  return kirim(chatId, r ? `${perintah === "/lokerbuka" ? "Dibuka kembali" : "Ditutup, sudah hilang dari situs"}: #${r.id} ${esc(r.posisi)}` : "Nomor tidak ditemukan.");
+}
+
 serve(async (req) => {
   if (req.method !== "POST") return new Response("ok");
   if (!TOKEN) return new Response("TELEGRAM_BOT_TOKEN belum di-set", { status: 500 });
@@ -278,7 +367,63 @@ serve(async (req) => {
     // Tombol "berikutnya"
     if (upd.callback_query) {
       const cq = upd.callback_query;
-      const [jenis, kursor, kode] = String(cq.data || "").split("|");
+      const [jenis, kursor, kode, ekstra] = String(cq.data || "").split("|");
+      if (jenis === "m") {
+        // Moderasi loker pemberi kerja: m|s|id (setujui), m|t|id (tolak)
+        if (!S.adalahAdmin(cq.from?.id)) {
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Khusus admin." });
+          return new Response("ok");
+        }
+        const chat = cq.message?.chat?.id;
+        try {
+          const m = await P.ambil(kode);
+          if (kursor === "s") await P.setujui(kode);
+          else await P.tolak(kode, P.ALASAN_BAWAAN);
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: kursor === "s" ? "Disetujui" : "Ditolak" });
+          if (chat) {
+            await kirim(
+              chat,
+              kursor === "s"
+                ? `Disetujui dan sudah tayang: #${kode} ${esc(m?.posisi)} · ${esc(m?.perusahaan)}`
+                : `Ditolak: #${kode} ${esc(m?.posisi)}. Kredit dikembalikan bila belum pernah tayang.\nAlasan khusus: <code>/tolakloker ${kode} alasannya</code>`,
+            );
+          }
+        } catch (e) {
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Gagal" });
+          if (chat) await kirim(chat, `Gagal: ${esc(e?.message)}`);
+        }
+        return new Response("ok");
+      }
+      if (jenis === "l") {
+        // Tombol loker manual: l|t|id (tutup)
+        if (!S.adalahAdmin(cq.from?.id)) {
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Khusus admin." });
+          return new Response("ok");
+        }
+        const r = await M.setAktif(Number(kode), false).catch(() => null);
+        await tg("answerCallbackQuery", { callback_query_id: cq.id, text: r ? "Loker ditutup" : "Gagal" });
+        if (r && cq.message?.chat?.id) await kirim(cq.message.chat.id, `Ditutup, sudah hilang dari situs: #${r.id} ${esc(r.posisi)}\nBuka lagi dengan /lokerbuka ${r.id}`);
+        return new Response("ok");
+      }
+      if (jenis === "u") {
+        // Tombol urgent: u|+|db1|id (tandai) atau u|-|db1|id (lepas)
+        if (!S.adalahAdmin(cq.from?.id)) {
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Khusus admin." });
+          return new Response("ok");
+        }
+        const ruj = { db: kode, id: Number(ekstra) };
+        try {
+          const r = kursor === "+" ? await U.tandai(ruj) : await U.lepas(ruj);
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: r ? (kursor === "+" ? "Ditandai urgent" : "Tanda urgent dihapus") : "Tidak ditemukan" });
+          if (r && cq.message?.chat?.id) {
+            await kirim(cq.message.chat.id, `${kursor === "+" ? `Urgent ${U.sisaTeks(r)}` : "Tanda urgent dihapus"}: <a href="${linkLoker(r)}">${judulBaris(r)}</a>`);
+          }
+        } catch (e) {
+          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Gagal" });
+          if (cq.message?.chat?.id) await kirim(cq.message.chat.id, `Gagal: ${esc(e?.message)}`);
+        }
+        return new Response("ok");
+      }
       if (jenis === "s") {
         // Tombol admin sertifikasi: s|t|id (terbitkan) atau s|a|id (arsipkan)
         if (!S.adalahAdmin(cq.from?.id)) {
@@ -321,6 +466,67 @@ serve(async (req) => {
           console.error("admin sertifikasi:", e?.message);
           await kirim(chatId, `Gagal: ${esc(e?.message || "galat tidak dikenal")}${/sertifikasi/.test(e?.message || "") ? "\nSudah menjalankan supabase/sql/10_sertifikasi.sql?" : ""}`);
         }
+      }
+      return new Response("ok");
+    }
+
+    if (perintah === "/antreanloker" || perintah === "/tolakloker") {
+      if (!S.adalahAdmin(userId)) {
+        await kirim(chatId, "Perintah ini khusus admin Jobly.");
+        return new Response("ok");
+      }
+      try {
+        if (perintah === "/antreanloker") {
+          const d = await P.antrean();
+          await kirim(
+            chatId,
+            d.length
+              ? `<b>Menunggu persetujuan (${d.length})</b>\n\n${d.map((r) => `#${r.id} <b>${esc(r.posisi)}</b> · ${esc(r.perusahaan)}`).join("\n")}`
+              : "Tidak ada loker yang menunggu persetujuan.",
+            d.length
+              ? { reply_markup: { inline_keyboard: d.slice(0, 15).map((r) => [{ text: `Setujui #${r.id}`, callback_data: `m|s|${r.id}` }, { text: `Tolak #${r.id}`, callback_data: `m|t|${r.id}` }]) } }
+              : {},
+          );
+        } else {
+          const m = teks.match(/^\S+\s+(\d+)\s*([\s\S]*)$/);
+          if (!m) await kirim(chatId, "Contoh: <code>/tolakloker 12 Link lamaran tidak bisa dibuka</code>");
+          else {
+            await P.tolak(m[1], m[2].trim() || P.ALASAN_BAWAAN);
+            await kirim(chatId, `Loker #${m[1]} ditolak. Alasan terlihat di dasbor pemberi kerja.`);
+          }
+        }
+      } catch (e) {
+        await kirim(chatId, `Gagal: ${esc(e?.message)}`);
+      }
+      return new Response("ok");
+    }
+
+    if (/^\/loker(baru|manual|ubah|tutup|buka)$/.test(perintah)) {
+      if (!S.adalahAdmin(userId)) {
+        await kirim(chatId, "Perintah ini khusus admin Jobly.");
+      } else {
+        try {
+          await perintahManual(chatId, userId, perintah, teks);
+        } catch (e) {
+          console.error("loker manual:", e?.message);
+          await kirim(chatId, `Gagal: ${esc(e?.message || "galat tidak dikenal")}`);
+        }
+      }
+      return new Response("ok");
+    }
+
+    if (perintah === "/urgent" || perintah === "/lepasurgent") {
+      if (S.adalahAdmin(userId)) {
+        try {
+          await perintahUrgent(chatId, perintah, teks);
+        } catch (e) {
+          console.error("urgent:", e?.message);
+          await kirim(chatId, `Gagal: ${esc(e?.message || "galat tidak dikenal")}`);
+        }
+      } else if (perintah === "/urgent") {
+        await kirimHasil(chatId, { urgent: "1", ...bacaPermintaan(teks.slice(7)) });
+      } else {
+        await kirim(chatId, "Perintah ini khusus admin Jobly.");
       }
       return new Response("ok");
     }

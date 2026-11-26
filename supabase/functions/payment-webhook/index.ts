@@ -65,6 +65,18 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    // Pembelian kredit pasang loker (pemberi kerja), dibuat oleh bayar-loker
+    if (String(order_id).includes("-LK-")) {
+      if (lunas) {
+        const { data: n, error } = await supabaseAdmin.rpc("lunasi_pembelian_kredit", { p_order: order_id });
+        if (error) throw new Error("Gagal menambah kredit: " + error.message);
+        console.log(`Kredit loker +${n} untuk ${order_id}`);
+        return json({ ok: true, kredit: n });
+      }
+      await supabaseAdmin.from("pembelian_kredit").update({ status: "failed" }).eq("order_id", order_id).eq("status", "pending");
+      return json({ ok: true, pembelian: "gagal" });
+    }
+
     await supabaseAdmin
       .from("payments")
       .update({
