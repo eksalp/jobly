@@ -23,7 +23,7 @@ export function Footer() {
         marginTop: 24,
       }}
     >
-      © {tahun}{" "}{t("Jobly · Dibuat oleh Eksal Pujianto", "Jobly · Made by Eksal Pujianto")}
+      © {tahun}{" "}{t("Workly · Dibuat oleh Eksal Pujianto", "Workly · Made by Eksal Pujianto")}
     </div>
   );
 }

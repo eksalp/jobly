@@ -472,7 +472,7 @@ async function aksiId(p, penuh) {
  * tetapi lapisan ini membuat pengambilan massal jauh lebih mahal:
  *  1. Klien skrip yang jujur menyebut dirinya (curl, python-requests, …)
  *     ditolak langsung.
- *  2. Permintaan harus datang dari halaman Jobly sendiri: browser selalu
+ *  2. Permintaan harus datang dari halaman Workly sendiri: browser selalu
  *     mengirim Sec-Fetch-Site / Origin / Referer untuk fetch dari situs ini.
  *  3. Batas jumlah permintaan per IP per menit. Hanya berlaku saat jawaban
  *     tidak diambil dari cache CDN, yaitu tepat saat skrip memvariasikan
@@ -502,7 +502,7 @@ function hostDari(nilai) {
 export function jagaAkses(req, aksi) {
   if (process.env.JOBLY_TANPA_PENJAGA === "1") return null;
   const h = req.headers;
-  // Layanan Jobly sendiri (mis. bot Telegram) memakai kunci rahasia bersama
+  // Layanan Workly sendiri (mis. bot Telegram) memakai kunci rahasia bersama
   const kunciServer = process.env.JOBLY_API_KUNCI;
   if (kunciServer && h["x-jobly-kunci"] === kunciServer) return null;
   const ua = String(h["user-agent"] || "");
@@ -512,7 +512,7 @@ export function jagaAkses(req, aksi) {
   const situs = String(h["sec-fetch-site"] || "");
   const asal = hostDari(h.origin) || hostDari(h.referer);
   const dariJobly = situs === "same-origin" || (asal && asal === host);
-  if (!dariJobly) return { status: 403, error: "Data loker hanya bisa diakses dari jobly.my.id." };
+  if (!dariJobly) return { status: 403, error: "Data loker hanya bisa diakses dari workly.id." };
 
   const batas = BATAS_PER_MENIT[aksi] || 20;
   const kunci = `${ipDari(req)}|${aksi}`;

@@ -79,9 +79,9 @@ export function infoSumber(job) {
   // Diposting langsung oleh perusahaan (loker manual / pemberi kerja)
   if (site === "jobly") {
     return {
-      nama: t("Diposting di Jobly", "Posted on Jobly"),
-      logo: "/logo-jobly-j.svg",
-      domain: "jobly.my.id",
+      nama: t("Diposting di Workly", "Posted on Workly"),
+      logo: "/logo-workly-w.svg",
+      domain: "workly.id",
       langsung: true,
     };
   }

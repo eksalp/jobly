@@ -115,7 +115,7 @@ function Antrean({ m, onSelesai, toast }) {
           {m.status === "tayang" && (
             <div className="pk-tombol">
               <a className="pb-btn pb-btn-outline pb-btn-sm" {...tautan(urlDetail({ id: `db1:${ID_MITRA + m.id}`, posisi: m.posisi }))}>
-                {t("Lihat di Jobly", "View on Jobly")}
+                {t("Lihat di Workly", "View on Workly")}
               </a>
               <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" disabled={Boolean(sibuk)} onClick={() => window.confirm(t("Turunkan loker ini?", "Take this job down?")) && jalankan("tutup")}>
                 {t("Turunkan", "Take down")}
@@ -151,7 +151,7 @@ export function AdminMitraPage() {
   }, [saring]);
 
   useEffect(() => {
-    document.title = t("Moderasi loker · Jobly", "Job moderation · Jobly");
+    document.title = t("Moderasi loker · Workly", "Job moderation · Workly");
   }, []);
   useEffect(() => {
     if (admin) muat();
@@ -173,7 +173,7 @@ export function AdminMitraPage() {
         )}
         {admin === false && (
           <div className="pk-panel pk-tengah">
-            <Lock size={18} /> {t("Halaman ini hanya bisa dibuka oleh admin Jobly.", "This page is only available to Jobly admins.")}
+            <Lock size={18} /> {t("Halaman ini hanya bisa dibuka oleh admin Workly.", "This page is only available to Workly admins.")}
           </div>
         )}
         {admin && (

@@ -8,7 +8,7 @@ import { t } from "../i18n.js";
  * kosong, halaman dokumen menampilkan tautan ke halaman FAQ sebagai gantinya.
  */
 export const SITUS = {
-  nama: "Jobly",
+  nama: "Workly",
   pembuat: "Eksal Pujianto",
   emailKontak: "", // contoh: "halo@domainmu.com"
   dokumenBerlaku: t("12 Oktober 2026", "12 October 2026"),
@@ -51,7 +51,7 @@ export const GRUP = [
     // ganti url ke tautan chat.whatsapp.com/… atau whatsapp.com/channel/…
     jenis: "whatsapp",
     label: t("Chat WhatsApp", "WhatsApp chat"),
-    ket: t("Tanya seputar Jobly atau minta info grup", "Ask about Jobly or the group"),
+    ket: t("Tanya seputar Workly atau minta info grup", "Ask about Workly or the group"),
     aksi: "Chat",
     anggota: "",
     url: "https://wa.me/6285811858064",

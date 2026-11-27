@@ -46,7 +46,7 @@ export async function antrean() {
   return rows.map((r) => ({ ...r, perusahaan: nama[r.user_id] || "" }));
 }
 
-export const ALASAN_BAWAAN = "Isi loker belum memenuhi ketentuan Jobly. Periksa kembali posisi, deskripsi, dan link lamaran.";
+export const ALASAN_BAWAAN = "Isi loker belum memenuhi ketentuan Workly. Periksa kembali posisi, deskripsi, dan link lamaran.";
 
 export const BANTUAN_MITRA = `<b>Loker pemberi kerja</b>
 /antreanloker — loker yang menunggu persetujuan

@@ -191,7 +191,7 @@ export default {
           "Cara dan waktu pembayaran (misalnya 50% di awal untuk klien baru)",
           "Apakah namamu boleh dicantumkan atau artikel ditulis atas nama klien",
         ]),
-        KOTAK("tips", "Langkah berikutnya", "Kerjakan latihan praktik Content Writer di Jobly: ada brief artikel sungguhan dan umpan balik seperti dari editor."),
+        KOTAK("tips", "Langkah berikutnya", "Kerjakan latihan praktik Content Writer di Workly: ada brief artikel sungguhan dan umpan balik seperti dari editor."),
       ],
       kuis: [
         K("Mengapa memilih 1 sampai 2 bidang tulisan menguntungkan?", "Klien lebih percaya penulis yang punya fokus dan pengetahuan bidang", ["Supaya tidak perlu riset", "Karena platform mewajibkannya", "Agar bisa menulis lebih cepat tanpa membaca"], "Spesialisasi membuat tulisanmu lebih dalam dan tarifmu lebih tinggi."),

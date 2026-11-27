@@ -225,11 +225,11 @@ function FormProfil({ pt, onSimpan, onBatal }) {
           </select>
         </label>
         <label>
-          <span>{t("Nama kontak (untuk tim Jobly)", "Contact name (for the Jobly team)")}</span>
+          <span>{t("Nama kontak (untuk tim Workly)", "Contact name (for the Workly team)")}</span>
           <input value={f.kontak_nama} onChange={ubah("kontak_nama")} />
         </label>
         <label>
-          <span>{t("WhatsApp kontak (untuk tim Jobly)", "Contact WhatsApp (for the Jobly team)")}</span>
+          <span>{t("WhatsApp kontak (untuk tim Workly)", "Contact WhatsApp (for the Workly team)")}</span>
           <input value={f.kontak_wa} onChange={ubah("kontak_wa")} inputMode="tel" placeholder="08xx" />
           <small>{t("Tidak ditampilkan ke pelamar.", "Not shown to applicants.")}</small>
         </label>
@@ -361,8 +361,8 @@ function FormLoker({ pt, awal, kredit, onSelesai, onBatal }) {
           {status === "tayang" && (
             <p className="pk-catatan">
               {t(
-                "Loker ini sedang tayang. Setelah disimpan, loker dicek ulang tim Jobly (tanpa memotong kredit) dan sementara disembunyikan sampai disetujui.",
-                "This job is live. After saving, it's reviewed again by Jobly (no extra credit) and hidden until approved.",
+                "Loker ini sedang tayang. Setelah disimpan, loker dicek ulang tim Workly (tanpa memotong kredit) dan sementara disembunyikan sampai disetujui.",
+                "This job is live. After saving, it's reviewed again by Workly (no extra credit) and hidden until approved.",
               )}
             </p>
           )}
@@ -623,7 +623,7 @@ function BarisLoker({ m, onUbah, onAksi }) {
           {m.status === "tayang" && sisaHari !== null
             ? t(`Tayang sampai ${tgl(m.tayang_sampai)} (${sisaHari} hari lagi)`, `Live until ${tgl(m.tayang_sampai)} (${sisaHari} days left)`)
             : m.status === "menunggu"
-              ? t("Sedang dicek tim Jobly", "Being reviewed by Jobly")
+              ? t("Sedang dicek tim Workly", "Being reviewed by Workly")
               : m.status === "berakhir"
                 ? t(`Berakhir ${tgl(m.tayang_sampai)}`, `Ended ${tgl(m.tayang_sampai)}`)
                 : t(`Dibuat ${tgl(m.dibuat_at)}`, `Created ${tgl(m.dibuat_at)}`)}
@@ -645,7 +645,7 @@ function BarisLoker({ m, onUbah, onAksi }) {
       </div>
       <div className="aksi">
         {url && (
-          <a {...tautan(url)} title={t("Lihat di Jobly", "View on Jobly")}>
+          <a {...tautan(url)} title={t("Lihat di Workly", "View on Workly")}>
             <ExternalLink size={15} />
           </a>
         )}
@@ -685,14 +685,14 @@ export function DasborMitraPage() {
   const pilihPaket = useMemo(() => new URLSearchParams(window.location.search).get("beli"), []);
 
   useEffect(() => {
-    document.title = t("Dasbor pemberi kerja · Jobly", "Employer dashboard · Jobly");
+    document.title = t("Dasbor pemberi kerja · Workly", "Employer dashboard · Workly");
   }, []);
   useEffect(() => {
     if (pilihPaket && data.pt) setMode("kredit");
   }, [pilihPaket, data.pt]);
 
   const aksi = async (jenis, m) => {
-    if (jenis === "tutup" && !window.confirm(t(`Tutup loker "${m.posisi}"? Loker langsung hilang dari Jobly.`, `Close "${m.posisi}"? It will be removed from Jobly right away.`))) return;
+    if (jenis === "tutup" && !window.confirm(t(`Tutup loker "${m.posisi}"? Loker langsung hilang dari Workly.`, `Close "${m.posisi}"? It will be removed from Workly right away.`))) return;
     if (jenis === "hapus" && !window.confirm(t(`Hapus draf "${m.posisi}"?`, `Delete draft "${m.posisi}"?`))) return;
     const { error } =
       jenis === "tutup"
@@ -746,7 +746,7 @@ export function DasborMitraPage() {
         kredit={data.pt.kredit}
         onBatal={() => setMode("daftar")}
         onSelesai={(j) => {
-          toast(j === "ajukan" ? t("Loker diajukan. Tim Jobly akan mengeceknya.", "Submitted. The Jobly team will review it.") : t("Tersimpan", "Saved"));
+          toast(j === "ajukan" ? t("Loker diajukan. Tim Workly akan mengeceknya.", "Submitted. The Workly team will review it.") : t("Tersimpan", "Saved"));
           setMode("daftar");
           data.muat();
         }}
@@ -858,7 +858,7 @@ export function DasborMitraPage() {
 
         {isi}
         <p className="pk-redup" style={{ fontSize: 13, marginTop: 18 }}>
-          <Check size={13} /> {t("Butuh bantuan? Hubungi tim Jobly lewat halaman ", "Need help? Contact the Jobly team via the ")}
+          <Check size={13} /> {t("Butuh bantuan? Hubungi tim Workly lewat halaman ", "Need help? Contact the Workly team via the ")}
           <a {...tautan("/faq")}>FAQ</a>.
         </p>
       </div>

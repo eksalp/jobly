@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Edge Function: telegram-bot — bot Telegram Jobly untuk mencari loker.
+// Edge Function: telegram-bot — bot Telegram Workly untuk mencari loker.
 //
 // Pengguna cukup mengetik, misalnya:
 //   "data science"            → loker data science
@@ -9,14 +9,14 @@
 //   "bumn engineer"           → engineer di BUMN
 //   /remote /freelance /bumn /magang /bantuan
 //
-// Data diambil dari API Jobly (jobly.my.id/api/loker), jadi hasil dan
+// Data diambil dari API Workly (workly.id/api/loker), jadi hasil dan
 // kecerdasan pencariannya sama persis dengan situs: padanan kata, kota,
 // bidang, BUMN, dan seterusnya.
 //
 // Secret yang dibutuhkan:
 //   TELEGRAM_BOT_TOKEN        token dari @BotFather
 //   TELEGRAM_WEBHOOK_SECRET   teks acak; dikirim Telegram di setiap pesan
-//   JOBLY_URL (opsional)      bawaan https://jobly.my.id
+//   JOBLY_URL (opsional)      bawaan https://workly.id
 //   TELEGRAM_ADMIN_IDS        ID Telegram admin (dipisah koma) untuk
 //                             mengelola sertifikasi; cek lewat /idku
 //
@@ -41,7 +41,7 @@ import * as P from "./mitra.ts";
 
 const TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
 const RAHASIA = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") ?? "";
-const SITUS = (Deno.env.get("JOBLY_URL") ?? "https://jobly.my.id").replace(/\/+$/, "");
+const SITUS = (Deno.env.get("JOBLY_URL") ?? "https://workly.id").replace(/\/+$/, "");
 const PER_HALAMAN = 5;
 
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -82,7 +82,7 @@ async function cariLoker(f, kursor) {
   // Kunci bersama supaya lolos penjaga anti-scraping di /api/loker
   const kunci = Deno.env.get("JOBLY_API_KUNCI");
   const res = await fetch(`${SITUS}/api/loker?${p}`, { headers: kunci ? { "x-jobly-kunci": kunci } : {} });
-  if (!res.ok) throw new Error(`API Jobly ${res.status}`);
+  if (!res.ok) throw new Error(`API Workly ${res.status}`);
   return res.json();
 }
 
@@ -132,7 +132,7 @@ async function kirimHasil(chatId, f, kursor = "", total = null) {
 
   const tombol = [];
   if (d.kursor) tombol.push({ text: `${PER_HALAMAN} berikutnya ›`, callback_data: `m|${String(d.kursor).slice(0, 14)}|${kodeFilter(f)}` });
-  tombol.push({ text: "Buka di Jobly", url: linkSitus });
+  tombol.push({ text: "Buka di Workly", url: linkSitus });
 
   return tg("sendMessage", {
     chat_id: chatId,
@@ -143,7 +143,7 @@ async function kirimHasil(chatId, f, kursor = "", total = null) {
   });
 }
 
-const BANTUAN = `Halo! Aku bot <b>Jobly</b> 👋
+const BANTUAN = `Halo! Aku bot <b>Workly</b> 👋
 Ketik saja loker yang kamu cari, contohnya:
 
 • <code>data science</code>
@@ -171,11 +171,11 @@ async function sertifikasiUmum(chatId, kata) {
   const link = `${SITUS}/sertifikasi${kata ? `?q=${encodeURIComponent(kata)}` : ""}`;
   if (!hasil.length) {
     return kirim(chatId, `Belum ada rekomendasi untuk <b>${esc(kata)}</b>. Coba kata yang lebih umum, misalnya <i>data</i>, <i>marketing</i>, atau <i>pajak</i>.`, {
-      reply_markup: { inline_keyboard: [[{ text: "Lihat semua di Jobly", url: `${SITUS}/sertifikasi` }]] },
+      reply_markup: { inline_keyboard: [[{ text: "Lihat semua di Workly", url: `${SITUS}/sertifikasi` }]] },
     });
   }
   return kirim(chatId, `🎓 Sertifikasi & pelatihan${kata ? ` untuk <b>${esc(kata)}</b>` : ""}\n\n${hasil.map((r) => S.kartu(r)).join("\n\n")}`, {
-    reply_markup: { inline_keyboard: [[{ text: "Lihat semua di Jobly", url: link }]] },
+    reply_markup: { inline_keyboard: [[{ text: "Lihat semua di Workly", url: link }]] },
   });
 }
 
@@ -283,7 +283,7 @@ async function perintahUrgent(chatId, perintah, teks) {
   const argumen = teks.replace(/^\S+/, "").trim();
   if (perintah === "/lepasurgent") {
     const ruj = U.bacaRujukan(argumen);
-    if (!ruj) return kirim(chatId, "Tempel link lokernya, misalnya <code>/lepasurgent https://jobly.my.id/loker/1758392041-admin</code>");
+    if (!ruj) return kirim(chatId, "Tempel link lokernya, misalnya <code>/lepasurgent https://workly.id/loker/1758392041-admin</code>");
     const r = await U.lepas(ruj);
     return kirim(chatId, r ? `Tanda urgent dihapus: <a href="${linkLoker(r)}">${judulBaris(r)}</a>` : "Loker tidak ditemukan.");
   }
@@ -321,7 +321,7 @@ async function perintahManual(chatId, userId, perintah, teks) {
   const argumen = barisPertama.replace(/^\S+/, "").trim();
   const isi = teks.split("\n").slice(1).join("\n");
   const nomor = Number(argumen.match(/\d+/)?.[0] || 0);
-  const tombolTutup = (r) => ({ inline_keyboard: [[{ text: "Lihat di Jobly", url: M.linkManual(SITUS, r) }, { text: "Tutup loker", callback_data: `l|t|${r.id}` }]] });
+  const tombolTutup = (r) => ({ inline_keyboard: [[{ text: "Lihat di Workly", url: M.linkManual(SITUS, r) }, { text: "Tutup loker", callback_data: `l|t|${r.id}` }]] });
 
   if (perintah === "/lokerbaru") {
     if (!isi.trim() && !argumen) return kirim(chatId, M.TEMPLATE);
@@ -331,7 +331,7 @@ async function perintahManual(chatId, userId, perintah, teks) {
     }
     return kirim(
       chatId,
-      `✅ Loker tersimpan dan sudah tampil di Jobly.\n\n${M.ringkas(h.r, esc)}${h.urgent ? `\nUrgently hiring ${U.sisaTeks({ urgent_sampai: h.sampai })}` : ""}${h.galat.length ? `\n\n⚠️ Dilewati: ${esc(h.galat.join("; "))}` : ""}`,
+      `✅ Loker tersimpan dan sudah tampil di Workly.\n\n${M.ringkas(h.r, esc)}${h.urgent ? `\nUrgently hiring ${U.sisaTeks({ urgent_sampai: h.sampai })}` : ""}${h.galat.length ? `\n\n⚠️ Dilewati: ${esc(h.galat.join("; "))}` : ""}`,
       { reply_markup: tombolTutup(h.r) },
     );
   }
@@ -458,7 +458,7 @@ serve(async (req) => {
     }
     if (/^\/s(admin|format|list|baru|lihat|tambah|ubah|terbit|arsip|ai)$/.test(perintah)) {
       if (!S.adalahAdmin(userId)) {
-        await kirim(chatId, "Perintah ini khusus admin Jobly.");
+        await kirim(chatId, "Perintah ini khusus admin Workly.");
       } else {
         try {
           await perintahAdmin(chatId, userId, perintah, teks);
@@ -472,7 +472,7 @@ serve(async (req) => {
 
     if (perintah === "/antreanloker" || perintah === "/tolakloker") {
       if (!S.adalahAdmin(userId)) {
-        await kirim(chatId, "Perintah ini khusus admin Jobly.");
+        await kirim(chatId, "Perintah ini khusus admin Workly.");
         return new Response("ok");
       }
       try {
@@ -503,7 +503,7 @@ serve(async (req) => {
 
     if (/^\/loker(baru|manual|ubah|tutup|buka)$/.test(perintah)) {
       if (!S.adalahAdmin(userId)) {
-        await kirim(chatId, "Perintah ini khusus admin Jobly.");
+        await kirim(chatId, "Perintah ini khusus admin Workly.");
       } else {
         try {
           await perintahManual(chatId, userId, perintah, teks);
@@ -526,7 +526,7 @@ serve(async (req) => {
       } else if (perintah === "/urgent") {
         await kirimHasil(chatId, { urgent: "1", ...bacaPermintaan(teks.slice(7)) });
       } else {
-        await kirim(chatId, "Perintah ini khusus admin Jobly.");
+        await kirim(chatId, "Perintah ini khusus admin Workly.");
       }
       return new Response("ok");
     }

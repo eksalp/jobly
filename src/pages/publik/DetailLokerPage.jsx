@@ -228,7 +228,7 @@ export function DetailLokerPage({ slug }) {
   const memuatDaftar = !siap;
 
   useEffect(() => {
-    if (job) document.title = `${t(`${job.posisi} di ${job.perusahaan}`, `${job.posisi} at ${job.perusahaan}`)} · Jobly`;
+    if (job) document.title = `${t(`${job.posisi} di ${job.perusahaan}`, `${job.posisi} at ${job.perusahaan}`)} · Workly`;
   }, [job]);
 
   useEffect(() => {
@@ -475,8 +475,8 @@ export function DetailLokerPage({ slug }) {
             <div className="pb-d-note">
               {job.tanggal ? t(`Diposting ${waktuRelatif(job.tanggal).toLowerCase()} · `, `Posted ${waktuRelatif(job.tanggal).toLowerCase()} · `) : ""}
               {t(
-                `Tombol lamar akan membuka ${sumber.langsung ? "situs karier resmi perusahaan" : sumber.nama}. Jobly tidak memungut biaya apa pun.`,
-                `The apply button opens ${sumber.langsung ? "the company's official career site" : sumber.nama}. Jobly never charges you anything.`,
+                `Tombol lamar akan membuka ${sumber.langsung ? "situs karier resmi perusahaan" : sumber.nama}. Workly tidak memungut biaya apa pun.`,
+                `The apply button opens ${sumber.langsung ? "the company's official career site" : sumber.nama}. Workly never charges you anything.`,
               )}
             </div>
 

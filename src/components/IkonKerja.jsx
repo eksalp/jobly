@@ -1,7 +1,7 @@
 import React from "react";
 
 /**
- * Ikon koper kerja Jobly (pengganti ikon Briefcase bawaan lucide).
+ * Ikon koper kerja Workly (pengganti ikon Briefcase bawaan lucide).
  * Props mengikuti ikon lucide: size, color, strokeWidth, className, style.
  */
 export function IkonKerja({ size = 24, color = "currentColor", strokeWidth = 2, className, style, ...sisa }) {

@@ -34,7 +34,7 @@ export function GridBidang({ jumlah = {}, loading, batas }) {
 export function BidangPage() {
   const { statistik, loading } = useJobs();
   useEffect(() => {
-    document.title = t("Loker per bidang · Jobly", "Jobs by field · Jobly");
+    document.title = t("Loker per bidang · Workly", "Jobs by field · Workly");
   }, []);
   return (
     <PublicLayout aktif="/bidang">
@@ -43,8 +43,8 @@ export function BidangPage() {
         <h1>{t("Mau kerja di bidang apa?", "Which field do you want to work in?")}</h1>
         <p>
           {t(
-            "Pilih bidangmu, Jobly tampilkan semua lowongannya dari situs karier perusahaan, BUMN, LinkedIn, Indeed, dan lainnya.",
-            "Pick your field and Jobly shows every opening from company career sites, state-owned enterprises, LinkedIn, Indeed, and more.",
+            "Pilih bidangmu, Workly tampilkan semua lowongannya dari situs karier perusahaan, BUMN, LinkedIn, Indeed, dan lainnya.",
+            "Pick your field and Workly shows every opening from company career sites, state-owned enterprises, LinkedIn, Indeed, and more.",
           )}
         </p>
       </div>

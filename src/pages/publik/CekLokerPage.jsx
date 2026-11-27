@@ -81,7 +81,7 @@ export function CekLokerPage() {
   const [diperiksa, setDiperiksa] = useState("");
 
   useEffect(() => {
-    document.title = t("Cek loker palsu · Jobly", "Fake job checker · Jobly");
+    document.title = t("Cek loker palsu · Workly", "Fake job checker · Workly");
   }, []);
 
   // Periksa otomatis sebentar setelah berhenti mengetik
@@ -108,8 +108,8 @@ export function CekLokerPage() {
         <h1>{t("Cek loker palsu sebelum kamu melamar", "Check for fake jobs before you apply")}</h1>
         <p>
           {t(
-            "Dapat info loker dari WhatsApp, Instagram, Telegram, atau email? Tempel teksnya di sini. Jobly akan mencocokkannya dengan 16 modus penipuan loker yang paling sering beredar, mulai dari minta biaya, travel agent untuk interview, tugas like berbayar, sampai “jalur orang dalam”. Teksnya diperiksa di HP atau laptopmu sendiri dan tidak dikirim ke mana pun.",
-            "Got a job post from WhatsApp, Instagram, Telegram, or email? Paste it here. Jobly checks it against 16 of the most common job scams in Indonesia, from upfront fees and interview travel agents to paid like-tasks and “insider routes”. The check runs on your own phone or laptop and the text is never sent anywhere. Works best on Indonesian-language posts.",
+            "Dapat info loker dari WhatsApp, Instagram, Telegram, atau email? Tempel teksnya di sini. Workly akan mencocokkannya dengan 16 modus penipuan loker yang paling sering beredar, mulai dari minta biaya, travel agent untuk interview, tugas like berbayar, sampai “jalur orang dalam”. Teksnya diperiksa di HP atau laptopmu sendiri dan tidak dikirim ke mana pun.",
+            "Got a job post from WhatsApp, Instagram, Telegram, or email? Paste it here. Workly checks it against 16 of the most common job scams in Indonesia, from upfront fees and interview travel agents to paid like-tasks and “insider routes”. The check runs on your own phone or laptop and the text is never sent anywhere. Works best on Indonesian-language posts.",
           )}
         </p>
       </div>
@@ -183,8 +183,8 @@ export function CekLokerPage() {
             <h2 className="pb-h2">{t("Lebih aman: cari dari sumber resmi", "Safer: search official sources")}</h2>
             <p className="pb-sub">
               {t(
-                "Setiap loker di Jobly menampilkan sumbernya dan diarahkan ke situs karier perusahaan atau portal tepercaya. Kamu tidak pernah membayar apa pun untuk melamar.",
-                "Every job on Jobly shows its source and links to the company's career site or a trusted portal. You never pay anything to apply.",
+                "Setiap loker di Workly menampilkan sumbernya dan diarahkan ke situs karier perusahaan atau portal tepercaya. Kamu tidak pernah membayar apa pun untuk melamar.",
+                "Every job on Workly shows its source and links to the company's career site or a trusted portal. You never pay anything to apply.",
               )}
             </p>
           </div>

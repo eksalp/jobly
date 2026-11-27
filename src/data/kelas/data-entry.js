@@ -133,7 +133,7 @@ export default {
           "Hanya berkomunikasi lewat Telegram dengan akun anonim",
           "Diminta data pribadi berlebihan seperti foto KTP sambil memegang KTP sebelum ada kontrak",
         ]),
-        KOTAK("awas", "Prinsip sederhana", "Pekerjaan sah membayarmu, bukan meminta uangmu. Jika ragu, cek nama perusahaan, cari ulasan, dan baca panduan kenali penipuan kerja online di Jobly."),
+        KOTAK("awas", "Prinsip sederhana", "Pekerjaan sah membayarmu, bukan meminta uangmu. Jika ragu, cek nama perusahaan, cari ulasan, dan baca panduan kenali penipuan kerja online di Workly."),
       ],
       kuis: [
         K("Tanda paling jelas lowongan palsu adalah …", "Diminta menyetor uang sebelum bekerja", ["Ada tes mengetik", "Ada kontrak tertulis", "Ada wawancara"], "Pemberi kerja sah tidak meminta uang dari pekerja."),

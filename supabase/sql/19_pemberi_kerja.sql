@@ -1,7 +1,7 @@
 -- =====================================================================
 --  19 · Pemberi kerja: akun perusahaan, kredit loker, loker prioritas
 -- =====================================================================
---  Jalankan sekali di SQL Editor project DB1 (project Jobly utama,
+--  Jalankan sekali di SQL Editor project DB1 (project Workly utama,
 --  tempat tabel jobs dan akun pengguna berada). Aman dijalankan ulang.
 --  Membutuhkan 12_admin_sertifikasi.sql (fungsi saya_admin) sudah dijalankan.
 --

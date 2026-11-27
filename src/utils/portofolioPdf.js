@@ -8,7 +8,7 @@
  * brief, peran, proses, hasil & dampak, galeri, hasil kerja lengkap,
  * revisi klien, pelajaran, dan daftar periksa.
  *
- * Setiap halaman diberi keterangan "Proyek latihan di Jobly" supaya
+ * Setiap halaman diberi keterangan "Proyek latihan di Workly" supaya
  * jelas bahwa ini studi kasus latihan, bukan pengalaman kerja dengan
  * klien sungguhan.
  */
@@ -48,7 +48,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [], bahasa = "id
   const tulisAman = F === "helvetica" ? (s) => aman(s).replace(/[^\x00-\x7F•]/g, "") : aman;
 
   const nama = profil.nama || L("Nama Lengkap", "Full Name");
-  doc.setProperties({ title: `${L("Portofolio", "Portfolio")} ${nama}`, creator: "Jobly", subject: L("Portofolio proyek latihan", "Practice project portfolio") });
+  doc.setProperties({ title: `${L("Portofolio", "Portfolio")} ${nama}`, creator: "Workly", subject: L("Portofolio proyek latihan", "Practice project portfolio") });
 
   let y = M;
   let halamanProyek = "";
@@ -67,7 +67,7 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [], bahasa = "id
       doc.setLineWidth(0.2);
       doc.line(M, 287, LEBAR - M, 287);
       huruf(7.5, false, ABU);
-      doc.text(tulisAman(`${nama}  ·  ${L("Studi kasus berbasis brief simulasi (Jobly)", "Case study based on a simulated brief (Jobly)")}`), M, 291.5);
+      doc.text(tulisAman(`${nama}  ·  ${L("Studi kasus berbasis brief simulasi (Workly)", "Case study based on a simulated brief (Workly)")}`), M, 291.5);
       doc.text(`${i} / ${n}`, LEBAR - M, 291.5, { align: "right" });
     }
   };
@@ -413,8 +413,8 @@ export async function buatPdfPortofolio({ profil = {}, proyek = [], bahasa = "id
   y += 7;
   paragraf(
     L(
-      "Portofolio ini berisi proyek latihan berbasis studi kasus yang saya kerjakan di Jobly. Brief, klien, dan data di dalamnya adalah simulasi yang disusun menyerupai pekerjaan nyata. Setiap proyek disajikan sebagai studi kasus: tantangan klien, peran dan proses saya, hasil kerja beserta buktinya, tanggapan atas revisi, dan pelajaran yang saya ambil.",
-      "This portfolio contains case-study practice projects I completed on Jobly. The briefs, clients, and data are simulations modelled on real work. Each project is presented as a case study: the client's challenge, my role and process, the work and its evidence, my response to a revision, and lessons learned.",
+      "Portofolio ini berisi proyek latihan berbasis studi kasus yang saya kerjakan di Workly. Brief, klien, dan data di dalamnya adalah simulasi yang disusun menyerupai pekerjaan nyata. Setiap proyek disajikan sebagai studi kasus: tantangan klien, peran dan proses saya, hasil kerja beserta buktinya, tanggapan atas revisi, dan pelajaran yang saya ambil.",
+      "This portfolio contains case-study practice projects I completed on Workly. The briefs, clients, and data are simulations modelled on real work. Each project is presented as a case study: the client's challenge, my role and process, the work and its evidence, my response to a revision, and lessons learned.",
     ),
     { ukuran: 9.5, warna: ABU, jarak: 4.7 },
   );

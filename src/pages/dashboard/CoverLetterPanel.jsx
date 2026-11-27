@@ -648,7 +648,7 @@ export function CoverLetterPanel({ setActive }) {
           <Isian label="Perusahaan" value={d.perusahaan} onChange={ubah("perusahaan")} placeholder="PT Maju Bersama" />
           <Isian label="Nama penerima" info="opsional" value={d.penerimaNama} onChange={ubah("penerimaNama")} placeholder={en ? "Ms. Rina Wijaya" : "Rina Wijaya"} />
           <Isian label="Jabatan penerima" info="opsional" value={d.penerimaJabatan} onChange={ubah("penerimaJabatan")} placeholder="HR Manager" />
-          <Isian label="Tahu lowongan dari" info="opsional" value={d.sumber} onChange={ubah("sumber")} placeholder="Jobly / LinkedIn / situs karier" />
+          <Isian label="Tahu lowongan dari" info="opsional" value={d.sumber} onChange={ubah("sumber")} placeholder="Workly / LinkedIn / situs karier" />
           <Isian label="Tanggal surat" type="date" value={d.tanggal} onChange={ubah("tanggal")} />
         </div>
         <Isian label="Alamat perusahaan" info="opsional" value={d.alamat} onChange={ubah("alamat")} placeholder={"Jl. Sudirman No. 1\nJakarta Selatan"} multi rows={2} />

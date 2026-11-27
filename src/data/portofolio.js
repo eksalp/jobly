@@ -3,7 +3,7 @@
  *
  * Setiap tugas di latihan praktik (40 profesi × 2 tugas) bisa dipilih
  * sebagai proyek portofolio. Pengguna mengerjakannya dengan lebih lengkap,
- * menanggapi revisi dari klien, lalu Jobly menyusun hasilnya menjadi PDF
+ * menanggapi revisi dari klien, lalu Workly menyusun hasilnya menjadi PDF
  * (dan Excel bila ada tabel). Setiap akun maksimal memilih 2 proyek.
  */
 import { PROFESI, KATEGORI_PANDUAN } from "./panduan.js";

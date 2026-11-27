@@ -217,10 +217,10 @@ function JobFinderApp() {
 
   // Judul tab untuk halaman non-publik (halaman publik mengatur sendiri)
   React.useEffect(() => {
-    if (page === "beranda") document.title = t("Jobly · Lowongan kerja dari sumber resmi", "Jobly · Jobs from official sources");
+    if (page === "beranda") document.title = t("Workly · Lowongan kerja dari sumber resmi", "Workly · Jobs from official sources");
     else if (page === "dashboard")
-      document.title = `${PANEL_META[rute.dashActive]?.title || "Dashboard"} · Jobly`;
-    else if (HALAMAN_AUTH.includes(page)) document.title = t("Masuk · Jobly", "Sign in · Jobly");
+      document.title = `${PANEL_META[rute.dashActive]?.title || "Dashboard"} · Workly`;
+    else if (HALAMAN_AUTH.includes(page)) document.title = t("Masuk · Workly", "Sign in · Workly");
   }, [page, rute.dashActive]);
 
   const publik = HALAMAN_PUBLIK.includes(page);

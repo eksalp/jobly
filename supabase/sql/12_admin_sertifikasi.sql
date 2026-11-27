@@ -4,7 +4,7 @@
 --  Jalankan sekali di Supabase → SQL Editor (aman dijalankan ulang).
 --
 --  PENTING: ganti EMAIL_LOGIN_JOBLY_KAMU di baris paling bawah dengan
---  email yang kamu pakai untuk MASUK ke Jobly. Admin lain bisa
+--  email yang kamu pakai untuk MASUK ke Workly. Admin lain bisa
 --  ditambahkan dengan baris insert yang sama.
 --
 --  Admin bisa melihat semua item (termasuk arsip dan yang sudah tutup),
@@ -55,7 +55,7 @@ create policy "sertifikasi admin hapus" on public.sertifikasi
   for delete to authenticated
   using (public.saya_admin());
 
--- Ganti dengan email login Jobly-mu:
+-- Ganti dengan email login Workly-mu:
 insert into public.admin_jobly (email) values ('EMAIL_LOGIN_JOBLY_KAMU')
 on conflict (email) do nothing;
 

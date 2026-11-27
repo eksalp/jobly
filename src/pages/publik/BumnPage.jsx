@@ -23,7 +23,7 @@ export function BumnPage() {
   usePintasanCari("cari-bumn");
 
   useEffect(() => {
-    document.title = t("Loker BUMN · Jobly", "State-owned enterprise jobs · Jobly");
+    document.title = t("Loker BUMN · Workly", "State-owned enterprise jobs · Workly");
   }, []);
 
   const kata = useTunda(q, 350);

@@ -1,28 +1,22 @@
 import React, { useId } from "react";
 
 /**
- * Tanda Jobly: huruf "j" yang nyeleneh, dari satu pita biru tebal tanpa latar.
- * Titiknya berdiri sendiri di kanan atas. Batangnya turun, menyelinap ke
- * bawah pita (gradasi memudar menandai bagian yang "di belakang"),
- * berputar jadi simpul, lalu berakhir dengan ujung bulat.
+ * Tanda Workly: huruf "w" dari satu pita biru tebal tanpa latar.
+ * Kaki kiri turun lurus, lalu di tengah pita memelintir (gradasi memudar
+ * menandai sisi belakang pita) sebelum naik dan turun lagi ke kaki kanan.
  *
- * Disusun berlapis supaya tidak ada sambungan yang terlihat:
+ * Disusun berlapis:
  *   1. seluruh pita sebagai satu garis utuh (ujung bulat)
- *   2. gradasi di bagian batang yang lewat di bawah simpul
- *   3. lengkung atas simpul digambar ulang di paling atas
+ *   2. gradasi di bagian tengah yang memelintir
  *
- * Animasi (src/styles/merek.css), satu siklus 6 detik:
- *   pita ditulis cepat seperti goresan pena → titik meloncat keluar dari
- *   ujung pita dan mendarat di atas → kilau menyapu pita → titik meloncat
- *   kecil → pita ditarik kembali, titik masuk ke batang → ulang.
- * Prop `diam` mematikan animasi.
+ * Animasi (src/styles/merek.css): pita ditulis seperti goresan pena,
+ * kilau menyapu pita, lalu pita ditarik kembali. Prop `diam` mematikan animasi.
  */
 const BIRU = "#1660F5";
 const PUDAR = "#B7CDFC";
 export const PITA_UTUH =
-  "M44 19C43 26 41.5 33 38.5 38.5C33.5 45 26 48 19 46.5C9 44 7 34 16 30.5C24 27.5 38 28.5 45 36C50 42 50.5 50 46 56";
-export const PITA_BAWAH = "M43.6 22C43 26 41.5 33 38.5 38.5C33.5 45 26 48 19 46.5";
-export const PITA_ATAS = "M16 30.5C24 27.5 38 28.5 45 36C50 42 50.5 50 46 56";
+  "M7 16C9 30 12 40 16 46C19 50.5 24 49 26 44C29 36 31.5 27 35 27C38.5 27 39 36 41 44C42.5 50 47.5 50.5 50 45C53 38 54 28 53 20";
+export const PITA_PELINTIR = "M26 44C29 36 31.5 27 35 27";
 export const KOTAK_PANDANG = "-1 1.5 60 60";
 
 export function TandaJobly({ ukuran = 32, diam = false }) {
@@ -31,7 +25,7 @@ export function TandaJobly({ ukuran = 32, diam = false }) {
     <span className={`tj ${diam ? "tj-diam" : ""}`} style={{ width: ukuran, height: ukuran }} aria-hidden="true">
       <svg width={ukuran} height={ukuran} viewBox={KOTAK_PANDANG}>
         <defs>
-          <linearGradient id={`tjg${id}`} gradientUnits="userSpaceOnUse" x1="44" y1="22" x2="22" y2="47">
+          <linearGradient id={`tjg${id}`} gradientUnits="userSpaceOnUse" x1="22" y1="46" x2="36" y2="20">
             <stop offset="0" stopColor={BIRU} />
             <stop offset=".45" stopColor={PUDAR} />
             <stop offset="1" stopColor={BIRU} />
@@ -51,12 +45,10 @@ export function TandaJobly({ ukuran = 32, diam = false }) {
         </defs>
         <g className="tj-pita" fill="none" strokeWidth="8.4" mask={`url(#tjm${id})`}>
           <path d={PITA_UTUH} stroke={BIRU} strokeLinecap="round" strokeLinejoin="round" />
-          <path d={PITA_BAWAH} stroke={`url(#tjg${id})`} />
-          <path className="tj-atas" d={PITA_ATAS} stroke={BIRU} strokeLinecap="round" />
+          <path d={PITA_PELINTIR} stroke={`url(#tjg${id})`} />
           {/* kilau: garis tipis terang yang menyapu sepanjang pita */}
           <path className="tj-kilau" d={PITA_UTUH} pathLength="100" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
         </g>
-        <circle className="tj-titik" cx="45.5" cy="8.5" r="5.6" fill={BIRU} />
       </svg>
     </span>
   );

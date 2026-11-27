@@ -36,7 +36,7 @@ export function KalkulatorPage() {
   const [kursManual, setKursManual] = useState("");
 
   useEffect(() => {
-    document.title = t("Kalkulator gaji dolar ke rupiah · Jobly", "Dollar to rupiah salary calculator · Jobly");
+    document.title = t("Kalkulator gaji dolar ke rupiah · Workly", "Dollar to rupiah salary calculator · Workly");
   }, []);
 
   const kursLive = idrPer(kode, kurs.rates);

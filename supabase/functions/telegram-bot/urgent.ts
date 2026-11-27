@@ -3,7 +3,7 @@
 //
 //   /urgent                      daftar loker yang sedang urgent
 //   /urgent <link atau nomor>    tandai urgent 14 hari (angka di akhir = jumlah hari,
-//                                0 = tanpa batas), mis. /urgent jobly.my.id/loker/1758392041 30
+//                                0 = tanpa batas), mis. /urgent workly.id/loker/1758392041 30
 //   /urgent <kata kunci>         cari loker, lalu pilih lewat tombol "Tandai"
 //   /lepasurgent <link/nomor>    hapus tanda urgent
 //

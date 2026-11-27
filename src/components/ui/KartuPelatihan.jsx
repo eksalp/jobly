@@ -161,7 +161,7 @@ export function KartuPelatihan({ skor }) {
       >
         <Info size={11} style={{ flexShrink: 0, marginTop: 2 }} />
         <span>
-          {t("Layanan ini disediakan oleh mitra Jobly. Jobly bisa mendapat komisi kalau kamu mendaftar lewat tautan di atas, tanpa biaya tambahan untukmu.", "This service is provided by a Jobly partner. Jobly may earn a commission if you sign up through the link above, at no extra cost to you.")}
+          {t("Layanan ini disediakan oleh mitra Workly. Workly bisa mendapat komisi kalau kamu mendaftar lewat tautan di atas, tanpa biaya tambahan untukmu.", "This service is provided by a Workly partner. Workly may earn a commission if you sign up through the link above, at no extra cost to you.")}
         </span>
       </div>
     </Glass>

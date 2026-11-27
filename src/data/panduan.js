@@ -281,7 +281,7 @@ const PROFESI_ID = [
       { judul: "Kuasai spreadsheet", isi: "Belajar filter, sort, VLOOKUP atau XLOOKUP, hapus duplikat, dan pivot table. Ini yang membuatmu lebih cepat dan lebih dibayar." },
       { judul: "Ukur kecepatan mengetikmu", isi: "Latih di situs uji mengetik sampai stabil di atas 40 kata per menit dengan akurasi tinggi. Cantumkan angkanya di CV." },
       { judul: "Buat contoh pekerjaan", isi: "Ambil data publik yang berantakan, rapikan, lalu simpan versi sebelum dan sesudah. Bagikan sebagai portofolio." },
-      { judul: "Cari di tempat yang jelas", isi: "Utamakan lowongan dari perusahaan dengan nama, situs, dan alamat email resmi. Cek dulu di Cek Loker Jobly sebelum mengirim data diri." },
+      { judul: "Cari di tempat yang jelas", isi: "Utamakan lowongan dari perusahaan dengan nama, situs, dan alamat email resmi. Cek dulu di Cek Loker Workly sebelum mengirim data diri." },
       { judul: "Naik kelas", isi: "Setelah terbiasa, pelajari analisis data dasar atau tugas admin yang lebih luas. Data entry sebaiknya jadi langkah awal, bukan tujuan akhir." },
     ],
     platform: ["Jobstreet dan Glints (filter remote)", "LinkedIn", "Upwork", "Situs karier perusahaan"],
@@ -511,7 +511,7 @@ const INSIGHT_ID = [
       {
         judul: "Cari di beberapa tempat sekaligus",
         poin: [
-          "Lowongan remote di Jobly, Jobstreet, Glints, dan LinkedIn",
+          "Lowongan remote di Workly, Jobstreet, Glints, dan LinkedIn",
           "Platform freelance seperti Upwork, Fiverr, Sribulancer, dan Projects.co.id",
           "Jaringan sendiri: teman, mantan rekan kerja, komunitas",
           "Usaha di sekitarmu yang terlihat butuh bantuan",
@@ -533,7 +533,7 @@ const INSIGHT_ID = [
       },
       {
         judul: "Jangan berhenti di satu lamaran",
-        isi: "Wajar kalau dari 20 lamaran hanya 1 sampai 2 yang dibalas di awal. Catat lamaranmu, lihat mana yang dibalas, lalu perbaiki pola lamarannya. Fitur Lamaran Saya dan Rencana Lamar di Jobly bisa membantu mencatatnya.",
+        isi: "Wajar kalau dari 20 lamaran hanya 1 sampai 2 yang dibalas di awal. Catat lamaranmu, lihat mana yang dibalas, lalu perbaiki pola lamarannya. Fitur Lamaran Saya dan Rencana Lamar di Workly bisa membantu mencatatnya.",
       },
       {
         judul: "Setelah dapat klien pertama",
@@ -563,7 +563,7 @@ const INSIGHT_ID = [
       },
       {
         judul: "Hitung uang yang benar-benar kamu terima",
-        isi: "Selisih kurs dan biaya bisa memakan beberapa persen dari bayaranmu. Sebelum menyetujui tarif, hitung nilai bersihnya dalam rupiah dengan Kalkulator Gaji Jobly.",
+        isi: "Selisih kurs dan biaya bisa memakan beberapa persen dari bayaranmu. Sebelum menyetujui tarif, hitung nilai bersihnya dalam rupiah dengan Kalkulator Gaji Workly.",
         tautan: { label: "Buka Kalkulator Gaji", path: "/kalkulator-gaji" },
       },
       {
@@ -644,7 +644,7 @@ const INSIGHT_ID = [
           "Cari nama perusahaan dan nomor perekrut di internet",
           "Cocokkan lowongan dengan situs karier resmi perusahaan",
           "Pastikan email perekrut memakai domain perusahaan, bukan Gmail",
-          "Tempel teks lowongan ke Cek Loker Jobly untuk melihat tanda bahayanya",
+          "Tempel teks lowongan ke Cek Loker Workly untuk melihat tanda bahayanya",
         ],
         tautan: { label: "Buka Cek Loker", path: "/cek-loker" },
       },

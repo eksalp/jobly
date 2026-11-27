@@ -163,7 +163,7 @@ export default {
           "Bagaimana kamu menjaga kualitas saat antrean chat menumpuk?",
         ]),
         KOTAK("tips", "Jawab dengan STAR", "Situation, Task, Action, Result. Contoh: 'Saat jadi kasir (S), ada pembeli marah karena struk salah (T). Saya minta maaf, mengecek ulang, dan memperbaiki transaksi (A). Ia tenang dan kembali belanja minggu berikutnya (R).'"),
-        KOTAK("tips", "Langkah berikutnya", "Coba latihan praktik Customer Support di Jobly untuk merasakan tiket sungguhan dan penilaian seperti QA."),
+        KOTAK("tips", "Langkah berikutnya", "Coba latihan praktik Customer Support di Workly untuk merasakan tiket sungguhan dan penilaian seperti QA."),
       ],
       kuis: [
         K("Kerangka STAR terdiri dari …", "Situation, Task, Action, Result", ["Start, Talk, Act, Rest", "Skill, Team, Attitude, Role", "Simple, True, Accurate, Real"], "STAR membantu menjawab pertanyaan perilaku secara terstruktur."),

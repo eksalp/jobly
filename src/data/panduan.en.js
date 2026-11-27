@@ -202,7 +202,7 @@ export const PROFESI_EN = {
       { judul: "Master spreadsheets", isi: "Learn filter, sort, VLOOKUP or XLOOKUP, removing duplicates, and pivot tables. That's what makes you faster and better paid." },
       { judul: "Measure your typing speed", isi: "Practise on a typing test site until you're steadily above 40 words per minute with high accuracy. Put the number on your CV." },
       { judul: "Create sample work", isi: "Take messy public data, clean it, and keep the before and after versions. Share them as your portfolio." },
-      { judul: "Search in trustworthy places", isi: "Prioritise listings from companies with a real name, website, and official email. Check them first in Jobly's Fake Job Checker before sending personal details." },
+      { judul: "Search in trustworthy places", isi: "Prioritise listings from companies with a real name, website, and official email. Check them first in Workly's Fake Job Checker before sending personal details." },
       { judul: "Level up", isi: "Once you're comfortable, learn basic data analysis or broader admin tasks. Data entry should be a first step, not the end goal." },
     ],
     platform: ["Jobstreet and Glints (remote filter)", "LinkedIn", "Upwork", "Company career sites"],
@@ -389,7 +389,7 @@ export const INSIGHT_EN = {
       {
         judul: "Search in several places at once",
         poin: [
-          "Remote jobs on Jobly, Jobstreet, Glints, and LinkedIn",
+          "Remote jobs on Workly, Jobstreet, Glints, and LinkedIn",
           "Freelance platforms such as Upwork, Fiverr, Sribulancer, and Projects.co.id",
           "Your own network: friends, former colleagues, communities",
           "Businesses around you that clearly need help",
@@ -411,7 +411,7 @@ export const INSIGHT_EN = {
       },
       {
         judul: "Don't stop at one application",
-        isi: "It's normal for only 1 or 2 out of 20 applications to get a reply at first. Track your applications, see which ones get answers, and improve your approach. Jobly's My Applications and Application Plan features can help you keep track.",
+        isi: "It's normal for only 1 or 2 out of 20 applications to get a reply at first. Track your applications, see which ones get answers, and improve your approach. Workly's My Applications and Application Plan features can help you keep track.",
       },
       {
         judul: "After your first client",
@@ -438,7 +438,7 @@ export const INSIGHT_EN = {
       },
       {
         judul: "Calculate what you actually receive",
-        isi: "Exchange rates and fees can eat several percent of your pay. Before agreeing to a rate, work out the net amount in rupiah with Jobly's Salary Calculator.",
+        isi: "Exchange rates and fees can eat several percent of your pay. Before agreeing to a rate, work out the net amount in rupiah with Workly's Salary Calculator.",
         tautanLabel: "Open the Salary Calculator",
       },
       {
@@ -508,7 +508,7 @@ export const INSIGHT_EN = {
           "Search the company name and recruiter's number online",
           "Match the listing with the company's official career site",
           "Make sure the recruiter's email uses the company domain, not Gmail",
-          "Paste the listing into Jobly's Fake Job Checker to see its red flags",
+          "Paste the listing into Workly's Fake Job Checker to see its red flags",
         ],
         tautanLabel: "Open the Fake Job Checker",
       },

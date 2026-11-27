@@ -252,13 +252,13 @@ function unduhExcel(proyek, data, profil) {
       [t("Bidang", "Field"), proyek.namaProfesi],
       [t("Dikerjakan oleh", "Done by"), profil.nama || ""],
       [t("Tanggal", "Date"), tanggal],
-      [t("Keterangan", "Note"), t("Proyek latihan berbasis studi kasus di Jobly (jobly.my.id). Klien dan data adalah simulasi.", "Case-study practice project on Jobly (jobly.my.id). The client and data are simulated.")],
+      [t("Keterangan", "Note"), t("Proyek latihan berbasis studi kasus di Workly (workly.id). Klien dan data adalah simulasi.", "Case-study practice project on Workly (workly.id). The client and data are simulated.")],
       [""],
       [t("Brief klien", "Client brief"), proyek.brief],
     ],
     lebar: [20, 100],
   });
-  const blob = buatXlsx(lembar, { judul: proyek.judul, pembuat: profil.nama || "Jobly" });
+  const blob = buatXlsx(lembar, { judul: proyek.judul, pembuat: profil.nama || "Workly" });
   unduhBlob(blob, `${namaBerkas(proyek.profesi, proyek.judul) || "proyek"}.xlsx`);
 }
 

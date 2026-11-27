@@ -10,7 +10,7 @@ const idGrup = (g) => g.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 export function FaqPage() {
   useEffect(() => {
-    document.title = "FAQ · Jobly";
+    document.title = "FAQ · Workly";
   }, []);
 
   const gulir = (id) => (e) => {

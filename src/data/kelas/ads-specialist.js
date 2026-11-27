@@ -163,7 +163,7 @@ export default {
           ["Buat studi kasus", "Tujuan, anggaran, apa yang diuji, hasil, dan pelajaran. Angka nyata walau kecil lebih meyakinkan."],
           ["Tawarkan audit gratis singkat", "Lihat iklan UMKM di Meta Ad Library dan beri 3 saran perbaikan."],
         ]),
-        KOTAK("tips", "Langkah berikutnya", "Latihan praktik Ads Specialist di Jobly berisi data kampanye untuk dianalisis seperti di pekerjaan sungguhan."),
+        KOTAK("tips", "Langkah berikutnya", "Latihan praktik Ads Specialist di Workly berisi data kampanye untuk dianalisis seperti di pekerjaan sungguhan."),
       ],
       kuis: [
         K("Iklan mana yang berisiko ditolak platform?", "'Kamu gendut? Turun 10 kg dalam seminggu!'", ["'Sepatu lari ringan, ukuran 38 sampai 45'", "'Kelas Excel online, mulai Senin'", "'Gratis ongkir se-Jabodetabek'"], "Menyinggung kondisi pribadi dan klaim berlebihan melanggar kebijakan."),

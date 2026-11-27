@@ -25,7 +25,7 @@ export function IkonSosial() {
   const daftar = sosialAktif();
   if (!daftar.length) return null;
   return (
-    <div className="pb-sosial" aria-label={t("Media sosial Jobly", "Jobly on social media")}>
+    <div className="pb-sosial" aria-label={t("Media sosial Workly", "Workly on social media")}>
       {daftar.map(({ jenis, label, url, handle }) => {
         const Ikon = IKON_SOSIAL[jenis] || AtSign;
         return (
@@ -70,8 +70,8 @@ export function BagianKomunitas() {
             <h2 className="pb-h2">{t("Cari kerja tidak harus sendirian.", "You don't have to job hunt alone.")}</h2>
             <p className="pb-sub">
               {t(
-                "Gabung grup Jobly. Dapat info loker pilihan, rekrutmen yang lagi buka, dan tips melamar, langsung di HP-mu.",
-                "Join the Jobly group for handpicked jobs, open recruitment drives, and application tips, right on your phone.",
+                "Gabung grup Workly. Dapat info loker pilihan, rekrutmen yang lagi buka, dan tips melamar, langsung di HP-mu.",
+                "Join the Workly group for handpicked jobs, open recruitment drives, and application tips, right on your phone.",
               )}
             </p>
             {sosial.length > 0 && (

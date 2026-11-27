@@ -186,7 +186,7 @@ const GAYA = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 /** Nama lembar Excel: maks. 31 karakter, tanpa : \ / ? * [ ] */
 const namaLembar = (s, i) => (String(s || `Sheet${i + 1}`).replace(/[:\\/?*[\]]/g, " ").trim().slice(0, 31) || `Sheet${i + 1}`);
 
-export function buatXlsx(daftarLembar, { judul = "Jobly", pembuat = "Jobly" } = {}) {
+export function buatXlsx(daftarLembar, { judul = "Workly", pembuat = "Workly" } = {}) {
   const lembarAman = daftarLembar.map((l, i) => ({ ...l, nama: namaLembar(l.nama, i) }));
   const sekarang = new Date().toISOString().replace(/\.\d+Z$/, "Z");
 

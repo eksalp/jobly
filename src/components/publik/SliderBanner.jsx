@@ -107,7 +107,7 @@ export function SliderBanner({ jumlahFreelance = 0 }) {
     <section
       className="pb-slider"
       aria-roledescription="carousel"
-      aria-label={t("Sorotan Jobly", "Jobly highlights")}
+      aria-label={t("Sorotan Workly", "Workly highlights")}
       onMouseEnter={() => setJeda(true)}
       onMouseLeave={() => setJeda(false)}
       onFocus={() => setJeda(true)}

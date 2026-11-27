@@ -95,7 +95,7 @@ export function KelolaGambar({ jenis, url, onPasang, onHapus }) {
             : t(`Otomatis dipotong 4:1 di bagian tengah dan dikecilkan ke ${aturan.label}, maksimal ${aturan.maksKB} KB.`, `Automatically cropped 4:1 from the centre and resized to ${aturan.label}, max ${aturan.maksKB} KB.`)}
         </li>
         <li>{t("Setiap akun hanya menyimpan satu gambar. Mengunggah lagi langsung menghapus dan mengganti gambar lama.", "Each account keeps only one image. Uploading again deletes and replaces the old one.")}</li>
-        <li>{t("Gambar ini untuk pratinjau di Jobly. Untuk LinkedIn, unggah berkas aslimu langsung di LinkedIn agar tetap tajam.", "This image is for the Jobly preview. On LinkedIn, upload your original file so it stays sharp.")}</li>
+        <li>{t("Gambar ini untuk pratinjau di Workly. Untuk LinkedIn, unggah berkas aslimu langsung di LinkedIn agar tetap tajam.", "This image is for the Workly preview. On LinkedIn, upload your original file so it stays sharp.")}</li>
       </ul>
     </div>
   );

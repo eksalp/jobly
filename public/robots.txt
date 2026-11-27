@@ -1,4 +1,4 @@
-# Jobly — aturan untuk robot.
+# Workly — aturan untuk robot.
 # Halaman publik boleh diindeks mesin pencari. API data dan dasbor tidak.
 User-agent: *
 Disallow: /api/

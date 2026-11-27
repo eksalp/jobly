@@ -85,7 +85,7 @@ export function PetaGajiPage() {
   usePintasanCari("cari-gaji");
 
   useEffect(() => {
-    document.title = t("Peta gaji · Jobly", "Salary map · Jobly");
+    document.title = t("Peta gaji · Workly", "Salary map · Workly");
   }, []);
 
   useEffect(() => {
@@ -109,8 +109,8 @@ export function PetaGajiPage() {
         <h1>{t("Berapa gaji yang wajar untuk posisimu?", "What's a fair salary for your role?")}</h1>
         <p>
           {t(
-            "Angkanya diambil langsung dari loker di Jobly yang mencantumkan gaji, bukan dari survei atau perkiraan. Gaji dalam mata uang asing sudah diubah ke rupiah dengan kurs hari ini.",
-            "The numbers come straight from Jobly listings that show a salary, not from surveys or estimates. Foreign-currency pay is converted to rupiah at today's rate.",
+            "Angkanya diambil langsung dari loker di Workly yang mencantumkan gaji, bukan dari survei atau perkiraan. Gaji dalam mata uang asing sudah diubah ke rupiah dengan kurs hari ini.",
+            "The numbers come straight from Workly listings that show a salary, not from surveys or estimates. Foreign-currency pay is converted to rupiah at today's rate.",
           )}
         </p>
       </div>

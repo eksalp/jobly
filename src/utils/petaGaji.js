@@ -1,5 +1,5 @@
 /**
- * Peta Gaji — kisaran gaji dihitung dari loker Jobly sendiri.
+ * Peta Gaji — kisaran gaji dihitung dari loker Workly sendiri.
  *
  * Hanya loker yang mencantumkan angka gaji yang dipakai. Semua nominal
  * disetarakan ke rupiah per bulan (kurs harian untuk mata uang asing),

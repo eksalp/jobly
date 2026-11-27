@@ -244,7 +244,7 @@ export const PROFESI_TAMBAHAN_EN = {
       { judul: "Get used to teamwork", isi: "Learn pull requests, code reviews, and writing documentation. Remote companies rely heavily on these habits." },
       { judul: "Apply to remote companies", isi: "Besides freelancing, look for contract or full-time roles at overseas companies that accept applicants from Indonesia." },
     ],
-    platform: ["LinkedIn", "Upwork", "Toptal", "Tech company career sites", "Jobly (remote filter)"],
+    platform: ["LinkedIn", "Upwork", "Toptal", "Tech company career sites", "Workly (remote filter)"],
     waspada: ["Coding tests that turn out to be full features for a client's product without pay"],
   },
   "bot-otomasi": {
@@ -396,7 +396,7 @@ export const PROFESI_TAMBAHAN_EN = {
       { judul: "Build dashboards from public data", isi: "For example, sample sales data or BPS statistics. Publish them as your portfolio." },
       { judul: "Start from business questions", isi: "A good dashboard answers the client's questions, not just displays all the data." },
     ],
-    platform: ["Upwork", "LinkedIn", "Fiverr", "Jobly (remote filter)"],
+    platform: ["Upwork", "LinkedIn", "Fiverr", "Workly (remote filter)"],
     waspada: ["Clients sharing sensitive customer data without a confidentiality agreement"],
   },
   "analis-statistik": {
@@ -548,7 +548,7 @@ export const PROFESI_TAMBAHAN_EN = {
       { judul: "Practise summarising", isi: "Executives value a one-paragraph summary of a long document." },
       { judul: "Show initiative", isi: "Assistants who anticipate needs before being asked are the most sought after and kept the longest." },
     ],
-    platform: ["LinkedIn", "Upwork", "Virtual assistant agencies", "Jobly (remote filter)"],
+    platform: ["LinkedIn", "Upwork", "Virtual assistant agencies", "Workly (remote filter)"],
     waspada: ["Being asked to transfer company money on email instructions without verification. This is a common scam."],
   },
   "career-coach": {

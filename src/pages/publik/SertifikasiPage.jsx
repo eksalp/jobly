@@ -61,7 +61,7 @@ export function SertifikasiPage() {
   const [bidang, setBidang] = useState(awal.get("bidang") || "");
 
   useEffect(() => {
-    document.title = t("Sertifikasi & pelatihan · Jobly", "Certifications & training · Jobly");
+    document.title = t("Sertifikasi & pelatihan · Workly", "Certifications & training · Workly");
     muatSertifikasi().then(({ data, galat: g }) => {
       setSemua(data);
       setGalat(g);

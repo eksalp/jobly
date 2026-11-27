@@ -236,7 +236,7 @@ export function cekLoker({ teks = "", judul = "", perusahaan = "", link = "", ga
       berat: 22,
       judul: t("Gaji terlalu tinggi untuk syarat yang sangat ringan", "Pay is too high for very light requirements"),
       detail:
-        t("Bayaran besar tanpa pengalaman atau hanya bermodal HP adalah umpan klasik. Bandingkan dengan Peta Gaji Jobly untuk posisi serupa.", "Big pay with no experience needed, or just a phone, is classic bait. Compare with Jobly's salary map for similar roles."),
+        t("Bayaran besar tanpa pengalaman atau hanya bermodal HP adalah umpan klasik. Bandingkan dengan Peta Gaji Workly untuk posisi serupa.", "Big pay with no experience needed, or just a phone, is classic bait. Compare with Workly's salary map for similar roles."),
       kutipan: null,
     });
   }

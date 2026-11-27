@@ -30,7 +30,7 @@ export function AuthWrap({ children }) {
           <a
             href="/"
             onClick={keHalaman("/")}
-            aria-label={t("Ke beranda Jobly", "Go to Jobly home")}
+            aria-label={t("Ke beranda Workly", "Go to Workly home")}
             style={{ textDecoration: "none" }}
           >
             <Logo size={32} tagline />
@@ -77,7 +77,7 @@ export function AuthWrap({ children }) {
           color: T.inkFaint,
         }}
       >
-        © {new Date().getFullYear()}{" "}{t("Jobly · Dibuat oleh Eksal Pujianto", "Jobly · Made by Eksal Pujianto")}
+        © {new Date().getFullYear()}{" "}{t("Workly · Dibuat oleh Eksal Pujianto", "Workly · Made by Eksal Pujianto")}
       </div>
     </div>
   );

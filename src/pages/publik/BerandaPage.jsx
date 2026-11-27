@@ -319,12 +319,12 @@ export function BerandaPage() {
         <div>
           <h1>
             {t("In this economy, cari kerja itu susah.", "In this economy, job hunting is hard.")}{" "}
-            <span>{t("Biarkan Jobly mencarikan ribuan loker untukmu.", "Let Jobly find thousands of jobs for you.")}</span>
+            <span>{t("Biarkan Workly mencarikan ribuan loker untukmu.", "Let Workly find thousands of jobs for you.")}</span>
           </h1>
           <p className="pb-lede">
             {t(
-              "Setiap hari Jobly mengumpulkan lowongan dari situs karier perusahaan, BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek gajinya, lalu lamar langsung ke sumbernya.",
-              "Every day Jobly collects openings from company career sites, state-owned enterprises, LinkedIn, and Indeed. Search in one place, check the pay, then apply directly at the source.",
+              "Setiap hari Workly mengumpulkan lowongan dari situs karier perusahaan, BUMN, LinkedIn, dan Indeed. Kamu cukup cari di satu tempat, cek gajinya, lalu lamar langsung ke sumbernya.",
+              "Every day Workly collects openings from company career sites, state-owned enterprises, LinkedIn, and Indeed. Search in one place, check the pay, then apply directly at the source.",
             )}
           </p>
 
@@ -369,7 +369,7 @@ export function BerandaPage() {
 
         <aside className="pb-today" aria-label={t("Ringkasan lowongan hari ini", "Today's job summary")}>
           <div className="pb-today-head">
-            {t("Hari ini di Jobly", "Today on Jobly")}
+            {t("Hari ini di Workly", "Today on Workly")}
             <time>{hariIni}</time>
           </div>
           <div className="pb-today-stats">
@@ -616,7 +616,7 @@ export function BerandaPage() {
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
-              <span className="pb-label">{t("Kenapa Jobly", "Why Jobly")}</span>
+              <span className="pb-label">{t("Kenapa Workly", "Why Workly")}</span>
               <h2>{t("Bukan sekadar daftar loker.", "More than a job list.")}</h2>
               <p>{t("Semua yang kamu butuhkan buat melamar ada di sini, dan sebagian besar gratis.", "Everything you need to apply is here, and most of it is free.")}</p>
             </div>
@@ -627,7 +627,7 @@ export function BerandaPage() {
               <div className="teks">
                 <span className="pb-tag baru">{t("Gratis · tanpa daftar", "Free · no sign-up")}</span>
                 <h3>{t("Cek loker palsu", "Fake job checker")}</h3>
-                <p>{t("Ragu sama loker dari WhatsApp atau Instagram? Tempel teksnya di sini. Jobly akan menandai ciri-ciri penipuan, misalnya minta biaya, pakai travel agent, atau tugas like berbayar.", "Unsure about a job post from WhatsApp or Instagram? Paste it here. Jobly flags common scam signs, like upfront fees, travel agents, or paid like-tasks.")}</p>
+                <p>{t("Ragu sama loker dari WhatsApp atau Instagram? Tempel teksnya di sini. Workly akan menandai ciri-ciri penipuan, misalnya minta biaya, pakai travel agent, atau tugas like berbayar.", "Unsure about a job post from WhatsApp or Instagram? Paste it here. Workly flags common scam signs, like upfront fees, travel agents, or paid like-tasks.")}</p>
                 <span className="go">{t("Coba cek sekarang", "Check one now")} <ArrowRight size={15} /></span>
               </div>
               <MiniCek />

@@ -168,7 +168,7 @@ export default {
           "OnlineJobs.ph dan Upwork untuk klien luar negeri",
           "LinkedIn: tulis profil sebagai VA dengan bidang tertentu",
           "Grup Facebook pemilik toko online dan pelatih online",
-          "Lowongan remote di Jobly dengan kata kunci 'virtual assistant' atau 'admin online'",
+          "Lowongan remote di Workly dengan kata kunci 'virtual assistant' atau 'admin online'",
         ]),
         KOTAK("awas", "Ciri lowongan VA palsu", "Diminta membayar biaya pendaftaran, diminta 'like dan subscribe' berbayar, atau diminta memakai rekeningmu untuk menerima uang orang lain. Tinggalkan segera."),
       ],

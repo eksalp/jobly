@@ -1,5 +1,5 @@
 -- =====================================================================
--- Jobly — catatan pemakaian token AI per sesi (Simulasi interview)
+-- Workly — catatan pemakaian token AI per sesi (Simulasi interview)
 -- Jalankan sekali di project UTAMA (db1, yang dipakai login & pembayaran).
 -- Diisi oleh edge function simulasi-interview memakai service role.
 -- =====================================================================

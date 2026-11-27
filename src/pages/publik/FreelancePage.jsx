@@ -62,7 +62,7 @@ function BidangTren({ aktif, onPilih }) {
           <Flame size={13} /> {t("Lagi ramai", "Trending")}
         </span>
         <h2 id="judul-tren">{t("Bidang freelance yang paling banyak dicari klien", "Freelance fields clients are hiring for most")}</h2>
-        <p>{t("Dihitung dari proyek yang masih dibuka di Jobly. Klik salah satu untuk melihat proyeknya.", "Based on open projects on Jobly. Click one to see its projects.")}</p>
+        <p>{t("Dihitung dari proyek yang masih dibuka di Workly. Klik salah satu untuk melihat proyeknya.", "Based on open projects on Workly. Click one to see its projects.")}</p>
       </div>
       <div className="pb-fl-tren-grid">
         {loading &&
@@ -127,7 +127,7 @@ export function FreelancePage() {
   usePintasanCari("cari-freelance");
 
   useEffect(() => {
-    document.title = t("Loker freelance · Jobly", "Freelance jobs · Jobly");
+    document.title = t("Loker freelance · Workly", "Freelance jobs · Workly");
   }, []);
 
   const kata = useTunda(q, 350);

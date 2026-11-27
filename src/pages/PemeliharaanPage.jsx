@@ -23,19 +23,19 @@ export default function PemeliharaanPage() {
       <style>{CSS}</style>
       <div className="pml-kartu">
         <div className="pml-atas">
-          <img src="/logo-jobly-j.svg" alt="" width="34" height="34" />
-          <b>Jobly</b>
+          <img src="/logo-workly-w.svg" alt="" width="34" height="34" />
+          <b>Workly</b>
           <button type="button" className="pml-bhs" onClick={ganti}>
             {bahasa() === "en" ? "Bahasa Indonesia" : "English"}
           </button>
         </div>
 
         <span className="pml-label">{t("Sedang pemeliharaan", "Under maintenance")}</span>
-        <h1>{t("Jobly sedang ditingkatkan", "Jobly is being upgraded")}</h1>
+        <h1>{t("Workly sedang ditingkatkan", "Workly is being upgraded")}</h1>
         <p>
           {t(
-            "Terima kasih atas antusiasme kalian. Agar Jobly tetap nyaman dipakai, kami sedang memperbaiki dan menambah beberapa fitur. Situs untuk sementara ditutup sampai pekerjaan ini selesai.",
-            "Thank you for all the enthusiasm. To keep Jobly running smoothly, we're fixing and adding a few features. The site is closed for now until the work is done.",
+            "Terima kasih atas antusiasme kalian. Agar Workly tetap nyaman dipakai, kami sedang memperbaiki dan menambah beberapa fitur. Situs untuk sementara ditutup sampai pekerjaan ini selesai.",
+            "Thank you for all the enthusiasm. To keep Workly running smoothly, we're fixing and adding a few features. The site is closed for now until the work is done.",
           )}
         </p>
 
@@ -66,7 +66,7 @@ export default function PemeliharaanPage() {
         </ul>
 
         <p className="pml-kecil">
-          {t("Sampai jumpa lagi dengan Jobly yang lebih baik.", "See you soon with a better Jobly.")}
+          {t("Sampai jumpa lagi dengan Workly yang lebih baik.", "See you soon with a better Workly.")}
         </p>
       </div>
     </main>

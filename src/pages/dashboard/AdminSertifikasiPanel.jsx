@@ -308,11 +308,11 @@ export function AdminSertifikasiPanel() {
         <span className="pb-po-kunci-ikon">
           <Lock size={20} />
         </span>
-        <h2>{t("Khusus admin Jobly", "Jobly admins only")}</h2>
+        <h2>{t("Khusus admin Workly", "Workly admins only")}</h2>
         <p>
           {t(
-            "Halaman ini hanya bisa dibuka oleh admin Jobly.",
-            "This page is only available to Jobly admins.",
+            "Halaman ini hanya bisa dibuka oleh admin Workly.",
+            "This page is only available to Workly admins.",
           )}
         </p>
       </div>

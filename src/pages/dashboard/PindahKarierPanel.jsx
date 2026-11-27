@@ -825,7 +825,7 @@ export function PindahKarierPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  {t("Kursus dipilih berdasarkan kecocokan dengan kebutuhanmu. Pembelian lewat tautan ini ikut mendukung Jobly tanpa biaya tambahan untukmu.", "Courses are picked based on what fits your needs. Buying through these links helps support Jobly at no extra cost to you.")}
+                  {t("Kursus dipilih berdasarkan kecocokan dengan kebutuhanmu. Pembelian lewat tautan ini ikut mendukung Workly tanpa biaya tambahan untukmu.", "Courses are picked based on what fits your needs. Buying through these links helps support Workly at no extra cost to you.")}
                 </span>
               </div>
             </Glass>

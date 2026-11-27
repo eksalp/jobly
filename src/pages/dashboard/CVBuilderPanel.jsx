@@ -2170,7 +2170,7 @@ export function CVBuilderPanel({ setActive }) {
       doc.setProperties({
         title: `CV ${data.fullName || ""}`.trim(),
         subject: "Curriculum Vitae",
-        creator: "Jobly CV Builder",
+        creator: "Workly CV Builder",
       });
       const margin = ringkas ? 16 : 20,
         pageW = 210,

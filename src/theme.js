@@ -1,5 +1,5 @@
 /**
- * Token desain Jobly.
+ * Token desain Workly.
  *
  * Nilai di sini adalah variabel CSS, bukan warna langsung. Warna
  * sesungguhnya didefinisikan di src/styles/tema.css — sekali untuk tema

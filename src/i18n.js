@@ -1,5 +1,5 @@
 /**
- * Bahasa tampilan Jobly: Indonesia (bawaan) atau Inggris.
+ * Bahasa tampilan Workly: Indonesia (bawaan) atau Inggris.
  *
  * Cara pakai di mana saja (komponen, data, utilitas):
  *

@@ -1,5 +1,5 @@
 -- =====================================================================
--- Jobly — indeks supaya pencarian loker tetap cepat walau datanya besar
+-- Workly — indeks supaya pencarian loker tetap cepat walau datanya besar
 -- Jalankan di Supabase → SQL Editor, di KEDUA project (db1 & db2).
 -- Aman dijalankan berulang (IF NOT EXISTS). Kalau project db2 tidak punya
 -- salah satu kolom (mis. category), hapus baris indeks kolom itu saja.

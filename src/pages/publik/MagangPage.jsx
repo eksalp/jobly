@@ -42,7 +42,7 @@ export function MagangPage() {
   usePintasanCari("cari-magang");
 
   useEffect(() => {
-    document.title = t("Loker magang & internship · Jobly", "Internships · Jobly");
+    document.title = t("Loker magang & internship · Workly", "Internships · Workly");
   }, []);
 
   const kata = useTunda(q, 350).trim();

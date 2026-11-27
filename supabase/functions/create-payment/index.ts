@@ -133,7 +133,7 @@ serve(async (req) => {
             quantity: 1,
             // Nama aplikasi disertakan supaya transaksi mudah dibedakan
             // di dashboard yang dipakai bersama beberapa aplikasi.
-            name: `Jobly — ${paket.nama} (${labelDurasi(paket.durasiHari)})`.slice(
+            name: `Workly — ${paket.nama} (${labelDurasi(paket.durasiHari)})`.slice(
               0,
               50,
             ),

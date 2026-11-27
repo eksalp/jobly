@@ -213,7 +213,7 @@ export function KelasPage({ slug }) {
   }, [slug]);
 
   useEffect(() => {
-    document.title = kelas ? `${kelas.judul} · Jobly` : t("Kelas Dasar · Jobly", "Starter Course · Jobly");
+    document.title = kelas ? `${kelas.judul} · Workly` : t("Kelas Dasar · Workly", "Starter Course · Workly");
   }, [kelas]);
 
   // Di layar kecil daftar bab menjadi baris geser; pastikan bab aktif terlihat

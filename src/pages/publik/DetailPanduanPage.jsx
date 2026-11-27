@@ -213,7 +213,7 @@ function bagianProfesi(p, ekstra) {
             ))}
           </div>
           <p className="pb-pd-catatan">
-            {t("Kursus dipilih berdasarkan kecocokan dengan skill di panduan ini. Pembelian lewat tautan ini ikut mendukung Jobly tanpa biaya tambahan untukmu.", "Courses are chosen based on the skills in this guide. Buying through these links helps support Jobly at no extra cost to you.")}
+            {t("Kursus dipilih berdasarkan kecocokan dengan skill di panduan ini. Pembelian lewat tautan ini ikut mendukung Workly tanpa biaya tambahan untukmu.", "Courses are chosen based on the skills in this guide. Buying through these links helps support Workly at no extra cost to you.")}
           </p>
         </>
       ),
@@ -316,7 +316,7 @@ export function DetailPanduanPage({ slug }) {
   const p = cariPanduan(slug);
 
   useEffect(() => {
-    document.title = p ? t(`${p.judul} · Panduan Remote Working · Jobly`, `${p.judul} · Remote Working Guide · Jobly`) : t("Panduan tidak ditemukan · Jobly", "Guide not found · Jobly");
+    document.title = p ? t(`${p.judul} · Panduan Remote Working · Workly`, `${p.judul} · Remote Working Guide · Workly`) : t("Panduan tidak ditemukan · Workly", "Guide not found · Workly");
     window.scrollTo(0, 0);
   }, [p]);
 

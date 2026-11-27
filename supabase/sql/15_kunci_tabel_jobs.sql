@@ -11,7 +11,7 @@
 --         SUPABASE_SERVICE_ROLE_KEY    (service_role key project 1)
 --         SUPABASE_SERVICE_ROLE_KEY_2  (service_role key project 2)
 --       Kunci ini RAHASIA: jangan diawali VITE_ dan jangan dikirim ke chat.
---       Lalu Redeploy, dan pastikan jobly.my.id masih menampilkan loker.
+--       Lalu Redeploy, dan pastikan workly.id masih menampilkan loker.
 --    2. Pastikan bot scraper menulis memakai service_role key, bukan anon.
 --
 --  Jalankan di SQL Editor KEDUA project (project 1 dan project 2).

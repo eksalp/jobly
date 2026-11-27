@@ -3,7 +3,7 @@ import React from "react";
 import { T } from "../../theme";
 import { TandaJobly } from "./TandaJobly";
 
-/** Tanda Jobly: huruf "j" dari pita (komponen bersama, lihat TandaJobly). */
+/** Tanda Workly: huruf "j" dari pita (komponen bersama, lihat TandaJobly). */
 export function LogoMark({ size = 32 }) {
   return <TandaJobly ukuran={size} />;
 }
@@ -26,7 +26,7 @@ export function Logo({ size = 30, tagline = false }) {
             color: T.ink,
           }}
         >
-          Jobly
+          Workly
         </div>
         {tagline && (
           <div

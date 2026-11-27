@@ -212,7 +212,7 @@ function PromoLoker() {
   const { total, loading } = useJobs();
   return (
     <a className="pb-dd-promo" {...tautan("/loker")}>
-      <span className="k">{t("Hari ini di Jobly", "Today on Jobly")}</span>
+      <span className="k">{t("Hari ini di Workly", "Today on Workly")}</span>
       <b>{loading ? "…" : angka(total)}</b>
       <span className="s">{t("lowongan dari situs karier resmi, LinkedIn, Indeed, dan lainnya", "jobs from official career sites, LinkedIn, Indeed, and more")}</span>
       <span className="go">
@@ -625,9 +625,9 @@ export function SiteHeader({ aktif }) {
     <header className={`pb-header ${gulir ? "bergulir" : ""}`}>
       <div className="pb-wrap">
         <div className="pb-header-in">
-          <a className="pb-brand" {...tautan("/")} aria-label={t("Jobly, ke beranda", "Jobly home")}>
+          <a className="pb-brand" {...tautan("/")} aria-label={t("Workly, ke beranda", "Workly home")}>
             <TandaMerek />
-            Jobly
+            Workly
           </a>
 
           <nav className="pb-nav" aria-label={t("Menu utama", "Main menu")}>
@@ -781,7 +781,7 @@ export function SiteFooter() {
       ],
     },
     {
-      judul: "Jobly",
+      judul: "Workly",
       tautan: [
         [t("Harga", "Pricing"), "/#harga"],
         [t("Pasang loker (perusahaan)", "Post a job (employers)"), "/pemberi-kerja"],
@@ -801,12 +801,12 @@ export function SiteFooter() {
           <div>
             <a className="pb-brand" {...tautan("/")}>
               <TandaJobly ukuran={32} diam />
-              Jobly
+              Workly
             </a>
             <p>
               {t(
-                "In this economy, cari kerja itu semakin sulit. Jobly mengumpulkan lowongan dari situs karier resmi dan platform terpercaya setiap hari buat bantu kamu dapat pekerjaan.",
-                "In this economy, finding a job keeps getting harder. Every day Jobly collects openings from official career sites and trusted job platforms to help you land your next job.",
+                "In this economy, cari kerja itu semakin sulit. Workly mengumpulkan lowongan dari situs karier resmi dan platform terpercaya setiap hari buat bantu kamu dapat pekerjaan.",
+                "In this economy, finding a job keeps getting harder. Every day Workly collects openings from official career sites and trusted job platforms to help you land your next job.",
               )}
             </p>
             <IkonSosialFooter />
@@ -838,8 +838,8 @@ export function SiteFooter() {
           </span>
           <p>
             {t(
-              "Jobly bukan agen penyalur kerja. Selain loker prioritas yang dipasang langsung oleh perusahaan, Jobly tidak terhubung dengan perusahaan yang lowongannya ditampilkan. Kamu selalu melamar langsung ke perusahaan, dan Jobly tidak memungut biaya apa pun dari pelamar.",
-              "Jobly is not a recruitment agency. Apart from featured jobs posted directly by employers, Jobly is not affiliated with the companies whose jobs are listed. You always apply directly to the company, and Jobly never charges applicants anything.",
+              "Workly bukan agen penyalur kerja. Selain loker prioritas yang dipasang langsung oleh perusahaan, Workly tidak terhubung dengan perusahaan yang lowongannya ditampilkan. Kamu selalu melamar langsung ke perusahaan, dan Workly tidak memungut biaya apa pun dari pelamar.",
+              "Workly is not a recruitment agency. Apart from featured jobs posted directly by employers, Workly is not affiliated with the companies whose jobs are listed. You always apply directly to the company, and Workly never charges applicants anything.",
             )}
           </p>
         </div>

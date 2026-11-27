@@ -1,5 +1,5 @@
 // @ts-nocheck
-// Membaca pesan pengguna menjadi filter pencarian API Jobly.
+// Membaca pesan pengguna menjadi filter pencarian API Workly.
 
 const KOTA = [
   "Jakarta", "Bandung", "Surabaya", "Medan", "Semarang", "Yogyakarta", "Makassar", "Denpasar", "Bekasi", "Tangerang",
@@ -8,7 +8,7 @@ const KOTA = [
 ];
 const ALIAS_KOTA = { jogja: "Yogyakarta", jogjakarta: "Yogyakarta", jkt: "Jakarta", sby: "Surabaya", bdg: "Bandung", tangsel: "Tangerang", lampung: "Bandar Lampung" };
 
-/** Pecah teks pengguna menjadi filter API Jobly. */
+/** Pecah teks pengguna menjadi filter API Workly. */
 export function bacaPermintaan(teks) {
   let sisa = ` ${String(teks || "").toLowerCase()} `;
   const f = {};

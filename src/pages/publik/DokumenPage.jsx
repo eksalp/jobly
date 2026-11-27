@@ -22,7 +22,7 @@ function Teks({ s }) {
         (SITUS.emailKontak ? (
           <a href={`mailto:${SITUS.emailKontak}`}>{SITUS.emailKontak}</a>
         ) : (
-          <strong>{t("email kontak Jobly", "Jobly's contact email")}</strong>
+          <strong>{t("email kontak Workly", "Workly's contact email")}</strong>
         ))}
     </React.Fragment>
   ));
@@ -32,7 +32,7 @@ export function DokumenPage({ jenis }) {
   const doc = DOKUMEN[jenis];
 
   useEffect(() => {
-    if (doc) document.title = `${doc.judul} · Jobly`;
+    if (doc) document.title = `${doc.judul} · Workly`;
     window.scrollTo(0, 0);
   }, [doc]);
 

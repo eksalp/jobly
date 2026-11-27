@@ -38,7 +38,7 @@ const DOKUMEN_ID = {
               "Data yang kamu isi: profil karier, keahlian, pengalaman, isi CV Builder, Cover Letter Builder, dan LinkedIn Builder, teks CV atau profil LinkedIn yang kamu unggah, loker yang kamu simpan, serta catatan lamaran.",
               "Hasil fitur AI: hasil review CV, rencana pindah karier, serta transkrip teks dan penilaian simulasi interview.",
               "Data transaksi: paket yang dibeli, nominal, status pembayaran, dan nomor pesanan. Data kartu atau rekeningmu diproses oleh Midtrans dan tidak kami terima.",
-              "Data di perangkatmu: browser menyimpan sesi masuk dan data pendukung seperti kurs mata uang terakhir agar halaman lebih cepat. Jobly tidak memasang pelacak iklan atau analitik pihak ketiga.",
+              "Data di perangkatmu: browser menyimpan sesi masuk dan data pendukung seperti kurs mata uang terakhir agar halaman lebih cepat. Workly tidak memasang pelacak iklan atau analitik pihak ketiga.",
             ],
           },
         ],
@@ -64,7 +64,7 @@ const DOKUMEN_ID = {
         id: "ai",
         judul: "Pemrosesan oleh AI",
         isi: [
-          "Saat kamu memakai Review CV, analisis cover letter, Pindah Karier, atau Simulasi Interview, teks yang diperlukan (misalnya isi CV, isi cover letter, teks lowongan, posisi yang kamu incar, atau jawabanmu) dikirim ke Google melalui Gemini API untuk diproses. Pada simulasi interview, suaramu dialirkan langsung ke layanan suara Google selama sesi berlangsung. Jobly tidak menyimpan rekaman suara; yang kami simpan hanya transkrip teks dan penilaiannya.",
+          "Saat kamu memakai Review CV, analisis cover letter, Pindah Karier, atau Simulasi Interview, teks yang diperlukan (misalnya isi CV, isi cover letter, teks lowongan, posisi yang kamu incar, atau jawabanmu) dikirim ke Google melalui Gemini API untuk diproses. Pada simulasi interview, suaramu dialirkan langsung ke layanan suara Google selama sesi berlangsung. Workly tidak menyimpan rekaman suara; yang kami simpan hanya transkrip teks dan penilaiannya.",
           "Pemrosesan oleh Google tunduk pada ketentuan layanan Google. Tergantung jenis layanan yang digunakan, Google dapat menyimpan sementara atau memakai data tersebut sesuai ketentuannya. Karena itu, jangan mencantumkan data yang tidak dibutuhkan untuk melamar (misalnya NIK, nomor rekening, atau foto KTP) di CV yang kamu analisis.",
         ],
       },
@@ -88,7 +88,7 @@ const DOKUMEN_ID = {
         id: "penyimpanan",
         judul: "Penyimpanan & keamanan",
         isi: [
-          "Data disimpan selama akunmu aktif. Koneksi ke Jobly dienkripsi (HTTPS), dan aturan akses di basis data membatasi setiap akun hanya pada datanya sendiri. Data transaksi dapat kami simpan lebih lama bila diwajibkan untuk keperluan pencatatan dan perpajakan.",
+          "Data disimpan selama akunmu aktif. Koneksi ke Workly dienkripsi (HTTPS), dan aturan akses di basis data membatasi setiap akun hanya pada datanya sendiri. Data transaksi dapat kami simpan lebih lama bila diwajibkan untuk keperluan pencatatan dan perpajakan.",
           "Tidak ada sistem yang sepenuhnya kebal. Jika terjadi insiden keamanan yang berdampak pada data pribadimu, kami akan memberi tahu sesuai ketentuan yang berlaku.",
         ],
       },
@@ -112,7 +112,7 @@ const DOKUMEN_ID = {
         id: "usia",
         judul: "Batas usia",
         isi: [
-          "Jobly ditujukan bagi pengguna berusia 18 tahun ke atas. Pengguna di bawah 18 tahun hanya boleh membuat akun dengan persetujuan orang tua atau wali.",
+          "Workly ditujukan bagi pengguna berusia 18 tahun ke atas. Pengguna di bawah 18 tahun hanya boleh membuat akun dengan persetujuan orang tua atau wali.",
         ],
       },
       {
@@ -134,16 +134,16 @@ const DOKUMEN_ID = {
   "syarat-ketentuan": {
     judul: "Syarat & Ketentuan",
     ringkas:
-      "Aturan penggunaan Jobly, termasuk akun, paket berbayar, pembayaran, dan batas tanggung jawab.",
+      "Aturan penggunaan Workly, termasuk akun, paket berbayar, pembayaran, dan batas tanggung jawab.",
     callout:
-      "Dengan memakai Jobly, kamu menyetujui ketentuan ini. Bacalah terutama bagian Paket berbayar dan Pembayaran & pengembalian dana sebelum membeli.",
+      "Dengan memakai Workly, kamu menyetujui ketentuan ini. Bacalah terutama bagian Paket berbayar dan Pembayaran & pengembalian dana sebelum membeli.",
     bagian: [
       {
         id: "layanan",
         judul: "Tentang layanan",
         isi: [
-          "Jobly adalah layanan pencarian lowongan kerja yang mengumpulkan lowongan dari situs karier resmi perusahaan dan platform lowongan publik, ditambah alat untuk menyiapkan lamaran.",
-          "Jobly bukan agen penyalur tenaga kerja, tidak mewakili perusahaan pemberi kerja, dan tidak menerima atau menyeleksi lamaran. Jobly tidak menjamin kamu akan dipanggil interview atau diterima bekerja.",
+          "Workly adalah layanan pencarian lowongan kerja yang mengumpulkan lowongan dari situs karier resmi perusahaan dan platform lowongan publik, ditambah alat untuk menyiapkan lamaran.",
+          "Workly bukan agen penyalur tenaga kerja, tidak mewakili perusahaan pemberi kerja, dan tidak menerima atau menyeleksi lamaran. Workly tidak menjamin kamu akan dipanggil interview atau diterima bekerja.",
         ],
       },
       {
@@ -165,7 +165,7 @@ const DOKUMEN_ID = {
         isi: [
           {
             daftar: [
-              "Mengambil data Jobly secara otomatis dalam jumlah besar (scraping) atau menyalin daftar loker untuk layanan lain.",
+              "Mengambil data Workly secara otomatis dalam jumlah besar (scraping) atau menyalin daftar loker untuk layanan lain.",
               "Mengakali sistem kuota atau pembayaran, termasuk memanfaatkan celah teknis.",
               "Mengunggah konten yang melanggar hukum atau hak orang lain, termasuk CV milik orang lain tanpa izin.",
               "Memakai fitur AI untuk memalsukan dokumen, pengalaman, atau kualifikasi.",
@@ -226,22 +226,22 @@ const DOKUMEN_ID = {
         id: "hki",
         judul: "Hak kekayaan intelektual",
         isi: [
-          "Nama, tampilan, dan kode Jobly dilindungi hukum. Isi lowongan, nama, dan logo perusahaan adalah milik pemiliknya masing-masing.",
+          "Nama, tampilan, dan kode Workly dilindungi hukum. Isi lowongan, nama, dan logo perusahaan adalah milik pemiliknya masing-masing.",
         ],
       },
       {
         id: "tanggung-jawab",
         judul: "Batas tanggung jawab",
         isi: [
-          "Sejauh diizinkan hukum, Jobly tidak bertanggung jawab atas isi lowongan dari pihak ketiga, keputusan rekrutmen perusahaan, interaksimu dengan pemberi kerja atau pihak yang mengaku sebagai pemberi kerja, maupun keputusan yang kamu ambil berdasarkan hasil fitur AI atau kalkulator.",
-          "Total tanggung jawab Jobly atas klaim terkait layanan berbayar dibatasi sebesar nilai paket yang kamu bayar dalam 12 bulan terakhir.",
+          "Sejauh diizinkan hukum, Workly tidak bertanggung jawab atas isi lowongan dari pihak ketiga, keputusan rekrutmen perusahaan, interaksimu dengan pemberi kerja atau pihak yang mengaku sebagai pemberi kerja, maupun keputusan yang kamu ambil berdasarkan hasil fitur AI atau kalkulator.",
+          "Total tanggung jawab Workly atas klaim terkait layanan berbayar dibatasi sebesar nilai paket yang kamu bayar dalam 12 bulan terakhir.",
         ],
       },
       {
         id: "perubahan-layanan",
         judul: "Perubahan & penghentian layanan",
         isi: [
-          "Kamu bisa berhenti memakai Jobly kapan saja. Kami dapat mengubah, menambah, atau menghentikan fitur. Jika fitur berbayar dihentikan permanen saat paketmu masih berlaku, kami akan memberi tahu lebih dulu dan mengembalikan dana secara proporsional untuk sisa masa berlakunya.",
+          "Kamu bisa berhenti memakai Workly kapan saja. Kami dapat mengubah, menambah, atau menghentikan fitur. Jika fitur berbayar dihentikan permanen saat paketmu masih berlaku, kami akan memberi tahu lebih dulu dan mengembalikan dana secara proporsional untuk sisa masa berlakunya.",
         ],
       },
       {
@@ -255,7 +255,7 @@ const DOKUMEN_ID = {
         id: "perubahan",
         judul: "Perubahan ketentuan",
         isi: [
-          "Ketentuan ini dapat diperbarui. Versi terbaru selalu tersedia di halaman ini dengan tanggal berlakunya. Dengan tetap memakai Jobly setelah perubahan berlaku, kamu dianggap menyetujui ketentuan yang baru.",
+          "Ketentuan ini dapat diperbarui. Versi terbaru selalu tersedia di halaman ini dengan tanggal berlakunya. Dengan tetap memakai Workly setelah perubahan berlaku, kamu dianggap menyetujui ketentuan yang baru.",
         ],
       },
       {
@@ -270,9 +270,9 @@ const DOKUMEN_ID = {
   disclaimer: {
     judul: "Disclaimer",
     ringkas:
-      "Batasan informasi yang ditampilkan Jobly: lowongan dari pihak ketiga, logo perusahaan, angka gaji, kurs, dan hasil AI.",
+      "Batasan informasi yang ditampilkan Workly: lowongan dari pihak ketiga, logo perusahaan, angka gaji, kurs, dan hasil AI.",
     callout:
-      "Jobly tidak pernah meminta biaya kepada pelamar. Jika ada pihak yang meminta transfer uang atas nama perusahaan atau atas nama Jobly, itu penipuan.",
+      "Workly tidak pernah meminta biaya kepada pelamar. Jika ada pihak yang meminta transfer uang atas nama perusahaan atau atas nama Workly, itu penipuan.",
     bagian: [
       {
         id: "lowongan",
@@ -285,14 +285,14 @@ const DOKUMEN_ID = {
         id: "afiliasi",
         judul: "Tidak berafiliasi",
         isi: [
-          "Nama dan logo perusahaan serta platform lowongan adalah milik pemiliknya masing-masing. Tampilnya nama atau logo di Jobly hanya untuk menunjukkan sumber lowongan, dan tidak berarti ada kemitraan, dukungan, atau rekomendasi dari perusahaan tersebut.",
+          "Nama dan logo perusahaan serta platform lowongan adalah milik pemiliknya masing-masing. Tampilnya nama atau logo di Workly hanya untuk menunjukkan sumber lowongan, dan tidak berarti ada kemitraan, dukungan, atau rekomendasi dari perusahaan tersebut.",
         ],
       },
       {
         id: "bukan-penyalur",
         judul: "Bukan agen penyalur kerja",
         isi: [
-          "Jobly tidak menerima, meneruskan, atau menyeleksi lamaran, dan tidak menjamin panggilan interview maupun penerimaan kerja. Seluruh proses rekrutmen berlangsung antara kamu dan perusahaan.",
+          "Workly tidak menerima, meneruskan, atau menyeleksi lamaran, dan tidak menjamin panggilan interview maupun penerimaan kerja. Seluruh proses rekrutmen berlangsung antara kamu dan perusahaan.",
         ],
       },
       {
@@ -330,8 +330,8 @@ const DOKUMEN_ID = {
         id: "tautan",
         judul: "Tautan ke situs lain & tautan afiliasi",
         isi: [
-          "Jobly memuat tautan ke situs pihak ketiga, termasuk halaman lowongan asli. Kami tidak mengendalikan isi maupun praktik privasi situs tersebut.",
-          "Sebagian tautan ke kursus, bootcamp, dan layanan coaching merupakan tautan afiliasi. Jika kamu membeli melalui tautan tersebut, Jobly dapat menerima komisi tanpa biaya tambahan untukmu.",
+          "Workly memuat tautan ke situs pihak ketiga, termasuk halaman lowongan asli. Kami tidak mengendalikan isi maupun praktik privasi situs tersebut.",
+          "Sebagian tautan ke kursus, bootcamp, dan layanan coaching merupakan tautan afiliasi. Jika kamu membeli melalui tautan tersebut, Workly dapat menerima komisi tanpa biaya tambahan untukmu.",
         ],
       },
     ],
@@ -363,7 +363,7 @@ const DOKUMEN_EN = {
               "Data you enter: your career profile, skills, experience, CV Builder, Cover Letter Builder, and LinkedIn Builder content, CV or LinkedIn text you upload, saved jobs, and application notes.",
               "AI feature results: CV review results, career switch plans, and mock interview transcripts and scores.",
               "Transaction data: the plan purchased, amount, payment status, and order number. Card or bank details are processed by Midtrans and never reach us.",
-              "Data on your device: your browser stores your sign-in session and supporting data such as the latest exchange rate so pages load faster. Jobly doesn't use third-party advertising trackers or analytics.",
+              "Data on your device: your browser stores your sign-in session and supporting data such as the latest exchange rate so pages load faster. Workly doesn't use third-party advertising trackers or analytics.",
             ],
           },
         ],
@@ -389,7 +389,7 @@ const DOKUMEN_EN = {
         id: "ai",
         judul: "AI processing",
         isi: [
-          "When you use CV Review, cover letter review, Career Switch, or Mock Interview, the text needed (for example your CV, cover letter, job post, target role, or answers) is sent to Google through the Gemini API for processing. During a mock interview, your voice is streamed directly to Google's voice service for the length of the session. Jobly doesn't store voice recordings; we only keep the text transcript and the score.",
+          "When you use CV Review, cover letter review, Career Switch, or Mock Interview, the text needed (for example your CV, cover letter, job post, target role, or answers) is sent to Google through the Gemini API for processing. During a mock interview, your voice is streamed directly to Google's voice service for the length of the session. Workly doesn't store voice recordings; we only keep the text transcript and the score.",
           "Processing by Google is subject to Google's terms of service. Depending on the service used, Google may temporarily store or use that data under its terms. So don't include data you don't need for applying (for example your national ID number, bank account number, or ID card photo) in a CV you analyse.",
         ],
       },
@@ -413,7 +413,7 @@ const DOKUMEN_EN = {
         id: "penyimpanan",
         judul: "Storage & security",
         isi: [
-          "Data is kept while your account is active. Connections to Jobly are encrypted (HTTPS), and database access rules limit each account to its own data. We may keep transaction data longer where required for record-keeping and tax purposes.",
+          "Data is kept while your account is active. Connections to Workly are encrypted (HTTPS), and database access rules limit each account to its own data. We may keep transaction data longer where required for record-keeping and tax purposes.",
           "No system is completely immune. If a security incident affects your personal data, we will notify you as required by applicable rules.",
         ],
       },
@@ -437,7 +437,7 @@ const DOKUMEN_EN = {
         id: "usia",
         judul: "Age limit",
         isi: [
-          "Jobly is intended for users aged 18 and over. Users under 18 may only create an account with the consent of a parent or guardian.",
+          "Workly is intended for users aged 18 and over. Users under 18 may only create an account with the consent of a parent or guardian.",
         ],
       },
       {
@@ -457,15 +457,15 @@ const DOKUMEN_EN = {
 
   "syarat-ketentuan": {
     judul: "Terms of Service",
-    ringkas: "Rules for using Jobly, including accounts, paid plans, payment, and limits of liability.",
-    callout: `By using Jobly, you agree to these terms. Please read the Paid plans and Payment & refunds sections before buying. ${CATATAN_EN}`,
+    ringkas: "Rules for using Workly, including accounts, paid plans, payment, and limits of liability.",
+    callout: `By using Workly, you agree to these terms. Please read the Paid plans and Payment & refunds sections before buying. ${CATATAN_EN}`,
     bagian: [
       {
         id: "layanan",
         judul: "About the service",
         isi: [
-          "Jobly is a job search service that collects openings from official company career sites and public job platforms, plus tools to help you prepare applications.",
-          "Jobly is not a recruitment agency, doesn't represent employers, and doesn't receive or screen applications. Jobly doesn't guarantee that you'll be invited to interview or hired.",
+          "Workly is a job search service that collects openings from official company career sites and public job platforms, plus tools to help you prepare applications.",
+          "Workly is not a recruitment agency, doesn't represent employers, and doesn't receive or screen applications. Workly doesn't guarantee that you'll be invited to interview or hired.",
         ],
       },
       {
@@ -487,7 +487,7 @@ const DOKUMEN_EN = {
         isi: [
           {
             daftar: [
-              "Automatically collecting Jobly data in bulk (scraping) or copying job listings for another service.",
+              "Automatically collecting Workly data in bulk (scraping) or copying job listings for another service.",
               "Gaming the credit or payment system, including exploiting technical loopholes.",
               "Uploading content that breaks the law or others' rights, including someone else's CV without permission.",
               "Using AI features to fake documents, experience, or qualifications.",
@@ -548,22 +548,22 @@ const DOKUMEN_EN = {
         id: "hki",
         judul: "Intellectual property",
         isi: [
-          "Jobly's name, design, and code are protected by law. Job content, company names, and logos belong to their respective owners.",
+          "Workly's name, design, and code are protected by law. Job content, company names, and logos belong to their respective owners.",
         ],
       },
       {
         id: "tanggung-jawab",
         judul: "Limitation of liability",
         isi: [
-          "To the extent permitted by law, Jobly is not responsible for third-party job content, employers' hiring decisions, your dealings with employers or people claiming to be employers, or decisions you make based on AI features or calculators.",
-          "Jobly's total liability for claims related to paid services is limited to the amount you paid for plans in the last 12 months.",
+          "To the extent permitted by law, Workly is not responsible for third-party job content, employers' hiring decisions, your dealings with employers or people claiming to be employers, or decisions you make based on AI features or calculators.",
+          "Workly's total liability for claims related to paid services is limited to the amount you paid for plans in the last 12 months.",
         ],
       },
       {
         id: "perubahan-layanan",
         judul: "Changes & discontinuation",
         isi: [
-          "You can stop using Jobly at any time. We may change, add, or discontinue features. If a paid feature is permanently discontinued while your plan is active, we'll tell you in advance and refund the unused portion proportionally.",
+          "You can stop using Workly at any time. We may change, add, or discontinue features. If a paid feature is permanently discontinued while your plan is active, we'll tell you in advance and refund the unused portion proportionally.",
         ],
       },
       {
@@ -577,7 +577,7 @@ const DOKUMEN_EN = {
         id: "perubahan",
         judul: "Changes to these terms",
         isi: [
-          "These terms may be updated. The latest version is always on this page with its effective date. By continuing to use Jobly after a change takes effect, you accept the new terms.",
+          "These terms may be updated. The latest version is always on this page with its effective date. By continuing to use Workly after a change takes effect, you accept the new terms.",
         ],
       },
       {
@@ -590,8 +590,8 @@ const DOKUMEN_EN = {
 
   disclaimer: {
     judul: "Disclaimer",
-    ringkas: "Limits of the information Jobly shows: third-party jobs, company logos, salary figures, exchange rates, and AI results.",
-    callout: `Jobly never charges applicants. If anyone asks you to transfer money in a company's name or in Jobly's name, it's a scam. ${CATATAN_EN}`,
+    ringkas: "Limits of the information Workly shows: third-party jobs, company logos, salary figures, exchange rates, and AI results.",
+    callout: `Workly never charges applicants. If anyone asks you to transfer money in a company's name or in Workly's name, it's a scam. ${CATATAN_EN}`,
     bagian: [
       {
         id: "lowongan",
@@ -604,14 +604,14 @@ const DOKUMEN_EN = {
         id: "afiliasi",
         judul: "No affiliation",
         isi: [
-          "Company and job platform names and logos belong to their owners. Showing a name or logo on Jobly only indicates the source of a job and doesn't imply any partnership, endorsement, or recommendation from that company.",
+          "Company and job platform names and logos belong to their owners. Showing a name or logo on Workly only indicates the source of a job and doesn't imply any partnership, endorsement, or recommendation from that company.",
         ],
       },
       {
         id: "bukan-penyalur",
         judul: "Not a recruitment agency",
         isi: [
-          "Jobly doesn't receive, forward, or screen applications, and doesn't guarantee interviews or job offers. The whole hiring process happens between you and the company.",
+          "Workly doesn't receive, forward, or screen applications, and doesn't guarantee interviews or job offers. The whole hiring process happens between you and the company.",
         ],
       },
       {
@@ -649,8 +649,8 @@ const DOKUMEN_EN = {
         id: "tautan",
         judul: "Links to other sites & affiliate links",
         isi: [
-          "Jobly links to third-party sites, including original job pages. We don't control their content or privacy practices.",
-          "Some links to courses, bootcamps, and coaching services are affiliate links. If you buy through them, Jobly may earn a commission at no extra cost to you.",
+          "Workly links to third-party sites, including original job pages. We don't control their content or privacy practices.",
+          "Some links to courses, bootcamps, and coaching services are affiliate links. If you buy through them, Workly may earn a commission at no extra cost to you.",
         ],
       },
     ],

@@ -1,6 +1,6 @@
 // @ts-nocheck
 // Pilihan model Gemini per fitur, disusun untuk kualitas jawaban setara
-// analis HR dengan margin tetap besar (perhitungan: Jobly v5).
+// analis HR dengan margin tetap besar (perhitungan: Workly v5).
 //
 // Prinsipnya: model yang lebih cerdas (3.8 Flash) hanya dipakai di bagian
 // yang butuh penilaian, sedangkan pekerjaan menulis ulang dikerjakan model

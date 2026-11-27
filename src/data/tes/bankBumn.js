@@ -2,7 +2,7 @@
  * Bank soal gaya Rekrutmen Bersama BUMN (RBB): klasifikasi kata, diagram
  * (hubungan himpunan), Tes Wawasan Kebangsaan, dan Learning Agility.
  *
- * Semua soal ditulis sendiri oleh Jobly mengikuti FORMAT tes yang umum
+ * Semua soal ditulis sendiri oleh Workly mengikuti FORMAT tes yang umum
  * dipakai, bukan disalin dari buku atau bimbel mana pun.
  * Format: jawaban benar di o[0] (diacak saat ditampilkan).
  */

@@ -1,6 +1,6 @@
 /**
  * Pengetahuan umum ekonomi & kebanksentralan (persiapan seleksi PCPM
- * Bank Indonesia dan bank BUMN). Ditulis sendiri oleh Jobly berdasarkan
+ * Bank Indonesia dan bank BUMN). Ditulis sendiri oleh Workly berdasarkan
  * undang-undang dan informasi publik Bank Indonesia.
  *
  * Soal sengaja menghindari angka yang cepat berubah (BI-Rate, inflasi,

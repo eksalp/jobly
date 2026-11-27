@@ -26,7 +26,7 @@ const LANGKAH = [
   },
   {
     Ikon: ClipboardCheck,
-    judul: t("Dicek tim Jobly", "Reviewed by Jobly"),
+    judul: t("Dicek tim Workly", "Reviewed by Workly"),
     isi: t(
       "Setiap loker dicek dulu supaya pencari kerja terhindar dari loker palsu. Bila ditolak, kredit dikembalikan.",
       "Every post is reviewed so job seekers stay safe from fake listings. If it's rejected, the credit is refunded.",
@@ -36,8 +36,8 @@ const LANGKAH = [
     Ikon: Megaphone,
     judul: t("Tayang sebagai prioritas", "Goes live as featured"),
     isi: t(
-      `Loker tampil ${MASA_TAYANG_HARI} hari di urutan teratas pencarian yang cocok dan di beranda Jobly.`,
-      `Your post is shown for ${MASA_TAYANG_HARI} days at the top of matching searches and on the Jobly homepage.`,
+      `Loker tampil ${MASA_TAYANG_HARI} hari di urutan teratas pencarian yang cocok dan di beranda Workly.`,
+      `Your post is shown for ${MASA_TAYANG_HARI} days at the top of matching searches and on the Workly homepage.`,
     ),
   },
 ];
@@ -113,7 +113,7 @@ export function PemberiKerjaPage() {
   const total = statistik?.total;
   useGulirKeHash(true);
   useEffect(() => {
-    document.title = t("Pasang loker di Jobly · Untuk perusahaan", "Post a job on Jobly · For employers");
+    document.title = t("Pasang loker di Workly · Untuk perusahaan", "Post a job on Workly · For employers");
   }, []);
 
   return (
@@ -127,8 +127,8 @@ export function PemberiKerjaPage() {
           </h1>
           <p className="pb-lede">
             {t(
-              `Pasang loker di Jobly mulai ${rupiah(PAKET_LOKER[0].harga)}. Lokermu tampil paling atas di antara ${total ? `${total.toLocaleString(lokal())} ` : ""}lowongan yang dicari pengguna Jobly setiap hari, lengkap dengan logo perusahaan.`,
-              `Post a job on Jobly from ${rupiah(PAKET_LOKER[0].harga)}. Your post appears first among the ${total ? `${total.toLocaleString(lokal())} ` : ""}jobs Jobly users browse every day, complete with your company logo.`,
+              `Pasang loker di Workly mulai ${rupiah(PAKET_LOKER[0].harga)}. Lokermu tampil paling atas di antara ${total ? `${total.toLocaleString(lokal())} ` : ""}lowongan yang dicari pengguna Workly setiap hari, lengkap dengan logo perusahaan.`,
+              `Post a job on Workly from ${rupiah(PAKET_LOKER[0].harga)}. Your post appears first among the ${total ? `${total.toLocaleString(lokal())} ` : ""}jobs Workly users browse every day, complete with your company logo.`,
             )}
           </p>
           <div className="pk-aksi">

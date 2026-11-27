@@ -48,7 +48,7 @@ export function RemotePage() {
   usePintasanCari("cari-remote");
 
   useEffect(() => {
-    document.title = t("Loker remote · Jobly", "Remote jobs · Jobly");
+    document.title = t("Loker remote · Workly", "Remote jobs · Workly");
   }, []);
 
   const kata = useTunda(q, 350);

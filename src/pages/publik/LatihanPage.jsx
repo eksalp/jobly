@@ -392,8 +392,8 @@ export function LatihanPage({ slug }) {
 
   useEffect(() => {
     document.title = p
-      ? t(`Latihan ${p.judul} · Jobly`, `${p.judul} practice · Jobly`)
-      : t("Latihan tidak ditemukan · Jobly", "Practice not found · Jobly");
+      ? t(`Latihan ${p.judul} · Workly`, `${p.judul} practice · Workly`)
+      : t("Latihan tidak ditemukan · Workly", "Practice not found · Workly");
     window.scrollTo(0, 0);
   }, [p]);
 

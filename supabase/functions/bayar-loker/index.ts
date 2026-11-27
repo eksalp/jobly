@@ -74,7 +74,7 @@ serve(async (req) => {
           .map((x) => x.trim())
           .filter(Boolean),
         item_details: [
-          { id: `loker-${paket.id}`, price: paket.harga, quantity: 1, name: `Jobly — ${paket.nama}`.slice(0, 50) },
+          { id: `loker-${paket.id}`, price: paket.harga, quantity: 1, name: `Workly — ${paket.nama}`.slice(0, 50) },
         ],
       }),
     });

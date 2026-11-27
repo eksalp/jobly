@@ -34,7 +34,7 @@ serve(async (req) => {
     const admin = (Deno.env.get("TELEGRAM_ADMIN_IDS") ?? "").split(/[,\s]+/).filter(Boolean);
     if (!token || !admin.length) return json({ ok: true, catatan: "Telegram belum diatur" });
 
-    const situs = (Deno.env.get("JOBLY_URL") ?? "https://jobly.my.id").replace(/\/+$/, "");
+    const situs = (Deno.env.get("JOBLY_URL") ?? "https://workly.id").replace(/\/+$/, "");
     const gaji = m.gaji_min ? `${rp(m.gaji_min)}${m.gaji_max ? `–${rp(m.gaji_max)}` : ""}${m.tampilkan_gaji ? "" : " (disembunyikan)"}` : "";
     const ulang = m.tayang_sampai ? "\n<i>Pengajuan ulang setelah diubah (loker sudah pernah tayang)</i>" : "";
     const teks = `<b>Loker baru menunggu persetujuan</b> #${m.id}${ulang}

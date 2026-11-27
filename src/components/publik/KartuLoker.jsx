@@ -30,7 +30,7 @@ import { useSavedJobs } from "../../context/SavedJobsContext";
 import { t } from "../../i18n.js";
 
 /**
- * Kartu loker Jobly — dipakai di Beranda, Semua loker, Cocok untukku,
+ * Kartu loker Workly — dipakai di Beranda, Semua loker, Cocok untukku,
  * Tersimpan, dan Loker serupa.
  *
  *   [logo] Perusahaan                     [Baru]

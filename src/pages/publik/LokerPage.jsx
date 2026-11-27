@@ -162,7 +162,7 @@ export function LokerPage() {
         : t("Semua lowongan", "All jobs");
 
   useEffect(() => {
-    document.title = `${f.kota || f.q || f.negara || f.pt || f.bidang || f.bumn ? judul : t("Semua loker", "All jobs")} · Jobly`;
+    document.title = `${f.kota || f.q || f.negara || f.pt || f.bidang || f.bumn ? judul : t("Semua loker", "All jobs")} · Workly`;
   }, [judul, f.kota, f.q, f.negara, f.pt, f.bidang, f.bumn]);
 
   return (
@@ -435,7 +435,7 @@ export function LokerPage() {
         {!loading && grupAktif().length > 0 && (
           <div className="pb-grup-strip">
             <span>
-              <b>{t("Mau dapat info loker tiap hari?", "Want job alerts every day?")}</b> {t("Gabung grup Jobly, gratis.", "Join the Jobly group, it's free.")}
+              <b>{t("Mau dapat info loker tiap hari?", "Want job alerts every day?")}</b> {t("Gabung grup Workly, gratis.", "Join the Workly group, it's free.")}
             </span>
             <TautanGrup ringkas />
           </div>

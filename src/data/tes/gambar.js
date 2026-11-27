@@ -3,7 +3,7 @@
  * rumah-pohon-orang (HTP), dan pohon (Baum).
  *
  * Ini latihan format, bukan penilaian. Tes gambar ditafsirkan psikolog
- * secara utuh bersama tes lain, sehingga Jobly tidak memberi "skor".
+ * secara utuh bersama tes lain, sehingga Workly tidak memberi "skor".
  * Yang diberikan: waktu, kanvas, dan daftar periksa hal yang biasa
  * diperhatikan asesor (kelengkapan, proporsi, penggunaan ruang).
  */

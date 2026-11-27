@@ -19,7 +19,7 @@ export async function unduhCoverLetter(d) {
   doc.setProperties({
     title: `Cover Letter ${d.nama || ""}`.trim(),
     subject: d.posisi ? `Lamaran ${d.posisi}` : "Cover Letter",
-    creator: "Jobly Cover Letter Builder",
+    creator: "Workly Cover Letter Builder",
   });
 
   const safe = font.file

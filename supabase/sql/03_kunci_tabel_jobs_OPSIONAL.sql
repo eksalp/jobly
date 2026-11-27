@@ -11,7 +11,7 @@
 --        SUPABASE_SERVICE_ROLE_KEY_2  = service_role key project db2
 --      lalu redeploy. Kunci ini RAHASIA — jangan pernah diawali VITE_.
 --   2. Pastikan bot scraper menulis memakai service_role key (bukan anon).
---   3. Buka jobly.my.id dan pastikan loker tampil normal.
+--   3. Buka workly.id dan pastikan loker tampil normal.
 --
 -- Jalankan di kedua project. Untuk membatalkan, lihat bagian bawah.
 -- =====================================================================

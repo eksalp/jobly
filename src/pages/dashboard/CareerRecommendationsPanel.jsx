@@ -419,7 +419,7 @@ export function CareerRecommendationsPanel({ setActive }) {
               >
                 <Info size={12} style={{ flexShrink: 0, marginTop: 2 }} />
                 <span>
-                  {t("Tautan tersebut adalah rekomendasi dari sistem AI Jobly untuk mencari course yang cocok buat kamu!", "These links are suggestions from Jobly's AI to help you find a course that fits you.")}
+                  {t("Tautan tersebut adalah rekomendasi dari sistem AI Workly untuk mencari course yang cocok buat kamu!", "These links are suggestions from Workly's AI to help you find a course that fits you.")}
                 </span>
               </div>
             </>

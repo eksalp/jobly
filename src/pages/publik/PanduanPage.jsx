@@ -66,7 +66,7 @@ const gulir = (id) => (e) => {
 
 export function PanduanPage() {
   useEffect(() => {
-    document.title = t("Panduan Remote Working · Jobly", "Remote Working Guide · Jobly");
+    document.title = t("Panduan Remote Working · Workly", "Remote Working Guide · Workly");
   }, []);
 
   return (

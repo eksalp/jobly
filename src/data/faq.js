@@ -16,15 +16,15 @@ const hargaRingkas = ["coba", "aktif", "serius"]
 
 export const FAQ = [
   {
-    grup: t("Tentang Jobly", "About Jobly"),
+    grup: t("Tentang Workly", "About Workly"),
     items: [
       {
-        q: t("Apa itu Jobly?", "What is Jobly?"),
+        q: t("Apa itu Workly?", "What is Workly?"),
         beranda: true,
         a: [
           t(
-            "Jobly mengumpulkan lowongan dari situs karier resmi perusahaan dan platform kerja seperti LinkedIn dan Indeed, jadi kamu cukup cari di satu tempat. Lowongannya diperbarui otomatis setiap hari.",
-            "Jobly collects openings from official company career sites and job platforms like LinkedIn and Indeed, so you can search in one place. Listings update automatically every day.",
+            "Workly mengumpulkan lowongan dari situs karier resmi perusahaan dan platform kerja seperti LinkedIn dan Indeed, jadi kamu cukup cari di satu tempat. Lowongannya diperbarui otomatis setiap hari.",
+            "Workly collects openings from official company career sites and job platforms like LinkedIn and Indeed, so you can search in one place. Listings update automatically every day.",
           ),
           t(
             "Selain cari loker, kamu juga bisa membuat CV, merapikan profil LinkedIn, latihan pertanyaan interview, sampai simulasi interview dengan AI.",
@@ -33,12 +33,12 @@ export const FAQ = [
         ],
       },
       {
-        q: t("Apakah mencari loker di Jobly gratis?", "Is searching for jobs on Jobly free?"),
+        q: t("Apakah mencari loker di Workly gratis?", "Is searching for jobs on Workly free?"),
         beranda: true,
         a: [
           t(
-            "Ya. Semua lowongan di Jobly bisa dicari dan dibuka gratis, bahkan tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, Cover Letter Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
-            "Yes. Every job on Jobly can be searched and opened for free, even without signing up. A free account also includes the CV Builder, Cover Letter Builder, LinkedIn Builder, a bank of 140+ interview questions, the Fake Job Checker, Salary Map, Application Plan, saved jobs, and an application tracker.",
+            "Ya. Semua lowongan di Workly bisa dicari dan dibuka gratis, bahkan tanpa perlu daftar. Akun gratis juga sudah mencakup CV Builder, Cover Letter Builder, LinkedIn Builder, bank 140+ pertanyaan interview, Cek Loker Palsu, Peta Gaji, Rencana Lamar, loker tersimpan, dan pelacak lamaran.",
+            "Yes. Every job on Workly can be searched and opened for free, even without signing up. A free account also includes the CV Builder, Cover Letter Builder, LinkedIn Builder, a bank of 140+ interview questions, the Fake Job Checker, Salary Map, Application Plan, saved jobs, and an application tracker.",
           ),
           t(
             "Paket berbayar (mulai Rp 9.000, sekali bayar) membuka latihan praktik untuk 40 pekerjaan remote serta fitur yang memakai AI: Review CV, analisis cover letter, Pindah Karier, dan Simulasi Interview.",
@@ -47,15 +47,15 @@ export const FAQ = [
         ],
       },
       {
-        q: t("Dari mana lowongan di Jobly berasal?", "Where do Jobly's jobs come from?"),
+        q: t("Dari mana lowongan di Workly berasal?", "Where do Workly's jobs come from?"),
         a: [
           t(
             "Dari dua jenis sumber: situs karier resmi perusahaan (misalnya halaman karier bank, BUMN, dan perusahaan teknologi) serta platform lowongan publik seperti LinkedIn dan Indeed. Setiap lowongan menampilkan sumbernya.",
             "From two kinds of sources: official company career sites (for example the career pages of banks, state-owned enterprises, and tech companies) and public job platforms like LinkedIn and Indeed. Every job shows its source.",
           ),
           t(
-            "Jobly tidak membuat atau mengubah isi lowongan. Informasi yang tampil adalah salinan dari sumber aslinya pada saat dikumpulkan.",
-            "Jobly doesn't write or edit job posts. What you see is a copy of the original source at the time it was collected.",
+            "Workly tidak membuat atau mengubah isi lowongan. Informasi yang tampil adalah salinan dari sumber aslinya pada saat dikumpulkan.",
+            "Workly doesn't write or edit job posts. What you see is a copy of the original source at the time it was collected.",
           ),
         ],
       },
@@ -64,8 +64,8 @@ export const FAQ = [
         beranda: true,
         a: [
           t(
-            "Buka detail lowongan, lalu klik tombol Lamar. Kamu akan dibawa ke halaman loker di situs aslinya, dan semua proses lamaran dilakukan di sana. Jobly tidak menerima, meneruskan, atau menyeleksi lamaran.",
-            "Open the job details and click Apply. You'll be taken to the job page on the original site, and the whole application happens there. Jobly doesn't receive, forward, or screen applications.",
+            "Buka detail lowongan, lalu klik tombol Lamar. Kamu akan dibawa ke halaman loker di situs aslinya, dan semua proses lamaran dilakukan di sana. Workly tidak menerima, meneruskan, atau menyeleksi lamaran.",
+            "Open the job details and click Apply. You'll be taken to the job page on the original site, and the whole application happens there. Workly doesn't receive, forward, or screen applications.",
           ),
         ],
       },
@@ -73,17 +73,17 @@ export const FAQ = [
         q: t("Kenapa ada lowongan yang ternyata sudah ditutup?", "Why are some jobs already closed?"),
         a: [
           t(
-            "Lowongan dikumpulkan otomatis, jadi kadang ada jeda antara saat perusahaan menutup lowongan dan saat lowongan itu hilang dari Jobly. Sebelum melamar, cek dulu status dan batas waktunya di situs aslinya.",
-            "Jobs are collected automatically, so there can be a delay between a company closing a job and it disappearing from Jobly. Before applying, check the status and deadline on the original site.",
+            "Lowongan dikumpulkan otomatis, jadi kadang ada jeda antara saat perusahaan menutup lowongan dan saat lowongan itu hilang dari Workly. Sebelum melamar, cek dulu status dan batas waktunya di situs aslinya.",
+            "Jobs are collected automatically, so there can be a delay between a company closing a job and it disappearing from Workly. Before applying, check the status and deadline on the original site.",
           ),
         ],
       },
       {
-        q: t("Ada yang meminta uang untuk proses rekrutmen. Apakah itu dari Jobly?", "Someone asked me for money during hiring. Is that Jobly?"),
+        q: t("Ada yang meminta uang untuk proses rekrutmen. Apakah itu dari Workly?", "Someone asked me for money during hiring. Is that Workly?"),
         a: [
           t(
-            "Bukan. Jobly tidak pernah memungut biaya dari pelamar dan tidak bekerja atas nama perusahaan mana pun. Perusahaan yang sah juga tidak meminta biaya tes, pelatihan, seragam, atau tiket perjalanan sebagai syarat diterima. Kalau ada pihak yang meminta, jangan transfer dan laporkan lowongan tersebut.",
-            "No. Jobly never charges applicants and doesn't act on behalf of any company. Legitimate employers don't ask for test, training, uniform, or travel fees as a condition of hiring. If someone asks, don't transfer anything and report the job.",
+            "Bukan. Workly tidak pernah memungut biaya dari pelamar dan tidak bekerja atas nama perusahaan mana pun. Perusahaan yang sah juga tidak meminta biaya tes, pelatihan, seragam, atau tiket perjalanan sebagai syarat diterima. Kalau ada pihak yang meminta, jangan transfer dan laporkan lowongan tersebut.",
+            "No. Workly never charges applicants and doesn't act on behalf of any company. Legitimate employers don't ask for test, training, uniform, or travel fees as a condition of hiring. If someone asks, don't transfer anything and report the job.",
           ),
         ],
       },
@@ -150,8 +150,8 @@ export const FAQ = [
         q: t("Metode pembayaran apa saja yang bisa dipakai?", "Which payment methods are accepted?"),
         a: [
           t(
-            "Pembayaran lewat QRIS, yang diproses oleh Midtrans. Kamu bisa scan pakai aplikasi bank atau dompet digital apa saja, seperti GoPay, OVO, DANA, atau ShopeePay. Jobly tidak menyimpan data rekeningmu.",
-            "Payment is by QRIS, processed by Midtrans. Scan it with any Indonesian banking or e-wallet app, such as GoPay, OVO, DANA, or ShopeePay. Jobly doesn't store your account details.",
+            "Pembayaran lewat QRIS, yang diproses oleh Midtrans. Kamu bisa scan pakai aplikasi bank atau dompet digital apa saja, seperti GoPay, OVO, DANA, atau ShopeePay. Workly tidak menyimpan data rekeningmu.",
+            "Payment is by QRIS, processed by Midtrans. Scan it with any Indonesian banking or e-wallet app, such as GoPay, OVO, DANA, or ShopeePay. Workly doesn't store your account details.",
           ),
         ],
       },

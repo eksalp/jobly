@@ -1,5 +1,5 @@
 /*
- * Halaman publik Jobly — Beranda, Loker, Detail, Kalkulator, FAQ, dokumen.
+ * Halaman publik Workly — Beranda, Loker, Detail, Kalkulator, FAQ, dokumen.
  *
  * Arah visual: putih bersih, teks biru-hitam, satu warna merek biru navy.
  * Hierarki dibangun lewat ukuran & ketebalan huruf, bukan ornamen.
@@ -747,7 +747,7 @@ button.pb-quota {
   border-color: var(--brand-line);
 }
 
-/* panel "Hari ini di Jobly" */
+/* panel "Hari ini di Workly" */
 .pb-today {
   border: 1px solid var(--line);
   border-radius: 16px;

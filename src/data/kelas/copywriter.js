@@ -214,7 +214,7 @@ export default {
           "Agensi digital lokal yang sering membutuhkan freelancer",
         ]),
         KOTAK("awas", "Waspadai tes gratis yang dipakai sungguhan", "Sebagian calon klien meminta 'tes' berupa copy lengkap untuk produk mereka tanpa bayaran, lalu memakainya. Tes yang wajar biasanya pendek (2 sampai 3 headline) atau dibayar."),
-        KOTAK("tips", "Langkah berikutnya", "Kerjakan latihan praktik Copywriter di Jobly untuk merasakan brief dan revisi klien sungguhan, lalu jadikan salah satunya proyek portofolio."),
+        KOTAK("tips", "Langkah berikutnya", "Kerjakan latihan praktik Copywriter di Workly untuk merasakan brief dan revisi klien sungguhan, lalu jadikan salah satunya proyek portofolio."),
       ],
       kuis: [
         K("Yang paling dilihat klien saat memilih copywriter adalah …", "Contoh tulisan dan alasan di baliknya", ["Ijazah sarjana sastra", "Jumlah pengikut Instagram", "Kecepatan mengetik"], "Klien ingin melihat kemampuanmu langsung dari contoh karya."),
