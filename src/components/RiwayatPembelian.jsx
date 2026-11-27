@@ -14,6 +14,7 @@ import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { PAKET, rupiah } from "../data/paket";
 import { lokal, t } from "../i18n.js";
+import { BATAS_BAYAR_MENIT } from "../utils/snap";
 
 const STATUS = {
   aktif: { label: t("Aktif", "Active"), warna: "#0F7B4F", Ikon: Check },
@@ -135,14 +136,14 @@ export function RiwayatPembelian() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {daftar.map((d) => {
-          // Sesi pembayaran Midtrans kedaluwarsa setelah 15 menit.
+          // Sesi pembayaran Midtrans kedaluwarsa setelah BATAS_BAYAR_MENIT.
           // Pending yang lebih tua dari itu pasti tidak akan dibayar,
           // jadi ditampilkan sebagai kedaluwarsa meski notifikasi expire
           // dari Midtrans belum tentu pernah sampai (user yang cuma
           // menutup halaman tidak memicu webhook apa pun).
           const lewatTempo =
             d.status === "pending" &&
-            Date.now() - new Date(d.created_at).getTime() > 15 * 60 * 1000;
+            Date.now() - new Date(d.created_at).getTime() > BATAS_BAYAR_MENIT * 60 * 1000;
           const statusTampil = lewatTempo ? "expired" : d.status;
           const st = STATUS[statusTampil] ?? STATUS.batal;
           const { Ikon } = st;
@@ -316,7 +317,7 @@ export function RiwayatPembelian() {
                         lineHeight: 1.55,
                       }}
                     >
-                      {t("Pembayaran belum terkonfirmasi. Kalau kamu sudah membayar, paket akan aktif otomatis dalam beberapa menit.", "Payment isn't confirmed yet. If you've already paid, the plan will activate automatically within a few minutes.")}
+                      {t("Pembayaran belum terkonfirmasi. Kalau belum membayar, lanjutkan lewat tombol \"Lanjutkan pembayaran\" di bagian atas halaman ini. Kalau sudah, paket aktif otomatis dalam beberapa menit.", "Payment isn't confirmed yet. If you haven't paid, use \"Continue payment\" at the top of this page. If you have, the plan activates automatically within a few minutes.")}
                     </div>
                   )}
                 </div>

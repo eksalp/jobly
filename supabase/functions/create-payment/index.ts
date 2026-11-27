@@ -118,6 +118,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         transaction_details: { order_id: orderId, gross_amount: paket.harga },
+        // Batas waktu bayar. Selama belum lewat, pengguna bisa membuka lagi
+        // jendela pembayaran yang tertutup (src/utils/snap.js, BATAS_BAYAR_MENIT).
+        expiry: { unit: "minutes", duration: 60 },
         customer_details: { email: user.email },
         // Hanya QRIS (biaya 0,7%). Bisa diubah lewat secret MIDTRANS_METODE,
         // mis. "other_qris,gopay,shopeepay". QRIS tetap bisa dibayar dari

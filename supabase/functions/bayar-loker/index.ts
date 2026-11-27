@@ -68,6 +68,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         transaction_details: { order_id: orderId, gross_amount: paket.harga },
+        // Batas waktu bayar. Selama belum lewat, pengguna bisa membuka lagi
+        // jendela pembayaran yang tertutup (src/utils/snap.js, BATAS_BAYAR_MENIT).
+        expiry: { unit: "minutes", duration: 60 },
         customer_details: { email: user.email, first_name: String(pt.nama).slice(0, 50) },
         enabled_payments: (Deno.env.get("MIDTRANS_METODE") ?? "other_qris")
           .split(",")

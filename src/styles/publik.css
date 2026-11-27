@@ -10786,3 +10786,28 @@ html[data-tema="gelap"] .pk-status.merah { background: rgba(239, 68, 68, 0.18); 
   border-color: var(--brand);
   color: var(--brand);
 }
+
+/* -------------------------------------- pembayaran tertunda & riwayat invoice */
+.pk-tertunda { display: grid; gap: 10px; }
+.pk-tertunda > div {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 18px; border-radius: 14px; border: 1px solid #f5d38a; background: #fff8e6;
+}
+.pk-tertunda b { display: block; font-size: 15px; color: #7a4b00; }
+.pk-tertunda span { font-size: 13.5px; color: #8a5a10; }
+html[data-tema="gelap"] .pk-tertunda > div { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.35); }
+html[data-tema="gelap"] .pk-tertunda b, html[data-tema="gelap"] .pk-tertunda span { color: #fcd34d; }
+.pk-riwayat { display: grid; font-size: 13.5px; }
+.pk-riwayat > div {
+  display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 0.9fr) 170px; gap: 12px; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--line);
+}
+.pk-riwayat > div.kepala { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); padding-top: 0; }
+.pk-riwayat .mono { font-family: "IBM Plex Mono", monospace; font-size: 12px; overflow-wrap: anywhere; }
+.pk-riwayat small { display: block; color: var(--muted); font-size: 12px; }
+.pk-riwayat .aksi { display: flex; justify-content: flex-end; gap: 6px; }
+@media (max-width: 760px) {
+  .pk-riwayat > div.kepala { display: none; }
+  .pk-riwayat > div { grid-template-columns: 1fr 1fr; row-gap: 6px; }
+  .pk-riwayat .aksi { grid-column: 1 / -1; justify-content: flex-start; }
+}

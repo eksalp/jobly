@@ -15,6 +15,7 @@ import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useLangganan } from "../../hooks/useLangganan";
 import { DAFTAR_PAKET, SEMUA_TIER, PAKET, rupiah, labelDurasi } from "../../data/paket";
 import { RiwayatPembelian } from "../../components/RiwayatPembelian";
+import { BayarTertunda } from "../../components/BayarTertunda";
 import { lokal, t } from "../../i18n.js";
 
 /** Paket berbayar yang membuka latihan praktik. */
@@ -80,6 +81,8 @@ export function PaketPanel() {
   const [proses, setProses] = useState(null); // id paket yang sedang diproses
   const [galat, setGalat] = useState("");
   const [sukses, setSukses] = useState("");
+  // Dinaikkan saat jendela pembayaran ditutup, supaya kartu "Lanjutkan pembayaran" muncul
+  const [penandaBayar, setPenandaBayar] = useState(0);
 
   // Kalau kuota masih banyak, beri tahu sebelum membeli.
   // Membiarkan orang membeli sesuatu yang belum dibutuhkan itu
@@ -172,15 +175,19 @@ export function PaketPanel() {
         },
         onPending: () => {
           setGalat(
-            t("Pembayaran belum selesai. Langganan aktif otomatis setelah pembayaran terkonfirmasi.", "Payment isn't finished yet. Your plan activates automatically once payment is confirmed."),
+            t("Pembayaran belum selesai. Lanjutkan lewat tombol \"Lanjutkan pembayaran\" sebelum waktunya habis; paket aktif otomatis setelah lunas.", "Payment isn't finished. Use \"Continue payment\" before it expires; your plan activates automatically once paid."),
           );
           setProses(null);
+          setPenandaBayar((n) => n + 1);
         },
         onError: () => {
           setGalat(t("Pembayaran gagal. Silakan coba lagi.", "Payment failed. Please try again."));
           setProses(null);
         },
-        onClose: () => setProses(null),
+        onClose: () => {
+          setProses(null);
+          setPenandaBayar((n) => n + 1);
+        },
       });
     } catch (e) {
       setGalat(e?.message || t("Gagal membuat transaksi.", "Couldn't create the transaction."));
@@ -213,6 +220,8 @@ export function PaketPanel() {
           {t("Semua loker, CV Builder, Cover Letter Builder, dan LinkedIn Builder gratis selamanya. Paket berbayar membuka latihan praktik untuk 40 pekerjaan remote dan menambah kuota analisis AI, analisis cover letter, Pindah Karier, dan simulasi interview.", "Every job, the CV Builder, the Cover Letter Builder, and the LinkedIn Builder are free forever. Paid plans unlock hands-on practice for 40 remote roles and add credits for AI analysis, cover letter review, Career Switch, and mock interviews.")}
         </div>
       </div>
+
+      <BayarTertunda penanda={penandaBayar} onLunas={() => langganan.refresh()} />
 
       {/* Status langganan aktif */}
       {langganan.aktif && (

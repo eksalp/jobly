@@ -68,7 +68,12 @@ serve(async (req) => {
     // Pembelian kredit pasang loker (pemberi kerja), dibuat oleh bayar-loker
     if (String(order_id).includes("-LK-")) {
       if (lunas) {
-        const { data: n, error } = await supabaseAdmin.rpc("lunasi_pembelian_kredit", { p_order: order_id });
+        // Metode & ID transaksi dicatat untuk invoice (butuh SQL 20)
+        const { data: n, error } = await supabaseAdmin.rpc("lunasi_pembelian_kredit", {
+          p_order: order_id,
+          p_metode: body.payment_type ?? null,
+          p_transaksi: body.transaction_id ?? null,
+        });
         if (error) throw new Error("Gagal menambah kredit: " + error.message);
         console.log(`Kredit loker +${n} untuk ${order_id}`);
         return json({ ok: true, kredit: n });

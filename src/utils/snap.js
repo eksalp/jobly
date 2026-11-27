@@ -29,3 +29,22 @@ export function muatSnap() {
   });
   return janji;
 }
+
+/**
+ * Batas waktu menyelesaikan pembayaran (menit). Sama dengan `expiry` yang
+ * dikirim create-payment dan bayar-loker ke Midtrans. Selama belum lewat,
+ * jendela pembayaran yang tertutup bisa dibuka lagi dengan token yang sama.
+ */
+export const BATAS_BAYAR_MENIT = 60;
+
+/** Sisa menit untuk melanjutkan pembayaran (0 = sudah lewat). */
+export function sisaMenitBayar(dibuatAt) {
+  const sisa = BATAS_BAYAR_MENIT - (Date.now() - new Date(dibuatAt).getTime()) / 60000;
+  return sisa > 0 ? Math.ceil(sisa) : 0;
+}
+
+/** Buka lagi jendela pembayaran Midtrans untuk transaksi yang belum dibayar. */
+export async function lanjutkanBayar(token, handler = {}) {
+  const snap = await muatSnap();
+  snap.pay(token, handler);
+}

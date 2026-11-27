@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle, ArrowLeft, Check, CheckCircle2, Clock, Eye, ExternalLink, ImagePlus, Loader2,
-  MousePointerClick, Pencil, Plus, Send, Trash2, X, XCircle,
+  MousePointerClick, Pencil, Plus, Send, Trash2, X, XCircle, Download,
 } from "lucide-react";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker } from "../../components/publik/KartuLoker";
@@ -11,7 +11,8 @@ import { BIDANG } from "../../data/bidang";
 import { PAKET_LOKER, MASA_TAYANG_HARI, rupiah } from "../../data/paketLoker";
 import { mapSupabaseJob } from "../../utils/petaLoker";
 import { urlDetail } from "../../utils/sumberLoker";
-import { muatSnap } from "../../utils/snap";
+import { muatSnap, lanjutkanBayar, sisaMenitBayar } from "../../utils/snap";
+import { unduhInvoice } from "../../utils/invoicePdf";
 import { tautan } from "../../utils/navigasi";
 import { lokal, t } from "../../i18n.js";
 
@@ -148,9 +149,16 @@ function FormProfil({ pt, onSimpan, onBatal }) {
     setGalat("");
     const ext = file.name.split(".").pop().toLowerCase().replace(/[^a-z]/g, "") || "png";
     const path = `${user.id}/logo-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("logo-perusahaan").upload(path, file, { upsert: true, contentType: file.type });
+    // Nama file selalu baru, jadi tidak perlu upsert (upsert butuh izin tambahan)
+    const { error } = await supabase.storage.from("logo-perusahaan").upload(path, file, { upsert: false, contentType: file.type });
     setSibuk(false);
-    if (error) return setGalat(t("Logo gagal diunggah: ", "Logo upload failed: ") + error.message);
+    if (error) {
+      return setGalat(
+        /row-level security|not authorized|bucket not found/i.test(error.message)
+          ? t("Logo belum bisa diunggah karena izin penyimpanan belum disiapkan (SQL 20). Hubungi admin Workly.", "The logo can't be uploaded yet because storage permissions aren't set up (SQL 20). Contact the Workly admin.")
+          : t("Logo gagal diunggah: ", "Logo upload failed: ") + error.message,
+      );
+    }
     const { data } = supabase.storage.from("logo-perusahaan").getPublicUrl(path);
     setF((x) => ({ ...x, logo_url: data.publicUrl }));
   };
@@ -546,13 +554,17 @@ function BeliKredit({ pt, pilihan, onLunas }) {
         },
         onPending: () => {
           setProses("");
-          setPesan({ ok: false, teks: t("Pembayaran belum selesai. Kredit masuk otomatis setelah pembayaran terkonfirmasi.", "Payment isn't finished. Credits are added automatically once confirmed.") });
+          setPesan({ ok: false, teks: t("Pembayaran belum selesai. Lanjutkan kapan saja lewat tombol \"Lanjutkan bayar\" sebelum waktunya habis; kredit masuk otomatis setelah lunas.", "Payment isn't finished. Use \"Continue payment\" before it expires; credits are added automatically once paid.") });
+          onLunas();
         },
         onError: () => {
           setProses("");
           setPesan({ ok: false, teks: t("Pembayaran gagal. Silakan coba lagi.", "Payment failed. Please try again.") });
         },
-        onClose: () => setProses(""),
+        onClose: () => {
+          setProses("");
+          onLunas(); // tampilkan pembayaran tertunda, bila ada
+        },
       });
     } catch (e) {
       setProses("");
@@ -592,21 +604,118 @@ function BeliKredit({ pt, pilihan, onLunas }) {
   );
 }
 
-function RiwayatBeli({ beli }) {
+/** Pembayaran yang jendelanya tertutup tetapi masih bisa dilanjutkan. */
+const bisaDilanjutkan = (b) => b.status === "pending" && b.snap_token && sisaMenitBayar(b.dibuat_at) > 0;
+
+function TombolLanjutBayar({ b, onLunas, kecil }) {
+  const [sibuk, setSibuk] = useState(false);
+  const [pesan, setPesan] = useState("");
+  const lanjut = async () => {
+    setSibuk(true);
+    setPesan("");
+    try {
+      await lanjutkanBayar(b.snap_token, {
+        onSuccess: () => {
+          setSibuk(false);
+          setPesan(t("Pembayaran berhasil. Kredit sedang ditambahkan...", "Payment successful. Adding credits..."));
+          setTimeout(onLunas, 3000);
+        },
+        onPending: () => setSibuk(false),
+        onError: () => {
+          setSibuk(false);
+          setPesan(t("Sesi pembayaran ini sudah tidak berlaku. Silakan beli ulang.", "This payment session is no longer valid. Please buy again."));
+        },
+        onClose: () => setSibuk(false),
+      });
+    } catch (e) {
+      setSibuk(false);
+      setPesan(e.message);
+    }
+  };
+  return (
+    <>
+      <button type="button" className={`pb-btn pb-btn-primary ${kecil ? "pb-btn-sm" : ""}`} disabled={sibuk} onClick={lanjut}>
+        {sibuk ? <Loader2 size={14} className="pk-putar" /> : <Clock size={14} />} {t("Lanjutkan bayar", "Continue payment")}
+      </button>
+      {pesan && <small className="pk-redup" style={{ display: "block", marginTop: 6 }}>{pesan}</small>}
+    </>
+  );
+}
+
+/** Kartu di atas paket: pembayaran yang belum selesai. */
+function BayarTertunda({ beli, onLunas }) {
+  const tertunda = beli.filter(bisaDilanjutkan);
+  if (!tertunda.length) return null;
+  return (
+    <div className="pk-tertunda">
+      {tertunda.map((b) => (
+        <div key={b.order_id}>
+          <div>
+            <b>{t("Pembayaran belum selesai", "Payment not finished")}</b>
+            <span>
+              {PAKET_LOKER.find((p) => p.id === b.paket)?.nama || b.paket} · {rupiah(b.harga)} ·{" "}
+              {t(`sisa waktu ${sisaMenitBayar(b.dibuat_at)} menit`, `${sisaMenitBayar(b.dibuat_at)} min left`)}
+            </span>
+          </div>
+          <div>
+            <TombolLanjutBayar b={b} onLunas={onLunas} kecil />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RiwayatBeli({ beli, pt, onLunas }) {
+  const { user } = useAuth();
   if (!beli.length) return null;
-  const label = { pending: t("Menunggu bayar", "Awaiting payment"), paid: t("Lunas", "Paid"), failed: t("Gagal", "Failed") };
+  const label = {
+    pending: t("Menunggu bayar", "Awaiting payment"),
+    kedaluwarsa: t("Kedaluwarsa", "Expired"),
+    paid: t("Lunas", "Paid"),
+    failed: t("Gagal / batal", "Failed / cancelled"),
+  };
+  const warna = { paid: "hijau", failed: "merah", kedaluwarsa: "abu", pending: "kuning" };
   return (
     <div className="pk-panel">
-      <h3 style={{ margin: "0 0 10px", fontSize: 16 }}>{t("Riwayat pembelian", "Purchase history")}</h3>
-      <div className="pk-tabel">
-        {beli.map((b) => (
-          <div key={b.order_id}>
-            <span>{tgl(b.dibuat_at)}</span>
-            <span>{PAKET_LOKER.find((p) => p.id === b.paket)?.nama || b.paket}</span>
-            <span>{rupiah(b.harga)}</span>
-            <span className={`pk-status ${b.status === "paid" ? "hijau" : b.status === "failed" ? "merah" : "kuning"}`}>{label[b.status]}</span>
-          </div>
-        ))}
+      <h3 style={{ margin: "0 0 4px", fontSize: 16 }}>{t("Riwayat pembelian & invoice", "Purchases & invoices")}</h3>
+      <p className="pk-redup" style={{ margin: "0 0 12px", fontSize: 13 }}>
+        {t("Invoice tersedia untuk setiap pembelian yang sudah lunas.", "An invoice is available for every paid purchase.")}
+      </p>
+      <div className="pk-riwayat">
+        <div className="kepala">
+          <span>{t("Tanggal", "Date")}</span>
+          <span>{t("No. invoice / pesanan", "Invoice / order no.")}</span>
+          <span>{t("Paket", "Bundle")}</span>
+          <span>Total</span>
+          <span>Status</span>
+          <span />
+        </div>
+        {beli.map((b) => {
+          const st = b.status === "pending" && !bisaDilanjutkan(b) ? "kedaluwarsa" : b.status;
+          return (
+            <div key={b.order_id}>
+              <span>{tgl(b.dibayar_at || b.dibuat_at)}</span>
+              <span className="mono">{b.no_invoice || b.order_id}</span>
+              <span>
+                {PAKET_LOKER.find((p) => p.id === b.paket)?.nama || b.paket}
+                <small>{t(`${b.kredit} kredit`, `${b.kredit} credits`)}</small>
+              </span>
+              <span>{rupiah(b.harga)}</span>
+              <span>
+                <span className={`pk-status ${warna[st]}`}>{label[st]}</span>
+              </span>
+              <span className="aksi">
+                {b.status === "paid" && (
+                  <button type="button" className="pb-btn pb-btn-outline pb-btn-sm" onClick={() => unduhInvoice(b, pt, user?.email)}>
+                    <Download size={14} /> Invoice
+                  </button>
+                )}
+                {st === "pending" && <TombolLanjutBayar b={b} onLunas={onLunas} kecil />}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -838,8 +947,9 @@ export function DasborMitraPage() {
   } else if (mode === "kredit") {
     isi = (
       <>
+        <BayarTertunda beli={data.beli} onLunas={data.muat} />
         <BeliKredit pt={data.pt} pilihan={pilihPaket} onLunas={data.muat} />
-        <RiwayatBeli beli={data.beli} />
+        <RiwayatBeli beli={data.beli} pt={data.pt} onLunas={data.muat} />
       </>
     );
   } else {
