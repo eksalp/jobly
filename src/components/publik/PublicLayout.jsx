@@ -75,7 +75,7 @@ const I = {
   freelance: { t: t("Loker freelance", "Freelance jobs"), d: t("Kerja per proyek, atur waktumu sendiri", "Project-based work on your own schedule"), path: "/freelance", Ikon: Handshake, baru: true },
   magang: { t: t("Loker magang / internship", "Internships"), d: t("MagangHub Kemnaker dan program magang perusahaan", "MagangHub and company internship programmes"), path: "/magang", Ikon: GraduationCap, baru: true },
   urgent: { t: "Urgently hiring", d: t("Perusahaan yang ingin segera merekrut", "Companies hiring as soon as possible"), path: "/loker?urgent=1", Ikon: Clock, baru: true },
-  pasang: { t: t("Pasang loker", "Post a job"), d: t("Untuk perusahaan: loker prioritas mulai Rp49rb", "For employers: featured jobs from Rp49k"), path: "/pemberi-kerja", Ikon: Megaphone },
+  pasang: { t: t("Pasang loker", "Post a job"), d: t("Untuk perusahaan: loker prioritas Rp10rb per loker", "For employers: featured jobs at Rp10k each"), path: "/pemberi-kerja", Ikon: Megaphone },
   cocok: { t: t("Cocok untukku", "Matched for me"), d: t("Loker yang paling sesuai dengan CV-mu", "Jobs that best fit your CV"), path: ke("jobfinder"), Ikon: Sparkles },
   simpan: { t: t("Tersimpan", "Saved"), d: t("Loker yang sudah kamu simpan", "Jobs you have saved"), path: ke("saved"), Ikon: Bookmark },
   lamaran: { t: t("Lamaran saya", "My applications"), d: t("Pantau status setiap lamaran", "Track the status of each application"), path: ke("applications"), Ikon: Send },

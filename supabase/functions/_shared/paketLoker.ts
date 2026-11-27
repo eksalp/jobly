@@ -7,7 +7,7 @@
  * pembayaran selalu dari file ini, bukan dari browser.
  */
 export const PAKET_LOKER: Record<string, { id: string; nama: string; kredit: number; harga: number }> = {
-  satu: { id: "satu", nama: "1 Loker", kredit: 1, harga: 49000 },
-  lima: { id: "lima", nama: "Paket 5 Loker", kredit: 5, harga: 199000 },
-  lima_belas: { id: "lima_belas", nama: "Paket 15 Loker", kredit: 15, harga: 499000 },
+  satu: { id: "satu", nama: "1 Loker", kredit: 1, harga: 10000 },
+  lima: { id: "lima", nama: "Paket 5 Loker", kredit: 5, harga: 50000 },
+  lima_belas: { id: "lima_belas", nama: "Paket 15 Loker", kredit: 15, harga: 150000 },
 };

@@ -25,12 +25,32 @@ const METODE = {
   cstore: "Gerai retail",
 };
 
+/** Logo Workly (SVG di /public) diubah menjadi PNG untuk ditempel ke PDF. */
+async function logoPng() {
+  try {
+    const img = await new Promise((ok, gagal) => {
+      const i = new Image();
+      i.onload = () => ok(i);
+      i.onerror = gagal;
+      i.src = "/logo-workly-w.svg";
+    });
+    const c = document.createElement("canvas");
+    c.width = 240;
+    c.height = 240;
+    c.getContext("2d").drawImage(img, 0, 0, 240, 240);
+    return c.toDataURL("image/png");
+  } catch {
+    return null; // tanpa logo, invoice tetap dibuat
+  }
+}
+
 /**
  * @param {object} b  baris pembelian_kredit (status paid)
  * @param {object} pt baris perusahaan
  * @param {string} email email akun perusahaan
  */
-export function unduhInvoice(b, pt, email) {
+export async function unduhInvoice(b, pt, email) {
+  const logo = await logoPng();
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const W = 210;
   const kiri = 18;
@@ -45,15 +65,17 @@ export function unduhInvoice(b, pt, email) {
   // ---------------------------------------------------------------- kepala
   doc.setFillColor(...biru);
   doc.rect(0, 0, W, 4, "F");
+  const xNama = logo ? kiri + 15 : kiri;
+  if (logo) doc.addImage(logo, "PNG", kiri - 1, 13.5, 14, 14);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
-  doc.setTextColor(22, 96, 245);
-  doc.text(SITUS.nama || "Workly", kiri, 24);
+  doc.setTextColor(...tinta);
+  doc.text(SITUS.nama || "Workly", xNama, 24);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   doc.setTextColor(...abu);
-  doc.text("workly.id", kiri, 30);
-  if (SITUS.emailKontak) doc.text(SITUS.emailKontak, kiri, 35);
+  doc.text("workly.id", xNama, 30);
+  if (SITUS.emailKontak) doc.text(SITUS.emailKontak, xNama, 35);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);

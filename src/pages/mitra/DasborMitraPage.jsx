@@ -8,7 +8,7 @@ import { KartuLoker } from "../../components/publik/KartuLoker";
 import { supabase, supabaseConfigured } from "../../lib/supabaseClient";
 import { useAuth } from "../../context/AuthContext";
 import { BIDANG } from "../../data/bidang";
-import { PAKET_LOKER, MASA_TAYANG_HARI, rupiah } from "../../data/paketLoker";
+import { PAKET_LOKER, MASA_TAYANG_HARI, rupiah, ketHargaPaket } from "../../data/paketLoker";
 import { mapSupabaseJob } from "../../utils/petaLoker";
 import { urlDetail } from "../../utils/sumberLoker";
 import { muatSnap, lanjutkanBayar, sisaMenitBayar } from "../../utils/snap";
@@ -596,7 +596,7 @@ function BeliKredit({ pt, pilihan, onLunas }) {
             <b>{p.nama}</b>
             <div className="harga">{rupiah(p.harga)}</div>
             <small>
-              {p.kredit > 1 ? t(`${rupiah(Math.round(p.harga / p.kredit))} per loker · hemat ${p.hemat}%`, `${rupiah(Math.round(p.harga / p.kredit))} per post · save ${p.hemat}%`) : t("per loker", "per post")}
+              {ketHargaPaket(p)}
             </small>
             <button type="button" className={`pb-btn ${p.populer || pilihan === p.id ? "pb-btn-primary" : "pb-btn-outline"} pb-btn-sm`} disabled={Boolean(proses)} onClick={() => beli(p.id)}>
               {proses === p.id ? <Loader2 size={14} className="pk-putar" /> : null} {t("Beli", "Buy")}

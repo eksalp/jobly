@@ -4,7 +4,7 @@ import { PublicLayout, useGulirKeHash } from "../../components/publik/PublicLayo
 import { DaftarFaq } from "../../components/publik/DaftarFaq";
 import { useJobs } from "../../context/JobsContext";
 import { useAuth } from "../../context/AuthContext";
-import { PAKET_LOKER, FITUR_LOKER, MASA_TAYANG_HARI, rupiah } from "../../data/paketLoker";
+import { PAKET_LOKER, FITUR_LOKER, MASA_TAYANG_HARI, rupiah, ketHargaPaket } from "../../data/paketLoker";
 import { tautan } from "../../utils/navigasi";
 import { lokal, t } from "../../i18n.js";
 
@@ -174,7 +174,7 @@ export function PemberiKerjaPage() {
           <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">{t("Harga", "Pricing")}</span>
-              <h2>{t("Bayar per loker, lebih hemat dengan paket", "Pay per post, save with a bundle")}</h2>
+              <h2>{t("Cukup Rp10.000 per loker", "Just Rp10,000 per post")}</h2>
               <p>{t("Sekali bayar, tanpa langganan. Semua paket mendapat fitur yang sama:", "One-time payment, no subscription. Every bundle includes:")}</p>
             </div>
           </div>
@@ -187,9 +187,7 @@ export function PemberiKerjaPage() {
                 </div>
                 <div className="amt">{rupiah(p.harga)}</div>
                 <div className="per">
-                  {p.kredit > 1
-                    ? t(`${rupiah(Math.round(p.harga / p.kredit))} per loker · hemat ${p.hemat}%`, `${rupiah(Math.round(p.harga / p.kredit))} per post · save ${p.hemat}%`)
-                    : t("per loker", "per post")}
+                  {ketHargaPaket(p)}
                 </div>
                 <p style={{ margin: "4px 0 0", fontSize: 13.5, color: "var(--ink2)" }}>{p.ket}</p>
                 <ul>
