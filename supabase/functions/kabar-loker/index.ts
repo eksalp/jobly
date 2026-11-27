@@ -48,7 +48,7 @@ serve(async (req) => {
 <b>${esc(m.posisi)}</b>
 ${esc(pt?.nama)}${pt?.situs ? ` · ${esc(pt.situs)}` : ""}
 ${[m.lokasi || pt?.kota, m.tipe, m.cara_kerja, gaji].filter(Boolean).map(esc).join(" · ")}
-Lamar: ${esc(m.link)}
+Lamar: ${esc(m.cara_lamar === "form" ? `Formulir Workly → ${m.email_lamaran || "email akun"}` : m.cara_lamar === "email" ? `Email ${m.email_lamaran}` : m.link)}
 
 ${esc(String(m.deskripsi || "").slice(0, 1200))}${String(m.deskripsi || "").length > 1200 ? "…" : ""}
 

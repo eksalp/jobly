@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle, ArrowLeft, Check, CheckCircle2, Clock, Eye, ExternalLink, ImagePlus, Loader2,
-  MousePointerClick, Pencil, Plus, Send, Trash2, X, XCircle, Download,
+  MousePointerClick, Pencil, Plus, Send, Trash2, X, XCircle, Download, Users, FileText, Mail, Phone, MapPin, Link2,
 } from "lucide-react";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker } from "../../components/publik/KartuLoker";
@@ -50,6 +50,36 @@ const angkaSaja = (v) => {
   return n > 0 ? n : null;
 };
 
+/** Cara pelamar melamar (sama dengan SQL 22). */
+export const CARA_LAMAR = [
+  {
+    id: "form",
+    judul: t("Formulir Workly", "Workly form"),
+    ket: t(
+      "Pelamar mengisi formulir di Workly dan mengunggah CV. Lamaran langsung dikirim ke email perusahaan dan tersimpan di dasbor ini.",
+      "Applicants fill in a form on Workly and upload a CV. Applications go straight to your email and are kept in this dashboard.",
+    ),
+  },
+  {
+    id: "link",
+    judul: t("Link formulir perusahaan", "Your own form or page"),
+    ket: t("Pelamar diarahkan ke Google Form, situs karier, atau sistem rekrutmen milik perusahaan.", "Applicants are sent to your Google Form, careers page, or applicant tracking system."),
+  },
+  {
+    id: "email",
+    judul: t("Lewat email", "By email"),
+    ket: t("Pelamar mengirim CV langsung ke alamat email perusahaan.", "Applicants send their CV directly to your email address."),
+  },
+];
+
+/** Alamat yang dibuka tombol lamar, sesuai cara melamar. */
+export function alamatLamar(m) {
+  const cara = m.cara_lamar || "link";
+  if (cara === "form") return `${window.location.origin}/lamar/${m.id || 0}`;
+  if (cara === "email") return `mailto:${m.email_lamaran || ""}?subject=${encodeURIComponent(`Lamaran ${m.posisi || ""} (via Workly)`)}`;
+  return m.link;
+}
+
 /** Baris loker_perusahaan + perusahaan → objek job untuk KartuLoker. */
 export function keJobMitra(m, pt) {
   const job = mapSupabaseJob(
@@ -66,7 +96,7 @@ export function keJobMitra(m, pt) {
       max_amount: m.tampilkan_gaji ? m.gaji_max || m.gaji_min : null,
       currency: m.tampilkan_gaji && m.gaji_min ? "IDR" : null,
       interval: m.tampilkan_gaji && m.gaji_min ? "monthly" : null,
-      job_url: m.link,
+      job_url: alamatLamar(m),
       site: "jobly",
       prioritas: true,
       created_at: m.tayang_mulai || new Date().toISOString(),
@@ -85,14 +115,16 @@ function Lencana({ status }) {
 
 function useDataMitra() {
   const { user } = useAuth();
-  const [d, setD] = useState({ memuat: true, pt: null, loker: [], beli: [], galat: "" });
+  const [d, setD] = useState({ memuat: true, pt: null, loker: [], beli: [], lamaran: [], galat: "" });
   const muat = useCallback(async () => {
     if (!user) return;
     await supabase.rpc("rapikan_loker_mitra").then(() => {}, () => {});
-    const [pt, loker, beli] = await Promise.all([
+    const [pt, loker, beli, lamaran] = await Promise.all([
       supabase.from("perusahaan").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("loker_perusahaan").select("*").eq("user_id", user.id).order("dibuat_at", { ascending: false }),
       supabase.from("pembelian_kredit").select("*").eq("user_id", user.id).order("dibuat_at", { ascending: false }).limit(20),
+      // RLS: hanya lamaran untuk loker milik perusahaan ini
+      supabase.from("lamaran_mitra").select("*").order("dibuat_at", { ascending: false }).limit(1000),
     ]);
     const galat = pt.error || loker.error;
     setD({
@@ -100,6 +132,7 @@ function useDataMitra() {
       pt: pt.data || null,
       loker: loker.data || [],
       beli: beli.data || [],
+      lamaran: lamaran.data || [],
       galat: galat
         ? /relation|does not exist|schema cache/i.test(galat.message)
           ? t("Fitur pemberi kerja belum disiapkan di database (SQL 19).", "Employer features aren't set up in the database yet (SQL 19).")
@@ -299,16 +332,25 @@ const LOKER_KOSONG = {
   gaji_max: "",
   tampilkan_gaji: true,
   link: "",
+  cara_lamar: "form",
+  email_lamaran: "",
   deskripsi: "",
 };
 
 function FormLoker({ pt, awal, kredit, onSelesai, onBatal }) {
   const { user } = useAuth();
-  const [f, setF] = useState(() =>
-    awal
-      ? { ...LOKER_KOSONG, ...Object.fromEntries(Object.entries(awal).map(([k, v]) => [k, v ?? ""])), tampilkan_gaji: awal.tampilkan_gaji !== false }
-      : { ...LOKER_KOSONG, lokasi: pt?.kota || "" },
-  );
+  const [f, setF] = useState(() => {
+    if (!awal) return { ...LOKER_KOSONG, lokasi: pt?.kota || "", email_lamaran: user?.email || "" };
+    const isi = { ...LOKER_KOSONG, ...Object.fromEntries(Object.entries(awal).map(([k, v]) => [k, v ?? ""])), tampilkan_gaji: awal.tampilkan_gaji !== false };
+    // Loker lama yang memakai mailto: di kolom link ditampilkan sebagai "Lewat email"
+    if ((awal.cara_lamar || "link") === "link" && String(awal.link).startsWith("mailto:")) {
+      isi.cara_lamar = "email";
+      isi.email_lamaran = String(awal.link).replace(/^mailto:/, "").split("?")[0];
+      isi.link = "";
+    }
+    if (!isi.email_lamaran && isi.cara_lamar !== "link") isi.email_lamaran = user?.email || "";
+    return isi;
+  });
   const [sibuk, setSibuk] = useState("");
   const [galat, setGalat] = useState("");
   const ubah = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
@@ -316,9 +358,8 @@ function FormLoker({ pt, awal, kredit, onSelesai, onBatal }) {
   const perluKredit = !awal?.sudah_bayar;
 
   const baris = useMemo(() => {
-    let link = f.link.trim();
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(link)) link = `mailto:${link}`;
-    else if (link && !/^(https?:|mailto:)/i.test(link)) link = `https://${link}`;
+    let link = f.cara_lamar === "link" ? f.link.trim() : "";
+    if (link && !/^https?:/i.test(link)) link = `https://${link}`;
     const min = angkaSaja(f.gaji_min);
     const max = angkaSaja(f.gaji_max);
     return {
@@ -333,13 +374,18 @@ function FormLoker({ pt, awal, kredit, onSelesai, onBatal }) {
       gaji_max: min && max ? Math.max(min, max) : null,
       tampilkan_gaji: Boolean(f.tampilkan_gaji),
       link,
+      cara_lamar: f.cara_lamar,
+      email_lamaran: f.cara_lamar === "link" ? null : f.email_lamaran.trim().toLowerCase() || null,
       deskripsi: f.deskripsi.trim(),
     };
   }, [f]);
 
   const periksa = () => {
     if (baris.posisi.length < 2) return t("Nama posisi wajib diisi.", "Job title is required.");
-    if (!baris.link) return t("Link atau email lamaran wajib diisi.", "An apply link or email is required.");
+    if (baris.cara_lamar === "link" && !/^https?:\/\/[^\s.]+\.[^\s]+/i.test(baris.link))
+      return t("Isi link formulir atau halaman lamaran perusahaan, misalnya https://forms.gle/...", "Enter your application form or page link, e.g. https://forms.gle/...");
+    if (baris.cara_lamar !== "link" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(baris.email_lamaran || ""))
+      return t("Isi alamat email perusahaan yang benar.", "Enter a valid company email address.");
     if (baris.deskripsi.length < 80)
       return t("Deskripsi minimal 80 karakter: tulis tanggung jawab dan kualifikasi.", "Description needs at least 80 characters: list responsibilities and requirements.");
     return "";
@@ -461,10 +507,41 @@ function FormLoker({ pt, awal, kredit, onSelesai, onBatal }) {
             <input type="checkbox" checked={f.tampilkan_gaji} onChange={ubah("tampilkan_gaji")} />
             {t("Tampilkan gaji di loker (loker bergaji jelas lebih banyak dilamar)", "Show the salary (posts with a salary get more applicants)")}
           </label>
-          <label className="lebar">
-            <span>{t("Link lamaran atau email *", "Apply link or email *")}</span>
-            <input value={f.link} onChange={ubah("link")} placeholder="https://contoh.co.id/karier  atau  hrd@contoh.co.id" />
-          </label>
+          <fieldset className="lebar pk-cara-lamar">
+            <legend>{t("Cara pelamar melamar *", "How candidates apply *")}</legend>
+            <div className="pilihan">
+              {CARA_LAMAR.map((c) => (
+                <label key={c.id} className={f.cara_lamar === c.id ? "on" : ""}>
+                  <input type="radio" name="cara_lamar" value={c.id} checked={f.cara_lamar === c.id} onChange={ubah("cara_lamar")} />
+                  <b>
+                    {c.judul}
+                    {c.id === "form" && <span className="pk-rekom">{t("Disarankan", "Recommended")}</span>}
+                  </b>
+                  <small>{c.ket}</small>
+                </label>
+              ))}
+            </div>
+            {f.cara_lamar === "link" && (
+              <label>
+                <span>{t("Link formulir / halaman lamaran *", "Application form / page link *")}</span>
+                <input value={f.link} onChange={ubah("link")} placeholder="https://forms.gle/...  atau  https://contoh.co.id/karier" />
+              </label>
+            )}
+            {f.cara_lamar === "form" && (
+              <label>
+                <span>{t("Kirim lamaran ke email *", "Send applications to email *")}</span>
+                <input type="email" value={f.email_lamaran} onChange={ubah("email_lamaran")} placeholder="hrd@contoh.co.id" />
+                <small>{t("Setiap lamaran dikirim ke email ini beserta CV-nya, dan juga tersimpan di dasbor.", "Each application, with its CV, is sent to this email and also kept in your dashboard.")}</small>
+              </label>
+            )}
+            {f.cara_lamar === "email" && (
+              <label>
+                <span>{t("Email penerima lamaran *", "Email that receives applications *")}</span>
+                <input type="email" value={f.email_lamaran} onChange={ubah("email_lamaran")} placeholder="hrd@contoh.co.id" />
+                <small>{t("Alamat ini tampil ke pelamar.", "This address is shown to applicants.")}</small>
+              </label>
+            )}
+          </fieldset>
           <label className="lebar">
             <span>{t("Deskripsi pekerjaan *", "Job description *")}</span>
             <textarea
@@ -809,7 +886,7 @@ function KonfirmasiAksi({ aksi, onBatal, onYa }) {
   );
 }
 
-function BarisLoker({ m, onUbah, onAksi }) {
+function BarisLoker({ m, onUbah, onAksi, jumlahPelamar = 0, baru = 0, onPelamar }) {
   const url = m.status === "tayang" ? urlDetail({ id: `db1:${ID_MITRA + m.id}`, posisi: m.posisi }) : null;
   const sisaHari = m.tayang_sampai ? Math.ceil((new Date(m.tayang_sampai) - Date.now()) / 86400000) : null;
   return (
@@ -847,6 +924,12 @@ function BarisLoker({ m, onUbah, onAksi }) {
         </span>
       </div>
       <div className="aksi">
+        {(m.cara_lamar === "form" || jumlahPelamar > 0) && (
+          <button type="button" className="pk-tombol-pelamar" onClick={() => onPelamar(m)} title={t("Lihat pelamar", "View applicants")}>
+            <Users size={15} /> {jumlahPelamar}
+            {baru > 0 && <i>{t(`${baru} baru`, `${baru} new`)}</i>}
+          </button>
+        )}
         {url && (
           <a {...tautan(url)} title={t("Lihat di Workly", "View on Workly")}>
             <ExternalLink size={15} />
@@ -881,6 +964,126 @@ function BarisLoker({ m, onUbah, onAksi }) {
   );
 }
 
+/* ------------------------------------------------------ pelamar */
+
+export const STATUS_LAMARAN = {
+  baru: t("Baru", "New"),
+  dilihat: t("Sudah dilihat", "Seen"),
+  diproses: t("Diproses", "In process"),
+  diterima: t("Diterima", "Accepted"),
+  ditolak: t("Tidak lanjut", "Not proceeding"),
+};
+
+function PanelPelamar({ m, lamaran, onKembali, onUbah }) {
+  const [toast, elemenToast] = useToast();
+  const [buka, setBuka] = useState(null);
+  const [saring, setSaring] = useState("semua");
+  const daftar = lamaran.filter((l) => saring === "semua" || l.status === saring);
+
+  const ubahStatus = async (l, status) => {
+    const { error } = await supabase.from("lamaran_mitra").update({ status }).eq("id", l.id);
+    if (error) return toast(error.message);
+    onUbah(l.id, status);
+  };
+  const unduhCv = async (l) => {
+    const { data, error } = await supabase.storage.from("cv-pelamar").createSignedUrl(l.cv_path, 3600, {
+      download: `CV-${l.nama.replace(/[^A-Za-z0-9]+/g, "-")}.pdf`,
+    });
+    if (error) return toast(t("CV tidak bisa dibuka: ", "Couldn't open CV: ") + error.message);
+    window.open(data.signedUrl, "_blank", "noopener");
+    if (l.status === "baru") ubahStatus(l, "dilihat");
+  };
+
+  return (
+    <div className="pk-panel">
+      <button type="button" className="pk-kembali" onClick={onKembali}>
+        <ArrowLeft size={15} /> {t("Kembali ke daftar loker", "Back to job list")}
+      </button>
+      <div className="pk-daftar-atas">
+        <div>
+          <h2 style={{ margin: 0, fontSize: 20 }}>{t(`Pelamar ${m.posisi}`, `Applicants: ${m.posisi}`)}</h2>
+          <small className="pk-redup">
+            {t(`${lamaran.length} lamaran masuk lewat formulir Workly`, `${lamaran.length} applications via the Workly form`)}
+          </small>
+        </div>
+        <select value={saring} onChange={(e) => setSaring(e.target.value)} className="pk-saring">
+          <option value="semua">{t("Semua status", "All statuses")}</option>
+          {Object.entries(STATUS_LAMARAN).map(([k, v]) => (
+            <option key={k} value={k}>
+              {v}
+            </option>
+          ))}
+        </select>
+      </div>
+      {daftar.length === 0 ? (
+        <div className="pk-kosong">
+          <p>
+            {lamaran.length === 0
+              ? t("Belum ada pelamar. Lamaran yang masuk akan tampil di sini dan juga dikirim ke email perusahaan.", "No applicants yet. New applications appear here and are also emailed to you.")
+              : t("Tidak ada pelamar dengan status ini.", "No applicants with this status.")}
+          </p>
+        </div>
+      ) : (
+        <div className="pk-pelamar">
+          {daftar.map((l) => (
+            <div key={l.id} className={`pk-pelamar-baris ${l.status}`}>
+              <div className="kepala" onClick={() => setBuka(buka === l.id ? null : l.id)}>
+                <div className="nama">
+                  <b>{l.nama}</b>
+                  <small>
+                    {[l.domisili, tgl(l.dibuat_at)].filter(Boolean).join(" · ")}
+                  </small>
+                </div>
+                <span className={`pk-status-lamar ${l.status}`}>{STATUS_LAMARAN[l.status] || l.status}</span>
+              </div>
+              <div className="kontak">
+                <a href={`mailto:${l.email}`}>
+                  <Mail size={13} /> {l.email}
+                </a>
+                {l.telepon && (
+                  <a href={`https://wa.me/${l.telepon.replace(/\D/g, "").replace(/^0/, "62")}`} target="_blank" rel="noreferrer">
+                    <Phone size={13} /> {l.telepon}
+                  </a>
+                )}
+                {l.domisili && (
+                  <span>
+                    <MapPin size={13} /> {l.domisili}
+                  </span>
+                )}
+                {l.tautan && (
+                  <a href={l.tautan} target="_blank" rel="noreferrer">
+                    <Link2 size={13} /> {l.tautan.replace(/^https?:\/\/(www\.)?/, "").slice(0, 40)}
+                  </a>
+                )}
+              </div>
+              {l.pesan && (buka === l.id ? <p className="pesan">{l.pesan}</p> : <p className="pesan ringkas" onClick={() => setBuka(l.id)}>{l.pesan}</p>)}
+              <div className="pk-tombol">
+                <button type="button" className="pb-btn pb-btn-primary pb-btn-sm" onClick={() => unduhCv(l)}>
+                  <FileText size={14} /> {t("Lihat CV", "View CV")}
+                </button>
+                <label className="pk-ubah-status">
+                  <span>{t("Status", "Status")}</span>
+                  <select value={l.status} onChange={(e) => ubahStatus(l, e.target.value)}>
+                    {Object.entries(STATUS_LAMARAN).map(([k, v]) => (
+                      <option key={k} value={k}>
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <p className="pk-redup" style={{ fontSize: 12.5, margin: "14px 0 0" }}>
+        {t("Status hanya untuk catatanmu sendiri dan tidak dikirim ke pelamar. Hubungi pelamar lewat email atau WhatsApp.", "Status is only for your own tracking and isn't sent to applicants. Contact applicants by email or WhatsApp.")}
+      </p>
+      {elemenToast}
+    </div>
+  );
+}
+
 /* ------------------------------------------------------ halaman */
 
 const TAB_SAH = ["daftar", "tulis", "kredit", "profil"];
@@ -897,6 +1100,8 @@ export function DasborMitraPage() {
   const [toast, elemenToast] = useToast();
   const [mode, setModeState] = useState(tabDariUrl); // daftar | tulis | profil | kredit
   const [sunting, setSunting] = useState(null);
+  const [pelamarDari, setPelamarDari] = useState(null); // loker yang sedang dilihat pelamarnya
+  const [ubahanLamaran, setUbahanLamaran] = useState({}); // id -> status (pembaruan lokal)
   const pilihPaket = useMemo(() => new URLSearchParams(window.location.search).get("beli"), []);
 
   useEffect(() => {
@@ -905,6 +1110,7 @@ export function DasborMitraPage() {
   // Tab mengikuti alamat (?tab=...), jadi menu header dan tombol kembali browser ikut bekerja
   const setMode = (m) => {
     setModeState(m);
+    setPelamarDari(null);
     const url = m === "daftar" ? "/pemberi-kerja/dasbor" : `/pemberi-kerja/dasbor?tab=${m}`;
     if (window.location.pathname + window.location.search !== url) {
       window.history.pushState({}, "", url);
@@ -1000,6 +1206,9 @@ export function DasborMitraPage() {
     klik: data.loker.reduce((n, m) => n + (m.klik || 0), 0),
   };
 
+  const lamaranLoker = (id) =>
+    data.lamaran.filter((l) => l.loker_id === id).map((l) => (ubahanLamaran[l.id] ? { ...l, status: ubahanLamaran[l.id] } : l));
+
   let isi;
   if (data.memuat) {
     isi = (
@@ -1048,6 +1257,15 @@ export function DasborMitraPage() {
         <RiwayatBeli beli={data.beli} pt={data.pt} onLunas={data.muat} />
       </>
     );
+  } else if (pelamarDari && mode === "daftar") {
+    isi = (
+      <PanelPelamar
+        m={pelamarDari}
+        lamaran={lamaranLoker(pelamarDari.id)}
+        onKembali={() => setPelamarDari(null)}
+        onUbah={(id, status) => setUbahanLamaran((x) => ({ ...x, [id]: status }))}
+      />
+    );
   } else {
     isi = (
       <div className="pk-panel">
@@ -1080,6 +1298,12 @@ export function DasborMitraPage() {
                 key={m.id}
                 m={m}
                 onAksi={aksi}
+                jumlahPelamar={lamaranLoker(m.id).length}
+                baru={lamaranLoker(m.id).filter((l) => l.status === "baru").length}
+                onPelamar={(x) => {
+                  setPelamarDari(x);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 onUbah={(x) => {
                   setSunting(x);
                   setMode("tulis");

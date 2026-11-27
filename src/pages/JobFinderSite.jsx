@@ -15,6 +15,7 @@ import { DashboardPage, PANEL_META } from "./dashboard/DashboardPage";
 import { BerandaPage } from "./publik/BerandaPage";
 import { LokerPage } from "./publik/LokerPage";
 import { DetailLokerPage } from "./publik/DetailLokerPage";
+import { LamarPage } from "./publik/LamarPage";
 import { KalkulatorPage } from "./publik/KalkulatorPage";
 import { FaqPage } from "./publik/FaqPage";
 import { DokumenPage } from "./publik/DokumenPage";
@@ -59,7 +60,7 @@ const DASH_IDS = Object.keys(PANEL_META);
  *   /pemberi-kerja/dasbor     Dasbor pemberi kerja (wajib masuk)
  *   /pemberi-kerja/admin      Moderasi loker pemberi kerja (admin)
  */
-const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "magang", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan", "mitra"];
+const HALAMAN_PUBLIK = ["beranda", "loker", "detail", "kalkulator", "faq", "dokumen", "remote", "freelance", "magang", "bumn", "bidang", "sertifikasi", "cek", "petagaji", "panduan", "panduanDetail", "kelas", "latihan", "mitra", "lamar"];
 const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 // Halaman pemberi kerja yang wajib masuk (bukan bagian dari dashboard pencari kerja)
@@ -87,6 +88,10 @@ function parsePath(pathname) {
     return { page: "detail", slug: path.slice("/loker/".length) };
   }
   if (path === "/loker") return { page: "loker" };
+  {
+    const m = path.match(/^\/lamar\/(\d+)$/);
+    if (m) return { page: "lamar", nomor: m[1] };
+  }
   if (path === "/pemberi-kerja") return { page: "mitra" };
   if (path === "/pemberi-kerja/dasbor") return { page: "mitraDasbor" };
   if (path === "/pemberi-kerja/masuk") return { page: "mitraMasuk" };
@@ -224,7 +229,7 @@ function JobFinderApp() {
       } catch {
         /* abaikan */
       }
-      if (tujuan && (tujuan.startsWith("/dashboard/") || tujuan.startsWith("/latihan/") || tujuan.startsWith("/pemberi-kerja/"))) {
+      if (tujuan && (tujuan.startsWith("/dashboard/") || tujuan.startsWith("/latihan/") || tujuan.startsWith("/lamar/") || tujuan.startsWith("/pemberi-kerja/"))) {
         window.history.pushState({}, "", tujuan);
         terapkan(parsePath(window.location.pathname));
         window.scrollTo(0, 0);
@@ -278,6 +283,9 @@ function JobFinderApp() {
       break;
     case "detail":
       isi = <DetailLokerPage slug={rute.slug} />;
+      break;
+    case "lamar":
+      isi = <LamarPage nomor={rute.nomor} />;
       break;
     case "kalkulator":
       isi = <KalkulatorPage />;

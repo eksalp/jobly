@@ -84,9 +84,15 @@ function Antrean({ m, onSelesai, toast }) {
             </dd>
             <dt>{t("Lamar", "Apply")}</dt>
             <dd>
-              <a href={m.link} target="_blank" rel="noreferrer">
-                {m.link} <ExternalLink size={12} />
-              </a>
+              {m.cara_lamar === "form" ? (
+                t(`Formulir Workly (diteruskan ke ${m.email_lamaran || "email akun"})`, `Workly form (forwarded to ${m.email_lamaran || "account email"})`)
+              ) : m.cara_lamar === "email" ? (
+                t(`Email: ${m.email_lamaran}`, `Email: ${m.email_lamaran}`)
+              ) : (
+                <a href={m.link} target="_blank" rel="noreferrer">
+                  {m.link} <ExternalLink size={12} />
+                </a>
+              )}
             </dd>
           </dl>
           <div className="pk-deskripsi">{m.deskripsi}</div>

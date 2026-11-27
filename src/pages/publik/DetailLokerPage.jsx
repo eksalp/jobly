@@ -377,10 +377,16 @@ export function DetailLokerPage({ slug }) {
     [t("Diposting", "Posted"), formatTanggal(job.tanggal)],
   ].filter(([, v]) => v);
 
+  // Loker perusahaan yang memakai formulir Workly: buka /lamar/<nomor> di situs ini
+  const lamarWorkly = String(job.link || "").match(/^https?:\/\/[^/]+\/lamar\/(\d+)$/);
   const tombolLamar = job.ditutup ? (
     <span className="pb-btn pb-btn-outline" aria-disabled="true" style={{ cursor: "default", opacity: 0.7 }}>
       {t("Lowongan sudah ditutup", "This job is closed")}
     </span>
+  ) : lamarWorkly ? (
+    <a className="pb-btn pb-btn-primary" {...tautan(`/lamar/${lamarWorkly[1]}`)}>
+      {t("Lamar lewat Workly", "Apply via Workly")} <ArrowRight size={16} />
+    </a>
   ) : (
     <a className="pb-btn pb-btn-primary" href={job.link} target="_blank" rel="noreferrer" onClick={() => catatMitra(job, "klik")}>
       {String(job.link).startsWith("mailto:")
