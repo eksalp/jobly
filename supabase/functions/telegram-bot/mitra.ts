@@ -46,9 +46,15 @@ export async function antrean() {
   return rows.map((r) => ({ ...r, perusahaan: nama[r.user_id] || "" }));
 }
 
+// Awal teks pesan permintaan alasan; balasan admin atas pesan ini = alasan tolak
+export const PROMPT_ALASAN = "Alasan penolakan loker #";
+
+export const teksEmail = (h, esc) =>
+  h?.ok ? `Email pemberitahuan terkirim ke ${esc(h.ke)}.` : `Email ke perusahaan tidak terkirim (${esc(h?.alasan || "galat")}).`;
+
 export const ALASAN_BAWAAN = "Isi loker belum memenuhi ketentuan Workly. Periksa kembali posisi, deskripsi, dan link lamaran.";
 
 export const BANTUAN_MITRA = `<b>Loker pemberi kerja</b>
 /antreanloker — loker yang menunggu persetujuan
 /tolakloker &lt;nomor&gt; &lt;alasan&gt; — tolak dengan alasan (kredit dikembalikan)
-Tombol Setujui/Tolak juga muncul setiap ada loker baru diajukan.`;
+Tombol Setujui/Tolak juga muncul setiap ada loker baru diajukan. Setelah klik Tolak, balas pesan dari bot dengan alasannya. Perusahaan menerima email untuk setiap persetujuan dan penolakan.`;

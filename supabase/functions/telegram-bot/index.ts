@@ -38,6 +38,7 @@ import * as S from "./sertifikasi.ts";
 import * as U from "./urgent.ts";
 import * as M from "./manual.ts";
 import * as P from "./mitra.ts";
+import { kabariPerusahaan } from "../_shared/kabarPerusahaan.ts";
 
 const TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
 const RAHASIA = Deno.env.get("TELEGRAM_WEBHOOK_SECRET") ?? "";
@@ -375,18 +376,38 @@ serve(async (req) => {
           return new Response("ok");
         }
         const chat = cq.message?.chat?.id;
+        // Lepas tombol dari pesan asal supaya tidak diklik dua kali
+        const lepasTombol = () =>
+          chat && cq.message?.message_id
+            ? tg("editMessageReplyMarkup", { chat_id: chat, message_id: cq.message.message_id, reply_markup: { inline_keyboard: [] } })
+            : null;
         try {
           const m = await P.ambil(kode);
-          if (kursor === "s") await P.setujui(kode);
-          else await P.tolak(kode, P.ALASAN_BAWAAN);
-          await tg("answerCallbackQuery", { callback_query_id: cq.id, text: kursor === "s" ? "Disetujui" : "Ditolak" });
-          if (chat) {
-            await kirim(
-              chat,
-              kursor === "s"
-                ? `Disetujui dan sudah tayang: #${kode} ${esc(m?.posisi)} · ${esc(m?.perusahaan)}`
-                : `Ditolak: #${kode} ${esc(m?.posisi)}. Kredit dikembalikan bila belum pernah tayang.\nAlasan khusus: <code>/tolakloker ${kode} alasannya</code>`,
-            );
+          if (!m) {
+            await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Loker tidak ditemukan" });
+            return new Response("ok");
+          }
+          if (kursor === "s") {
+            await P.setujui(kode);
+            await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Disetujui" });
+            await lepasTombol();
+            const email = await kabariPerusahaan(kode);
+            if (chat) await kirim(chat, `Disetujui dan sudah tayang: #${kode} ${esc(m.posisi)} · ${esc(m.perusahaan)}
+${P.teksEmail(email, esc)}`);
+          } else {
+            // Tolak: minta alasan dulu, admin membalas pesan ini
+            if (m.status !== "menunggu" && m.status !== "tayang") {
+              await tg("answerCallbackQuery", { callback_query_id: cq.id, text: `Status loker: ${m.status}` });
+              return new Response("ok");
+            }
+            await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Tulis alasannya" });
+            if (chat)
+              await kirim(chat, `${P.PROMPT_ALASAN}${kode} (${esc(m.posisi)} · ${esc(m.perusahaan)})
+
+Balas pesan ini dengan alasan penolakan. Alasan dikirim ke email perusahaan dan tampil di dasbornya.
+Tanpa alasan khusus: <code>/tolakloker ${kode}</code>`, {
+                reply_markup: { force_reply: true, input_field_placeholder: "Tulis alasan penolakan..." },
+              });
           }
         } catch (e) {
           await tg("answerCallbackQuery", { callback_query_id: cq.id, text: "Gagal" });
@@ -448,6 +469,23 @@ serve(async (req) => {
     const perintah = teks.split(/\s+/)[0].toLowerCase().replace(/@.*$/, "");
     const userId = pesan?.from?.id;
 
+    // Balasan admin atas permintaan alasan penolakan loker
+    const asal = String(pesan?.reply_to_message?.text || "");
+    if (asal.startsWith(P.PROMPT_ALASAN) && !teks.startsWith("/")) {
+      if (!S.adalahAdmin(userId)) return new Response("ok");
+      const nomor = asal.slice(P.PROMPT_ALASAN.length).match(/^\d+/)?.[0];
+      try {
+        await P.tolak(nomor, teks);
+        const email = await kabariPerusahaan(nomor);
+        await kirim(chatId, `Loker #${nomor} ditolak.
+Alasan: ${esc(teks)}
+${P.teksEmail(email, esc)}`);
+      } catch (e) {
+        await kirim(chatId, `Gagal menolak #${nomor}: ${esc(e?.message)}`);
+      }
+      return new Response("ok");
+    }
+
     if (perintah === "/idku") {
       await kirim(chatId, `ID Telegram-mu: <code>${esc(userId)}</code>`);
       return new Response("ok");
@@ -492,7 +530,8 @@ serve(async (req) => {
           if (!m) await kirim(chatId, "Contoh: <code>/tolakloker 12 Link lamaran tidak bisa dibuka</code>");
           else {
             await P.tolak(m[1], m[2].trim() || P.ALASAN_BAWAAN);
-            await kirim(chatId, `Loker #${m[1]} ditolak. Alasan terlihat di dasbor pemberi kerja.`);
+            const email = await kabariPerusahaan(m[1]);
+            await kirim(chatId, `Loker #${m[1]} ditolak. Alasan terlihat di dasbor pemberi kerja.\n${P.teksEmail(email, esc)}`);
           }
         }
       } catch (e) {

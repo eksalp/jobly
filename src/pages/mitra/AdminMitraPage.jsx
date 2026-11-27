@@ -36,6 +36,8 @@ function Antrean({ m, onSelesai, toast }) {
           : await supabase.rpc("tolak_loker", { p_id: m.id, p_alasan: alasan.trim() });
     setSibuk("");
     if (error) return toast(error.message);
+    // Email status ke perusahaan (tidak menghambat bila gagal)
+    if (jenis !== "tutup") supabase.functions.invoke("kabar-perusahaan", { body: { id: m.id } }).catch(() => {});
     toast(jenis === "setujui" ? t("Disetujui, loker tayang", "Approved, now live") : jenis === "tutup" ? t("Loker ditutup", "Job closed") : t("Ditolak", "Rejected"));
     onSelesai();
   };
