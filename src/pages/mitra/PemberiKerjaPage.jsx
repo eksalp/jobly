@@ -3,6 +3,7 @@ import { ArrowRight, Check, ClipboardCheck, CreditCard, FilePen, Megaphone, Eye,
 import { PublicLayout, useGulirKeHash } from "../../components/publik/PublicLayout";
 import { DaftarFaq } from "../../components/publik/DaftarFaq";
 import { useJobs } from "../../context/JobsContext";
+import { useAuth } from "../../context/AuthContext";
 import { PAKET_LOKER, FITUR_LOKER, MASA_TAYANG_HARI, rupiah } from "../../data/paketLoker";
 import { tautan } from "../../utils/navigasi";
 import { lokal, t } from "../../i18n.js";
@@ -109,6 +110,7 @@ function ContohKartu() {
 }
 
 export function PemberiKerjaPage() {
+  const { session } = useAuth();
   const { statistik } = useJobs();
   const total = statistik?.total;
   useGulirKeHash(true);
@@ -132,7 +134,7 @@ export function PemberiKerjaPage() {
             )}
           </p>
           <div className="pk-aksi">
-            <a className="pb-btn pb-btn-primary" {...tautan("/pemberi-kerja/dasbor")}>
+            <a className="pb-btn pb-btn-primary" {...tautan(session ? "/pemberi-kerja/dasbor?tab=tulis" : "/pemberi-kerja/daftar")}>
               {t("Pasang loker", "Post a job")} <ArrowRight size={16} />
             </a>
             <a className="pb-btn pb-btn-outline" href="#harga">
@@ -143,7 +145,7 @@ export function PemberiKerjaPage() {
         <ContohKartu />
       </section>
 
-      <section className="pb-section">
+      <section className="pb-section" id="cara-kerja">
         <div className="pb-wrap">
           <div className="pb-head" data-muncul="">
             <div>
@@ -207,7 +209,7 @@ export function PemberiKerjaPage() {
         </div>
       </section>
 
-      <section className="pb-section">
+      <section className="pb-section" id="faq">
         <div className="pb-wrap pk-faq">
           <div data-muncul="">
             <span className="pb-label">FAQ</span>
@@ -221,7 +223,7 @@ export function PemberiKerjaPage() {
         <div className="pb-wrap pk-ajak" data-muncul="">
           <h2>{t("Siap membuka lowongan?", "Ready to hire?")}</h2>
           <p>{t("Buat akun perusahaan gratis. Kredit baru dibeli saat kamu siap memasang loker.", "Create a free company account. Buy credits only when you're ready to post.")}</p>
-          <a className="pb-btn pb-btn-primary" {...tautan("/pemberi-kerja/dasbor")}>
+          <a className="pb-btn pb-btn-primary" {...tautan(session ? "/pemberi-kerja/dasbor?tab=tulis" : "/pemberi-kerja/daftar")}>
             {t("Mulai sekarang", "Get started")} <ArrowRight size={16} />
           </a>
         </div>

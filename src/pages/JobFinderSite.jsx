@@ -64,6 +64,8 @@ const DOKUMEN = ["kebijakan-privasi", "syarat-ketentuan", "disclaimer"];
 const HALAMAN_AUTH = ["login", "register", "forgot"];
 // Halaman pemberi kerja yang wajib masuk (bukan bagian dari dashboard pencari kerja)
 const HALAMAN_MITRA = ["mitraDasbor", "mitraAdmin"];
+// Halaman masuk/daftar khusus perusahaan
+const HALAMAN_AUTH_MITRA = ["mitraMasuk", "mitraDaftar"];
 
 function pathFor(page, dashActive) {
   if (page === "dashboard") return `/dashboard/${dashActive}`;
@@ -87,6 +89,8 @@ function parsePath(pathname) {
   if (path === "/loker") return { page: "loker" };
   if (path === "/pemberi-kerja") return { page: "mitra" };
   if (path === "/pemberi-kerja/dasbor") return { page: "mitraDasbor" };
+  if (path === "/pemberi-kerja/masuk") return { page: "mitraMasuk" };
+  if (path === "/pemberi-kerja/daftar") return { page: "mitraDaftar" };
   if (path === "/pemberi-kerja/admin") return { page: "mitraAdmin" };
   if (path === "/kalkulator-gaji") return { page: "kalkulator" };
   if (path === "/panduan") return { page: "panduan" };
@@ -113,7 +117,7 @@ function parsePath(pathname) {
 }
 
 function JobFinderApp() {
-  const { session, authLoading } = useAuth();
+  const { session, authLoading, peran, peranSiap } = useAuth();
   const [rute, setRute] = useState(() => ({
     dashActive: "overview",
     ...parsePath(window.location.pathname),
@@ -195,8 +199,24 @@ function JobFinderApp() {
       } catch {
         /* abaikan */
       }
-      go("login");
-    } else if (session && HALAMAN_AUTH.includes(page)) {
+      if (page === "mitraDasbor") {
+        window.history.pushState({}, "", "/pemberi-kerja/masuk");
+        terapkan(parsePath("/pemberi-kerja/masuk"));
+      } else go("login");
+    } else if (session && peranSiap && peran === "perusahaan" && (page === "dashboard" || HALAMAN_AUTH.includes(page) || HALAMAN_AUTH_MITRA.includes(page))) {
+      // Akun perusahaan selalu diarahkan ke dasbor perusahaan
+      let tujuan = null;
+      try {
+        tujuan = sessionStorage.getItem("jobly:tujuan");
+        sessionStorage.removeItem("jobly:tujuan");
+      } catch {
+        /* abaikan */
+      }
+      const ke = tujuan && tujuan.startsWith("/pemberi-kerja/") ? tujuan : "/pemberi-kerja/dasbor";
+      window.history.pushState({}, "", ke);
+      terapkan(parsePath(window.location.pathname));
+      window.scrollTo(0, 0);
+    } else if (session && peranSiap && HALAMAN_AUTH.includes(page)) {
       let tujuan = null;
       try {
         tujuan = sessionStorage.getItem("jobly:tujuan");
@@ -213,7 +233,7 @@ function JobFinderApp() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authLoading, session, page]);
+  }, [authLoading, session, page, peran, peranSiap]);
 
   // Judul tab untuk halaman non-publik (halaman publik mengatur sendiri)
   React.useEffect(() => {
@@ -221,6 +241,7 @@ function JobFinderApp() {
     else if (page === "dashboard")
       document.title = `${PANEL_META[rute.dashActive]?.title || "Dashboard"} · Workly`;
     else if (HALAMAN_AUTH.includes(page)) document.title = t("Masuk · Workly", "Sign in · Workly");
+    else if (HALAMAN_AUTH_MITRA.includes(page)) document.title = t("Akun perusahaan · Workly", "Company account · Workly");
   }, [page, rute.dashActive]);
 
   const publik = HALAMAN_PUBLIK.includes(page);
@@ -311,6 +332,12 @@ function JobFinderApp() {
       break;
     case "mitraAdmin":
       isi = <AdminMitraPage />;
+      break;
+    case "mitraMasuk":
+      isi = <LoginPage go={go} jenis="perusahaan" />;
+      break;
+    case "mitraDaftar":
+      isi = <RegisterPage go={go} jenis="perusahaan" />;
       break;
     case "login":
       isi = <LoginPage go={go} />;

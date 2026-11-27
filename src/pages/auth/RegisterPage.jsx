@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import { User, Mail, Lock, Loader2 } from "lucide-react";
+import { User, Mail, Lock, Loader2, Building2 } from "lucide-react";
 import { T } from "../../theme";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../../components/ui/Button";
 import { Field, ErrorNote, GoogleButton } from "../../components/ui/FormControls";
 import { AuthWrap } from "./AuthWrap";
+import { keHalaman } from "../../utils/navigasi";
 import { t } from "../../i18n.js";
 
-export function RegisterPage({ go }) {
+/** Halaman daftar. `jenis` = "pekerja" (/register) atau "perusahaan" (/pemberi-kerja/daftar). */
+export function RegisterPage({ go, jenis = "pekerja" }) {
+  const mitra = jenis === "perusahaan";
   const { signUpWithEmail, signInWithGoogle } = useAuth();
   const [fullName, setFullName] = useState("");
+  const [namaPt, setNamaPt] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,7 +22,7 @@ export function RegisterPage({ go }) {
   const [info, setInfo] = useState("");
 
   const handleSubmit = async () => {
-    if (!fullName.trim() || !email.trim() || !password) {
+    if (!fullName.trim() || !email.trim() || !password || (mitra && !namaPt.trim())) {
       setError(t("Lengkapi semua kolom dulu ya.", "Please fill in every field."));
       return;
     }
@@ -33,7 +37,17 @@ export function RegisterPage({ go }) {
       email.trim(),
       password,
       fullName.trim(),
+      mitra ? "perusahaan" : "pekerja",
+      mitra ? { nama_perusahaan: namaPt.trim() } : {},
     );
+    if (!err && mitra) {
+      // Dipakai untuk mengisi nama di formulir profil perusahaan
+      try {
+        localStorage.setItem("jobly:nama-perusahaan", namaPt.trim());
+      } catch {
+        /* penyimpanan tidak tersedia */
+      }
+    }
     setLoading(false);
     if (err) {
       setError(err);
@@ -42,7 +56,8 @@ export function RegisterPage({ go }) {
     // Kalau "Confirm email" aktif di Supabase Auth settings, session belum
     // langsung ada sampai user klik link di email.
     if (data?.session) {
-      go("dashboard");
+      if (mitra) keHalaman("/pemberi-kerja/dasbor");
+      else go("dashboard");
     } else {
       setInfo(
         t("Akun berhasil dibuat! Cek email kamu untuk konfirmasi sebelum login.", "Account created! Check your email to confirm before signing in."),
@@ -53,7 +68,7 @@ export function RegisterPage({ go }) {
   const handleGoogle = async () => {
     setError("");
     setGoogleLoading(true);
-    const { error: err } = await signInWithGoogle();
+    const { error: err } = await signInWithGoogle(mitra ? "perusahaan" : "pekerja");
     if (err) {
       setError(err);
       setGoogleLoading(false);
@@ -61,7 +76,7 @@ export function RegisterPage({ go }) {
   };
 
   return (
-    <AuthWrap>
+    <AuthWrap mitra={mitra}>
       <h1
         style={{
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
@@ -71,10 +86,12 @@ export function RegisterPage({ go }) {
           marginBottom: 4,
         }}
       >
-        {t("Mulai perjalanan kariermu", "Start your career journey")}
+        {mitra ? t("Daftarkan perusahaanmu", "Register your company") : t("Mulai perjalanan kariermu", "Start your career journey")}
       </h1>
       <p style={{ fontSize: 13.5, color: T.inkSoft, marginBottom: 24 }}>
-        {t("Buat akun gratis, tanpa kartu kredit.", "Create a free account, no credit card needed.")}
+        {mitra
+          ? t("Akun perusahaan gratis. Kredit loker baru dibeli saat kamu siap memasang loker.", "Company accounts are free. Buy job credits only when you're ready to post.")
+          : t("Buat akun gratis, tanpa kartu kredit.", "Create a free account, no credit card needed.")}
       </p>
       <ErrorNote message={error} />
       {info && (
@@ -92,8 +109,18 @@ export function RegisterPage({ go }) {
           {info}
         </div>
       )}
+      {mitra && (
+        <Field
+          label={t("Nama perusahaan", "Company name")}
+          icon={<Building2 size={16} color={T.inkFaint} />}
+          placeholder="PT Contoh Sejahtera"
+          value={namaPt}
+          onChange={(e) => setNamaPt(e.target.value)}
+          autoComplete="organization"
+        />
+      )}
       <Field
-        label={t("Nama lengkap", "Full name")}
+        label={mitra ? t("Nama kamu (penanggung jawab rekrutmen)", "Your name (hiring contact)") : t("Nama lengkap", "Full name")}
         icon={<User size={16} color={T.inkFaint} />}
         placeholder={t("Nama kamu", "Your name")}
         value={fullName}
@@ -101,9 +128,9 @@ export function RegisterPage({ go }) {
         autoComplete="name"
       />
       <Field
-        label="Email"
+        label={mitra ? t("Email kerja", "Work email") : "Email"}
         icon={<Mail size={16} color={T.inkFaint} />}
-        placeholder={t("nama@email.com", "name@email.com")}
+        placeholder={mitra ? t("hrd@perusahaan.co.id", "hr@company.com") : t("nama@email.com", "name@email.com")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         autoComplete="email"
@@ -127,7 +154,7 @@ export function RegisterPage({ go }) {
         {loading ? (
           <Loader2 size={15} style={{ animation: "spin 1s linear infinite" }} />
         ) : (
-          t("Buat Akun", "Create account")
+          mitra ? t("Buat akun perusahaan", "Create company account") : t("Buat Akun", "Create account")
         )}
       </Button>
       <div
@@ -151,13 +178,22 @@ export function RegisterPage({ go }) {
           color: T.inkSoft,
         }}
       >
-        {t("Sudah punya akun?", "Already have an account?")}{" "}
+        {mitra ? t("Sudah punya akun perusahaan?", "Already have a company account?") : t("Sudah punya akun?", "Already have an account?")}{" "}
         <span
           style={{ color: T.accent, fontWeight: 600, cursor: "pointer" }}
-          onClick={() => go("login")}
+          onClick={() => (mitra ? keHalaman("/pemberi-kerja/masuk") : go("login"))}
         >
           {t("Masuk", "Sign in")}
         </span>
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${T.border}`, fontSize: 12.5 }}>
+          {mitra ? t("Mencari kerja? ", "Looking for work? ") : t("Mau pasang loker? ", "Hiring? ")}
+          <span
+            style={{ color: T.accent, fontWeight: 600, cursor: "pointer" }}
+            onClick={() => keHalaman(mitra ? "/register" : "/pemberi-kerja/daftar")}
+          >
+            {mitra ? t("Daftar sebagai pencari kerja", "Sign up as a job seeker") : t("Daftarkan perusahaan", "Register your company")}
+          </span>
+        </div>
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </AuthWrap>

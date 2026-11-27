@@ -113,10 +113,18 @@ function useDataMitra() {
 
 /* ------------------------------------------------------ profil */
 
+const namaTersimpan = () => {
+  try {
+    return localStorage.getItem("jobly:nama-perusahaan") || "";
+  } catch {
+    return "";
+  }
+};
+
 function FormProfil({ pt, onSimpan, onBatal }) {
   const { user } = useAuth();
   const [f, setF] = useState(() => ({
-    nama: pt?.nama || "",
+    nama: pt?.nama || user?.user_metadata?.nama_perusahaan || namaTersimpan() || "",
     situs: pt?.situs || "",
     kota: pt?.kota || "",
     industri: pt?.industri || "",
@@ -676,20 +684,50 @@ function BarisLoker({ m, onUbah, onAksi }) {
 
 /* ------------------------------------------------------ halaman */
 
+const TAB_SAH = ["daftar", "tulis", "kredit", "profil"];
+const tabDariUrl = () => {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get("beli")) return "kredit";
+  const tab = p.get("tab");
+  return TAB_SAH.includes(tab) ? tab : "daftar";
+};
+
 export function DasborMitraPage() {
-  const { user } = useAuth();
+  const { user, peran, peranSiap, signOut } = useAuth();
   const data = useDataMitra();
   const [toast, elemenToast] = useToast();
-  const [mode, setMode] = useState("daftar"); // daftar | tulis | profil | kredit
+  const [mode, setModeState] = useState(tabDariUrl); // daftar | tulis | profil | kredit
   const [sunting, setSunting] = useState(null);
   const pilihPaket = useMemo(() => new URLSearchParams(window.location.search).get("beli"), []);
 
   useEffect(() => {
     document.title = t("Dasbor pemberi kerja · Workly", "Employer dashboard · Workly");
   }, []);
+  // Tab mengikuti alamat (?tab=...), jadi menu header dan tombol kembali browser ikut bekerja
+  const setMode = (m) => {
+    setModeState(m);
+    const url = m === "daftar" ? "/pemberi-kerja/dasbor" : `/pemberi-kerja/dasbor?tab=${m}`;
+    if (window.location.pathname + window.location.search !== url) {
+      window.history.pushState({}, "", url);
+      window.dispatchEvent(new Event("popstate"));
+    }
+  };
   useEffect(() => {
-    if (pilihPaket && data.pt) setMode("kredit");
-  }, [pilihPaket, data.pt]);
+    // Dari menu header (jf:path): "Pasang loker" selalu membuka formulir kosong
+    const dariMenu = () =>
+      setTimeout(() => {
+        const tab = tabDariUrl();
+        setModeState(tab);
+        if (tab === "tulis") setSunting(null);
+      }, 0);
+    const dariRiwayat = () => setTimeout(() => setModeState(tabDariUrl()), 0);
+    window.addEventListener("jf:path", dariMenu);
+    window.addEventListener("popstate", dariRiwayat);
+    return () => {
+      window.removeEventListener("jf:path", dariMenu);
+      window.removeEventListener("popstate", dariRiwayat);
+    };
+  }, []);
 
   const aksi = async (jenis, m) => {
     if (jenis === "tutup" && !window.confirm(t(`Tutup loker "${m.posisi}"? Loker langsung hilang dari Workly.`, `Close "${m.posisi}"? It will be removed from Workly right away.`))) return;
@@ -704,6 +742,51 @@ export function DasborMitraPage() {
   };
 
   if (!supabaseConfigured || !user) return null;
+
+  if (!peranSiap) {
+    return (
+      <PublicLayout aktif="/pemberi-kerja">
+        <div className="pb-wrap pk-dasbor">
+          <div className="pk-panel pk-tengah">
+            <Loader2 size={18} className="pk-putar" /> {t("Menyiapkan akun...", "Preparing your account...")}
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
+
+  if (peran !== "perusahaan") {
+    return (
+      <PublicLayout aktif="/pemberi-kerja">
+        <div className="pb-wrap pk-dasbor">
+          <div className="pk-panel" style={{ maxWidth: 560, margin: "40px auto", display: "grid", gap: 12 }}>
+            <h1 style={{ margin: 0, fontSize: 22 }}>{t("Halaman ini untuk akun perusahaan", "This page is for company accounts")}</h1>
+            <p className="pk-redup" style={{ margin: 0, lineHeight: 1.6 }}>
+              {t(
+                `Kamu masuk sebagai pencari kerja (${user.email}). Untuk memasang loker, keluar lalu masuk atau daftar dengan akun perusahaan memakai email lain.`,
+                `You're signed in as a job seeker (${user.email}). To post jobs, sign out and sign in or register with a company account using another email.`,
+              )}
+            </p>
+            <div className="pk-tombol">
+              <button
+                type="button"
+                className="pb-btn pb-btn-primary"
+                onClick={async () => {
+                  await signOut();
+                  window.dispatchEvent(new CustomEvent("jf:path", { detail: "/pemberi-kerja/daftar" }));
+                }}
+              >
+                {t("Keluar & daftar perusahaan", "Sign out & register a company")}
+              </button>
+              <a className="pb-btn pb-btn-outline" {...tautan("/dashboard/overview")}>
+                {t("Kembali ke dasbor pencari kerja", "Back to job seeker dashboard")}
+              </a>
+            </div>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+  }
 
   const ringkas = {
     tayang: data.loker.filter((m) => m.status === "tayang").length,

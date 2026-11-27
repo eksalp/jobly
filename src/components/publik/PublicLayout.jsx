@@ -41,6 +41,11 @@ import {
   Award,
   Clock,
   Megaphone,
+  Building2,
+  PlusCircle,
+  Coins,
+  LayoutDashboard,
+  Tag,
 } from "lucide-react";
 import { IkonKerja as Briefcase } from "../IkonKerja";
 import "../../styles/publik.css";
@@ -101,7 +106,7 @@ export const MENU_APLIKASI = [
     label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: t("Cari", "Search"), items: [I.semua, I.urgent, I.bidang, I.remote, I.freelance, I.bumn, I.magang, I.cocok, I.pasang] },
+      { judul: t("Cari", "Search"), items: [I.semua, I.urgent, I.bidang, I.remote, I.freelance, I.bumn, I.magang, I.cocok] },
       { judul: t("Punyaku", "Mine"), items: [I.simpan, I.lamaran, I.rencana] },
     ],
   },
@@ -124,7 +129,7 @@ export const MENU_PUBLIK = [
     label: t("Loker", "Jobs"),
     promo: "loker",
     kolom: [
-      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.urgent, I.bidang, I.remote, I.freelance, I.bumn, I.magang, I.pasang] },
+      { judul: t("Cari loker", "Find jobs"), items: [I.semua, I.urgent, I.bidang, I.remote, I.freelance, I.bumn, I.magang] },
       { judul: t("Riset sebelum melamar", "Research before applying"), items: [I.peta, I.cek, I.kalkulator] },
     ],
   },
@@ -141,6 +146,31 @@ export const MENU_PUBLIK = [
   { label: t("Harga", "Pricing"), path: "/#harga", Ikon: CreditCard },
   { label: "FAQ", path: "/faq", Ikon: HelpCircle },
 ];
+
+// Menu pemberi kerja (penerbit loker). Sebelum masuk: info & harga.
+// Sesudah masuk sebagai akun perusahaan: alat untuk mengelola loker.
+const DASBOR_MITRA = "/pemberi-kerja/dasbor";
+export const MENU_MITRA_PUBLIK = [
+  { label: t("Cara kerja", "How it works"), path: "/pemberi-kerja#cara-kerja", Ikon: ListChecks },
+  { label: t("Harga", "Pricing"), path: "/pemberi-kerja#harga", Ikon: Tag },
+  { label: "FAQ", path: "/pemberi-kerja#faq", Ikon: HelpCircle },
+];
+export const MENU_MITRA = [
+  { label: t("Dasbor", "Dashboard"), path: DASBOR_MITRA, Ikon: LayoutDashboard },
+  { label: t("Pasang loker", "Post a job"), path: `${DASBOR_MITRA}?tab=tulis`, Ikon: PlusCircle, sorot: true },
+  { label: t("Kredit & paket", "Credits"), path: `${DASBOR_MITRA}?tab=kredit`, Ikon: Coins },
+  { label: t("Profil perusahaan", "Company profile"), path: `${DASBOR_MITRA}?tab=profil`, Ikon: Building2 },
+  { label: t("Harga", "Pricing"), path: "/pemberi-kerja#harga", Ikon: Tag },
+];
+
+/** Menu mitra cocok dengan alamat saat ini, termasuk ?tab=... */
+const cocokMitra = (path) => {
+  const [p, q = ""] = path.split("#")[0].split("?");
+  if (window.location.pathname !== p) return false;
+  const tabMenu = new URLSearchParams(q).get("tab") || "";
+  const tabKini = new URLSearchParams(window.location.search).get("tab") || "";
+  return tabMenu === tabKini && !path.includes("#");
+};
 
 const MENU_AKUN = [
   { t: t("Paket & langganan", "Plans & billing"), path: ke("paket"), Ikon: CreditCard },
@@ -277,11 +307,13 @@ function MenuTurun({ grup, aktif, kecuali = [] }) {
         <div ref={menuRef} className={`pb-dd-menu ${lebar ? "lebar" : ""}`} role="menu" style={geser ? { transform: `translateX(${geser}px)` } : undefined}>
           <div className="pb-dd-cols">
             {grup.kolom.map((k, i) => (
-              <div key={i} className="pb-dd-col">
+              <div key={i} className={`pb-dd-col ${k.items.length > 4 ? "ganda" : ""}`}>
                 {k.judul && <div className="pb-dd-h">{k.judul}</div>}
-                {k.items.map((item) => (
-                  <ItemMenu key={item.path} item={item} aktif={aktif} />
-                ))}
+                <div className="pb-dd-isi">
+                  {k.items.map((item) => (
+                    <ItemMenu key={item.path} item={item} aktif={aktif} />
+                  ))}
+                </div>
               </div>
             ))}
             {grup.promo === "loker" && <PromoLoker />}
@@ -592,12 +624,90 @@ function MenuAkun({ aktif }) {
   );
 }
 
+/** Menu akun untuk akun perusahaan: tanpa kuota AI pencari kerja. */
+function MenuAkunMitra({ aktif }) {
+  const { user, signOut } = useAuth();
+  const [buka, setBuka] = useState(false);
+  const ref = useTutupLuar(buka, setBuka);
+  useEffect(() => setBuka(false), [aktif]);
+  const meta = user?.user_metadata || {};
+  const nama = meta.nama_perusahaan || meta.full_name || user?.email?.split("@")[0] || t("Perusahaan", "Company");
+  const keluar = async () => {
+    setBuka(false);
+    await signOut();
+    keHalaman("/pemberi-kerja");
+  };
+  return (
+    <div className="pb-dd" ref={ref}>
+      <button
+        type="button"
+        className="pb-avatar mitra"
+        aria-label={t("Menu akun perusahaan", "Company account menu")}
+        aria-expanded={buka}
+        aria-haspopup="true"
+        onClick={() => setBuka((v) => !v)}
+      >
+        {getInitials(nama)}
+      </button>
+      {buka && (
+        <div className="pb-dd-menu kanan" role="menu" style={{ top: "calc(100% + 10px)" }}>
+          <div className="pb-acct">
+            <span className="pb-tag-mitra">{t("Akun perusahaan", "Company account")}</span>
+            <b>{nama}</b>
+            <span>{user?.email}</span>
+          </div>
+          {MENU_MITRA.filter((m) => !m.path.includes("#")).map(({ label, path, Ikon }) => (
+            <a key={path} role="menuitem" className={cocokMitra(path) ? "on" : ""} {...tautan(path)}>
+              <span className="pb-dd-ic">
+                <Ikon size={17} />
+              </span>
+              <span className="pb-dd-t">{label}</span>
+            </a>
+          ))}
+          <div className="pb-dd-sep" />
+          <button type="button" className="item" role="menuitem" onClick={keluar}>
+            <span className="pb-dd-ic">
+              <LogOut size={17} />
+            </span>
+            <span className="pb-dd-t">{t("Keluar", "Sign out")}</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileKeluar() {
+  const { signOut } = useAuth();
+  return (
+    <button
+      type="button"
+      className="pb-btn pb-btn-outline"
+      style={{ width: "100%", marginTop: 14 }}
+      onClick={async () => {
+        await signOut();
+        keHalaman("/pemberi-kerja");
+      }}
+    >
+      <LogOut size={15} /> {t("Keluar", "Sign out")}
+    </button>
+  );
+}
+
+/** Header dipakai dalam mode perusahaan? (akun perusahaan, atau tamu di halaman /pemberi-kerja) */
+export function useModeMitra(aktif) {
+  const { session, peran } = useAuth();
+  const halamanMitra = (aktif || "").startsWith("/pemberi-kerja") && aktif !== "/pemberi-kerja/admin";
+  return session ? peran === "perusahaan" : halamanMitra;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Header                                                             */
 /* ------------------------------------------------------------------ */
 
 export function SiteHeader({ aktif }) {
   const { session } = useAuth();
+  const mitra = useModeMitra(aktif);
   const l = useLangganan();
   const masuk = Boolean(session);
   const [buka, setBuka] = useState(false);
@@ -611,7 +721,20 @@ export function SiteHeader({ aktif }) {
     };
   }, [buka]);
   const [gulir, setGulir] = useState(false);
-  const menu = masuk ? MENU_APLIKASI : MENU_PUBLIK;
+  const menu = mitra ? (masuk ? MENU_MITRA : MENU_MITRA_PUBLIK) : masuk ? MENU_APLIKASI : MENU_PUBLIK;
+  // Render ulang saat ?tab= berubah supaya penanda menu mitra ikut pindah
+  const [, setPenanda] = useState(0);
+  useEffect(() => {
+    if (!mitra) return undefined;
+    const f = () => setTimeout(() => setPenanda((n) => n + 1), 0);
+    window.addEventListener("jf:path", f);
+    window.addEventListener("popstate", f);
+    return () => {
+      window.removeEventListener("jf:path", f);
+      window.removeEventListener("popstate", f);
+    };
+  }, [mitra]);
+  const tandaiAktif = (path) => (mitra ? cocokMitra(path) : cocok(path, aktif) && !path.includes("#"));
 
   useEffect(() => setBuka(false), [aktif]);
   useEffect(() => {
@@ -625,9 +748,14 @@ export function SiteHeader({ aktif }) {
     <header className={`pb-header ${gulir ? "bergulir" : ""}`}>
       <div className="pb-wrap">
         <div className="pb-header-in">
-          <a className="pb-brand" {...tautan("/")} aria-label={t("Workly, ke beranda", "Workly home")}>
+          <a
+            className="pb-brand"
+            {...tautan(mitra ? (masuk ? DASBOR_MITRA : "/pemberi-kerja") : "/")}
+            aria-label={t("Workly, ke beranda", "Workly home")}
+          >
             <TandaMerek />
             Workly
+            {mitra && <span className="pb-brand-mitra">{t("untuk Perusahaan", "for Employers")}</span>}
           </a>
 
           <nav className="pb-nav" aria-label={t("Menu utama", "Main menu")}>
@@ -635,7 +763,8 @@ export function SiteHeader({ aktif }) {
               m.kolom ? (
                 <MenuTurun key={m.label} grup={m} aktif={aktif} kecuali={menu.filter((x) => x.path).map((x) => x.path)} />
               ) : (
-                <a key={m.label} className={cocok(m.path, aktif) && !m.path.includes("#") ? "on" : ""} {...tautan(m.path)}>
+                <a key={m.label} className={`${tandaiAktif(m.path) ? "on" : ""} ${m.sorot && mitra ? "sorot-mitra" : ""}`} {...tautan(m.path)}>
+                  {m.sorot && mitra && <PlusCircle size={15} />}
                   {m.label}
                 </a>
               ),
@@ -645,13 +774,30 @@ export function SiteHeader({ aktif }) {
           <div className="pb-actions">
             <TombolBahasa />
             <TombolTema />
-            {masuk ? (
+            {masuk && mitra ? (
+              <MenuAkunMitra aktif={aktif} />
+            ) : masuk ? (
               <>
                 {(l?.aktif || l?.punyaKuota) && <ChipKuota l={l} aktif={aktif} />}
                 <MenuAkun aktif={aktif} />
               </>
+            ) : mitra ? (
+              <>
+                <a className="pb-login pb-ganti-sisi" {...tautan("/")}>
+                  {t("Cari kerja?", "Job seeker?")}
+                </a>
+                <a className="pb-login" {...tautan("/pemberi-kerja/masuk")}>
+                  {t("Masuk", "Sign in")}
+                </a>
+                <a className="pb-btn pb-btn-primary pb-btn-sm" {...tautan("/pemberi-kerja/daftar")}>
+                  {t("Daftar perusahaan", "Register company")}
+                </a>
+              </>
             ) : (
               <>
+                <a className="pb-login pb-ganti-sisi" {...tautan("/pemberi-kerja")}>
+                  {t("Untuk perusahaan", "For employers")}
+                </a>
                 <a className="pb-login" {...tautan("/login")}>
                   {t("Masuk", "Sign in")}
                 </a>
@@ -680,7 +826,7 @@ export function SiteHeader({ aktif }) {
               ? menu.filter((m) => !m.kolom)
               : [{ label: I.panduan.t, path: I.panduan.path, Ikon: I.panduan.Ikon, sorot: true }]
             ).map(({ label, path, Ikon, sorot }) => (
-              <a key={path} className={`pb-mm-item ${sorot ? "sorot" : ""}`} {...tautan(path)}>
+              <a key={path} className={`pb-mm-item ${sorot ? "sorot" : ""} ${tandaiAktif(path) ? "on" : ""}`} {...tautan(path)}>
                 <Ikon size={16} />
                 <span>{label}</span>
                 {sorot && <ArrowRight size={15} className="pb-mm-panah" />}
@@ -705,7 +851,7 @@ export function SiteHeader({ aktif }) {
               </React.Fragment>
             ),
           )}
-          {masuk && (
+          {masuk && !mitra && (
             <>
               <div className="pb-mm-group">{t("Akun", "Account")}</div>
               {MENU_AKUN.map((i) => (
@@ -721,14 +867,19 @@ export function SiteHeader({ aktif }) {
           <PilihBahasa kecil />
           {!masuk && (
             <div className="pb-mobile-cta">
-              <a className="pb-btn pb-btn-outline" {...tautan("/login")}>
+              <a className="pb-btn pb-btn-outline" {...tautan(mitra ? "/pemberi-kerja/masuk" : "/login")}>
                 {t("Masuk", "Sign in")}
               </a>
-              <a className="pb-btn pb-btn-primary" {...tautan("/register")}>
-                {t("Daftar gratis", "Sign up free")}
+              <a className="pb-btn pb-btn-primary" {...tautan(mitra ? "/pemberi-kerja/daftar" : "/register")}>
+                {mitra ? t("Daftar perusahaan", "Register company") : t("Daftar gratis", "Sign up free")}
               </a>
             </div>
           )}
+          {masuk && mitra && <MobileKeluar />}
+          <a className="pb-mm-sisi" {...tautan(mitra ? "/" : "/pemberi-kerja")}>
+            {mitra ? t("Mencari kerja? Buka Workly untuk pencari kerja", "Looking for work? Go to Workly for job seekers") : t("Perusahaan? Pasang loker di Workly", "Hiring? Post a job on Workly")}
+            <ArrowRight size={14} />
+          </a>
         </div>
       </div>
     </header>
@@ -747,10 +898,34 @@ function IkonSosialFooter() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ mitra = false }) {
   const tahun = new Date().getFullYear();
 
-  const kolom = [
+  const kolomMitra = [
+    {
+      judul: t("Untuk perusahaan", "For employers"),
+      tautan: [
+        [t("Pasang loker", "Post a job"), `${DASBOR_MITRA}?tab=tulis`],
+        [t("Dasbor perusahaan", "Company dashboard"), DASBOR_MITRA],
+        [t("Kredit & paket", "Credits"), `${DASBOR_MITRA}?tab=kredit`],
+        [t("Harga", "Pricing"), "/pemberi-kerja#harga"],
+        [t("Cara kerja", "How it works"), "/pemberi-kerja#cara-kerja"],
+        ["FAQ", "/pemberi-kerja#faq"],
+      ],
+    },
+    {
+      judul: "Workly",
+      tautan: [
+        [t("Untuk pencari kerja", "For job seekers"), "/"],
+        [t("Lihat semua loker", "Browse all jobs"), "/loker"],
+        [t("Syarat & ketentuan", "Terms of service"), "/syarat-ketentuan"],
+        [t("Kebijakan privasi", "Privacy policy"), "/kebijakan-privasi"],
+        ["Disclaimer", "/disclaimer"],
+      ],
+    },
+  ];
+
+  const kolomPekerja = [
     {
       judul: t("Lowongan", "Jobs"),
       tautan: [
@@ -784,8 +959,7 @@ export function SiteFooter() {
       judul: "Workly",
       tautan: [
         [t("Harga", "Pricing"), "/#harga"],
-        [t("Pasang loker (perusahaan)", "Post a job (employers)"), "/pemberi-kerja"],
-        [t("Dasbor pemberi kerja", "Employer dashboard"), "/pemberi-kerja/dasbor"],
+        [t("Untuk perusahaan", "For employers"), "/pemberi-kerja"],
         ["FAQ", "/faq"],
         [t("Syarat & ketentuan", "Terms of service"), "/syarat-ketentuan"],
         [t("Kebijakan privasi", "Privacy policy"), "/kebijakan-privasi"],
@@ -793,18 +967,22 @@ export function SiteFooter() {
       ],
     },
   ];
+  const kolom = mitra ? kolomMitra : kolomPekerja;
 
   return (
     <footer className="pb-footer">
       <div className="pb-wrap">
         <div className="pb-foot-grid">
           <div>
-            <a className="pb-brand" {...tautan("/")}>
+            <a className="pb-brand" {...tautan(mitra ? "/pemberi-kerja" : "/")}>
               <TandaJobly ukuran={32} diam />
               Workly
             </a>
             <p>
-              {t(
+              {mitra ? t(
+                "Pasang loker dan jangkau ribuan pencari kerja yang setiap hari mencari lowongan di Workly.",
+                "Post your jobs and reach the thousands of job seekers who search on Workly every day.",
+              ) : t(
                 "In this economy, cari kerja itu semakin sulit. Workly mengumpulkan lowongan dari situs karier resmi dan platform terpercaya setiap hari buat bantu kamu dapat pekerjaan.",
                 "In this economy, finding a job keeps getting harder. Every day Workly collects openings from official career sites and trusted job platforms to help you land your next job.",
               )}
@@ -905,12 +1083,13 @@ function KeAtas() {
 /** Kerangka halaman publik: header, isi, footer. */
 export function PublicLayout({ aktif, children }) {
   const akar = useRef(null);
+  const mitra = useModeMitra(aktif);
   useAnimasiMuncul(akar);
   return (
     <div className="pb" ref={akar}>
       <SiteHeader aktif={aktif} />
       <main className="pb-main">{children}</main>
-      <SiteFooter />
+      <SiteFooter mitra={mitra} />
       <KeAtas />
     </div>
   );

@@ -12,7 +12,7 @@ const keHalaman = (path) => (e) => {
  * Bingkai halaman masuk / daftar / lupa sandi.
  * Bersih ala remotefreelance.id: header tipis dan kartu bergaris halus.
  */
-export function AuthWrap({ children }) {
+export function AuthWrap({ children, mitra = false }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--t-surface)" }}>
       <header style={{ borderBottom: `1px solid ${T.border}` }}>
@@ -28,19 +28,33 @@ export function AuthWrap({ children }) {
           }}
         >
           <a
-            href="/"
-            onClick={keHalaman("/")}
+            href={mitra ? "/pemberi-kerja" : "/"}
+            onClick={keHalaman(mitra ? "/pemberi-kerja" : "/")}
             aria-label={t("Ke beranda Workly", "Go to Workly home")}
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}
           >
-            <Logo size={32} tagline />
+            <Logo size={32} tagline={!mitra} />
+            {mitra && (
+              <span
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: "var(--brand, #1660F5)",
+                  background: "var(--brand-soft, #e8efff)",
+                  padding: "3px 9px",
+                  borderRadius: 99,
+                }}
+              >
+                {t("untuk Perusahaan", "for Employers")}
+              </span>
+            )}
           </a>
           <a
-            href="/loker"
-            onClick={keHalaman("/loker")}
-            style={{ fontSize: 14, fontWeight: 600, color: T.ink, textDecoration: "none" }}
+            href={mitra ? "/" : "/pemberi-kerja"}
+            onClick={keHalaman(mitra ? "/" : "/pemberi-kerja")}
+            style={{ fontSize: 13.5, fontWeight: 600, color: T.inkSoft, textDecoration: "none" }}
           >
-            {t("Lihat loker ↗", "Browse jobs ↗")}
+            {mitra ? t("Mencari kerja? →", "Looking for work? →") : t("Untuk perusahaan →", "For employers →")}
           </a>
         </div>
       </header>

@@ -10697,3 +10697,92 @@ html[data-tema="gelap"] .pk-status.merah { background: rgba(239, 68, 68, 0.18); 
 @media (max-width: 860px) {
   .pk-harga .pb-prices { grid-template-columns: minmax(0, 1fr); max-width: 460px; }
 }
+
+/* ------------------------------------------- menu turun: melebar ke samping */
+.pb-dd-menu.lebar {
+  max-width: min(1180px, calc(100vw - 32px));
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+.pb-dd-col.ganda {
+  width: 540px;
+}
+.pb-dd-col.ganda .pb-dd-isi {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 4px;
+}
+.pb-dd-isi {
+  display: flex;
+  flex-direction: column;
+}
+.pb-dd-col.ganda .pb-dd-isi {
+  display: grid;
+}
+@media (max-width: 1200px) {
+  .pb-dd-col.ganda {
+    width: 470px;
+  }
+  .pb-dd-menu a.pb-dd-promo {
+    display: none;
+  }
+}
+
+/* ------------------------------------------- mode perusahaan (header) */
+.pb-brand-mitra {
+  margin-left: 2px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--brand);
+  background: var(--brand-soft);
+  padding: 3px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+  align-self: center;
+}
+.pb-nav > a.sorot-mitra {
+  color: var(--brand);
+  font-weight: 600;
+  gap: 6px;
+}
+.pb-actions .pb-login.pb-ganti-sisi {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+.pb-actions .pb-login.pb-ganti-sisi:hover {
+  color: var(--brand);
+}
+@media (max-width: 1180px) {
+  .pb-actions .pb-login.pb-ganti-sisi {
+    display: none;
+  }
+}
+.pb-avatar.mitra {
+  border-radius: 11px;
+  background: var(--brand);
+}
+.pb-tag-mitra {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand);
+  background: var(--brand-soft);
+  padding: 2px 8px;
+  border-radius: 99px;
+  margin-bottom: 6px;
+}
+.pb-mobile-menu > a.pb-mm-sisi {
+  margin-top: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--brand);
+  font-weight: 600;
+}
+.pb-mm-item.on {
+  border-color: var(--brand);
+  color: var(--brand);
+}
