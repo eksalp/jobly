@@ -39,6 +39,13 @@ export default function PemeliharaanPage() {
           )}
         </p>
 
+        <p className="pml-baru">
+          {t(
+            "Kabar baru: Jobly sekarang bernama Workly, dengan alamat baru workly.id. Akun dan datamu tetap sama.",
+            "News: Jobly is now Workly, at our new address workly.id. Your account and data stay the same.",
+          )}
+        </p>
+
         <div className="pml-waktu">
           <span>{t("Perkiraan dibuka kembali", "Expected back")}</span>
           <strong>
@@ -78,6 +85,7 @@ const CSS = `
 .pml-kartu{width:100%;max-width:560px;background:var(--t-surface,#fff);border:1px solid var(--t-border,#e2e8f0);border-radius:20px;padding:32px 28px;box-shadow:0 20px 50px -30px rgba(15,23,42,.35)}
 .pml-atas{display:flex;align-items:center;gap:10px;margin-bottom:28px}
 .pml-atas b{font-size:18px}
+.pml-baru{margin:16px 0 18px;padding:12px 14px;border-radius:12px;background:rgba(22,96,245,.08);color:var(--t-ink,#0f172a);font-size:14px;line-height:1.55}
 .pml-bhs{margin-left:auto;background:none;border:1px solid var(--t-border,#e2e8f0);color:var(--t-ink-soft,#475569);border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer}
 .pml-label{display:inline-block;font-size:12px;font-weight:600;color:var(--t-warn-ink,#92400e);background:var(--t-warn-bg,#fef3c7);padding:4px 10px;border-radius:999px}
 .pml h1{font-size:clamp(24px,5vw,30px);line-height:1.2;margin:12px 0 10px;letter-spacing:-.02em}

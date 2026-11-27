@@ -12,10 +12,10 @@
  * Untuk kembali melihat halaman pemeliharaan:  /?uji=keluar
  */
 export const PEMELIHARAAN = {
-  AKTIF: false,
+  AKTIF: true,
   // Perkiraan selesai (WIB). Situs TIDAK otomatis dibuka pada jam ini;
   // setelah jam ini lewat, halaman menampilkan "sebentar lagi".
-  selesai: "2026-10-16T08:00:00+07:00",
+  selesai: "2026-11-27T21:00:00+07:00",
   kunciUji: "jobly-uji",
 };
 
