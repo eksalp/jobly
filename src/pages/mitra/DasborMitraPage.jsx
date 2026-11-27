@@ -735,6 +735,80 @@ function RiwayatBeli({ beli, pt, onLunas }) {
 
 /* ------------------------------------------------------ daftar loker */
 
+/** Loker yang sedang menunggu dan belum pernah tayang: kreditnya bisa dikembalikan. */
+const belumTayang = (m) => m.status === "menunggu" && !m.tayang_sampai;
+
+/** Kotak persetujuan sebelum membatalkan, menutup, atau menghapus loker. */
+function KonfirmasiAksi({ aksi, onBatal, onYa }) {
+  const [sibuk, setSibuk] = useState(false);
+  useEffect(() => {
+    const esc = (e) => e.key === "Escape" && !sibuk && onBatal();
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
+  }, [onBatal, sibuk]);
+  if (!aksi) return null;
+  const { jenis, m } = aksi;
+  const sisaHari = m.tayang_sampai ? Math.max(0, Math.ceil((new Date(m.tayang_sampai) - Date.now()) / 86400000)) : 0;
+
+  let judul, isi, tombol, bahaya;
+  if (jenis === "hapus") {
+    judul = t("Hapus draf ini?", "Delete this draft?");
+    isi = [t(`Draf "${m.posisi}" akan dihapus permanen.`, `The draft "${m.posisi}" will be permanently deleted.`), t("Tidak ada kredit yang terpakai.", "No credits are used.")];
+    tombol = t("Ya, hapus draf", "Yes, delete draft");
+    bahaya = true;
+  } else if (belumTayang(m)) {
+    judul = t("Batalkan pengajuan loker?", "Cancel this submission?");
+    isi = [
+      t(`"${m.posisi}" belum disetujui, jadi pengajuannya bisa dibatalkan.`, `"${m.posisi}" hasn't been approved yet, so the submission can be cancelled.`),
+      t("1 kredit dikembalikan ke akunmu.", "1 credit is returned to your account."),
+      t("Loker kembali menjadi draf; kamu bisa mengubah lalu mengajukannya lagi, atau menghapusnya.", "The job goes back to draft; you can edit and resubmit it, or delete it."),
+    ];
+    tombol = t("Ya, batalkan & kembalikan kredit", "Yes, cancel & refund credit");
+    bahaya = false;
+  } else {
+    judul = t("Tutup loker ini?", "Close this job?");
+    isi = [
+      t(`"${m.posisi}" langsung hilang dari Workly dan tidak bisa ditayangkan lagi.`, `"${m.posisi}" is removed from Workly right away and can't be published again.`),
+      sisaHari > 0
+        ? t(`Sisa masa tayang ${sisaHari} hari ikut hangus. Kredit tidak dikembalikan karena loker sudah pernah tayang.`, `The remaining ${sisaHari} days are forfeited. The credit isn't refunded because the job has already been live.`)
+        : t("Kredit tidak dikembalikan karena loker sudah pernah tayang.", "The credit isn't refunded because the job has already been live."),
+      t("Kalau hanya ingin mengubah isi, pakai tombol Ubah saja.", "If you only want to change the content, use Edit instead."),
+    ];
+    tombol = t("Ya, tutup loker", "Yes, close job");
+    bahaya = true;
+  }
+
+  return (
+    <div className="pk-modal-latar" role="presentation" onMouseDown={(e) => e.target === e.currentTarget && !sibuk && onBatal()}>
+      <div className="pk-modal" role="dialog" aria-modal="true" aria-labelledby="pk-modal-judul">
+        <h3 id="pk-modal-judul">{judul}</h3>
+        <ul>
+          {isi.map((x) => (
+            <li key={x}>{x}</li>
+          ))}
+        </ul>
+        <div className="pk-tombol" style={{ justifyContent: "flex-end" }}>
+          <button type="button" className="pb-btn pb-btn-outline" disabled={sibuk} onClick={onBatal} autoFocus>
+            {t("Kembali", "Go back")}
+          </button>
+          <button
+            type="button"
+            className={`pb-btn ${bahaya ? "pk-btn-bahaya" : "pb-btn-primary"}`}
+            disabled={sibuk}
+            onClick={async () => {
+              setSibuk(true);
+              await onYa();
+              setSibuk(false);
+            }}
+          >
+            {sibuk && <Loader2 size={15} className="pk-putar" />} {tombol}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function BarisLoker({ m, onUbah, onAksi }) {
   const url = m.status === "tayang" ? urlDetail({ id: `db1:${ID_MITRA + m.id}`, posisi: m.posisi }) : null;
   const sisaHari = m.tayang_sampai ? Math.ceil((new Date(m.tayang_sampai) - Date.now()) / 86400000) : null;
@@ -789,7 +863,11 @@ function BarisLoker({ m, onUbah, onAksi }) {
           </button>
         )}
         {["menunggu", "tayang"].includes(m.status) && (
-          <button type="button" onClick={() => onAksi("tutup", m)} title={t("Tutup loker", "Close job")}>
+          <button
+            type="button"
+            onClick={() => onAksi("tutup", m)}
+            title={belumTayang(m) ? t("Batalkan pengajuan", "Cancel submission") : t("Tutup loker", "Close job")}
+          >
             <X size={15} />
           </button>
         )}
@@ -850,15 +928,21 @@ export function DasborMitraPage() {
     };
   }, []);
 
-  const aksi = async (jenis, m) => {
-    if (jenis === "tutup" && !window.confirm(t(`Tutup loker "${m.posisi}"? Loker langsung hilang dari Workly.`, `Close "${m.posisi}"? It will be removed from Workly right away.`))) return;
-    if (jenis === "hapus" && !window.confirm(t(`Hapus draf "${m.posisi}"?`, `Delete draft "${m.posisi}"?`))) return;
-    const { error } =
-      jenis === "tutup"
-        ? await supabase.rpc("tutup_loker", { p_id: m.id })
-        : await supabase.from("loker_perusahaan").delete().eq("id", m.id);
-    if (error) toast(error.message);
-    else toast(jenis === "tutup" ? t("Loker ditutup", "Job closed") : t("Draf dihapus", "Draft deleted"));
+  // Aksi tutup/hapus selalu lewat kotak persetujuan dulu
+  const [konfirmasi, setKonfirmasi] = useState(null);
+  const aksi = (jenis, m) => setKonfirmasi({ jenis, m });
+  const jalankanAksi = async () => {
+    const { jenis, m } = konfirmasi;
+    if (jenis === "tutup") {
+      const { data: hasil, error } = await supabase.rpc("tutup_loker", { p_id: m.id });
+      if (error) toast(error.message);
+      else if (hasil === "dibatalkan") toast(t("Pengajuan dibatalkan, 1 kredit dikembalikan", "Submission cancelled, 1 credit refunded"));
+      else toast(t("Loker ditutup", "Job closed"));
+    } else {
+      const { error } = await supabase.from("loker_perusahaan").delete().eq("id", m.id);
+      toast(error ? error.message : t("Draf dihapus", "Draft deleted"));
+    }
+    setKonfirmasi(null);
     data.muat();
   };
 
@@ -1067,6 +1151,7 @@ export function DasborMitraPage() {
           <a {...tautan("/faq")}>FAQ</a>.
         </p>
       </div>
+      <KonfirmasiAksi aksi={konfirmasi} onBatal={() => setKonfirmasi(null)} onYa={jalankanAksi} />
       {elemenToast}
     </PublicLayout>
   );
