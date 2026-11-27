@@ -13,6 +13,7 @@ import { mapSupabaseJob } from "../../utils/petaLoker";
 import { urlDetail } from "../../utils/sumberLoker";
 import { muatSnap, lanjutkanBayar, sisaMenitBayar } from "../../utils/snap";
 import { unduhInvoice } from "../../utils/invoicePdf";
+import { kecilkanLogo, MAKS_ASLI, MAKS_HASIL } from "../../utils/kecilkanLogo";
 import { tautan } from "../../utils/navigasi";
 import { lokal, t } from "../../i18n.js";
 
@@ -144,13 +145,24 @@ function FormProfil({ pt, onSimpan, onBatal }) {
     e.target.value = "";
     if (!file) return;
     if (!/^image\/(png|jpeg|webp|svg\+xml)$/.test(file.type)) return setGalat(t("Logo harus PNG, JPG, WEBP, atau SVG.", "Logo must be PNG, JPG, WEBP, or SVG."));
-    if (file.size > 1024 * 1024) return setGalat(t("Ukuran logo maksimal 1 MB.", "Logo must be 1 MB or smaller."));
+    if (file.size > MAKS_ASLI) return setGalat(t("Ukuran file maksimal 5 MB.", "File must be 5 MB or smaller."));
     setSibuk(true);
     setGalat("");
-    const ext = file.name.split(".").pop().toLowerCase().replace(/[^a-z]/g, "") || "png";
-    const path = `${user.id}/logo-${Date.now()}.${ext}`;
+    let hasil;
+    try {
+      // Dikecilkan dulu (maks. 256 px, WEBP) supaya penyimpanan tetap ringan
+      hasil = await kecilkanLogo(file);
+    } catch (err) {
+      setSibuk(false);
+      return setGalat(err.message);
+    }
+    if (hasil.blob.size > MAKS_HASIL) {
+      setSibuk(false);
+      return setGalat(t("Logo terlalu rumit untuk dikecilkan. Coba gambar yang lebih sederhana.", "The logo is too complex to shrink. Try a simpler image."));
+    }
+    const path = `${user.id}/logo-${Date.now()}.${hasil.ext}`;
     // Nama file selalu baru, jadi tidak perlu upsert (upsert butuh izin tambahan)
-    const { error } = await supabase.storage.from("logo-perusahaan").upload(path, file, { upsert: false, contentType: file.type });
+    const { error } = await supabase.storage.from("logo-perusahaan").upload(path, hasil.blob, { upsert: false, contentType: hasil.tipe });
     setSibuk(false);
     if (error) {
       return setGalat(
@@ -208,7 +220,7 @@ function FormProfil({ pt, onSimpan, onBatal }) {
             <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={unggahLogo} hidden />
           </label>
           <small className="pk-redup" style={{ display: "block", marginTop: 6 }}>
-            {t("Persegi, PNG/JPG/WEBP/SVG, maks. 1 MB", "Square, PNG/JPG/WEBP/SVG, max 1 MB")}
+            {t("Persegi, PNG/JPG/WEBP/SVG. Otomatis dikecilkan ke 256 px.", "Square, PNG/JPG/WEBP/SVG. Automatically resized to 256 px.")}
           </small>
         </div>
       </div>

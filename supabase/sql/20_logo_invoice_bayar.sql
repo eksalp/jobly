@@ -8,9 +8,12 @@
 -- ---------------------------------------------- 1. unggah logo perusahaan
 -- Unggahan dengan "upsert" juga membutuhkan izin SELECT. Tanpa policy ini
 -- Supabase Storage menolak dengan "new row violates row-level security".
+-- Logo dikecilkan di browser (maks. 256 px, WEBP), jadi batas 200 KB sudah
+-- longgar. SVG tidak diterima lagi; file SVG diubah menjadi WEBP sebelum diunggah.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('logo-perusahaan', 'logo-perusahaan', true, 1048576, array['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'])
-on conflict (id) do nothing;
+values ('logo-perusahaan', 'logo-perusahaan', true, 204800, array['image/png', 'image/jpeg', 'image/webp'])
+on conflict (id) do update set file_size_limit = excluded.file_size_limit,
+                               allowed_mime_types = excluded.allowed_mime_types;
 
 drop policy if exists "logo perusahaan baca" on storage.objects;
 create policy "logo perusahaan baca" on storage.objects
