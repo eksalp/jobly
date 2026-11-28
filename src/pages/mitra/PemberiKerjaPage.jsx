@@ -176,7 +176,7 @@ export function PemberiKerjaPage() {
           <div className="pb-head" data-muncul="">
             <div>
               <span className="pb-label">{t("Harga", "Pricing")}</span>
-              <h2>{t("Cukup Rp10.000 per loker", "Just Rp10,000 per post")}</h2>
+              <h2>{t("Mulai Rp32.500 per loker", "From Rp32,500 per post")}</h2>
               <p>{t("Sekali bayar, tanpa langganan. Semua paket mendapat fitur yang sama:", "One-time payment, no subscription. Every bundle includes:")}</p>
             </div>
           </div>

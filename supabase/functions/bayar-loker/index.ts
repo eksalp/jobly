@@ -3,7 +3,7 @@
 // Membuat transaksi Midtrans untuk membeli kredit pasang loker (pemberi kerja).
 // Kredit ditambahkan oleh payment-webhook setelah pembayaran lunas.
 //
-// Masukan : { paket: "satu" | "lima" | "lima_belas" }
+// Masukan : { paket: "satu" | "lima" | "sepuluh" }
 // Keluaran: { snapToken, orderId }
 
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";

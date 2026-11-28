@@ -742,7 +742,7 @@ function BayarTertunda({ beli, onLunas }) {
           <div>
             <b>{t("Pembayaran belum selesai", "Payment not finished")}</b>
             <span>
-              {PAKET_LOKER.find((p) => p.id === b.paket)?.nama || b.paket} · {rupiah(b.harga)} ·{" "}
+              {PAKET_LOKER.find((p) => p.id === b.paket)?.nama || (b.paket === "lima_belas" ? t("Paket 15 Loker", "15 Job posts") : b.paket)} · {rupiah(b.harga)} ·{" "}
               {t(`sisa waktu ${sisaMenitBayar(b.dibuat_at)} menit`, `${sisaMenitBayar(b.dibuat_at)} min left`)}
             </span>
           </div>
@@ -787,7 +787,7 @@ function RiwayatBeli({ beli, pt, onLunas }) {
               <span>{tgl(b.dibayar_at || b.dibuat_at)}</span>
               <span className="mono">{b.no_invoice || b.order_id}</span>
               <span>
-                {PAKET_LOKER.find((p) => p.id === b.paket)?.nama || b.paket}
+                {PAKET_LOKER.find((p) => p.id === b.paket)?.nama || (b.paket === "lima_belas" ? t("Paket 15 Loker", "15 Job posts") : b.paket)}
                 <small>{t(`${b.kredit} kredit`, `${b.kredit} credits`)}</small>
               </span>
               <span>{rupiah(b.harga)}</span>

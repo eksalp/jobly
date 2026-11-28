@@ -59,7 +59,8 @@ export async function unduhInvoice(b, pt, email) {
   const abu = [107, 118, 133];
   const tinta = [17, 27, 41];
   const paket = PAKET_LOKER.find((p) => p.id === b.paket);
-  const namaPaket = paket ? paket.nama : b.paket;
+  const PAKET_LAMA = { lima_belas: "Paket 15 Loker" };
+  const namaPaket = paket ? paket.nama : PAKET_LAMA[b.paket] || b.paket;
   const noInvoice = b.no_invoice || b.order_id;
 
   // ---------------------------------------------------------------- kepala

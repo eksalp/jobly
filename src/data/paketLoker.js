@@ -3,8 +3,8 @@
  * Harga pembayaran diambil server dari supabase/functions/_shared/paketLoker.ts,
  * jadi ubah KEDUA file bila harga berubah.
  *
- * Saat ini Rp10.000 per loker untuk semua paket. Isi `hemat` (persen) pada
- * paket bila nanti ingin memberi potongan; teks "hemat X%" otomatis tampil.
+ * 1 loker Rp35.000, 5 loker Rp170.000, 10 loker Rp325.000.
+ * `hemat` (persen) dibanding membeli satuan; teks "hemat X%" otomatis tampil.
  */
 import { t } from "../i18n.js";
 
@@ -15,22 +15,24 @@ export const PAKET_LOKER = [
     id: "satu",
     nama: t("1 Loker", "1 Job post"),
     kredit: 1,
-    harga: 10000,
+    harga: 35000,
     ket: t("Untuk satu posisi yang ingin segera terisi", "For a single role you need filled"),
   },
   {
     id: "lima",
     nama: t("Paket 5 Loker", "5 Job posts"),
     kredit: 5,
-    harga: 50000,
+    harga: 170000,
+    hemat: 3,
     populer: true,
     ket: t("Untuk beberapa posisi sekaligus", "For several roles at once"),
   },
   {
-    id: "lima_belas",
-    nama: t("Paket 15 Loker", "15 Job posts"),
-    kredit: 15,
-    harga: 150000,
+    id: "sepuluh",
+    nama: t("Paket 10 Loker", "10 Job posts"),
+    kredit: 10,
+    harga: 325000,
+    hemat: 7,
     ket: t("Untuk rekrutmen rutin atau agensi", "For ongoing hiring or agencies"),
   },
 ];
