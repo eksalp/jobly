@@ -23,8 +23,7 @@ import {
   Award,
   ListChecks,
   FolderOpen,
-  Mic,
-} from "lucide-react";
+  Mic, Zap } from "lucide-react";
 import { IkonKerja as Briefcase } from "../../components/IkonKerja";
 import { PublicLayout, useToast } from "../../components/publik/PublicLayout";
 import { KartuLoker } from "../../components/publik/KartuLoker";
@@ -420,7 +419,9 @@ export function DetailLokerPage({ slug }) {
               <LogoKotak src={logo} nama={job.perusahaan} ukuran={72} radius={18} />
               <div style={{ minWidth: 0 }}>
                 {job.prioritas && !job.ditutup && (
-                  <span className="pb-badge-prioritas besar">{t("Loker prioritas", "Featured job")}</span>
+                  <span className="pb-badge-prioritas besar">
+                    <Zap size={13} strokeWidth={2.6} fill="currentColor" /> {t("Loker prioritas", "Featured job")}
+                  </span>
                 )}{" "}
                 {job.urgent && !job.ditutup && (
                   <span className="pb-badge-urgent besar">

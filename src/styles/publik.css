@@ -10558,28 +10558,32 @@ html[data-tema="gelap"] .pb-chip-urgent.on {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   font-size: 11.5px;
   font-weight: 700;
-  color: #1d4ed8;
-  background: #e8efff;
+  color: #fff;
+  background: #dc2626;
   border-radius: 6px;
-  padding: 3px 8px;
+  padding: 3px 8px 3px 6px;
+}
+.pb-badge-prioritas svg {
+  flex-shrink: 0;
 }
 .pb-badge-prioritas.besar {
   font-size: 12.5px;
-  padding: 4px 10px;
+  padding: 4px 10px 4px 8px;
   margin-bottom: 8px;
 }
 html[data-tema="gelap"] .pb-badge-prioritas {
-  color: #bfdbfe;
-  background: rgba(59, 130, 246, 0.2);
+  color: #fff;
+  background: #dc2626;
 }
 .pb-card.pb-card-prioritas {
-  border-color: #bcd0fb;
-  box-shadow: 0 0 0 1px #bcd0fb inset;
+  border-color: #fca5a5;
+  box-shadow: 0 0 0 1px #fca5a5 inset;
 }
 html[data-tema="gelap"] .pb-card.pb-card-prioritas {
-  border-color: rgba(96, 165, 250, 0.45);
+  border-color: rgba(248, 113, 113, 0.5);
   box-shadow: none;
 }
 

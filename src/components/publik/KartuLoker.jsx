@@ -7,8 +7,7 @@ import {
   Bookmark,
   BookmarkCheck,
   ListPlus,
-  ListChecks,
-} from "lucide-react";
+  ListChecks, Zap } from "lucide-react";
 import { IkonKerja as Briefcase } from "../IkonKerja";
 import { LogoKotak, LogoSumber } from "./LogoKotak";
 import {
@@ -111,7 +110,9 @@ export function KartuLoker({ job, onToast, cocok, onLacak, dilamar }) {
           </div>
         </div>
         {job.prioritas && !job.ditutup ? (
-          <span className="pb-badge-prioritas">{t("Prioritas", "Featured")}</span>
+          <span className="pb-badge-prioritas">
+            <Zap size={12} strokeWidth={2.6} fill="currentColor" /> {t("Prioritas", "Featured")}
+          </span>
         ) : job.urgent && !job.ditutup ? (
           <span className="pb-badge-urgent">
             Urgent

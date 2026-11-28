@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ArrowRight, Check, ClipboardCheck, CreditCard, FilePen, Megaphone, Eye, MousePointerClick } from "lucide-react";
+import { ArrowRight, Check, ClipboardCheck, CreditCard, FilePen, Megaphone, Eye, MousePointerClick, Zap } from "lucide-react";
 import { PublicLayout, useGulirKeHash } from "../../components/publik/PublicLayout";
 import { DaftarFaq } from "../../components/publik/DaftarFaq";
 import { useJobs } from "../../context/JobsContext";
@@ -91,7 +91,9 @@ function ContohKartu() {
             <div className="pb-card-co">{t("Perusahaan kamu", "Your company")}</div>
             <div className="pb-card-src">{t("Diposting langsung", "Posted directly")}</div>
           </div>
-          <span className="pb-badge-prioritas">{t("Prioritas", "Featured")}</span>
+          <span className="pb-badge-prioritas">
+            <Zap size={12} strokeWidth={2.6} fill="currentColor" /> {t("Prioritas", "Featured")}
+          </span>
         </div>
         <h3 style={{ margin: "14px 0 6px", fontSize: 17 }}>{t("Posisi yang kamu buka", "The role you're hiring for")}</h3>
         <div style={{ color: "var(--muted)", fontSize: 13.5 }}>{t("Kota · Full time · Di kantor", "City · Full time · On-site")}</div>
